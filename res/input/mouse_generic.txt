@@ -1,0 +1,4 @@
+button1	0	0	14	20
+button3	14	0	14	20
+button2	28	0	14	20
+button5	42	0	14	20

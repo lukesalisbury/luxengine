@@ -1,0 +1,31 @@
+/****************************
+Copyright (c) 2006-2012 Luke Salisbury
+This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+****************************/
+#include "config.h"
+
+void Config::PlatformSettings()
+{
+	this->platform = "wii";
+
+	this->SetNumber("display.limit", 60);
+	this->SetNumber("display.width", 640);
+	this->SetNumber("display.height", 480);
+	this->SetNumber("display.autoscale", 1);
+	this->SetNumber("map.width", 256);
+	this->SetNumber("map.height", 384);
+	this->SetNumber("screen.width", 640);
+	this->SetNumber("screen.height", 480);
+	this->SetBoolean("debug.enable", false);
+	this->SetBoolean("audio.able", false);
+	this->SetString("control.set1", "arrows|none|mouse|k0|k1|k10|k11|k8|k9|k3|k6|k7|k8|k9|k10|k11|k12|k13|k0" );
+	this->SetString("control.buttons1", "k13|k27|m1" );
+
+
+}

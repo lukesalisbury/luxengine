@@ -1,0 +1,29 @@
+PLATFORM = LINUX
+PLATFORM_LIBS = -lz -lGLESv2 -lEGL -lm -lX11 -Wl,-rpath -Wl,\$$ORIGIN/lib -shared
+PLATFORM_FLAGS = -DNOSDL -DHAS_SOCKLEN_T -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DFLOATPOINT -fPIC
+PLATFORM_DIRECTORY = platform/sogl
+OBJDIR = objects-sogl
+
+INCLUDE_PAWN = TRUE
+
+ASM =
+ASMTYPE = elf
+
+CPP = g++
+CC = gcc
+RES =
+BIN  = libluxengine.so
+OPENGL = FALSE
+
+NETWORK = TRUE
+ONLINEENABLED = TRUE
+NET_OBJECT = $(OBJDIR)/enet/unix.o
+
+ifeq ($(PLATFORMBITS), 32)
+	ASM = nasm
+endif
+
+ifeq ($(BUILDDEBUG), TRUE)
+	PLATFORM_FLAGS += -ggdb
+endif
+

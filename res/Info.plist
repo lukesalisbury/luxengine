@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleVersion</key>
+	<string>0.92</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>application/x-oloz-game</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Mokoi File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>Mokoi</string>
+				<string></string>
+			</array>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>game</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleName</key>
+	<string>Mokoi Gaming</string>
+	<key>CFBundleExecutable</key>
+	<string>luxengine</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.5.0</string>
+	<key>CFBundleDisplayName</key>
+	<string>Mokoi Gaming</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Lux Engine</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Mokoi Gaming</string>
+	<key>CFBundleIconFile</key>
+	<string>luxengine.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>info.mokoi.luxengine</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>NSAppleScriptEnabled</key>
+	<false/>
+</dict>
+</plist>

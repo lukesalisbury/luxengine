@@ -1,0 +1,1 @@
+Requires a copy of SDL and SDL_mixer source codes
