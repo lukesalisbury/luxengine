@@ -1,0 +1,22 @@
+Display Styles
+Normal
+Vertical Gradient
+Horizontal Gradient
+Glow
+Outline
+Replace Colour
+Negative
+Display
+Function Used:
+Line
+Circle
+Rectangle
+Polygon
+Display Objects
+Animation
+asdasd
+asdasd
+asdasdasd
+LANG-19
+LANG-20
+LANG-21

@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "luxengine.h"
 #include "map_object.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "lux_canvas.h"
 #include "display.h"
 #include "core.h"
@@ -397,7 +397,7 @@ LuxSprite * MapObject::GetSprite( bool no_increment )
 		}
 		else
 		{
-			std::cout << "data type error" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "data type error" << std::endl;
 		}
 	}
 	return NULL;
@@ -437,7 +437,7 @@ LuxSprite * MapObject::GetCurrentSprite( )
 		}
 		else
 		{
-			std::cout << "data type error" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "data type error" << std::endl;
 		}
 	}
 	return NULL;

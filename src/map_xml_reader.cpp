@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "map_xml_reader.h"
 #include "engine.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "mokoi_game.h"
 #include "map_object.h"
 #include "masks.h"

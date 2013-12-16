@@ -5,7 +5,7 @@ ifeq ($(OBJDIR), )
 endif
 
 ifeq ($(BUILDDIR), )
-	BUILDDIR = build
+	BUILDDIR = bin
 endif
 
 ifeq ($(INSTALLDIR), )

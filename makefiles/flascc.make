@@ -16,7 +16,7 @@ CPPFLAGS+=-I"$(GLS3D)/include"
 #-I"$(FLASCC)/usr/include/"
 
 OBJDIR = objects-flascc
-BUILDDIR = build/flash
+BUILDDIR = bin/flash
 
 INCLUDE_PAWN = TRUE
 PAWNSIMPLEEXEC = TRUE

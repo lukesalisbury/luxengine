@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "audio.h"
 #include "engine.h"
 #include "config.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "mokoi_game.h"
 
 
@@ -36,7 +36,7 @@ AudioSystem::AudioSystem()
 	Mix_QuerySpec(&this->frequency, &this->outformat, &this->channels);
 
 	this->bits = this->outformat&0xFF;
-	std::cout << "Audio System: " << this->frequency << "Hz " << this->bits << " bit " << ( this->channels > 1 ? "stereo" : "mono" ) << " - Buffer Size: " << this->buffers << " bytes." << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Audio System: " << this->frequency << "Hz " << this->bits << " bit " << ( this->channels > 1 ? "stereo" : "mono" ) << " - Buffer Size: " << this->buffers << " bytes." << std::endl;
 
 	std::string buffer;
 	std::stringstream audiolist_file;

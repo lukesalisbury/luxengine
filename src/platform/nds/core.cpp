@@ -183,7 +183,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 	key_states =  keysHeld();
 
 
-	//std::cout << "touch_time" << "-" << this->touch_time << "-" << this->GetFrameDelta() << std::endl;
+	//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "touch_time" << "-" << this->touch_time << "-" << this->GetFrameDelta() << std::endl;
 	this->last_press = this->touch_press;
 	this->touch_press = (key_states & KEY_TOUCH);
 }

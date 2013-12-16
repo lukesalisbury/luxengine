@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "luxengine.h"
 #include "entity_manager.h"
 #include "mokoi_game.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 /*
 #include "../../../ThirdParty/tinyjs/TinyJS.h"
 

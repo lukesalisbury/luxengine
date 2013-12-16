@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "gui.h"
 #include "misc_functions.h"
 #include "css.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "display_functions.h"
 #include "mokoi_game.h"
 
@@ -94,8 +94,8 @@ LuxSheet * UserInterface::GetSheet( std::string file, uint16_t width, uint16_t h
 			elix::Image * image_file;
 			elix::File * image_source_file;
 
-			elix::path::StripUnwantedCharacters(file);
-			local_filesystem_path = elix::path::Resources("") + file;
+			elix::string::StripUnwantedCharacters(file);
+			local_filesystem_path = elix::directory::Resources("") + file;
 
 			image_source_file = new elix::File( local_filesystem_path );
 			if ( image_source_file->Exist() )

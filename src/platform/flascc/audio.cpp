@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "audio.h"
 #include "engine.h"
 #include "config.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "mokoi_game.h"
 
 AudioSystem::AudioSystem( )

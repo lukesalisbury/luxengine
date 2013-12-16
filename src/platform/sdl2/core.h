@@ -38,6 +38,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			const char * GamepadName( uint32_t device_number );
 
 			void SystemMessage(uint8_t type, std::string message);
+			std::ostream& SystemMessage(uint8_t type);
 			void AbleOutput(bool able);
 			uint32_t WasInit(uint32_t flag);
 			void QuitSubSystem(uint32_t flag);

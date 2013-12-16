@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "lux_types.h"
 #include "player.h"
-#include "elix_file.h"
+#include "elix_file.hpp"
 #include "platform_media.h"
 #include <vector>
 #include <string>
@@ -30,8 +30,7 @@ class LuxEngine
 {
 	public:
 		~LuxEngine();
-		LuxEngine(char * executable = "/");
-		LuxEngine(std::string game, std::string base_directory );
+		LuxEngine( std::string executable = "/");
 
 		bool ShowDialog(std::string text, LuxWidget dialog = DIALOGYESNO, std::string * answer = NULL);
 		void FatalError(std::string reason);

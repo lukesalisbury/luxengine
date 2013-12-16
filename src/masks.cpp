@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "masks.h"
 #include "mokoi_game.h"
-
+#include "core.h"
 Lux_Mask * Lux_Mask_New(uint16_t width, uint16_t height)
 {
 	Lux_Mask * mask = new Lux_Mask;
@@ -41,7 +41,7 @@ bool Lux_Mask_Load(std::string filename, Lux_Mask * mask)
 		mask_file.read((char*)&mask->width, sizeof(uint16_t));
 		mask_file.read((char*)&mask->height, sizeof(uint16_t));
 		mask->length = mask->width * mask->height;
-		std::cout << "Mask Overflow: " << mask->width << " " << mask->height <<" " << mask->length << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Mask Overflow: " << mask->width << " " << mask->height <<" " << mask->length << std::endl;
 		mask->data = new uint8_t[mask->length];
 		mask->ref++;
 		char ch;
@@ -52,10 +52,10 @@ bool Lux_Mask_Load(std::string filename, Lux_Mask * mask)
 				mask->data[count] = (uint8_t)ch;
 			}
 			else
-				std::cout << "Mask Overflow: " << ch << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Mask Overflow: " << ch << std::endl;
 			count++;
 		}
-		std::cout << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << std::endl;
 		mask_file.clear();
 	}
 	return true;

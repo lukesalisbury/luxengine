@@ -53,7 +53,7 @@ typedef void * native_pointer;
 typedef void * mem_pointer;
 typedef int32_t fixed;
 
-#include "elix_file.h"
+#include "elix_file.hpp"
 
 #define NULLIFY(x) if (x != NULL) { delete(x); x = NULL; }
 

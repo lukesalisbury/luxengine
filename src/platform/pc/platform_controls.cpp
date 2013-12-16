@@ -9,7 +9,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "player.h"
 #include "game_config.h"
 #include "core.h"
@@ -56,7 +56,7 @@ bool Player::SetupController( std::string name )
 	}
 	else
 	{
-		std::cout << "'" << name << "'' Invalid Control String '" << settings << "'"<< std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "'" << name << "'' Invalid Control String '" << settings << "'"<< std::endl;
 	}
 	values.clear();
 

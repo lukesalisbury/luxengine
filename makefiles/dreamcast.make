@@ -24,7 +24,7 @@ PLATFORM_FLAGS += -ml -m4-single-only -fno-crossjumping $(INC_PATHS) -D_arch_dre
 
 CPP = $(SUPPORTLIBS)/sh-elf/bin/sh-elf-g++
 CC = $(SUPPORTLIBS)/sh-elf/bin/sh-elf-gcc
-BUILDDIR = build/dc
+BUILDDIR = din/dc
 OBJDIR = objects-dc
 #RES = $(OBJDIR)/romdisk.o
 #RES_SOURCE = $(OBJDIR)/romdisk.img

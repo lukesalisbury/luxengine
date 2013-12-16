@@ -44,7 +44,7 @@ bool MokoiMapScreen::Init()
 	if ( this->initialised )
 		return false;
 
-	std::cout << "MokoiMapScreen::Init:" << this->initialised << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "MokoiMapScreen::Init:" << this->initialised << std::endl;
 	this->initialised = true;
 	if ( !this->_mask )
 		this->_mask = Lux_Mask_New( (this->_width), (this->_height) );

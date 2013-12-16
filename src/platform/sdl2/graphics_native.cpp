@@ -23,8 +23,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "graphics_native.h"
 #include "graphics_system.h"
 
-#include "elix_string.h"
-#include "elix_png.h"
+#include "elix_string.hpp"
+#include "elix_png.hpp"
 #include "bitfont.h"
 
 uint32_t Lux_Effect_Hex( ObjectEffect fx);
@@ -111,7 +111,7 @@ void Lux_Native_LoadFont()
 		}
 		native_font[c] = SDL_CreateTexture(native_renderer, SDL_PIXELFORMAT_ARGB1555, SDL_TEXTUREACCESS_STATIC, 8, 8);
 		if ( !native_font[c] )
-			std::cout << "Lux_Native_LoadFont: " << SDL_GetError() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Lux_Native_LoadFont: " << SDL_GetError() << std::endl;
 		//SDL_SetTextureAlphaMod(native_font[c],255);
 		SDL_SetTextureBlendMode(native_font[c],SDL_BLENDMODE_BLEND);
 		SDL_UpdateTexture(native_font[c], NULL, charflip, 16);
@@ -160,7 +160,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 	native_window = SDL_CreateWindow(sdlgraphics_title.c_str(),SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, native_window_flags);
 	if ( !native_window )
 	{
-		std::cout << __FILE__ << ":" << __LINE__ << " | Couldn't create Window. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't create Window. " << SDL_GetError() << std::endl;
 		return false;
 	}
 	SDL_GetWindowSize(native_window, &window_width, &window_height);
@@ -175,7 +175,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 
 	if ( !native_renderer )
 	{
-		std::cout << __FILE__ << ":" << __LINE__ << " | Couldn't create Renderer. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
 
@@ -651,7 +651,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect e
 {
 	if ( !native_renderer )
 	{
-		std::cout << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
 		return;
 	}
 
@@ -670,7 +670,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y
 {
 	if ( !native_renderer )
 	{
-		std::cout << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
 		return;
 	}
 
@@ -691,7 +691,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect
 {
 	if ( !native_renderer )
 	{
-		std::cout << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
 		return;
 	}
 

@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "worker.h"
 #include "core.h"
 #include "config.h"
-#include "elix_path.h"
+#include "elix_path.hpp"
 #ifdef NO_ZLIB
 	#define MINIZ_HEADER_FILE_ONLY
 	#include "miniz.c"

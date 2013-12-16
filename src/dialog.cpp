@@ -112,7 +112,7 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 {
 	if ( lux::display == NULL )
 	{
-		std::cout << "No Display. Message: " << text << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "No Display. Message: " << text << std::endl;
 		return false;
 	}
 	uint16_t text_length = text.length() * 8;

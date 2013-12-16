@@ -17,7 +17,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 #include "pawn_helper.h"
 #include "world.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "save_system.h"
 
 extern const AMX_NATIVE_INFO Functions_Natives[];
@@ -86,7 +86,7 @@ static cell AMX_NATIVE_CALL pawnGameSave(AMX *amx, const cell *params)
 	for (uint8_t count = 0; count < 64; count++)
 	{
 		cookie_data[count] = (int32_t)*cptr;
-		//std::cout << +count << ": " << cookie_data[count] << std::endl;
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << +count << ": " << cookie_data[count] << std::endl;
 		cptr ++;
 	}
 
@@ -170,7 +170,7 @@ static cell AMX_NATIVE_CALL pawnGameGetDetails(AMX *amx, const cell *params)
 			for (uint8_t count = 0; count < 64; count++)
 			{
 				*cptr = cookie_data[count];
-				//std::cout << +count << ": " << cookie_data[count] << std::endl;
+				//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << +count << ": " << cookie_data[count] << std::endl;
 				cptr ++;
 			}
 			read_successful = true;

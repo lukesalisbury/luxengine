@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define SAVE_SYSTEM_H
 
 #include "stdheader.h"
-#include "elix_file.h"
+#include "elix_file.hpp"
 #include "world.h"
 #include "entity_manager.h"
 

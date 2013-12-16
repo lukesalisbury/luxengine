@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "engine.h"
 #include "world_section.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "mokoi_game.h"
 #include "entity_section.h"
 #include "config.h"

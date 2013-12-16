@@ -1,0 +1,5 @@
+<sheet xmlns="http://mokoi.info/format/sheet">
+	<sprite name="1" mask="0">
+		<position x="0" y="0" w="128" h="64" />
+	</sprite>
+</sheet>

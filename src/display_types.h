@@ -20,7 +20,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "sprite_types.h"
 #include "map_object.h"
 #include "object_effect.h"
-#include "elix_png.h"
+#include "elix_png.hpp"
 #include "lux_polygon.h"
 
 extern ObjectEffect default_fx;

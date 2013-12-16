@@ -9,18 +9,19 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "luxengine.h"
+#include "core.h"
 #include "config.h"
 #include "mokoi_game.h"
-#include "elix_file.h"
-#include "elix_string.h"
-
+#include "elix_file.hpp"
+#include "elix_string.hpp"
+#include "elix_program.hpp"
 
 void ConfigResource::Print()
 {
 	std::map<std::string, std::string>::iterator iter;
 	for ( iter = this->values.begin(); iter != this->values.end(); iter++ )
 	{
-		std::cout << iter->first << "=" << iter->second << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << iter->first << "=" << iter->second << std::endl;
 	}
 
 }
@@ -105,7 +106,7 @@ void ConfigResource::MarkModified(std::string key)
 
 Config::Config( )
 {
-	this->path = elix::path::Program();
+	this->path = elix::program::RootDirectory();
 	this->platform = "posix";
 
 	this->SetString( "project.file", this->path + ELIX_DIR_SSEPARATOR"game"ELIX_DIR_SSEPARATOR ); /* Path to Default Game */
@@ -122,7 +123,7 @@ Config::Config( )
 	this->PlatformSettings();
 
 	/* Load Global Settings */
-	elix::File * file = new elix::File( elix::path::User("") + "mokoi.config" );
+	elix::File * file = new elix::File( elix::directory::User("", "mokoi.config") );
 	this->LoadFromFile(file);
 	delete file;
 

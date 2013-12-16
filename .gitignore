@@ -1,6 +1,8 @@
 *.o
 *.user
 *.user.*
+*.amx
+*.amx64
 
 #################
 ## Eclipse

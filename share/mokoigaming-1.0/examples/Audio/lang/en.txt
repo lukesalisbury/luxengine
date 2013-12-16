@@ -1,0 +1,8 @@
+Music Files
+Sound Effects
+You can add new files this game by just adding them.
+Press ❸ to Open/Close Dialog
+Audio Demo
+Function Used:\n AudioPlaySound\n AudioPlayMusic\n AudioVolume\n FileGetList\n DialogShow\n DialogGetString\n DialogPlayAudio
+❶❷❸❹❺❻❼❽❾❿➀➁➂➃➄➅▲△▼▽◀◁▶▷◐◒◑◓
+asdasdas

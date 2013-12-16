@@ -20,8 +20,8 @@ Some Code taken from Easy GL2D http://rel.betterwebber.com
 #include "graphics_system.h"
 
 #include "bitfont.h"
-#include "elix_png.h"
-#include "elix_string.h"
+#include "elix_png.hpp"
+#include "elix_string.hpp"
 
 #include <nds.h>
 #include <nds/arm9/trig_lut.h>

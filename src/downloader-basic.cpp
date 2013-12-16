@@ -17,8 +17,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "entity.h"
-#include "elix_path.h"
-#include "elix_string.h"
+#include "elix_path.hpp"
+#include "elix_string.hpp"
 #ifdef NO_ZLIB
 	#define MINIZ_HEADER_FILE_ONLY
 	#include "miniz.c"
@@ -111,7 +111,7 @@ std::string Lux_Util_FillAddress(std::string address, uint16_t port, sockaddr_in
 		addr.sin_addr.s_addr = 0;
 	addr.sin_port = htons(port);
 
-	std::cout << "Downloading:" << path << " from " << address << ":" << port<< std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Downloading:" << path << " from " << address << ":" << port<< std::endl;
 
 	return header;
 }
@@ -150,7 +150,7 @@ uint16_t Lux_Util_ParseHTTPHeader( HeaderInfo & header )
 			{
 				std::stringstream stream(lines[i].substr(9, 3));
 				stream >> header.status;
-				std::cout << "Header: '" << lines[i].substr(5,3) << "' '" << lines[i].substr(9, 3) << "' '" << lines[i].substr(13) << "'" << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Header: '" << lines[i].substr(5,3) << "' '" << lines[i].substr(9, 3) << "' '" << lines[i].substr(13) << "'" << std::endl;
 			}
 			else
 			{
@@ -158,7 +158,7 @@ uint16_t Lux_Util_ParseHTTPHeader( HeaderInfo & header )
 				if ( std::string::npos != slipt_point )
 				{
 					header.response[lines[i].substr(0, slipt_point)] = lines[i].substr(slipt_point+2);
-					std::cout << "Header: '" << lines[i].substr(0, slipt_point) << "' '" << lines[i].substr(slipt_point+2) << "'" << std::endl;
+					lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Header: '" << lines[i].substr(0, slipt_point) << "' '" << lines[i].substr(slipt_point+2) << "'" << std::endl;
 				}
 			}
 		}
@@ -321,7 +321,7 @@ int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserI
 			if ( header.status == 302 )
 			{
 				std::string new_location = header.response["Location"].substr(7);
-				std::cout << "downloaded moved to " << new_location << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "downloaded moved to " << new_location << std::endl;
 				requestHeader = Lux_Util_FillAddress( new_location, 80, serv_addr );
 
 				urlData.clear();
@@ -389,7 +389,7 @@ int32_t Lux_Util_FileDownloaderThread( void * data )
 			if ( header.status == 302 )
 			{
 				std::string new_location = header.response["Location"].substr(7);
-				std::cout << "Downloaded moved to " << new_location << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Downloaded moved to " << new_location << std::endl;
 				requestHeader = Lux_Util_FillAddress( new_location, 80, serv_addr );
 
 				urlData.clear();

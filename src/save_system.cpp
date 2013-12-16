@@ -16,9 +16,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include "world.h"
 #include "entity_manager.h"
-#include "elix_file.h"
-#include "elix_path.h"
-#include "elix_string.h"
+#include "elix_file.hpp"
+#include "elix_path.hpp"
+#include "elix_string.hpp"
 #include "mokoi_game.h"
 #include "save_system.h"
 
@@ -128,7 +128,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager)
 
 	if ( lux::game->public_directory.length() == 0 )
 	{
-		std::cout << "Invalid Save Directory." <<  std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Invalid Save Directory." <<  std::endl;
 		return false;
 	}
 
@@ -156,7 +156,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager)
 	}
 
 	/* Open File */
-	std::cout << "Saving to " << this->file_name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Saving to " << this->file_name << std::endl;
 
 	/* Todo Add overwrite warning */
 	this->save_file = new elix::File( this->file_name, true );
@@ -296,7 +296,7 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 	}
 
 	/* Open File */
-	std::cout << "Restoring " << this->file_name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Restoring " << this->file_name << std::endl;
 
 	this->save_file = new elix::File( this->file_name, false );
 	if ( !this->save_file->Exist() )

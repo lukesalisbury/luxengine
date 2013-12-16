@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "sprite_sheet.h"
 #include "xml_functions.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "display.h"
 
 
@@ -259,15 +259,15 @@ bool LuxSheet::ParseXML()
 
 void LuxSheet::Print()
 {
-	std::cout << "----------------------------" << std::endl;
-	std::cout << "-" << this->name << std::endl;
-	std::cout << "----------------------------" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "----------------------------" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "-" << this->name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "----------------------------" << std::endl;
 	for( std::map<uint32_t, LuxSprite *>::iterator iter = this->children.begin(); iter != this->children.end(); ++iter )
 	{
 		LuxSprite  * s = (*iter).second;
-		std::cout << "(" << (*iter).first << ")" << s->name << " [" << s->sheet_area.x << "x" << s->sheet_area.y << "] w:"<< s->sheet_area.w << " h:" << s->sheet_area.h << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "(" << (*iter).first << ")" << s->name << " [" << s->sheet_area.x << "x" << s->sheet_area.y << "] w:"<< s->sheet_area.w << " h:" << s->sheet_area.h << std::endl;
 	}
-	std::cout << "----------------------------" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "----------------------------" << std::endl;
 }
 
 bool LuxSheet::ParseSimpleText(const std::string content )
@@ -339,7 +339,7 @@ bool LuxSheet::Load()
 		}
 		if ( this->graphics.LoadSpriteSheet(this->name, &this->children) )
 		{
-			//std::cout << "Loading Sheet '" << this->name << "'" << this->requested << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Loading Sheet '" << this->name << "'" << this->requested << std::endl;
 			this->loaded = true;
 
 			this->failed = false;
@@ -379,7 +379,7 @@ bool LuxSheet::Refresh(GraphicSystem graphics)
 
 bool LuxSheet::Unload()
 {
-	//std::cout << "Freeing sheet '" << this->name << "' (" << this->requested << ")" << std::endl;
+	//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Freeing sheet '" << this->name << "' (" << this->requested << ")" << std::endl;
 	this->graphics.FreeSpriteSheet( &this->children );
 	this->loaded = false;
 	this->requested = 0;

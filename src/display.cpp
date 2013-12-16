@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "engine.h"
 #include "world.h"
 #include "lux_canvas.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "mokoi_game.h"
 #include "display_types.h"
 
@@ -88,7 +88,7 @@ DisplaySystem::DisplaySystem()
 		#ifndef OPENGLONLY
 		if ( lux::config->GetString("display.opengl") == "required" )
 		{
-			std::cout << __FILE__ << ":" << __LINE__ << " | Requires OpenGL " << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << __FILE__ << ":" << __LINE__ << " | Requires OpenGL " << std::endl;
 			return;
 		}
 
@@ -103,7 +103,7 @@ DisplaySystem::DisplaySystem()
 
 	if ( !is_display_setup )
 	{
-		std::cout << __FILE__ << ":" << __LINE__ << " | Graphic System Failed" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Graphic System Failed" << std::endl;
 		if ( lux::engine )
 		{
 			lux::engine->FatalError("display.cpp: Graphic System Failed");
@@ -143,7 +143,7 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp, bool
 
 	if ( !is_display_setup )
 	{
-		std::cout << __FILE__ << ":" << __LINE__ << " | Graphic System Failed" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Graphic System Failed" << std::endl;
 		return;
 	}
 
@@ -361,22 +361,27 @@ void DisplaySystem::InitialSetup()
 		return;
 	}
 
-	this->bpp = (uint8_t)lux::config->GetNumber("display.bpp") * 8;
+
 	this->frame_skip = 0;
 	this->screen_dimension.x = 0;
 	this->screen_dimension.y = 0;
-	this->screen_dimension.w = lux::config->GetNumber("screen.width");
-	this->screen_dimension.h = lux::config->GetNumber("screen.height");
-	this->fullscreen = lux::config->GetBoolean("display.fullscreen");
-	this->sprite_quick_access = lux::config->GetBoolean("sprite.shortname");
-	this->show_3d = lux::config->GetBoolean("fun.able");
-	this->show_debug = lux::config->GetBoolean("debug.able");
-	this->show_mask = lux::config->GetBoolean("debug.masks");
-	this->show_spriteinfo = lux::config->GetBoolean("debug.sprite");
-	this->show_collisions = lux::config->GetBoolean("debug.collision");
 	this->sprite_font = "";
 	this->show_cursor = true;
 	this->cache_sprites = false;
+
+	if ( lux::config )
+	{
+		this->screen_dimension.w = lux::config->GetNumber("screen.width");
+		this->screen_dimension.h = lux::config->GetNumber("screen.height");
+		this->bpp = (uint8_t)lux::config->GetNumber("display.bpp") * 8;
+		this->fullscreen = lux::config->GetBoolean("display.fullscreen");
+		this->sprite_quick_access = lux::config->GetBoolean("sprite.shortname");
+		this->show_3d = lux::config->GetBoolean("fun.able");
+		this->show_debug = lux::config->GetBoolean("debug.able");
+		this->show_mask = lux::config->GetBoolean("debug.masks");
+		this->show_spriteinfo = lux::config->GetBoolean("debug.sprite");
+		this->show_collisions = lux::config->GetBoolean("debug.collision");
+	}
 
 	this->graphics = GraphicsNone;
 
@@ -472,7 +477,7 @@ void DisplaySystem::UnrefSheet(std::string name)
 
 	if ( iter_sheet == this->_sheets.end() )
 	{
-		std::cout << "RefSheet Failed: " << name << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "RefSheet Failed: " << name << std::endl;
 		return;
 	}
 

@@ -11,8 +11,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "game_config.h"
 #include "engine.h"
-#include "elix_string.h"
-#include "elix_path.h"
+#include "elix_string.hpp"
+#include "elix_path.hpp"
 #include "mokoi_game.h"
 #include "tinyxml/tinyxml2ext.h"
 #include "worker.h"
@@ -181,7 +181,7 @@ void luxtest::loop()
 		if ( initial_effect.rotation >= 360 )
 			initial_effect.rotation -= 360;
 
-		//std::cout << "rotation: " << initial_effect.rotation << std::endl;
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "rotation: " << initial_effect.rotation << std::endl;
 	}
 
 	if ( controller->GetButton(6) == 1 )
@@ -191,7 +191,7 @@ void luxtest::loop()
 			initial_effect.flip_image = 16;
 		if ( initial_effect.flip_image >= 20 )
 			initial_effect.flip_image -= 20;
-		//std::cout << "flip_image: " << (int)initial_effect.flip_image << std::endl;
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "flip_image: " << (int)initial_effect.flip_image << std::endl;
 	}
 	if ( controller->GetButton(1) == 1 )
 	{
@@ -202,7 +202,7 @@ void luxtest::loop()
 			initial_effect.scale_xaxis = 500;
 			initial_effect.scale_yaxis = 500;
 		}
-		//std::cout << "flip_image: " << (int)initial_effect.flip_image << std::endl;
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "flip_image: " << (int)initial_effect.flip_image << std::endl;
 	}
 	if ( controller->GetButton(2) == 1 )
 	{

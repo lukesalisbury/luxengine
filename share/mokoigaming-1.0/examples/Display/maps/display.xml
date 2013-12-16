@@ -1,0 +1,200 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="0" blue="4" green="96" mode="0" />
+	<option name="wrap" value="0" type="" />
+</settings>
+<object value="String 14" type="text">
+	<position x="2" y="2" w="31" h="7" z="6000" l="6" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="14" />
+</object>
+<object value="Animation" type="text">
+	<position x="8" y="208" w="35" h="5" z="4000" l="4" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="-1" />
+</object>
+<object value="String 10" type="text">
+	<position x="8" y="24" w="31" h="7" z="6000" l="6" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="10" />
+</object>
+<object value="String 12" type="text">
+	<position x="56" y="24" w="31" h="7" z="6000" l="6" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="12" />
+</object>
+<object value="Colouring Sprite" type="text">
+	<position x="344" y="16" w="56" h="7" z="4000" l="4" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="-1" />
+</object>
+<object value="Scaling" type="text">
+	<position x="128" y="344" w="25" h="7" z="6000" l="6" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="-1" />
+</object>
+<object value="Rotating Sprite" type="text">
+	<position x="520" y="16" w="51" h="7" z="4000" l="4" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="-1" />
+</object>
+<object value="Tiling" type="text">
+	<position x="8" y="344" w="18" h="7" z="6000" l="6" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="-1" />
+</object>
+<object value="planetcute.png:1" type="sprite">
+	<position x="344" y="32" w="48" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" />
+	<entity value="random-colour" language="mps" global="false"/>
+</object>
+<object value="planetcute.png:2" type="sprite" id="*">
+	<position x="528" y="32" w="48" h="80" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" />
+	<entity value="rotate-image" language="mps" global="false"/>
+</object>
+<object value="Rectangle" type="rect" id="*">
+	<position x="64" y="40" w="46" h="47" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="random-colour" language="mps" global="false"/>
+</object>
+<object value="Line" type="line" id="*">
+	<position x="8" y="40" w="38" h="87" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="random-colour" language="mps" global="false"/>
+</object>
+<object value="String 11" type="text">
+	<position x="128" y="24" w="30" h="7" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="11" />
+</object>
+<object value="Circle" type="circle">
+	<position x="136" y="40" w="33" h="47" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="asd" value="sdf" type=""/>
+	<entity value="random-colour" language="mps" global="true"/>
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="8" y="224" w="32" h="40" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="40" y="224" w="32" h="40" z="1000" l="1" r="0" f="1"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="true" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="128" y="224" w="32" h="40" z="0" l="0" r="180" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="128" y="280" w="32" h="40" z="0" l="0" r="90" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="8" y="280" w="32" h="40" z="0" l="0" r="270" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="48" y="280" w="32" h="40" z="0" l="0" r="90" f="1"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="true" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="88" y="280" w="32" h="40" z="0" l="0" r="270" f="1"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="true" />
+</object>
+<object value="Line" type="line">
+	<position x="506" y="73" w="596" h="74" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="96" y="224" w="32" h="40" z="0" l="0" r="180" f="1"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="Line" type="line">
+	<position x="42" y="37" w="44" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" />
+</object>
+<object value="player1.png:front" type="sprite">
+	<position x="16" y="136" w="32" h="40" z="6000" l="6" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" />
+	<entity value="follow_path" language="mps" global="false"/>
+	<path>
+		<point x="16" y="136" ms="10"/>
+		<point x="608" y="136" ms="10"/>
+		<point x="608" y="448" ms="10"/>
+		<point x="328" y="176" ms="10"/>
+		<point x="16" y="176" ms="10"/>
+	</path>
+</object>
+<object value="Rectangle" type="rect">
+	<position x="352" y="224" w="72" h="72" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" />
+	<entity value="style_change" language="mps" global="false"/>
+</object>
+<object value="player1.png:back_4" type="sprite">
+	<position x="432" y="224" w="32" h="40" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" />
+	<entity value="style_change" language="mps" global="false"/>
+</object>
+<object value="String 0" type="text">
+	<position x="352" y="208" w="26" h="7" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="0" />
+</object>
+<object value="Polygon" type="polygon">
+	<position x="184" y="40" w="75" h="72" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="0" green="255" alpha="255" />
+	<option points="5"/>
+	<point x="50" y="25"/>
+	<point x="75" y="40"/>
+	<point x="60" y="60"/>
+	<point x="40" y="60"/>
+	<point x="25" y="40"/>
+</object>
+<object value="sprite-border.png:5" type="sprite">
+	<position x="386" y="356" w="16" h="16" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="process.png:process" type="sprite" id="">
+	<position x="8" y="360" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" type="hidden"/>
+	<entity value="tile-image" language="mps" global="false"/>
+</object>
+<object value="process.png:process" type="sprite">
+	<position x="170" y="367" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="mirror" value="false" type="hidden"/>
+	<entity value="scale-image" language="mps" global="false"/>
+</object>
+<object value="sprite-border.png:5" type="sprite">
+	<position x="208" y="240" w="96" h="64" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="String 13" type="text">
+	<position x="184" y="24" w="31" h="7" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="13" type="hidden"/>
+</object>
+<object value="Text" type="text">
+	<position x="192" y="208" w="15" h="5" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="-1" type="hidden"/>
+</object>
+<object value="Line" type="line">
+	<position x="546" y="34" w="547" h="120" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+</map>

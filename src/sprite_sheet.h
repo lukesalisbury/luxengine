@@ -19,7 +19,7 @@ class LuxSheet;
 #include "stdheader.h"
 #include "lux_sprite.h"
 #include "display_types.h"
-#include "elix_png.h"
+#include "elix_png.hpp"
 
 class LuxSheet
 {

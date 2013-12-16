@@ -1,0 +1,6 @@
+#define DIALOG_EDIT ME 0
+#define LANG_EDIT ME 0
+#define LANG_TITLE 1
+#define LANG_CREATOR 2
+#define LANG_GAMEOVER 3
+#define LANG_PLAYAGAIN 4

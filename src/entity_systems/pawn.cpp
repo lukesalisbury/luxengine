@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 #include "pawn_helper.h"
 #include "mokoi_game.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "display.h"
 //#include "../amx4/osdefs.h"
 
@@ -89,7 +89,7 @@ int AMXAPI Lux_PawnEntity_Monitor(AMX * amx)
 	{
 		if ( time > entity->starting_run_time + 2000 )
 		{
-			std::cout << "Script '" << entity->_base << "' running to long" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Script '" << entity->_base << "' running to long" << std::endl;
 			//return AMX_ERR_EXIT;
 		}
 	}
@@ -124,7 +124,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		}
 		else
 		{
-			std::cout << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error: " << file << " " << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error: " << file << " " << std::endl;
 			return false;
 		}
 
@@ -134,7 +134,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 
 		if ( hdr.magic != AMX_MAGIC )
 		{
-			std::cout << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
 			delete[] tempblock;
 			return false;
 		}
@@ -149,7 +149,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 
 		if ( result )
 		{
-			std::cout << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
 			delete[] memblock;
 			return false;
 		}
@@ -659,7 +659,7 @@ int32_t Lux_PawnEntity_Call( mem_pointer entity_data, char * function, native_po
 		if ( error )
 		{
 			MessagePush( (char*)"%s(%s): [Public] %s", entity->_base.c_str(),function,Lux_PawnEntity_StrError(error) );
-			std::cout << "Entity:" << entity->id.c_str() << "(" << entity->_base.c_str() << ") - Public Runtime Error " << Lux_PawnEntity_StrError(error) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity:" << entity->id.c_str() << "(" << entity->_base.c_str() << ") - Public Runtime Error " << Lux_PawnEntity_StrError(error) << std::endl;
 		}
 	}
 

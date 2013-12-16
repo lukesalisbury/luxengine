@@ -1,0 +1,3 @@
+Map
+BTN0 switches to section 'Section1'.\nBTN1 switches to section 'Section2'.\nBTN2 switches to back to File mode.\n
+Function Used:

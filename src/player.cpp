@@ -9,7 +9,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "engine.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "core.h"
 #include "game_config.h"
 

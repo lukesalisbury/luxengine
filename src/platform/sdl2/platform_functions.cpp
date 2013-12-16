@@ -11,10 +11,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "stdheader.h"
 #include "mokoi_game.h"
-#include "elix_png.h"
+#include "elix_png.hpp"
 #include <string>
 #include <SDL.h>
-
+#include "core.h"
 
 /* Lux_SDL2_Image2Surface
  * Creates a SDL_Surface from a file from the game file.
@@ -67,7 +67,7 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 	}
 	else
 	{
-		std::cout << "Scanning for window icon in resource directory." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Scanning for window icon in resource directory." << std::endl;
 
 		// Load Icon from resource
 		elix::Image * image_file;
@@ -75,7 +75,7 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 		uint32_t size = 0;
 		uint8_t * data = NULL;
 
-		image_source_file = new elix::File( elix::path::Resources("") + "window_icon.png" );
+		image_source_file = new elix::File( elix::directory::Resources("") + "window_icon.png" );
 		size = image_source_file->ReadAll( (data_pointer*) &data);
 
 		if ( size )

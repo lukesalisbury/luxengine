@@ -8,9 +8,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "player.h"
 #include "game_config.h"
+#include "core.h"
 #include <SDL.h>
 #include <SDL_keycode.h>
 /*
@@ -108,7 +109,7 @@ bool Player::SetupController( std::string name )
 		}
 		else
 		{
-			std::cout << "'" << name << "'' Invalid Control String '" << settings << "'"<< std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "'" << name << "'' Invalid Control String '" << settings << "'"<< std::endl;
 		}
 		values.clear();
 
@@ -161,24 +162,24 @@ void Player::ParseButton(Player_Button * button, std::string config)
 		case 'k':
 			/* Todo: Handle more then one */
 			button->device = KEYBOARD;
-			//std::cout << "Player Button: [KEYBOARD] #" << button->device_number << " - " << SDL_GetScancodeName((SDL_Scancode)button->sym) << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [KEYBOARD] #" << button->device_number << " - " << SDL_GetScancodeName((SDL_Scancode)button->sym) << std::endl;
 			break;
 		case 'm':
 			/* Todo: Handle more then one */
 			button->device = MOUSEBUTTON;
-			//std::cout << "Player Button: [MOUSEBUTTON] #" << button->device_number << " - " << button->sym << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [MOUSEBUTTON] #" << button->device_number << " - " << button->sym << std::endl;
 			break;
 		case 'b':
 			button->device = CONTROLBUTTON;
-			//std::cout << "Player Button: [CONTROLBUTTON] #" << button->device_number << " - " << button->sym << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [CONTROLBUTTON] #" << button->device_number << " - " << button->sym << std::endl;
 			break;
 		case 'h':
 			button->device = CONTROLHAT;
-			//std::cout << "Player Button: [CONTROLHAT] #" << button->device_number << " - " << button->sym << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [CONTROLHAT] #" << button->device_number << " - " << button->sym << std::endl;
 			break;
 		default:
 			button->device = NOINPUT;
-			//std::cout << "Player Button: [NOINPUT] " << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [NOINPUT] " << std::endl;
 			break;
 	}
 

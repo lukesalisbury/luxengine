@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "entity_manager.h"
 #include "world.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "display.h"
 #include "entity_system.h"
 

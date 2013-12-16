@@ -13,7 +13,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 
-void main_args( int argc, char *argv[] )
+#include "elix_file.hpp"
+#include "elix_string.hpp"
+
+
+void main_args( int argc, char *argv[], bool skipProjectFile )
 {
 	int c = argc;
 	while ( c > 1 ) {
@@ -49,21 +53,68 @@ void main_args( int argc, char *argv[] )
 		}
 		else if ( argv[c][0] != '-' )
 		{
-			lux::global_config->SetString("project.file", argv[c]);
-			luxportal::add( argv[c] );
-			luxportal::use = false;
-			luxportal::active = false;
+			if ( !skipProjectFile )
+			{
+				lux::global_config->SetString("project.file", argv[c]);
+				luxportal::add( argv[c] );
+				luxportal::use = false;
+				luxportal::active = false;
+			}
+		}
+		else
+		{
+			// Unknown argument.
 		}
 	}
 }
 
+
+namespace Mokoi {
+	int32_t gameSignatureOffset( elix::File * file );
+}
+
+bool checkForAttachedGame( char * argv )
+{
+	bool result = false;
+	elix::File * file = new elix::File( std::string(argv), false );
+
+	result = Mokoi::gameSignatureOffset( file ) > 1 ? true : false;
+
+
+	return result;
+}
+
+extern "C" void lux_engine_init()
+{
+
+}
+
+extern "C" void lux_engine_loop()
+{
+	if ( lux::engine->Start() )
+	{
+		lux::engine->Loop();
+	}
+	lux::engine->Close();
+}
+
 extern "C" int main( int argc, char *argv[] )
 {
-	std::string base_directory;
+	bool gameAttached = false;
+	std::string base_executable = (argc ? argv[0] : "/luxengine" );
 
-	base_directory = elix::path::GetBase( (argc ? argv[0] : "" ), true );
-	lux::engine = new LuxEngine( elix::path::Documents(false) + "Display/", base_directory );
-	main_args( argc, argv );
+	lux::engine = new LuxEngine( base_executable );
+
+
+	gameAttached = checkForAttachedGame( (argc ? argv[0] : NULL) );
+	if ( gameAttached )
+	{
+		lux::global_config->SetString("project.file", argv[0]);
+		luxportal::use = false;
+		luxportal::active = false;
+	}
+
+	main_args( argc, argv, gameAttached );
 
 	if ( luxportal::testmode )
 	{
@@ -77,22 +128,14 @@ extern "C" int main( int argc, char *argv[] )
 		{
 			if ( luxportal::run() )
 			{
-				if ( lux::engine->Start() )
-				{
-					lux::engine->Loop();
-				}
-				lux::engine->Close();
+				lux_engine_loop();
 			}
 		}
 
 	}
 	else
 	{
-		if ( lux::engine->Start() )
-		{
-			lux::engine->Loop();
-		}
-		lux::engine->Close();
+		lux_engine_loop();
 	}
 	luxportal::close();
 

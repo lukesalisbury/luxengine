@@ -18,7 +18,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "world.h"
 #include "misc_functions.h"
 #include "display_functions.h"
-#include "elix_endian.h"
+#include "elix_endian.hpp"
 
 
 extern const AMX_NATIVE_INFO Graphics_Natives[];

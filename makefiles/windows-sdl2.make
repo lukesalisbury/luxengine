@@ -1,5 +1,7 @@
 ifeq ($(SUPPORTPATH), )
-	SUPPORTPATH = C:/dev/supportlibs
+
+$(error Please set SUPPORTPATH variable before running make. )
+
 endif
 
 SUPPORTPATH = f:/sdl2libs
@@ -12,9 +14,9 @@ CPPFLAGS += -I"$(SUPPORTPATH)/include" -I"$(SUPPORTPATH)/include/SDL2" -I"$(CURL
 OBJDIR = object-sdl2
 
 PLATFORM = __GNUWIN32__
-PLATFORM_LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer.dll -lwinmm -static-libgcc
+PLATFORM_LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lwinmm -static-libgcc
 PLATFORM_LIBS += -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lversion -luuid
-PLATFORM_FLAGS = -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DNO_ZLIB -DUSE_SDL2 -DOPENGLONLY
+PLATFORM_FLAGS = -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DNO_ZLIB -DUSE_SDL2 -DOPENGLONLY -Dmain=SDL_main
 PLATFORM_OBJECTS = $(OBJDIR)/lux.res
 
 ifeq ($(PLATFORM_DIRECTORY), )

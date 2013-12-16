@@ -12,9 +12,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define _BASECORE_H_
 
 #define SYSTEM_MESSAGE_ERROR 1
-#define SYSTEM_MESSAGE_INFO 2
+#define SYSTEM_MESSAGE_WARNING 2
 #define SYSTEM_MESSAGE_DEBUG 3
-#define SYSTEM_MESSAGE_WARNING 4
+#define SYSTEM_MESSAGE_INFO 4
+#define SYSTEM_MESSAGE_LOG 5
 
 
 #include "luxengine.h"
@@ -22,6 +23,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include <vector>
 #include <string>
+#include <iostream>
 
 class BaseCoreSystem
 {
@@ -37,8 +39,10 @@ protected:
 	uint32_t internal_ms;
 	LuxState state;
 
+
 public:
 	virtual void SystemMessage(uint8_t type, std::string message) = 0;
+	virtual std::ostream& SystemMessage(uint8_t type) = 0;
 	virtual void AbleOutput(bool able) = 0;
 	virtual uint32_t WasInit(uint32_t flag) = 0;
 	virtual void QuitSubSystem(uint32_t flag) = 0;

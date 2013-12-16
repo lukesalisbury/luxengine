@@ -11,7 +11,7 @@ RES =
 
 CPP = arm-none-eabi-g++.exe
 CC =  arm-none-eabi-gcc.exe
-BUILDDIR = build/nds
+BUILDDIR = bin/nds
 OBJDIR = objects-nds
 OPENGL = FALSE
 ONLINEENABLED = FALSE

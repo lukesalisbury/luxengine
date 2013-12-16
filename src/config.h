@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#include <vector>
 	#include <list>
 	#include <sstream>
-	#include "elix_file.h"
+	#include "elix_file.hpp"
 
 
 	class ConfigResource

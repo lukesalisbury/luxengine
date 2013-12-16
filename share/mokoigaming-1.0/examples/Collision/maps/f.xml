@@ -1,0 +1,15 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="2" />
+	<color red="218" blue="81" green="81" mode="0" />
+	<option name="independent" value="false" type="" />
+	<option name="wrap" value="0" type="" />
+	<option name="music" value="" type="music" />
+	<option name="centerview" value="false" type="" />
+	<option name="name" value="gdfsgdfg" type="" />
+</settings>
+<object value="ztown.png:2" type="sprite">
+	<position x="136" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+</map>

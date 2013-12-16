@@ -11,7 +11,7 @@ CPP = g++
 CC = gcc
 BIN  = luxengine
 OPENGL = FALSE
-BUILDDIR = build/beos
+BUILDDIR = bin/beos
 
 
 NETWORK = TRUE

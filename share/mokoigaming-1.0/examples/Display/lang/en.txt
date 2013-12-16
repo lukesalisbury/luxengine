@@ -1,0 +1,11 @@
+Display Styles
+Normal
+Vertical Gradient
+Horizontal Gradient
+Glow
+Outline
+Replace Colour
+Negative
+Display
+Function Used:\n EntityGetNumber\n ObjectFollowPath\n ObjectEffect\n LanguageString\n\nAdditional Features:\n Display Styles\n Path\n Map Canvas\n
+asd

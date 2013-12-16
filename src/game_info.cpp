@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 
 #include "game_info.h"
-#include "elix_path.h"
+#include "elix_path.hpp"
 
 namespace luxportal {
 	game::game( std::string gamepack, UserInterface * gui )

@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <iostream>
 #include <vector>
 #include <map>
-#include "elix_file.h"
+#include "elix_file.hpp"
 
 #ifndef DIRECTORY_FILE
 	#define DIRECTORY_FILE "game.mokoi"
@@ -28,6 +28,7 @@ typedef enum {
 	MOKOI_GAME_PATCH,
 	MOKOI_GAME_DIRECTORY,
 	MOKOI_GAME_RESOURCE,
+	MOKOI_GAME_EXECUTABLE,
 	MOKOI_GAME_ONLINE
 } MokoiGameType;
 
@@ -67,6 +68,7 @@ class MokoiGame
 		std::map< std::string, StoredFileInfo * > files;
 		std::vector< elix::File * > loaded_files;
 		uint8_t type;
+		int32_t start_offset;
 	public:
 		bool SetProjectDirectory();
 		uint8_t GetType(std::string &path, bool info );

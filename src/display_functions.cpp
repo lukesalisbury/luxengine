@@ -10,8 +10,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "luxengine.h"
 #include "mokoi_game.h"
-#include "elix_string.h"
-#include "elix_endian.h"
+#include "elix_string.hpp"
+#include "elix_endian.hpp"
 #include <sstream>
 #include <algorithm>
 #ifndef toupper

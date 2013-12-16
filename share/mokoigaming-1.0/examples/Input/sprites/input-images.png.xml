@@ -1,0 +1,8 @@
+<sheet xmlns="http://mokoi.info/format/sheet">
+	<sprite name="button" mask="0" entity="input-button.mps">
+		<position x="0" y="0" w="32" h="32" />
+	</sprite>
+	<sprite name="axis" mask="0" entity="input-display.mps">
+		<position x="32" y="0" w="96" h="64" />
+	</sprite>
+</sheet>

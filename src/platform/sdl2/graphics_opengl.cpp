@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "luxengine.h"
 #include "map_object.h"
 #include "mokoi_game.h"
-#include "elix_png.h"
+#include "elix_png.hpp"
 #include "game_config.h"
 #include "core.h"
 
@@ -131,7 +131,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 	native_context = SDL_GL_CreateContext(native_window);
 	if ( !native_context )
 	{
-		std::cout << __FILE__ << ":" << __LINE__ << " | Couldn't create Renderer. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
 
@@ -139,11 +139,11 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 
 
-	std::cout << __FILE__ << ": | Video Driver: OpenGL " << std::endl;
-	std::cout << __FILE__ << ": | Vendor: " << glGetString(GL_VENDOR) << std::endl;
-	std::cout << __FILE__ << ": | Renderer: " << glGetString(GL_RENDERER) << std::endl;
-	std::cout << __FILE__ << ": | Version: " << glGetString(GL_VERSION) << std::endl;
-	std::cout << __FILE__ << ": | GL_ARB_texture_non_power_of_two: " << SDL_GL_ExtensionSupported((char *)"GL_ARB_texture_non_power_of_two") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Video Driver: OpenGL " << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Vendor: " << glGetString(GL_VENDOR) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Renderer: " << glGetString(GL_RENDERER) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Version: " << glGetString(GL_VERSION) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | GL_ARB_texture_non_power_of_two: " << SDL_GL_ExtensionSupported((char *)"GL_ARB_texture_non_power_of_two") << std::endl;
 
 	native_graphics_dimension.w = width;
 	native_graphics_dimension.h = height;

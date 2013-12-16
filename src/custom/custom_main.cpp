@@ -26,7 +26,7 @@ Notice — For any reuse or distribution, you must make clear to others the lice
 #include "portal.h"
 #include "core.h"
 #include "config.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 
 #ifdef FLASCC
 #include <AS3/AS3.h>
@@ -35,7 +35,7 @@ Notice — For any reuse or distribution, you must make clear to others the lice
 
 MODULE_EXPORT void update_lux_engine()
 {
-	std::cout << "update_lux_engine" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "update_lux_engine" << std::endl;
 	if ( lux::engine->state > NOTRUNNING )
 	{
 		lux::engine->Refresh();
@@ -150,7 +150,7 @@ bool StartEngine()
 			classic_filename.append(quest_filename);
 			classic_filename.append("");
 
-			std::cout << "classic_filename " << classic_filename << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "classic_filename " << classic_filename << std::endl;
 
 			system( classic_filename.c_str() );
 			return true;

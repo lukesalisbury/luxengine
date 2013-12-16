@@ -22,7 +22,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LENS_SERVERMSG 11
 
 #include "enet/enet.h"
-#include "elix_endian.h"
+#include "elix_endian.hpp"
 
 template <typename T> void ReadPacket( ENetPacket * packet, int pos, T & v);
 Player * NetworkGetPlayer( uint32_t network_id );

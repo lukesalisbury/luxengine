@@ -11,8 +11,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "game_config.h"
 #include "engine.h"
-#include "elix_string.h"
-#include "elix_path.h"
+#include "elix_string.hpp"
+#include "elix_path.hpp"
 #include "mokoi_game.h"
 #include "tinyxml/tinyxml2ext.h"
 #include "worker.h"
@@ -178,7 +178,7 @@ int32_t luxportal::browse_demos( LuxRect page_rect )
 	#ifdef apple
 	std::string dir = "../../../MokoiGamingExamples";
 	#else
-	std::string dir = elix::path::Resources("examples");
+	std::string dir = elix::directory::Resources("examples");
 	#endif
 	elix::path::Children( dir, "", list, false, true, true );
 
@@ -423,8 +423,8 @@ int32_t luxportal::online_page( LuxRect page_rect )
 	uint32_t start = 0, length = luxportal::item_count;
 
 
-	Lux_Util_FileDownloaderBackground( luxportal::root_url + "/games.xml", elix::path::Cache("portal.xml") ,  luxportal::interface );
-	xml.LoadFile( elix::path::Cache("portal.xml").c_str() );
+	Lux_Util_FileDownloaderBackground( luxportal::root_url + "/games.xml", elix::directory::Cache("portal.xml") ,  luxportal::interface );
+	xml.LoadFile( elix::directory::Cache("portal.xml").c_str() );
 
 	if ( xml.Error() )
 	{
@@ -487,9 +487,9 @@ int32_t luxportal::online_page( LuxRect page_rect )
 	if ( return_value > 0 )
 	{
 		luxportal::game * selected = luxportal::games.at(return_value-1);
-		Lux_Util_FileDownloaderBackground(selected->url.substr(7), elix::path::Cache("temp.game"), luxportal::interface);
-		lux::global_config->SetString("project.file", elix::path::Cache("temp.game"));
-		luxportal::add( elix::path::Cache("temp.game") );
+		Lux_Util_FileDownloaderBackground(selected->url.substr(7), elix::directory::Cache("temp.game"), luxportal::interface);
+		lux::global_config->SetString("project.file", elix::directory::Cache("temp.game"));
+		luxportal::add( elix::directory::Cache("temp.game") );
 		return_value = GUI_PORTAL_PLAY;
 	}
 
@@ -511,7 +511,7 @@ void luxportal::clear()
 void luxportal::open()
 {
 	std::string buffer;
-	elix::File * gamelist = new elix::File( elix::path::Cache("recent.txt") , false );
+	elix::File * gamelist = new elix::File( elix::directory::Cache("recent.txt") , false );
 	if ( gamelist->Exist() )
 	{
 		while ( gamelist->ReadLine(&buffer) )
@@ -533,7 +533,7 @@ void luxportal::close()
 	luxportal::previous.sort();
 	luxportal::previous.unique();
 
-	elix::File * gamelist = new elix::File( elix::path::Cache("recent.txt") , true );
+	elix::File * gamelist = new elix::File( elix::directory::Cache("recent.txt") , true );
 	std::list<std::string>::iterator iter1 = luxportal::previous.begin();
 	while ( iter1 != luxportal::previous.end() )
 	{
@@ -705,7 +705,7 @@ bool luxportal::run()
 	lux::config = new GameConfig();
 
 	/* Read CSS file */
-	elix::File * portalcss = new elix::File( elix::path::Resources("") + "portal.css");
+	elix::File * portalcss = new elix::File( elix::directory::Resources("") + "portal.css");
 	css = portalcss->ReadString();
 	delete portalcss;
 
@@ -726,7 +726,7 @@ bool luxportal::run()
 	lux::config->SetNumber("screen.height", 600);
 
 
-	luxportal::browse_path_default = elix::path::Documents(false);
+	luxportal::browse_path_default = elix::directory::Documents(false);
 	luxportal::browse_path = luxportal::browse_path_default;
 	luxportal::mode = GUI_PORTAL_DEMOS;
 	luxportal::display = new DisplaySystem();

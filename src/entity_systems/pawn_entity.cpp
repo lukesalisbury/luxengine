@@ -19,7 +19,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "pawn.h"
 #include <cmath>
 #include <algorithm>
-#include "elix_string.h"
+#include "elix_string.hpp"
 
 
 extern const AMX_NATIVE_INFO Entity_Natives[];
@@ -431,7 +431,7 @@ static cell AMX_NATIVE_CALL pawnEntityPublicFunction(AMX *amx, const cell *param
 				}
 				else if ( *cptr == 'n' ) //Value, passed by value
 				{
-					//std::cout << num_param << ": " << *cptr  << " = " << *arg_ptr << std::endl;
+					//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << num_param << ": " << *cptr  << " = " << *arg_ptr << std::endl;
 					int32_t value =  (int32_t)*arg_ptr;
 					wanted_entity->callbacks->Push(wanted_entity->_data,(int32_t)*arg_ptr);
 				}

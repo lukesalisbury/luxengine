@@ -568,7 +568,7 @@ SDL_Surface * SDL_Surface_LoadImage( std::string file )
 				std::cerr << "SDL_Surface_LoadImage:" << w << "x" << h << std::endl;
 			}
 			else
-				std::cout << file << ": not a png image" << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << file << ": not a png image" << std::endl;
 		}
 	}
 
@@ -636,8 +636,8 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 
 	const char *name = SDL_GetCurrentVideoDriver();
 	SDL_GetRendererInfo( &info);
-	std::cout << "Video System: " << name << std::endl;
-	std::cout << "Render: " << info.name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Video System: " << name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Render: " << info.name << std::endl;
 
 	return true;
 }

@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "bitfont.h"
 #include "display.h"
 #include "misc_functions.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include <math.h>
 #ifndef LUX_DISPLAY_FUNCTION
 #define LUX_DISPLAY_FUNCTION

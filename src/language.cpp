@@ -9,7 +9,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "engine.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "mokoi_game.h"
 #include "game_config.h"
 #include "gui.h"
@@ -18,7 +18,7 @@ bool LuxEngine::LoadDefaultLanguage()
 {
 	std::string defaultlang = lux::config->GetString("language.default");
 
-	//std::cout << "defaultlang:"<< defaultlang << std::endl;
+	//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "defaultlang:"<< defaultlang << std::endl;
 
 	if ( lux::display )
 	{

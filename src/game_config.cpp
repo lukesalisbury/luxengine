@@ -11,14 +11,14 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "game_config.h"
 #include "core.h"
 #include "mokoi_game.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 
 GameConfig::GameConfig()
 {
 	this->has_config_file = false;
-	this->allowAll = false;
+	this->allow_all = false;
 
-	if ( lux::game )
+	if ( lux::game && lux::game->valid )
 	{
 		std::stringstream config_file;
 
@@ -30,12 +30,13 @@ GameConfig::GameConfig()
 		{
 			has_config_file = true;
 		}
-
-		//std::cout << "config_file" << config_file.str() << std::endl;
+		/*
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "config_file" << config_file.str() << std::endl;
 		if ( !has_config_file )
 		{
 			Lux_FatalError("Game Config file not found");
 		}
+		*/
 
 		this->LoadFromStream(config_file);
 
@@ -48,13 +49,6 @@ GameConfig::GameConfig()
 			delete file;
 		}
 
-		/*
-		if ( !lux::config->GetNumber("screen.width") || !lux::config->GetNumber("screen.height") )
-		{
-			lux::config->SetNumber("screen.width", lux::config->GetNumber("map.width") );
-			lux::config->SetNumber("screen.height", lux::config->GetNumber("map.height") );
-		}
-		*/
 		if ( !this->GetBoolean("display.customsize") )
 		{
 			this->SetNumber("display.width", this->GetNumber("screen.width") );
@@ -66,7 +60,7 @@ GameConfig::GameConfig()
 	}
 	else
 	{
-		this->allowAll = true;
+		this->allow_all = true;
 	}
 }
 
@@ -214,7 +208,7 @@ void GameConfig::SetBoolean( std::string key, bool value )
 
 bool GameConfig::AllowChanges( std::string key )
 {
-	if ( this->allowAll )
+	if ( this->allow_all )
 		return true;
 	if ( !key.compare("server.ip") || !key.compare("display.mode") || !key.compare("display.fullscreen") )
 	{

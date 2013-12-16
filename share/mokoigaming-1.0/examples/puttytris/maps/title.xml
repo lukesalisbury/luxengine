@@ -1,0 +1,80 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="0" blue="0" green="0" mode="0" />
+</settings>
+<object value="String 1" type="text">
+	<position x="144" y="18" w="29" h="8" z="2000" l="2" r="0" f="0"/>
+	<color red="235" blue="40" green="238" alpha="255" />
+	<setting key="number" value="1" />
+</object>
+<object value="String 2" type="text">
+	<position x="64" y="400" w="30" h="8" z="2000" l="2" r="0" f="0"/>
+	<color red="102" blue="244" green="134" alpha="255" />
+	<setting key="number" value="2" />
+</object>
+<object value="Rectangle" type="rect">
+	<position x="64" y="40" w="192" h="352" z="1000" l="1" r="0" f="0"/>
+	<color red="33" blue="63" green="37" alpha="255" />
+</object>
+<object value="Rectangle" type="rect">
+	<position x="62" y="38" w="196" h="356" z="0" l="0" r="0" f="0"/>
+	<color red="62" blue="118" green="71" alpha="255" />
+</object>
+<object value="puttetris.png:1" type="sprite">
+	<position x="144" y="376" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:2" type="sprite">
+	<position x="128" y="360" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:5" type="sprite">
+	<position x="64" y="376" w="64" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:5" type="sprite">
+	<position x="160" y="376" w="48" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:2" type="sprite">
+	<position x="160" y="344" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:2" type="sprite">
+	<position x="144" y="360" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:2" type="sprite">
+	<position x="80" y="360" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:1" type="sprite">
+	<position x="208" y="376" w="48" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:1" type="sprite">
+	<position x="176" y="360" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:1" type="sprite">
+	<position x="64" y="328" w="16" h="48" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:1" type="sprite">
+	<position x="80" y="328" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:5" type="sprite">
+	<position x="192" y="360" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:5" type="sprite">
+	<position x="224" y="360" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="puttetris.png:5" type="sprite">
+	<position x="144" y="344" w="16" h="16" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+</map>

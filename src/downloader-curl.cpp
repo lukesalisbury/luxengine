@@ -17,9 +17,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "entity.h"
-#include "elix_path.h"
-#include "elix_string.h"
-#include "elix_file.h"
+#include "elix_path.hpp"
+#include "elix_string.hpp"
+#include "elix_file.hpp"
 #ifdef NO_ZLIB
 	#define MINIZ_HEADER_FILE_ONLY
 	#include "miniz.c"
@@ -139,7 +139,7 @@ int32_t Lux_Util_FileDownloaderThread( void * data )
 		/* Check for errors */
 		if ( res != CURLE_OK )
 		{
-			std::cout << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
 		}
 
 		/* always cleanup */
@@ -222,7 +222,7 @@ int32_t Lux_Util_FileDownloaderEntityCallback( void * data )
 		/* Check for errors */
 		if ( res != CURLE_OK )
 		{
-			std::cout << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
 		}
 
 		/* always cleanup */

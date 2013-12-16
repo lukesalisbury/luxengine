@@ -1,0 +1,3 @@
+Parallax Scolling Test. Press A to switch scolling modes
+Functions used:\n MapSetOffset
+Map Wrapping Demo

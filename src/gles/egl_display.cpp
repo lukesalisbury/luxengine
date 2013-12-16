@@ -51,7 +51,7 @@ namespace egl_display {
 		x11Display = XOpenDisplay(NULL);
 		if (!x11Display)
 		{
-			std::cout << "ERROR: unable to get display!" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "ERROR: unable to get display!" << std::endl;
 			return 0;
 		}
 
@@ -59,7 +59,7 @@ namespace egl_display {
 		if ( egl_display == EGL_NO_DISPLAY )
 		{
 			TestEGLError( );
-			std::cout << "Unable to initialise EGL display. a" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Unable to initialise EGL display. a" << std::endl;
 			return false;
 		}
 
@@ -68,7 +68,7 @@ namespace egl_display {
 		if ( !eglInitialize(egl_display, NULL, NULL ))
 		{
 			TestEGLError( );
-			std::cout << "Unable to initialise EGL display." << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Unable to initialise EGL display." << std::endl;
 			return 0;
 		}
 		/*
@@ -76,7 +76,7 @@ namespace egl_display {
 		if ( !eglGetConfigs(egl_display, NULL, 0, &numConfigs) )
 		{
 			TestEGLError( );
-			std::cout << "Unable to get a config for EGL " << numConfigs << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Unable to get a config for EGL " << numConfigs << std::endl;
 			return 0;
 		}
 
@@ -84,10 +84,10 @@ namespace egl_display {
 		if ( eglChooseConfig(egl_display, egl_config_attribs, &egl_config, 1, &numConfigs) != EGL_TRUE)
 		{
 			TestEGLError( );
-			std::cout << "Unable to find a config for EGL " << numConfigs << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Unable to find a config for EGL " << numConfigs << std::endl;
 			return 0;
 		}
-		std::cout << "Unable to find a config for EGL " << numConfigs << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Unable to find a config for EGL " << numConfigs << std::endl;
 		*/
 
 		// Bind GLES and create the context
@@ -97,7 +97,7 @@ namespace egl_display {
 		egl_context = eglCreateContext( egl_display, egl_config, EGL_NO_CONTEXT, contextParams);
 		if (egl_context == EGL_NO_CONTEXT)
 		{
-			std::cout << "Unable to create GLES context!" << eglGetError() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Unable to create GLES context!" << eglGetError() << std::endl;
 			return 0;
 		}
 
@@ -122,7 +122,7 @@ namespace egl_display {
 		{
 			TestEGLError( );
 
-			std::cout << "Unable to create EGL surface!" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Unable to create EGL surface!" << std::endl;
 			return 0;
 		}
 
@@ -130,7 +130,7 @@ namespace egl_display {
 
 		if ( eglMakeCurrent( egl_display,  egl_surface,  egl_surface, egl_context) == EGL_FALSE )
 		{
-			std::cout << "Unable to make GLES context current" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Unable to make GLES context current" << std::endl;
 			return 0;
 		}
 

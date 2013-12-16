@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "stdheader.h"
 #include "display_types.h"
 #include "map_object.h"
-#include "elix_png.h"
+#include "elix_png.hpp"
 #ifndef LUX_DISPLAY_FUNCTION
 #define LUX_DISPLAY_FUNCTION
 #endif

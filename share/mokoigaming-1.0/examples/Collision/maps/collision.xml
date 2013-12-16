@@ -1,0 +1,229 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="0" blue="0" green="0" mode="0" />
+</settings>
+<object value="ztown.png:163" type="sprite">
+	<position x="32" y="32" w="448" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:174" type="sprite">
+	<position x="32" y="0" w="448" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:19" type="sprite">
+	<position x="0" y="0" w="32" h="352" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:17" type="sprite">
+	<position x="480" y="0" w="32" h="352" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:97" type="sprite">
+	<position x="144" y="288" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:99" type="sprite">
+	<position x="304" y="288" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:98" type="sprite">
+	<position x="272" y="288" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:102" type="sprite">
+	<position x="240" y="288" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:101" type="sprite">
+	<position x="208" y="288" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:100" type="sprite">
+	<position x="176" y="288" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:63" type="sprite">
+	<position x="208" y="256" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:59" type="sprite">
+	<position x="176" y="256" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:60" type="sprite">
+	<position x="240" y="256" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:56" type="sprite">
+	<position x="272" y="256" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:51" type="sprite">
+	<position x="144" y="256" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:52" type="sprite">
+	<position x="304" y="256" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:34" type="sprite">
+	<position x="176" y="224" w="128" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:35" type="sprite">
+	<position x="304" y="224" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:33" type="sprite">
+	<position x="144" y="224" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:19" type="sprite">
+	<position x="304" y="192" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:17" type="sprite">
+	<position x="144" y="192" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:4" type="sprite">
+	<position x="144" y="160" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:6" type="sprite">
+	<position x="304" y="160" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:5" type="sprite">
+	<position x="176" y="160" w="128" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:18" type="sprite">
+	<position x="176" y="192" w="128" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:161" type="sprite">
+	<position x="112" y="320" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:163" type="sprite">
+	<position x="144" y="320" w="192" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:164" type="sprite">
+	<position x="336" y="320" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:2" type="sprite">
+	<position x="32" y="352" w="448" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:149" type="sprite">
+	<position x="112" y="192" w="32" h="128" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:117" type="sprite">
+	<position x="112" y="160" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:116" type="sprite">
+	<position x="336" y="160" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:114" type="sprite">
+	<position x="144" y="160" w="192" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:132" type="sprite">
+	<position x="336" y="192" w="32" h="128" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:179" type="sprite">
+	<position x="368" y="160" w="128" h="192" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:156" type="sprite">
+	<position x="112" y="64" w="32" h="96" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:155" type="sprite">
+	<position x="144" y="96" w="352" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:169" type="sprite">
+	<position x="144" y="64" w="352" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:169" type="sprite">
+	<position x="144" y="128" w="352" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:169" type="sprite">
+	<position x="16" y="192" w="32" h="160" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:169" type="sprite">
+	<position x="80" y="192" w="32" h="160" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:169" type="sprite">
+	<position x="16" y="64" w="96" h="96" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:123" type="sprite">
+	<position x="48" y="96" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:154" type="sprite">
+	<position x="48" y="192" w="32" h="160" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:170" type="sprite">
+	<position x="16" y="160" w="96" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:36" type="sprite">
+	<position x="480" y="352" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="ztown.png:20" type="sprite">
+	<position x="0" y="352" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:front" type="sprite">
+	<position x="294" y="56" w="32" h="40" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="objects" language="mps" global="false"/>
+</object>
+<object value="player1.png:front" type="sprite">
+	<position x="167" y="91" w="32" h="40" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="objects" language="mps" global="false"/>
+</object>
+<object value="player1.png:front" type="sprite">
+	<position x="411" y="71" w="32" h="40" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="objects" language="mps" global="false"/>
+</object>
+<object value="player1.png:front" type="sprite">
+	<position x="398" y="205" w="32" h="40" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="objects" language="mps" global="false"/>
+</object>
+<object value="player1.png:front" type="sprite">
+	<position x="54" y="222" w="32" h="40" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="objects" language="mps" global="false"/>
+</object>
+<object value="player1.png:front" type="sprite">
+	<position x="67" y="50" w="32" h="40" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="objects" language="mps" global="false"/>
+</object>
+<object value="String 1" type="text">
+	<position x="40" y="27" w="40" h="9" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="1" />
+</object>
+</map>

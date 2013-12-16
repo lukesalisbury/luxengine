@@ -210,17 +210,17 @@ void CompileShader( ShaderData * data )
 
 void setShaders()
 {
-	std::cout << __FILE__ << ": | GL_ARB_shader_objects :" << Lux_OGL_QueryExtension("GL_ARB_shader_objects") << std::endl;
-	std::cout << __FILE__ << ": | GL_ARB_shading_language_100 :" << Lux_OGL_QueryExtension("GL_ARB_shading_language_100") << std::endl;
-	std::cout << __FILE__ << ": | GL_ARB_vertex_shader :" << Lux_OGL_QueryExtension("GL_ARB_vertex_shader") << std::endl;
-	std::cout << __FILE__ << ": | GL_ARB_fragment_shader :" << Lux_OGL_QueryExtension("GL_ARB_fragment_shader") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | GL_ARB_shader_objects :" << Lux_OGL_QueryExtension("GL_ARB_shader_objects") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | GL_ARB_shading_language_100 :" << Lux_OGL_QueryExtension("GL_ARB_shading_language_100") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | GL_ARB_vertex_shader :" << Lux_OGL_QueryExtension("GL_ARB_vertex_shader") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | GL_ARB_fragment_shader :" << Lux_OGL_QueryExtension("GL_ARB_fragment_shader") << std::endl;
 	if ( !lux::config->GetBoolean("shader.able") )
 	{
 		return;
 	}
 	
 	#if defined(__APPLE__)
-	std::cout << __FILE__ << ": | Shaders disabled on OS X" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Shaders disabled on OS X" << std::endl;
 	return;
 	#endif
 

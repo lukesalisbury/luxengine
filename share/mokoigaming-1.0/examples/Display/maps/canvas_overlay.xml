@@ -1,0 +1,15 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="128" blue="128" green="128" mode="0" />
+</settings>
+<object value="This message and animation are from canvas_overlay map" type="text">
+	<position x="40" y="72" w="197" h="8" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="number" value="-1" />
+</object>
+<object value="title.png:1" type="sprite">
+	<position x="8" y="8" w="256" h="64" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+</map>

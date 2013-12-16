@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <sstream>
 #include "core.h"
 #include "world.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 
 
 bool Lux_Util_RectCollide(LuxRect a, LuxRect b);
@@ -79,7 +79,7 @@ void Entity::InitialSetup( std::string id )
 		this->loaded = this->callbacks->Init( this->id, this->_base, this->_data, this );
 		if ( !this->loaded )
 		{
-			std::cout << __FUNCTION__ << ":" << __LINE__ << " | No data for " << this->id << "|" << this->_base << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ":" << __LINE__ << " | No data for " << this->id << "|" << this->_base << std::endl;
 		}
 	}
 
@@ -202,7 +202,7 @@ int32_t Entity::Call(std::string function, char * format, ...)
 			std::cerr << __FUNCTION__ << ":" << __LINE__ << " | Call from " << this->id << " Failed" << std::endl;
 		return return_value;
 	}
-	std::cout << __FUNCTION__ << ":" << __LINE__ << " | '" << this->id << "' Call Function Failed '" << function << "'" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ":" << __LINE__ << " | '" << this->id << "' Call Function Failed '" << function << "'" << std::endl;
 	return -1;
 }
 

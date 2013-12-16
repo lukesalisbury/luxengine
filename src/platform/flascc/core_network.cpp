@@ -15,7 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include "entity_manager.h"
 #include "world.h"
-#include "elix_endian.h"
+#include "elix_endian.hpp"
 #include "network_types.h"
 
 /* Network Thread */

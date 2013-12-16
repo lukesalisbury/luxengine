@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "engine.h"
 #include "display.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "mokoi_game.h"
 #include "entity_section.h"
 #include "world.h"
@@ -41,7 +41,7 @@ void PrintLuxMapIdent( LuxMapIdent id, std::ostream & stream  )
 
 WorldSystem::WorldSystem()
 {
-	std::cout << " > Opening the World" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Opening the World" << std::endl;
 	this->active_map = this->_nextmap = NULL;
 	this->active_section = this->next_section = NULL;
 
@@ -56,7 +56,7 @@ WorldSystem::WorldSystem()
 
 WorldSystem::~WorldSystem()
 {
-	std::cout << " < Closing the World" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing the World" << std::endl;
 	if ( this->_objectscache.size() )
 	{
 		while ( this->_objectscache.begin() != this->_objectscache.end() )
@@ -510,7 +510,7 @@ void WorldSystem::DeleteSection( uint32_t section )
 	{
 		if ( p->second->InSection(section) && !p->second->_keep )
 		{
-			std::cout << " Section[" << std::dec << section << "]: " << p->second->_name  << " deleted" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " Section[" << std::dec << section << "]: " << p->second->_name  << " deleted" << std::endl;
 			delete p->second;
 			this->map_list.erase(p++);
 		}
@@ -850,11 +850,11 @@ bool WorldSystem::Restore( elix::File * current_save_file )
 			{
 				restoring_map = new MokoiMap(current_save_file);
 				restoring_map->SetIdent(restore_map_id);
-				std::cout << "Map not already loaded " << restore_map_id << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Map not already loaded " << restore_map_id << std::endl;
 			}
 			else
 			{
-				std::cout << "Map already has been loaded " << restore_map_id << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Map already has been loaded " << restore_map_id << std::endl;
 				restoring_map->Restore( current_save_file );
 			}
 

@@ -22,10 +22,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "gui.h"
 #include "downloader.h"
 #include "mokoi_game.h"
-#include "elix_path.h"
-#include "elix_file.h"
+#include "elix_path.hpp"
+#include "elix_file.hpp"
 #include "elix_intdef.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 
 
 namespace Mokoi {
@@ -36,6 +36,23 @@ namespace Mokoi {
 	bool folder_check( std::pair<std::string, StoredFileInfo *> p )
 	{
 		return !p.first.compare( 2, folderlist_prefix.length(), folderlist_prefix );
+	}
+}
+
+
+
+namespace Mokoi {
+	int32_t gameSignatureOffset( elix::File * file )
+	{
+		uint8_t game_sign[8] = {137, 'M', 'o', 'k', 'o', 'i', '0', '\n'};
+		int32_t p = -1;
+		if ( file != NULL )
+		{
+			game_sign[6] = '1';
+			p = file->Scan( 0, game_sign, 8 );
+
+		}
+		return p;
 	}
 }
 
@@ -57,6 +74,7 @@ MokoiGame::MokoiGame( std::string path, bool checkonly )
 	this->filename = path;
 
 	type = this->GetType( this->filename, true );
+
 	if ( type == MOKOI_GAME_UNKNOWN )
 	{
 		if ( !checkonly )
@@ -109,13 +127,13 @@ bool MokoiGame::SetProjectDirectory()
 
 		this->localid = project_id.str();
 
-		this->public_directory =  elix::path::User( this->localid );
+		this->public_directory =  elix::directory::User( this->localid );
 
 		elix::File * title_file = new elix::File(this->public_directory + "title.txt", true);
 		title_file->Write(this->title);
 		delete title_file;
 
-		std::cout << "Game Public Directory: " << this->public_directory << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Game Public Directory: " << this->public_directory << std::endl;
 
 
 		return true;
@@ -145,12 +163,11 @@ uint8_t MokoiGame::GetType( std::string & path, bool info )
 		path.append(DIRECTORY_FILE);
 	}
 
-
-
 	uint8_t type = MOKOI_GAME_UNKNOWN;
 	uint8_t buf[8];
 	elix::File * file;
 	std::string name = elix::path::GetName( path );
+
 	if ( name == DIRECTORY_FILE )
 	{
 		file = new elix::File( path );
@@ -221,15 +238,20 @@ uint8_t MokoiGame::GetType( std::string & path, bool info )
 		file = new elix::File( path );
 		if ( file->Exist() )
 		{
+			this->start_offset = Mokoi::gameSignatureOffset(file);
+			if ( this->start_offset != -1 )
+			{
+				file->Seek(this->start_offset);
+			}
+
 			file->Read( &buf, 1, 8 );
 			if ( buf[6] == '1' && buf[7] == 10 )
 			{
 				if ( memcmp(buf, Mokoi::game_magic, 6) == 0 )
 				{
-					type = MOKOI_GAME_PACK;
+					type = ( start_offset > 0 ? MOKOI_GAME_EXECUTABLE : MOKOI_GAME_PACK);
 					if ( info )
 					{
-
 						file->Read( &this->name, 1, 255);
 						this->title.assign(this->name);
 						file->Read_uint32( true );
@@ -250,6 +272,11 @@ uint8_t MokoiGame::GetType( std::string & path, bool info )
 					type = MOKOI_GAME_RESOURCE;
 				}
 			}
+			else
+			{
+				 this->start_offset = 0;
+			}
+
 		}
 		delete file;
 	}
@@ -257,16 +284,18 @@ uint8_t MokoiGame::GetType( std::string & path, bool info )
 	return type;
 }
 
-
+#include <sstream>
 void MokoiGame::Print()
 {
-	std::cout << "----------------------------" << std::endl;
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << "------MokoiGame::Print------" << std::endl;
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << "Files: " << this->files.size() << std::endl;
 	for( std::map<std::string, StoredFileInfo *>::iterator iter = this->files.begin(); iter != this->files.end(); ++iter )
 	{
 		StoredFileInfo * s = (*iter).second;
-		std::cout << (*iter).first << " ["<< (int)s->path_type << ":" << s->path << "]" <<  std::endl;
+
+		lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << (*iter).first << " ["<< (int)s->path_type << ":" << s->path << "]" <<  std::endl;
 	}
-	std::cout << "----------------------------" << std::endl;
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG) << "----------------------------" << std::endl;
 }
 
 bool MokoiGame::ScanPackage( uint8_t type, std::string path, std::string dest )
@@ -282,6 +311,14 @@ bool MokoiGame::ScanPackage( uint8_t type, std::string path, std::string dest )
 		goto function_exit;
 	}
 
+	if ( type == MOKOI_GAME_EXECUTABLE )
+	{
+		if ( this->start_offset > 0 )
+		{
+			file->Seek(this->start_offset);
+		}
+	}
+
 	file->Read( &type_buffer, 1, 8 );
 
 	if ( type_buffer[6] != '1' || type_buffer[7] != 10 )
@@ -289,7 +326,7 @@ bool MokoiGame::ScanPackage( uint8_t type, std::string path, std::string dest )
 		goto function_exit;
 	}
 
-	if ( type == MOKOI_GAME_PACK && !memcmp(type_buffer, Mokoi::game_magic, 6) )
+	if ( (type == MOKOI_GAME_PACK || type == MOKOI_GAME_EXECUTABLE) && !memcmp(type_buffer, Mokoi::game_magic, 6) )
 	{
 		uint32_t logo_len = 0;
 
@@ -302,7 +339,7 @@ bool MokoiGame::ScanPackage( uint8_t type, std::string path, std::string dest )
 	else if ( type == MOKOI_GAME_RESOURCE && !memcmp(type_buffer, Mokoi::resource_magic, 6) )
 	{
 		file->Seek( file->Tell() + 128+128+1 ); // Skip Title, Author and category
-		std::cout << "scanning resource" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "scanning resource" << std::endl;
 		crc = file->Read_uint32( true ); // CRC
 	}
 	else if ( type == MOKOI_GAME_PATCH && !memcmp(type_buffer, Mokoi::patch_magic, 6) )
@@ -315,7 +352,7 @@ bool MokoiGame::ScanPackage( uint8_t type, std::string path, std::string dest )
 		crc = file->Read_uint32( true );
 		if ( (required_game_crc != crc ) || required_game_id != this->id )
 		{
-			std::cout << "Patch '" << path << "' is not compatable with this game." << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Patch '" << path << "' is not compatable with this game." << std::endl;
 			goto function_exit;
 		}
 
@@ -412,7 +449,7 @@ bool MokoiGame::ScanDirectory( uint8_t type, std::string path, std::string dest,
 bool MokoiGame::Scan( uint8_t type, std::string path, std::string dest )
 {
 	bool results = false;
-	if ( type == MOKOI_GAME_PACK || type == MOKOI_GAME_RESOURCE || type == MOKOI_GAME_PATCH )
+	if ( type == MOKOI_GAME_PACK|| type == MOKOI_GAME_EXECUTABLE || type == MOKOI_GAME_RESOURCE || type == MOKOI_GAME_PATCH )
 	{
 		results = MokoiGame::ScanPackage( type, path, dest );
 	}
@@ -454,7 +491,7 @@ bool MokoiGame::Add( std::string path )
 	type = this->GetType( clean_path, false );
 	if ( type == MOKOI_GAME_UNKNOWN )
 	{
-		std::cout << "Invalid Mokoi Game File: '" << path <<"'"<< std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Invalid Mokoi Game File: '" << path <<"'"<< std::endl;
 		return false;
 	}
 	this->Scan( type, clean_path, "" );
@@ -482,12 +519,12 @@ bool MokoiGame::LoadPackage( std::string package_filename  )
 	uint8_t package_type;
 	std::string package_full_path;
 
-	package_full_path += elix::path::User("packages");
+	package_full_path += elix::directory::User("packages");
 	package_full_path += package_filename;
 
 	package_type = this->GetType( package_full_path, false );
 
-	std::cout << "PACKAGE: " << package_full_path << " [" << (int)package_type << "]" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "PACKAGE: " << package_full_path << " [" << (int)package_type << "]" << std::endl;
 
 
 	if ( package_type == MOKOI_GAME_RESOURCE )
@@ -555,7 +592,7 @@ uint32_t MokoiGame::GetFile(std::string filename, uint8_t ** data, bool addnull)
 	{
 
 		filename[q] = '_';
-		std::cout << "ISO 9660:" << filename << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "ISO 9660:" << filename << std::endl;
 	}
 
 	#endif
@@ -569,7 +606,7 @@ uint32_t MokoiGame::GetFile(std::string filename, uint8_t ** data, bool addnull)
 		elix::File * file = new elix::File( info->path );
 		if ( file->Exist() )
 		{
-			if ( info->path_type == MOKOI_GAME_PACK || info->path_type == MOKOI_GAME_PATCH || info->path_type == MOKOI_GAME_RESOURCE )
+			if ( info->path_type == MOKOI_GAME_PACK || info->path_type == MOKOI_GAME_EXECUTABLE || info->path_type == MOKOI_GAME_PATCH || info->path_type == MOKOI_GAME_RESOURCE )
 			{
 				uint8_t * buffer = new uint8_t[info->compress];
 				if (addnull)

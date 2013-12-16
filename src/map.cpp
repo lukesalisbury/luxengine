@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 
 #include "engine.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "display.h"
 #include "mokoi_game.h"
 #include "map_object.h"
@@ -28,7 +28,7 @@ bool RemoveMapObject( MapObject * object) { return object->can_remove; }
 
 MokoiMap::MokoiMap( std::string name )
 {
-	std::cout << " > Opening map '" << name << "'"  << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Opening map '" << name << "'"  << std::endl;
 
 	this->InitialSetup(name);
 }
@@ -37,14 +37,14 @@ MokoiMap::MokoiMap( elix::File * current_save_file )
 {
 	if ( this->Restore( current_save_file ) )
 	{
-		std::cout << " > Restore map '" << this->_name << "'"  << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Restore map '" << this->_name << "'"  << std::endl;
 	}
 }
 
 
 MokoiMap::~MokoiMap()
 {
-	std::cout << " < Closing Map '" << this->_name << "'"<< std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing Map '" << this->_name << "'"<< std::endl;
 	std::vector< MapObject * >::iterator p;
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
@@ -216,7 +216,7 @@ void MokoiMap::SetBackgroundModifier( LuxColour mod )
 */
 bool MokoiMap::Init()
 {
-	std::cout << " > MokoiMap Init " << this->_name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > MokoiMap Init " << this->_name << std::endl;
 
 	lux::screen::display("Loading Map: " + this->_name);
 	if ( this->LoadFile() )
@@ -350,7 +350,7 @@ bool MokoiMap::Loop()
 */
 bool MokoiMap::Close()
 {
-	std::cout << " < MokoiMap Init " << this->_name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < MokoiMap Init " << this->_name << std::endl;
 
 	this->active = false;
 	this->_server = false;

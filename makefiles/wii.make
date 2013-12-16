@@ -13,7 +13,7 @@ RES =
 
 CC = powerpc-eabi-gcc.exe
 CPP = powerpc-eabi-g++.exe
-BUILDDIR = build/wii
+BUILDDIR = bin/wii
 OBJDIR = objects-wii
 OPENGL = FALSE
 BUILDDEBUG = FALSE

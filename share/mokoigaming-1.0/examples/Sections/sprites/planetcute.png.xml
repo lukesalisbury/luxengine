@@ -1,0 +1,11 @@
+<sheet xmlns="http://mokoi.info/format/sheet">
+	<sprite name="3" mask="0">
+		<position x="96" y="0" w="48" h="80" />
+	</sprite>
+	<sprite name="2" mask="0">
+		<position x="48" y="0" w="48" h="80" />
+	</sprite>
+	<sprite name="1" mask="0">
+		<position x="0" y="0" w="48" h="80" />
+	</sprite>
+</sheet>

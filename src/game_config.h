@@ -13,7 +13,7 @@ class GameConfig : public ConfigResource
 	private:
 		std::string path;
 		bool has_config_file;
-		bool allowAll;
+		bool allow_all;
 	public:
 		bool Has(std::string key);
 		bool AllowChanges( std::string key );

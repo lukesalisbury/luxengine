@@ -1,0 +1,27 @@
+[Mokoi]
+project.title=Map Wrap Demo
+project.id=testgame
+player.number=1
+world.startx=5
+world.starty=5
+map.width=512
+map.height=384
+project.language=en
+debug.able=false
+save.allowed=false
+display.mode=OpenGL
+screen.width=512
+screen.height=384
+display.width=1024
+display.height=768
+project.author=Mokoi Gaming
+project.creation=42
+language.default=en
+display.colour=0
+display.fullscreen=false
+audio.able=false
+save.access=false
+layer.static6=true
+map.centerview=0
+display.customsize=false
+map.start=intro

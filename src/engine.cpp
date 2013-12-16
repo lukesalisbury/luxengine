@@ -18,7 +18,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 #include "misc_functions.h"
 #include "mokoi_game.h"
-#include "elix_path.h"
+#include "elix_path.hpp"
+#include "elix_program.hpp"
 #include <algorithm>
 #include "save_system.h"
 
@@ -50,9 +51,9 @@ namespace lux {
 }
 
 /* Engine Class */
-LuxEngine::LuxEngine( char * executable )
+LuxEngine::LuxEngine( std::string executable )
 {
-	elix::path::SetProgramName(PROGRAM_NAME, PROGRAM_VERSION_STABLE, PROGRAM_DOCUMENTS, std::string( executable ) );
+	elix::program::Set(PROGRAM_NAME, PROGRAM_VERSION_STABLE, PROGRAM_DOCUMENTS, executable );
 
 	std::string base_directory = "/";
 
@@ -63,54 +64,33 @@ LuxEngine::LuxEngine( char * executable )
 	lux::global_config = new Config();
 	lux::media = new PlatformMedia();
 
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, PROGRAM_NAME" - Version "PROGRAM_VERSION" Log" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
+
+	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, PROGRAM_NAME" - Version "PROGRAM_VERSION" Error Log" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, "-------------------------------------" );
+
 	if ( executable[0] != 0 )
 	{
-		std::cerr << PROGRAM_NAME << " - Version " << PROGRAM_VERSION  << " Error Log" << std::endl;
-		std::cerr << "-------------------------------------" << std::endl;
 		base_directory = elix::path::GetBase( executable, true );
-		std::cout << "Program Location: " << executable << std::endl;
-	}
-	std::cout << "Base Directory: " << base_directory << std::endl;
-	std::cout << "-------------------------------------" << std::endl;
-	std::cerr << "-------------------------------------" << std::endl;
 
+		lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Program Location: " + executable );
+	}
+
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Base Directory: " + base_directory );
+
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "binary_dir: " + base_directory );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User: " + elix::path::User("") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User Documents: " + elix::path::Documents(false) );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Global Documents: " + elix::path::Documents(true) );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Cache: " + elix::path::Cache("")  );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Resources: " + elix::path::Resources("examples") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "examples: " + elix::path::Resources("examples") );
-
-
-	if ( lux::core->Good() )
-	{
-		this->state = IDLE;
-	}
-	else
-	{
-		this->FatalError("Couldn't init Core.");
-		this->state = GAMEERROR;
-	}
-}
-
-LuxEngine::LuxEngine( std::string game, std::string base_directory )
-{
-	elix::path::SetProgramName(PROGRAM_NAME, PROGRAM_VERSION_STABLE, PROGRAM_DOCUMENTS, base_directory);
-
-	this->game_state = 0;
-	this->default_player = 1;
-
-	lux::core = new CoreSystem();
-	lux::global_config = new Config();
-	lux::media = new PlatformMedia();
-
-	std::cout << "Base Directory: " << base_directory << std::endl;
-	std::cout << "-------------------------------------" << std::endl;
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User: " + elix::directory::User("") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User Documents: " + elix::directory::Documents(false) );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Global Documents: " + elix::directory::Documents(true) );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Cache: " + elix::directory::Cache()  );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Resources: " + elix::directory::Resources("examples") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "examples: " + elix::directory::Resources("examples") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
 
 	if ( lux::core->Good() )
 	{
-		lux::global_config->SetString("project.file", game);
 		this->state = IDLE;
 	}
 	else
@@ -133,7 +113,7 @@ LuxEngine::~LuxEngine()
 
 void LuxEngine::Close()
 {
-	std::cout << "<-----------------LuxEngine::Close-----------------|" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "<-----------------LuxEngine::Close-----------------|" << std::endl;
 	std::cerr << "<-----------------LuxEngine::Close-----------------|" << std::endl;
 
 	if ( lux::world )
@@ -168,7 +148,7 @@ bool LuxEngine::Start( std::string project_file )
 		return false;
 
 	this->state = RUNNING;
-	std::cout << ">----------------LuxEngine::Start-------------------|" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << ">----------------LuxEngine::Start-------------------|" << std::endl;
 	std::cerr << ">----------------LuxEngine::Start-------------------|" << std::endl;
 
 	// Strip quotes from name if they have it.
@@ -178,14 +158,15 @@ bool LuxEngine::Start( std::string project_file )
 		lux::global_config->SetString("project.file", project_file);
 	}
 
-	std::cout << "Loading Game: " << project_file << std::endl;
+
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Loading Game: " << project_file << std::endl;
 
 	lux::entitysystems = new EntitySystem();
 	lux::game = new MokoiGame(project_file, false);
+	lux::config = new GameConfig();
 
 	if ( lux::game->valid )
 	{
-		lux::config = new GameConfig();
 
 		lux::display = new DisplaySystem();
 		lux::display->SetBackgroundColour((LuxColour){178,178,178,255});
@@ -194,6 +175,8 @@ bool LuxEngine::Start( std::string project_file )
 
 		if ( this->state == GAMEERROR )
 			return false;
+
+		lux::game->Print();
 
 		if ( lux::config->Has("package.main") )
 		{
@@ -219,7 +202,7 @@ bool LuxEngine::Start( std::string project_file )
 			std::vector<std::string> patch_list = lux::config->GetArray("patches.list");
 			for( uint8_t i = 0; i < patch_list.size(); i++ )
 			{
-				std::cout << "Patch " << patch_list[i] << " " << lux::game->Add( patch_list[i] ) << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Patch " << patch_list[i] << " " << lux::game->Add( patch_list[i] ) << std::endl;
 			}
 		}
 	}
@@ -507,7 +490,7 @@ bool LuxEngine::HandleSave()
 
 	if ( saved_game.Save( lux::world, lux::entities, NULL, 0 ) )
 	{
-		std::cout << "game saved" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "game saved" << std::endl;
 		return true;
 	}
 
@@ -555,9 +538,9 @@ bool LuxEngine::HandleLoad()
 
 	if ( saved_game.Restore( restored_world, restored_entity_manager, NULL, 0 ) )
 	{
-		std::cout << "game restored" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "game restored" << std::endl;
 
-		std::cout << "removing old world " << std::hex << current_world << " & enitites" << current_entity_manager << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "removing old world " << std::hex << current_world << " & enitites" << current_entity_manager << std::endl;
 		delete current_world;
 		delete current_entity_manager;
 
@@ -570,7 +553,7 @@ bool LuxEngine::HandleLoad()
 	}
 	else
 	{
-		std::cout << "removing failed world " << std::hex << current_world << " & enitites" << current_entity_manager << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "removing failed world " << std::hex << current_world << " & enitites" << current_entity_manager << std::endl;
 		delete restored_world;
 		delete restored_entity_manager;
 	}

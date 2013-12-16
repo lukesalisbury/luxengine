@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "engine.h"
 #include "display.h"
 #include "entity_manager.h"
-#include "elix_path.h"
+#include "elix_path.hpp"
 #include "world.h"
 #include <algorithm>
 #include <sys/stat.h>
@@ -96,18 +96,48 @@ CoreSystem::~CoreSystem()
 
 }
 
+std::ostream& CoreSystem::SystemMessage(uint8_t type)
+{
+	if ( type == SYSTEM_MESSAGE_LOG )
+	{
+		std::cout << "[" << (int)type << "]";
+		return std::cout;
+	}
+	else if ( type == SYSTEM_MESSAGE_ERROR || type == SYSTEM_MESSAGE_WARNING )
+	{
+		return std::cerr;
+	}
+	else
+	{
+		std::cout << "[" << (int)type << "]";
+		return std::cout;
+	}
+}
+
 void CoreSystem::SystemMessage(uint8_t type, std::string message)
 {
-	SDL_Log("%d: %s", type, message.c_str() );
-
-	std::cout << type << ":" << message.c_str() << std::endl;
+	if ( type == SYSTEM_MESSAGE_LOG )
+	{
+		//SDL_Log("%s", message.c_str() );
+		std::cout << "LOG:" <<  message << std::endl;
+	}
+	else if ( type == SYSTEM_MESSAGE_ERROR || SYSTEM_MESSAGE_WARNING )
+	{
+		//SDL_Log("%s", message.c_str() );
+		std::cerr << message << std::endl;
+	}
+	else
+	{
+		//SDL_Log("%d: %s", type, message.c_str() );
+		std::cout << type << ":" << message << std::endl;
+	}
 }
 
 void CoreSystem::AbleOutput(bool able)
 {
 	if ( able )
 	{
-		std::string error_filename = elix::path::User("") + "error.log";
+		std::string error_filename = elix::directory::User("") + "error.log";
 		freopen( error_filename.c_str(), "w", stderr );
 	}
 }

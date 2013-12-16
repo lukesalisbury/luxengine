@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "engine.h"
 #include "display.h"
 #include "entity_manager.h"
-#include "elix_path.h"
+#include "elix_path.hpp"
 #include <algorithm>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -53,7 +53,7 @@ CoreSystem::CoreSystem()
 				this->joystick[i] = SDL_JoystickOpen(i);
 				if ( this->joystick[i] != NULL )
 				{
-					std::cout << __FUNCTION__ << ": Found Joystick (" << i << "): " << SDL_JoystickName(i) << " Axes:" << SDL_JoystickNumAxes(this->joystick[i]) << " Buttons:" << SDL_JoystickNumButtons(this->joystick[i]) << " Hats:" << SDL_JoystickNumHats(this->joystick[i]) << " Balls:" << SDL_JoystickNumBalls(this->joystick[i]) << std::endl;
+					lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ": Found Joystick (" << i << "): " << SDL_JoystickName(i) << " Axes:" << SDL_JoystickNumAxes(this->joystick[i]) << " Buttons:" << SDL_JoystickNumButtons(this->joystick[i]) << " Hats:" << SDL_JoystickNumHats(this->joystick[i]) << " Balls:" << SDL_JoystickNumBalls(this->joystick[i]) << std::endl;
 				}
 			}
 		}
@@ -66,7 +66,7 @@ CoreSystem::CoreSystem()
 	found = wiiuse_find(wiimotes, 4, 5);
 	connected = wiiuse_connect(wiimotes, 4);
 
-	std::cout << __FUNCTION__ << ": Found '" << found << "' Wiimote(s). " << connected << " are conected." << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ": Found '" << found << "' Wiimote(s). " << connected << " are conected." << std::endl;
 	wiiuse_set_leds(wiimotes[0], WIIMOTE_LED_1 | WIIMOTE_LED_4);
 	wiiuse_rumble(wiimotes[0], 1);
 	wiiuse_rumble(wiimotes[0], 0);
@@ -116,16 +116,16 @@ void CoreSystem::AbleOutput(bool able)
 	if ( able )
 	{
 		/* Redirect Console output to text files */
-		//std::cout.sync_with_stdio(true);
-		std::string log_filename = elix::path::User("") + "luxengine.log";
-		std::string error_filename = elix::path::User("") + "error.log";
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO).sync_with_stdio(true);
+		std::string log_filename = elix::directory::User("") + "luxengine.log";
+		std::string error_filename = elix::directory::User("") + "error.log";
 	
 		freopen( error_filename.c_str(), "w", stderr );
 		freopen( log_filename.c_str(), "w", stdout );
-		//std::cout.sync_with_stdio(false);
-		std::cout << "-------------------------------------" << std::endl;
-		std::cout << PROGRAM_NAME << " - Version " << PROGRAM_VERSION << std::endl;
-		std::cout << "-------------------------------------" << std::endl;
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO).sync_with_stdio(false);
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "-------------------------------------" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << PROGRAM_NAME << " - Version " << PROGRAM_VERSION << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "-------------------------------------" << std::endl;
 		std::cerr << "-------------------------------------" << std::endl;
 		std::cerr << PROGRAM_NAME << " Error Log - Version " << PROGRAM_VERSION << std::endl;
 		std::cerr << "-------------------------------------" << std::endl;

@@ -17,7 +17,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 AudioSystem::AudioSystem ( )
 {
-	std::cout << "Audio System" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Audio System" << std::endl;
 	mm_ds_system sys;
 	sys.mod_count 			= 0;
 	sys.samp_count			= 0;

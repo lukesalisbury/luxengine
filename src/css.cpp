@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include <sstream>
 #include "css.h"
-#include "elix_string.h"
+#include "elix_string.hpp"
 #include "display_functions.h"
 /*
 element:state
@@ -103,9 +103,9 @@ void CSSParser::AddContent( std::string content )
 /*
 	for ( std::vector<CSSElement*>::iterator it = this->elements.begin(); it != this->elements.end(); it++ )
 	{
-		std::cout << (*it)->element << ":" << (*it)->state << "" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << (*it)->element << ":" << (*it)->state << "" << std::endl;
 		for ( std::map<std::string, std::string>::iterator key = (*it)->key.begin(); key != (*it)->key.end(); key++ )
-			std::cout << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
 	}
 */
 }
