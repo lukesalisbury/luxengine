@@ -56,7 +56,7 @@ CoreSystem::CoreSystem()
 				this->joystick[i] = SDL_JoystickOpen(i);
 				if ( this->joystick[i] != NULL )
 				{
-					lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ": Found Joystick (" << i << "): " << SDL_JoystickName(i) << " Axes:" << SDL_JoystickNumAxes(this->joystick[i]) << " Buttons:" << SDL_JoystickNumButtons(this->joystick[i]) << " Hats:" << SDL_JoystickNumHats(this->joystick[i]) << " Balls:" << SDL_JoystickNumBalls(this->joystick[i]) << std::endl;
+					this->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ": Found Joystick (" << i << "): " << SDL_JoystickName(i) << " Axes:" << SDL_JoystickNumAxes(this->joystick[i]) << " Buttons:" << SDL_JoystickNumButtons(this->joystick[i]) << " Hats:" << SDL_JoystickNumHats(this->joystick[i]) << " Balls:" << SDL_JoystickNumBalls(this->joystick[i]) << std::endl;
 				}
 			}
 		}
@@ -69,7 +69,7 @@ CoreSystem::CoreSystem()
 	found = wiiuse_find(wiimotes, 4, 5);
 	connected = wiiuse_connect(wiimotes, 4);
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ": Found '" << found << "' Wiimote(s). " << connected << " are conected." << std::endl;
+	this->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ": Found '" << found << "' Wiimote(s). " << connected << " are conected." << std::endl;
 	wiiuse_set_leds(wiimotes[0], WIIMOTE_LED_1 | WIIMOTE_LED_4);
 	wiiuse_rumble(wiimotes[0], 1);
 	wiiuse_rumble(wiimotes[0], 0);
@@ -131,21 +131,10 @@ void CoreSystem::AbleOutput(bool able)
 	{
 
 		/* Redirect Console output to text files */
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO).sync_with_stdio(true);
 		std::string log_filename = elix::directory::User("") + "luxengine.log";
 		std::string error_filename = elix::directory::User("") + "error.log";
 		freopen( error_filename.c_str(), "w", stderr );
 		//freopen( log_filename.c_str(), "w", stdout );
-		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO).sync_with_stdio(false);
-
-
-
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "-------------------------------------" << std::endl;
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << PROGRAM_NAME << " - Version " << PROGRAM_VERSION << std::endl;
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "-------------------------------------" << std::endl;
-		std::cerr << "-------------------------------------" << std::endl;
-		std::cerr << PROGRAM_NAME << " Error Log - Version " << PROGRAM_VERSION << std::endl;
-		std::cerr << "-------------------------------------" << std::endl;
 
 	}
 	else
@@ -200,21 +189,41 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	return false;
 }
 
+std::ostream& CoreSystem::SystemMessage(uint8_t type)
+{
+	if ( type == SYSTEM_MESSAGE_LOG )
+	{
+		std::cout << "[" << (int)type << "]";
+		return std::cout;
+	}
+	else if ( type == SYSTEM_MESSAGE_ERROR || type == SYSTEM_MESSAGE_WARNING )
+	{
+		return std::cerr;
+	}
+	else
+	{
+		std::cout << "[" << (int)type << "]";
+		return std::cout;
+	}
+}
+
 void CoreSystem::SystemMessage(uint8_t type, std::string message)
 {
-	if ( type == SYSTEM_MESSAGE_ERROR )
+	if ( type == SYSTEM_MESSAGE_LOG )
 	{
+		//SDL_Log("%s", message.c_str() );
+		std::cout << "LOG:" <<  message << std::endl;
+	}
+	else if ( type == SYSTEM_MESSAGE_ERROR || SYSTEM_MESSAGE_WARNING )
+	{
+		//SDL_Log("%s", message.c_str() );
 		std::cerr << message << std::endl;
 	}
-	else if ( type == SYSTEM_MESSAGE_INFO )
+	else
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << message << std::endl;
+		//SDL_Log("%d: %s", type, message.c_str() );
+		std::cout << type << ":" << message << std::endl;
 	}
-	else if ( type == SYSTEM_MESSAGE_DEBUG )
-	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << message << std::endl;
-	}
-
 }
 
 bool CoreSystem::Good()

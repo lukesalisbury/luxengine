@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Mokoi Engine
+GenericName=Mokoi
+Comment=
+Exec=../../bin/luxengine
+Icon=../icons/hicolor/mokoi-gaming.png
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=application/x-mokoi-game;
+Categories=Game;
+GenericName[en_AU]=Mokoi
+Comment[en_AU]=

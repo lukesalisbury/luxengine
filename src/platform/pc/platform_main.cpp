@@ -71,7 +71,7 @@ extern "C" int main( int argc, char *argv[] )
 	std::string base_directory;
 
 	base_directory = elix::path::GetBase( (argc ? argv[0] : "" ), true );
-	lux::engine = new LuxEngine( base_directory + "demos"LUX_DIR_SSEPARATOR"Collision"LUX_DIR_SSEPARATOR, base_directory );
+	lux::engine = new LuxEngine( base_directory );
 	main_args( argc, argv );
 
 	if ( luxportal::testmode )

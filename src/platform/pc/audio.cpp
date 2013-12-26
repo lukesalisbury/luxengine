@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "game_config.h"
 #include "elix_string.hpp"
 #include "mokoi_game.h"
-
+#include "core.h"
 
 void Lux_Audio_DialogEnded()
 {
