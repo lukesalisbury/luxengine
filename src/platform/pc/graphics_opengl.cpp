@@ -316,7 +316,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
 {
 	if ( !png->HasContent() )
 	{
-		std::cerr << "PNG is empty" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "PNG is empty" << std::endl;
 		return false;
 	}
 
@@ -357,7 +357,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
 	}
 	else
 	{
-		std::cerr << "PNG is empty" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "PNG is empty" << std::endl;
 	}
 	delete pixels;
 	/* ^ PNG Image */

@@ -88,7 +88,7 @@ DisplaySystem::DisplaySystem()
 		#ifndef OPENGLONLY
 		if ( lux::config->GetString("display.opengl") == "required" )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << __FILE__ << ":" << __LINE__ << " | Requires OpenGL " << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Requires OpenGL " << std::endl;
 			return;
 		}
 
@@ -659,9 +659,8 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 	std::stringstream msg;
 	switch ( object->type )
 	{
-		case 's':
+		case OBJECT_SPRITE:
 		{
-
 			LuxSprite * sprite = object->GetCurrentSprite();
 			if ( sprite )
 			{
@@ -679,8 +678,6 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 						}
 					}
 				}
-
-
 
 				if ( this->show_spriteinfo )
 				{

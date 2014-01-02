@@ -120,14 +120,14 @@ bool LuxSheet::ParseXML()
 	xml_file = MokoiGame_GetXML("./sprites/" + this->name + ".xml");
 	if ( xml_file->Error() )
 	{
-		std::cerr << __FILE__ << ":" << __LINE__ << " | " << xml_file->GetErrorStr1() << " : " << xml_file->GetErrorStr2 () << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | " << xml_file->GetErrorStr1() << " : " << xml_file->GetErrorStr2 () << std::endl;
 		return false;
 	}
 
 	root = xml_file->RootElement();
 	if ( !root || strcmp(root->Value(), "sheet") )
 	{
-		std::cerr << __FILE__ << ":" << __LINE__ << " | sprites/" + this->name + ".xml not a valid sheet file." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | sprites/" + this->name + ".xml not a valid sheet file." << std::endl;
 		return false;
 	}
 
@@ -346,7 +346,7 @@ bool LuxSheet::Load()
 		}
 		else
 		{
-			std::cerr << "Failed loading Spritesheet '" << name << "'" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Failed loading Spritesheet '" << name << "'" << std::endl;
 			this->failed = true;
 		}
 	}

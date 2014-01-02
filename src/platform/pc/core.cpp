@@ -181,7 +181,7 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	{
 		if ( SDL_InitSubSystem(flag) < 0 )
 		{
-			std::cerr << __FILE__ << ":" << __LINE__ << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
 			return false;
 		}
 		return true;
@@ -189,7 +189,7 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	return false;
 }
 
-std::ostream& CoreSystem::SystemMessage(uint8_t type)
+std::ostream& CoreSystem::SystemMessage(uint8_t type, const char * file = NULL, int line = 0 )
 {
 	if ( type == SYSTEM_MESSAGE_LOG )
 	{
@@ -198,7 +198,7 @@ std::ostream& CoreSystem::SystemMessage(uint8_t type)
 	}
 	else if ( type == SYSTEM_MESSAGE_ERROR || type == SYSTEM_MESSAGE_WARNING )
 	{
-		return std::cerr;
+		return lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR);
 	}
 	else
 	{
@@ -217,7 +217,7 @@ void CoreSystem::SystemMessage(uint8_t type, std::string message)
 	else if ( type == SYSTEM_MESSAGE_ERROR || SYSTEM_MESSAGE_WARNING )
 	{
 		//SDL_Log("%s", message.c_str() );
-		std::cerr << message << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << message << std::endl;
 	}
 	else
 	{

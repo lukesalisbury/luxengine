@@ -114,7 +114,7 @@ LuxEngine::~LuxEngine()
 void LuxEngine::Close()
 {
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "<-----------------LuxEngine::Close-----------------|" << std::endl;
-	std::cerr << "<-----------------LuxEngine::Close-----------------|" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "<-----------------LuxEngine::Close-----------------|" << std::endl;
 
 	if ( lux::world )
 	{
@@ -149,7 +149,7 @@ bool LuxEngine::Start( std::string project_file )
 
 	this->state = RUNNING;
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << ">----------------LuxEngine::Start-------------------|" << std::endl;
-	std::cerr << ">----------------LuxEngine::Start-------------------|" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << ">----------------LuxEngine::Start-------------------|" << std::endl;
 
 	// Strip quotes from name if they have it.
 	if ( project_file.at(0) == '\'' )

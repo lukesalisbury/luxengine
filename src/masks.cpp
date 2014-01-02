@@ -127,7 +127,7 @@ void Lux_Mask_FillArea(Lux_Mask * dest, uint16_t x, uint16_t y, uint16_t width, 
 	{
 		if ( (dest_pos + copy_length) > dest->length )
 		{
-			std::cerr << "Fill Area is larger then Mask" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Fill Area is larger then Mask" << std::endl;
 			break;
 		}
 		memset( dest->data + dest_pos, value, copy_length );
@@ -157,7 +157,7 @@ void Lux_Mask_FillArea(Lux_Mask * dest, uint16_t x, uint16_t y, uint16_t width, 
 	{
 		if ( (dest_pos + copy_length) > dest->length )
 		{
-			std::cerr << "Fill Area is larger then Mask" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Fill Area is larger then Mask" << std::endl;
 			break;
 		}
 		memset( dest->data + dest_pos, value, copy_length );

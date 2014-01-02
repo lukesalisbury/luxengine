@@ -79,7 +79,7 @@ MokoiGame::MokoiGame( std::string path, bool checkonly )
 	{
 		if ( !checkonly )
 		{
-			std::cerr << "Invalid File: " << path << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Invalid File: " << path << std::endl;
 		}
 		else
 		{
@@ -370,7 +370,7 @@ bool MokoiGame::ScanPackage( uint8_t type, std::string path, std::string dest )
 		if ( name_length < 3 || name_length > 500 ) /* File Name should be longer in 3 char */
 		{
 			if ( name_length )
-				std::cerr << "Invalid File Name in Game Pack." << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Invalid File Name in Game Pack." << std::endl;
 			break;
 		}
 
@@ -417,6 +417,7 @@ bool MokoiGame::ScanDirectory( uint8_t type, std::string path, std::string dest,
 	elix::path::Children( path, "", files, true, false, false );
 	elix::path::Children( path, "c/scripts", files, true, false, false );
 	elix::path::Children( path, "c/scripts/maps", files, false, false, false );
+	elix::path::Children( path, "sprites/virtual", files, false, false, false );
 	for( uint32_t i = 0; i < files.size(); i++ )
 	{
 		StoredFileInfo * info = new StoredFileInfo;
@@ -473,7 +474,7 @@ bool MokoiGame::Scan( uint8_t type, std::string path, std::string dest )
 		}
 		else
 		{
-			std::cerr << "Project must have an ID to download files" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Project must have an ID to download files" << std::endl;
 		}
 	}
 	else if ( type == MOKOI_GAME_DIRECTORY )

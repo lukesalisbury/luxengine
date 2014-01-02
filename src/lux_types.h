@@ -154,6 +154,7 @@ typedef struct {
 #define OBJECT_TEXT 't'
 #define OBJECT_THOBBER 'q'
 #define OBJECT_IMAGE 'i'
+#define OBJECT_VIRTUAL_SPRITE 'v'
 #define OBJECT_UNKNOWN 'U'
 
 #endif /* _LUXTYPES_H_ */

@@ -9,26 +9,21 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
-#include "engine.h"
-#include "display.h"
-#include "map_object.h"
+#include "lux_virtual_sprite.h"
 #include "map_xml_reader.h"
-
-
-bool ObjectOnScreen(LuxRect o, uint8_t flipmode, LuxRect s);
-bool ObjectSort(MapObject * a, MapObject * b );
-
-LuxCanvas::LuxCanvas(  )
+#include "core.h"
+LuxVirtualSprite::LuxVirtualSprite(  )
 {
 
 }
 
-LuxCanvas::LuxCanvas( std::string file )
+LuxVirtualSprite::LuxVirtualSprite( std::string file )
 {
-	this->Load(file);
+	std::string filename = file.substr(8);
+	this->Load(filename);
 }
 
-LuxCanvas::~LuxCanvas()
+LuxVirtualSprite::~LuxVirtualSprite()
 {
 	MapObject * object = NULL;
 	std::vector<MapObject*>::iterator l_object;
@@ -43,46 +38,56 @@ LuxCanvas::~LuxCanvas()
 }
 
 
-bool LuxCanvas::Load( std::string file )
+bool LuxVirtualSprite::Load( std::string file )
 {
 	MapXMLReader reader;
-
-	if ( !reader.Load("./maps/" + file + ".xml"))
-	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + file + ".xml not a valid canvas file." << std::endl;
-		return false;
-	}
 	uint32_t object_cache_count = 0;
 
-	reader.ReadObjects( this->_objects, object_cache_count, NULL );
+	if ( !reader.Load("./sprites/virtual/" + file + ".xml"))
+	{
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG, __FILE__ , __LINE__) << " sprites/virtual/" + file + ".xml not a valid canvas file." << std::endl;
+		return false;
+	}
 
-//	this->_objects.sort( ObjectSort );
+	reader.ReadDimension( this->rect );
+	reader.ReadObjects( this->_objects, object_cache_count, NULL );
 
 	return true;
 }
 
-bool LuxCanvas::Draw( DisplaySystem * display, int32_t x, int32_t y, int32_t z)
+bool LuxVirtualSprite::InsertToVector( MapObject * parent, std::vector<MapObject *> & object_array, uint32_t & object_cache_count, MokoiMap * map )
 {
 	if ( !this->_objects.size() )
 		return false;
 
-	if ( !display )
-		return false;
-
 	MapObject * object = NULL;
 	std::vector<MapObject*>::iterator l_object;
-	LuxRect position;
+	int32_t sx = parent->position.x;
+	int32_t sy = parent->position.y;
+
 
 	for ( l_object = this->_objects.begin(); l_object != this->_objects.end(); l_object++ )
 	{
 		object = (*l_object);
-		if ( !object->hidden )
+		if ( object )
 		{
-			position = object->position;
-			position.x += x;
-			position.y += y;
-			position.z = z;
-			display->DrawMapObject( object, position, object->effects );
+
+/*
+			if ( this->dimension_width > 1 || this->dimension_height > 1  )
+			{
+				while ( sx < x + width )
+				{
+					while ( sy < y + height )
+					{
+					}
+				}
+			}
+*/
+			object->static_map_id = ++object_cache_count;
+
+			/* Local object so we add it to the list */
+			object_array.push_back( object );
+
 		}
 	}
 

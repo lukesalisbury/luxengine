@@ -4,8 +4,8 @@ $(error Please set SUPPORTPATH variable before running make. )
 
 endif
 
-SUPPORTPATH = f:/sdl2libs
-CURLPATH = f:/libcurl
+SUPPORTPATH = c:/dev/sdl2libs
+CURLPATH = c:/dev/libcurl
 
 LDFLAGS += -L"$(SUPPORTPATH)/lib" -L"$(CURLPATH)/lib"
 CPPFLAGS += -I"$(SUPPORTPATH)/include" -I"$(SUPPORTPATH)/include/SDL2" -I"$(CURLPATH)/include"

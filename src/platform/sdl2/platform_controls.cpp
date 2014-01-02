@@ -147,7 +147,7 @@ void Player::ParseButton(Player_Button * button, std::string config)
 {
 	if ( config.length() < 3)
 	{
-		std::cerr << "Not a valid button '" << config << "'" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Not a valid button '" << config << "'" << std::endl;
 		return;
 	}
 	uint16_t device_type = config.at(0);

@@ -132,12 +132,12 @@ void WorldSystem::Print()
 	{
 		LuxMapIdent ident;
 		ident.value = iter->first;
-		PrintLuxMapIdent( ident, std::cerr );
-		std::cerr << "  " << iter->second->Name() << std::endl;
+		PrintLuxMapIdent( ident, lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) );
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "  " << iter->second->Name() << std::endl;
 	}
 	for( std::map<uint32_t, WorldSection *>::iterator iter = section_list.begin(); iter != section_list.end(); ++iter )
 	{
-		std::cerr << "Hash:" << iter->first << " " << iter->second->file << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Hash:" << iter->first << " " << iter->second->file << std::endl;
 	}
 }
 
@@ -414,7 +414,7 @@ bool WorldSystem::SetMap( std::string name, int32_t mapx, int32_t mapy  )
 		}
 		else
 		{
-			std::cerr << __FILE__ << ":" << __LINE__ << " | '" << name << "' map not found." << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | '" << name << "' map not found." << std::endl;
 		}
 	}
 	return false;

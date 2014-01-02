@@ -24,9 +24,9 @@ CSSParser::CSSParser( std::string content )
 	/*
 	for ( std::vector<CSSElement*>::iterator it = this->elements.begin(); it != this->elements.end(); it++ )
 	{
-		std::cerr << (*it)->element << ":" << (*it)->state << "" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << (*it)->element << ":" << (*it)->state << "" << std::endl;
 		for ( std::map<std::string, std::string>::iterator key = (*it)->key.begin(); key != (*it)->key.end(); key++ )
-			std::cerr << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
 	}
 	*/
 }

@@ -255,7 +255,6 @@ bool MokoiMap::Loop()
 		this->resetmap = false;
 	}
 
-
 	this->NetworkMapLoop();
 
 	lux::display->SetBackgroundObject( this->_background );
@@ -473,7 +472,7 @@ void MokoiMap::ReplaceObjectsSheets( std::string old_sheet, std::string new_shee
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
 		MapObject * object = (*p);
-		if ( object->type == 's' )
+		if ( object->type == OBJECT_SPRITE )
 		{
 			std::string sheet = object->image.substr(0, object->image.find_first_of(':'));
 			if ( !old_sheet.compare( sheet ) )
@@ -481,7 +480,7 @@ void MokoiMap::ReplaceObjectsSheets( std::string old_sheet, std::string new_shee
 				object->FreeData();
 				std::string sprite = object->image.substr(object->image.find_first_of(':'));
 				object->image = new_sheet + sprite;
-				object->SetData(NULL, 's');
+				object->SetData(NULL, OBJECT_SPRITE);
 			}
 		}
 	}
@@ -864,14 +863,14 @@ bool MokoiMap::Valid()
 		tinyxml2::XMLDocument * xml_file = MokoiGame_GetXML("./maps/" + this->_name + ".xml");
 		if ( xml_file->Error() )
 		{
-//			std::cerr << __FILE__ << ":" << __LINE__ << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
+//			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
 			delete xml_file;
 			return false;
 		}
 
 		if ( !xml_file->RootElement() || strcmp( xml_file->RootElement()->Value(), "map") )
 		{
-			std::cerr << __FILE__ << ":" << __LINE__ << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
 			delete xml_file;
 			return false;
 		}
@@ -903,13 +902,13 @@ bool MokoiMap::LoadDimension()
 		tinyxml2::XMLDocument * xml_file = MokoiGame_GetXML("./maps/" + this->_name + ".xml");
 		if ( xml_file->Error() )
 		{
-			//std::cerr << __FILE__ << ":" << __LINE__ << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
 			delete xml_file;
 			return false;
 		}
 		if ( !xml_file->RootElement() || strcmp( xml_file->RootElement()->Value(), "map") )
 		{
-			std::cerr << __FILE__ << ":" << __LINE__ << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
 			delete xml_file;
 			return false;
 		}
@@ -951,7 +950,7 @@ bool MokoiMap::LoadFile()
 
 	if ( !reader.Load("./maps/" + this->_name + ".xml"))
 	{
-		std::cerr << __FILE__ << ":" << __LINE__ << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
 		return false;
 	}
 

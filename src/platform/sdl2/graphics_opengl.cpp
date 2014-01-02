@@ -182,6 +182,8 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 	SDL_RenderSetLogicalSize(native_renderer, width, height);
 
 	Lux_SDL2_SetWindowIcon( native_window );
+	SDL_SetWindowTitle( native_window, native_window_title.c_str() );
+
 
 	SDL_DisableScreenSaver();
 
@@ -318,7 +320,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
 {
 	if ( !png->HasContent() )
 	{
-		std::cerr << "PNG is empty" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "PNG is empty" << std::endl;
 		return false;
 	}
 
@@ -356,7 +358,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
 	}
 	else
 	{
-		std::cerr << "PNG is empty" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "PNG is empty" << std::endl;
 	}
 	delete pixels;
 	/*  ^ PNG Image */

@@ -39,6 +39,7 @@ private:
 
 	/* Layers */
 	std::vector<Layer *> _layers;
+	Layer * overlay_layer;
 
 	/* Resource Management */
 	bool sprite_quick_access;

@@ -279,7 +279,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_SetFullscreen( bool able )
 		return true;
 	else
 	{
-		std::cerr << "Can't not make the change the display size." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Can't not make the change the display size." << std::endl;
 		return false;
 	}
 }
@@ -551,7 +551,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 
 	if ( !native_renderer )
 	{
-		std::cerr << __FILE__ << ":" << __LINE__ << " | Not a valid target surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Not a valid target surface." << std::endl;
 		return;
 	}
 

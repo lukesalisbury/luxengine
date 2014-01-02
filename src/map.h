@@ -11,8 +11,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef _MAP_H_
 #define _MAP_H_
 
-#include "luxengine.h"
 #include "map_object.h"
+#include "luxengine.h"
+
 #include "map_screen.h"
 #include "entity_section.h"
 

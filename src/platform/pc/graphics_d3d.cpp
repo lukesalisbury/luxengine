@@ -68,7 +68,7 @@ SDL_Surface * Lux_D3D_LoadSpriteImage(std::string file)
 		temp_surface = IMG_Load_RW(sprite_rwops, 1);
 		if ( temp_surface == NULL )
 		{
-			std::cerr << __FILE__ << ":" << __LINE__ << " | Error Loading: " << file << ". " << IMG_GetError() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Error Loading: " << file << ". " << IMG_GetError() << std::endl;
 		}
 		SDL_SetAlpha(temp_surface, 0, 255);
 		
@@ -107,7 +107,7 @@ bool Lux_D3D_Init(int width, int height, int bpp, bool fullscreen)
 	d3dGraphics_object = Direct3DCreate9(D3D_SDK_VERSION); 
 	if( d3dGraphics_object == NULL )
 	{	
-		std::cerr << "Could not create Direct3D Object" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Could not create Direct3D Object" << std::endl;
 		return false;
 	}
 
@@ -224,7 +224,7 @@ bool Lux_D3D_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> *
 			HRESULT result;
 			result = d3d_device->CreateTexture(w, h, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, (IDirect3DTexture9**)&p->second->data, NULL);
 			if (FAILED(result)) {
-				std::cerr << "CreateTexture() " << result << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "CreateTexture() " << result << std::endl;
 			}
 			else
 			{
@@ -235,10 +235,10 @@ bool Lux_D3D_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> *
 					memcpy( rect.pBits, temp_sheet->pixels, w*h*4 );
 				}
 				else
-					std::cerr << "LockRect() " << result << std::endl;
+					lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "LockRect() " << result << std::endl;
 				result = ((IDirect3DTexture9*)p->second->data)->UnlockRect(0);
 				if ( FAILED(result) )
-					std::cerr << "UnlockRect() " << result << std::endl;
+					lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "UnlockRect() " << result << std::endl;
 			}
 
 			SDL_FreeSurface(temp_sheet);

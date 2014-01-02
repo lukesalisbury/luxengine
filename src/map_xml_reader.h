@@ -26,6 +26,7 @@ class MapXMLReader
 		bool Load( std::string filename );
 		std::string GetTextString(tinyxml2::XMLElement * object_element , std::string default_text);
 		MapObject * ReadObject( tinyxml2::XMLElement * object_element );
+		void ReadDimension( LuxRect & rect );
 		void ReadObjects(std::vector<MapObject *> & object_array, uint32_t & object_cache_count , MokoiMap *map);
 		void ReadSettings( MokoiMap * map , std::map<std::string, std::string> &settings );
 		void ReadPolygon( MapObject * object, tinyxml2::XMLElement * object_element );

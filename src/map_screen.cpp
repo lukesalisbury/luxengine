@@ -56,7 +56,7 @@ bool MokoiMapScreen::Init()
 		for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 		{
 			(*p)->SetData(NULL, (*p)->type);
-			if ( ((*p)->type == 's' || (*p)->type == 'a') && (*p)->has_data )
+			if ( ((*p)->type == OBJECT_SPRITE) && (*p)->has_data )
 			{
 				current = (LuxSprite *)(*p)->GetData();
 				if ( current->mask_value )
@@ -69,7 +69,7 @@ bool MokoiMapScreen::Init()
 			}
 			if ( !lux::display->AddObjectToLayer((*p)->layer, (*p), true) )
 			{
-				std::cerr << (*p)->image << " (" << (*p)->type << ") add failed" << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << (*p)->image << " (" << (*p)->type << ") add failed" << std::endl;
 				(*p)->type = 0;
 			}
 		}
@@ -139,7 +139,7 @@ void MokoiMapScreen::BuildMask()
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
 		(*p)->SetData(NULL, (*p)->type);
-		if ( ((*p)->type == 's' || (*p)->type == 'a') && (*p)->has_data )
+		if ( ((*p)->type == OBJECT_SPRITE) && (*p)->has_data )
 		{
 			current = (LuxSprite *)(*p)->GetData();
 			if ( (*p)->effects.flip_image == 1 || (*p)->effects.flip_image == 3 )

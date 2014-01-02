@@ -109,7 +109,7 @@ void MapObject::Restore( elix::File * current_save_file )
 	this->path_point = 0;current_save_file->Read_uint16WithLabel("Map Object current path point", true );
 	current_save_file->ReadWithLabel("Map Object Image", &this->image );
 
-	if ( this->type == 's' )
+	if ( this->type == OBJECT_SPRITE )
 	{
 		this->SetData(NULL, this->type);
 	}
@@ -129,7 +129,7 @@ void MapObject::SetData(void * data, uint8_t type)
 {
 	if ( !data )
 	{
-		if ( type == 's' )
+		if ( type == OBJECT_SPRITE )
 		{
 			this->has_data = false;
 			std::vector<std::string> name_split;
@@ -141,7 +141,7 @@ void MapObject::SetData(void * data, uint8_t type)
 				{
 					this->data = (void*)sdata;
 					this->type = type;
-					this->data_type = 's';
+					this->data_type = OBJECT_SPRITE;
 					this->has_data = true;
 					this->sprite_width = sdata->sheet_area.w;
 					this->sprite_height = sdata->sheet_area.h;
@@ -360,7 +360,7 @@ LuxSprite * MapObject::PeekSprite(  )
 {
 	if ( this->data )
 	{
-		if ( this->data_type == 's' )
+		if ( this->data_type == OBJECT_SPRITE )
 		{
 			LuxSprite * orig = (LuxSprite*)this->data;
 
@@ -383,7 +383,7 @@ LuxSprite * MapObject::GetSprite( bool no_increment )
 	this->offset_y = 0;
 	if ( this->data )
 	{
-		if ( this->data_type == 's' )
+		if ( this->data_type == OBJECT_SPRITE )
 		{
 			LuxSprite * orig = (LuxSprite*)this->data;
 
@@ -414,7 +414,7 @@ LuxSprite * MapObject::GetCurrentSprite( )
 
 	if ( this->data )
 	{
-		if ( this->data_type == 's' )
+		if ( this->data_type == OBJECT_SPRITE )
 		{
 			LuxSprite * orig = (LuxSprite*)this->data;
 			if ( !orig )
@@ -454,7 +454,7 @@ mem_pointer MapObject::GetImage( ObjectEffect fx )
 
 	if ( this->data )
 	{
-		if ( this->data_type == 's' )
+		if ( this->data_type == OBJECT_SPRITE )
 		{
 			LuxSprite * orig = (LuxSprite*)this->data;
 			if ( !orig )
@@ -525,6 +525,25 @@ void MapObject::SetCanvas(LuxCanvas * data)
 	this->data_type = 'M';
 	this->data = (mem_pointer)data;
 	this->has_data = true;
+}
+
+
+LuxVirtualSprite * MapObject::GetVirtual()
+{
+	if ( this->data_type == OBJECT_VIRTUAL_SPRITE )
+	{
+		return (LuxVirtualSprite*)this->data;
+	}
+	return NULL;
+}
+
+LuxVirtualSprite * MapObject::InitialiseVirtual( )
+{
+	LuxVirtualSprite * data = new LuxVirtualSprite( this->image );
+	this->data_type = OBJECT_VIRTUAL_SPRITE;
+	this->data = (mem_pointer)data;
+	this->has_data = true;
+	return data;
 }
 
 

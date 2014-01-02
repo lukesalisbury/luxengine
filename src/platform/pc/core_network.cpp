@@ -351,7 +351,7 @@ bool CoreSystem::MessageAppend(fixed data)
 		memcpy(message_packet->data + dataLength, &p, 4);
 		return true;
 	}
-	std::cerr << "MessageAppend Error" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "MessageAppend Error" << std::endl;
 	return false;
 }
 
@@ -363,7 +363,7 @@ bool CoreSystem::MessageAppend(uint8_t data)
 		memcpy(message_packet->data + dataLength, &data, 1);
 		return true;
 	}
-	std::cerr << "MessageAppend Error" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "MessageAppend Error" << std::endl;
 	return false;
 }
 
@@ -376,7 +376,7 @@ bool CoreSystem::MessageAppend(uint32_t data)
 		memcpy(message_packet->data + dataLength, &p, 4);
 		return true;
 	}
-	std::cerr << "MessageAppend Error" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "MessageAppend Error" << std::endl;
 	return false;
 }
 

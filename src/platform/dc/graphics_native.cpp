@@ -258,7 +258,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_CreateSprite( LuxSprite * sprite, LuxRe
 {
 	if ( !png->HasContent() )
 	{
-		std::cerr << "PNG is empty" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "PNG is empty" << std::endl;
 		return false;
 	}
 

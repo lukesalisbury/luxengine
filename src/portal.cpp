@@ -428,7 +428,7 @@ int32_t luxportal::online_page( LuxRect page_rect )
 
 	if ( xml.Error() )
 	{
-		std::cerr << "Portal Error:" << xml.GetErrorStr1() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Portal Error:" << xml.GetErrorStr1() << std::endl;
 		return GUI_PORTAL_RECENT;
 	}
 

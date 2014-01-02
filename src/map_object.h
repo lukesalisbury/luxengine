@@ -17,13 +17,19 @@ class MapObject;
 #include "sprite_types.h"
 #include "display_types.h"
 #include "object_effect.h"
+
 #include "lux_canvas.h"
 #include "lux_polygon.h"
+#include "lux_virtual_sprite.h"
+
+
 class MapObject
 {
 	public:
 		MapObject();
 		~MapObject();
+
+		MapObject * clone() const { return new MapObject( *this ); }
 
 		ObjectEffect effects;
 		std::string image;
@@ -66,8 +72,13 @@ class MapObject
 		LuxPolygon * GetPolygon();
 		void SetPolygon(LuxPolygon * data);
 
+		/* canvas type */
 		LuxCanvas * GetCanvas();
 		void SetCanvas(LuxCanvas * data);
+
+		/* Virtual Sprite type */
+		LuxVirtualSprite * GetVirtual( );
+		LuxVirtualSprite * InitialiseVirtual( );
 
 		/* Path */
 		std::vector<LuxPath> _path;

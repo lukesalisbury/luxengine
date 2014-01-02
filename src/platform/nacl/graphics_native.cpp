@@ -565,7 +565,7 @@ SDL_Surface * SDL_Surface_LoadImage( std::string file )
 					temp_surface = SDL_CreateRGBSurfaceFrom( pixels, w, h, 32, 0, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 				#endif
 				SDL_SetAlpha(temp_surface, 0, 255);
-				std::cerr << "SDL_Surface_LoadImage:" << w << "x" << h << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "SDL_Surface_LoadImage:" << w << "x" << h << std::endl;
 			}
 			else
 				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << file << ": not a png image" << std::endl;
@@ -617,7 +617,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 	for (int i=0; i<driver_count; ++i)
 	{
 		SDL_GetRenderDriverInfo(i, &info);
-		std::cerr << "Available Render: " << info.name << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Available Render: " << info.name << std::endl;
 	}
 
 	if ( SDL_CreateRenderer(sdlgraphics_window, -1, SDL_RENDERER_ACCELERATED ) )
@@ -746,7 +746,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map
 	SDL_Surface * parent_sheet = SDL_Surface_LoadImage("./sprites/" + name);
 	if ( !parent_sheet )
 		return false;
-	std::cerr << "Lux_NATIVE_LoadSpriteSheet:" << parent_sheet->w << "x" << parent_sheet->h << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Lux_NATIVE_LoadSpriteSheet:" << parent_sheet->w << "x" << parent_sheet->h << std::endl;
 	std::map<std::string, LuxSprite *>::iterator p;
 	for( p = children->begin(); p != children->end(); p++ )
 	{
@@ -762,7 +762,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map
 
 			if( temp_sheet == NULL )
 			{
-				std::cerr << "CreateRGBSurface failed: " << SDL_GetError() << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "CreateRGBSurface failed: " << SDL_GetError() << std::endl;
 			}
 			else
 			{

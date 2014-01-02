@@ -199,7 +199,7 @@ int32_t Entity::Call(std::string function, char * format, ...)
 		return_value = this->callbacks->Call(this->_data, (char*)function.c_str(), stack_mem);
 
 		if ( return_value == -1 )
-			std::cerr << __FUNCTION__ << ":" << __LINE__ << " | Call from " << this->id << " Failed" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << __FUNCTION__ << ":" << __LINE__ << " | Call from " << this->id << " Failed" << std::endl;
 		return return_value;
 	}
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ":" << __LINE__ << " | '" << this->id << "' Call Function Failed '" << function << "'" << std::endl;

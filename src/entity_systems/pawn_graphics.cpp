@@ -370,7 +370,7 @@ static cell AMX_NATIVE_CALL pawnObjectReplace(AMX *amx, const cell *params)
 					return 0;
 			}
 
-			if ( object->type == 's' && type != 's' )
+			if ( object->type == OBJECT_SPRITE && type != OBJECT_SPRITE )
 			{
 				object->position.w = object->position.w ? object->position.w : 32;
 				object->position.h = object->position.h ? object->position.h : 32;

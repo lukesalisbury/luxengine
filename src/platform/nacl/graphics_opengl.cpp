@@ -432,7 +432,7 @@ LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
 		}
 		else
 		{
-			std::cerr << "Lux_OGL_PNGtoSprite failed" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Lux_OGL_PNGtoSprite failed" << std::endl;
 		}
 	}
 	delete sprite;

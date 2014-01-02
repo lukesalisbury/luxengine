@@ -126,7 +126,7 @@ int32_t AudioSystem::PlayEffect ( std::string requestSound, int32_t x, int32_t y
 
 		if ( chan == -1 )
 		{
-			std::cerr << __FILE__ << ":" << __LINE__ << " | PlayEffect: " << Mix_GetError() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayEffect: " << Mix_GetError() << std::endl;
 			return 0;
 		}
 		else
@@ -136,7 +136,7 @@ int32_t AudioSystem::PlayEffect ( std::string requestSound, int32_t x, int32_t y
 		}
 		return (int32_t)len;
 	}
-	std::cerr << requestSound << " not found" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << requestSound << " not found" << std::endl;
 	return 0;
 }
 
@@ -172,7 +172,7 @@ int32_t AudioSystem::PlayDialog( int32_t requestSound )
 			this->dialog = Mix_LoadMUS_RW(src, 0);
 			if ( Mix_PlayMusic(this->dialog, 1) == -1 )
 			{
-				std::cerr << __FILE__ << ":" << __LINE__ << " | PlayDialog: " << Mix_GetError() << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayDialog: " << Mix_GetError() << std::endl;
 				return 0;
 			}
 			Mix_HookMusicFinished( &Lux_Audio_DialogEnded );
@@ -204,18 +204,18 @@ int32_t AudioSystem::PlayMusic ( std::string requestMusic, int32_t loop, int32_t
 
 			if ( !this->music )
 			{
-				std::cerr << __FILE__ << ":" << __LINE__ << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
 			}
 
 			if ( Mix_FadeInMusic( this->music, loop, fadeLength ) == -1 )
 			{
-				std::cerr << __FILE__ << ":" << __LINE__ << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
 				return 0;
 			}
 			return 1;
 		}
 	}
-	std::cerr << __FILE__ << ":" << __LINE__ << " | PlayMusic Error: '" << requestMusic << "' "  << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayMusic Error: '" << requestMusic << "' "  << std::endl;
 	return 0;
 }
 

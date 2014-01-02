@@ -237,8 +237,8 @@ static cell AMX_NATIVE_CALL pawnEntityCreate(AMX *amx, const cell *params)
 	}
 	else
 	{
-		std::cerr << __FILE__ << ":" << __LINE__ << " | EntityCreate ('" << entity_parent;
-		std::cerr << "' '" << entity_id << "') Failed." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | EntityCreate ('" << entity_parent;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "' '" << entity_id << "') Failed." << std::endl;
 		response = 0;
 	}
 	return response;

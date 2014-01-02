@@ -31,15 +31,14 @@ bool MapXMLReader::Load( std::string file )
 	this->xml_file = MokoiGame_GetXML(file);
 	if ( this->xml_file->Error() )
 	{
-		//std::cerr << __FILE__ << ":" << __LINE__ << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG, __FILE__ , __LINE__) << this->xml_file->GetErrorStr1() <<  std::endl;
 		return false;
 	}
-
 
 	this->root = this->xml_file->RootElement();
 	if ( !this->root || strcmp( this->root->Value(), "map") )
 	{
-		std::cerr << __FILE__ << ":" << __LINE__ << " | " + file + " not a valid map file." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG, __FILE__ , __LINE__) << file << " not a valid map file." << std::endl;
 		return false;
 	}
 
@@ -121,7 +120,6 @@ bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object
 
 		entity_element->QueryBoolAttribute("global", &is_global_entity);
 
-
 		if ( entity_file_name.length() )
 		{
 			Entity * new_entity = lux::entities->NewEntity(object->id, entity_file_name, ( is_global_entity ? 0 : map->Ident() ) );
@@ -167,7 +165,6 @@ bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object
 
 				temporary_colour_value.rgba = object->effects.secondary_colour;
 				new_entity->AddSetting("object-colour-secondary", temporary_colour_value.hex );
-
 
 			}
 		}
@@ -259,26 +256,29 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 		tinyxml2::QueryUint8Attribute( effect_element, "green", object->effects.primary_colour.g );
 		tinyxml2::QueryUint8Attribute( effect_element, "blue", object->effects.primary_colour.b );
 		tinyxml2::QueryUint8Attribute( effect_element, "alpha", object->effects.primary_colour.a );
-
-
 	}
 
-	for ( settings_element = effect_element->FirstChildElement("setting"); settings_element; settings_element = settings_element->NextSiblingElement("setting") )
+	settings_element = effect_element->FirstChildElement("setting");
+	if ( settings_element )
 	{
-		std::string attrkey = "";
-
-		if ( tinyxml2::QueryStringAttribute(settings_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
+		for ( ; settings_element; settings_element = settings_element->NextSiblingElement("setting") )
 		{
-			if ( attrkey.compare("object-style") == 0 )
+
+			std::string attrkey = "";
+
+			if ( tinyxml2::QueryStringAttribute(settings_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
 			{
-				/* return char value instead of a number */
-				tinyxml2::QueryUint8Attribute( settings_element, "value", object->effects.style );
-			}
-			else if ( !attrkey.compare("object-colour-secondary") )
-			{
-				std::string attrvalue = "#FFFFFFFF";
-				tinyxml2::QueryStringAttribute(settings_element, "value", attrvalue);
-				object->effects.secondary_colour = Lux_Hex2Colour(attrvalue);
+				if ( attrkey.compare("object-style") == 0 )
+				{
+					/* return char value instead of a number */
+					tinyxml2::QueryUint8Attribute( settings_element, "value", object->effects.style );
+				}
+				else if ( !attrkey.compare("object-colour-secondary") )
+				{
+					std::string attrvalue = "#FFFFFFFF";
+					tinyxml2::QueryStringAttribute(settings_element, "value", attrvalue);
+					object->effects.secondary_colour = Lux_Hex2Colour(attrvalue);
+				}
 			}
 		}
 	}
@@ -287,7 +287,14 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 
 	if ( obj_type == "sprite" )
 	{
-		object->type = OBJECT_SPRITE;
+		if ( !object->image.compare( 0, 8, "Virtual:" ) )
+		{
+			object->type = OBJECT_VIRTUAL_SPRITE;
+		}
+		else
+		{
+			object->type = OBJECT_SPRITE;
+		}
 
 	}
 	else if ( obj_type == "rect" )
@@ -342,8 +349,14 @@ void MapXMLReader::ReadObjects( std::vector<MapObject *> & object_array, uint32_
 			object->static_map_id = ++object_cache_count;
 			if ( map )
 			{
+
 				if ( this->ReadEntity( object, child_element, map ) )
 				{
+					if ( object->type == OBJECT_VIRTUAL_SPRITE )
+					{
+						LuxVirtualSprite * sprite = object->InitialiseVirtual(  );
+						sprite->InsertToVector( object, object_array, object_cache_count, map  );
+					}
 					/* Local object so we add it to the list */
 					object_array.push_back( object );
 				}
@@ -356,12 +369,35 @@ void MapXMLReader::ReadObjects( std::vector<MapObject *> & object_array, uint32_
 			}
 			else
 			{
+				if ( object->type == OBJECT_VIRTUAL_SPRITE )
+				{
+					LuxVirtualSprite * sprite = object->InitialiseVirtual(  );
+					sprite->InsertToVector( object, object_array, object_cache_count, map  );
+				}
 				/* Local object so we add it to the list */
 				object_array.push_back( object );
 			}
 
 		}
 	}
+}
+
+void MapXMLReader::ReadDimension( LuxRect & rect )
+{
+	tinyxml2::XMLElement * settings_element = root->FirstChildElement("settings");
+
+	if ( !settings_element )
+	{
+		return;
+	}
+
+	tinyxml2::XMLElement * dimensions = settings_element->FirstChildElement("dimensions");
+	if ( dimensions )
+	{
+		rect.w = dimensions->UnsignedAttribute( "width" );
+		rect.h = dimensions->UnsignedAttribute( "height" );
+	}
+
 }
 
 void MapXMLReader::ReadSettings( MokoiMap * map, std::map<std::string, std::string> & settings )

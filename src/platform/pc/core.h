@@ -36,7 +36,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void QuitSubSystem(uint32_t flag);
 			bool InitSubSystem(uint32_t flag);
 			void SystemMessage(uint8_t type, std::string message);
-			std::ostream& SystemMessage(uint8_t type);
+			std::ostream& SystemMessage(uint8_t type, const char *file = NULL, int line = 0);
 			bool Good();
 			uint32_t GetTime();
 			uint32_t GetFrameDelta();

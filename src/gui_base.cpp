@@ -39,7 +39,7 @@ UserInterface::UserInterface()
 {
 	this->_display = NULL;
 	this->controller = NULL;
-	std::cerr << "UserInterface Error: Region & DisplaySystem must be set" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "UserInterface Error: Region & DisplaySystem must be set" << std::endl;
 }
 
 UserInterface::~UserInterface()

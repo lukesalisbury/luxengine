@@ -162,7 +162,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager)
 	this->save_file = new elix::File( this->file_name, true );
 	if ( !this->save_file->Exist() )
 	{
-		std::cerr << "===========================Saved Failed========================" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "===========================Saved Failed========================" << std::endl;
 		delete this->save_file;
 		return false;
 	}
@@ -193,8 +193,8 @@ bool LuxSaveState::Save(WorldSystem * old_world, EntityManager * old_entity_mana
 		return false;
 	}
 
-	std::cerr << "================ Save ===============" << std::endl;
-	std::cerr << "============= Type: "  << +this->save_type << " =============" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "================ Save ===============" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "============= Type: "  << +this->save_type << " =============" << std::endl;
 
 	lux::entities->SetSaveMode( this->save_type );
 
@@ -301,7 +301,7 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 	this->save_file = new elix::File( this->file_name, false );
 	if ( !this->save_file->Exist() )
 	{
-		std::cerr << "===========================Loading Failed========================" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "===========================Loading Failed========================" << std::endl;
 		delete this->save_file;
 		return false;
 	}
@@ -389,8 +389,8 @@ bool LuxSaveState::Restore( WorldSystem * new_world, EntityManager * new_entity_
 		return false;
 	}
 
-	std::cerr << "================ Load ===============" << std::endl;
-	std::cerr << "============= Type: "  << +this->save_type << " =============" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "================ Load ===============" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "============= Type: "  << +this->save_type << " =============" << std::endl;
 
 	lux::entities->SetSaveMode( this->save_type );
 

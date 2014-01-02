@@ -168,7 +168,7 @@ static bool CompileShaderCode(GLenum shader, const char *source)
 		glGetObjectParameterivARB(shader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &length);
 		info = new char(length+1);
 		glGetInfoLogARB(shader, length, NULL, info);
-		std::cerr << "Failed to compile shader (" << source << "):" << info << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Failed to compile shader (" << source << "):" << info << std::endl;
 		delete info;
 	
 	}

@@ -202,7 +202,7 @@ static bool CompileShaderCode(GLenum shader, const char *source)
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 		info = new char(length+1);
 		glGetShaderInfoLog(shader, length, NULL, info);
-		std::cerr << "Failed to compile shader (" << source << "):" << info << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Failed to compile shader (" << source << "):" << info << std::endl;
 		delete info;
 
 	}

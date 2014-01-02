@@ -126,9 +126,9 @@ void CoreSystem::AbleOutput(bool able)
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "-------------------------------------" << std::endl;
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << PROGRAM_NAME << " - Version " << PROGRAM_VERSION << std::endl;
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "-------------------------------------" << std::endl;
-		std::cerr << "-------------------------------------" << std::endl;
-		std::cerr << PROGRAM_NAME << " Error Log - Version " << PROGRAM_VERSION << std::endl;
-		std::cerr << "-------------------------------------" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "-------------------------------------" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << PROGRAM_NAME << " Error Log - Version " << PROGRAM_VERSION << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "-------------------------------------" << std::endl;
 
 	}
 	else
@@ -175,7 +175,7 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	{
 		if ( SDL_InitSubSystem(flag) < 0 )
 		{
-			std::cerr << __FILE__ << ":" << __LINE__ << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
 			return false;
 		}
 		return true;

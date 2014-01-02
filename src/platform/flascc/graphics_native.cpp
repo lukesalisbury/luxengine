@@ -336,7 +336,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect r
 {
 	if ( !png->HasContent() )
 	{
-		std::cerr << "PNG is empty" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "PNG is empty" << std::endl;
 		return false;
 	}
 
@@ -569,7 +569,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 
 	if ( !sdlgraphics_screen )
 	{
-		std::cerr << __FILE__ << ":" << __LINE__ << " | Not a valid target surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Not a valid target surface." << std::endl;
 		return;
 	}
 

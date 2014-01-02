@@ -505,3 +505,5 @@ src/downloader-basic.cpp
 ../elix/src/elix_program.hpp
 ../elix/src/elix_program.cpp
 makefiles/windows-standalone.make
+src/lux_virtual_sprite.h
+src/lux_virtual_sprite.cpp
