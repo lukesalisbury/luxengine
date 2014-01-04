@@ -12,6 +12,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "lux_virtual_sprite.h"
 #include "map_xml_reader.h"
 #include "core.h"
+
+
 LuxVirtualSprite::LuxVirtualSprite(  )
 {
 
@@ -27,9 +29,9 @@ LuxVirtualSprite::~LuxVirtualSprite()
 {
 	MapObject * object = NULL;
 	std::vector<MapObject*>::iterator l_object;
-	if ( this->_objects.size() )
+	if ( this->objects.size() )
 	{
-		for ( l_object = this->_objects.begin(); l_object != this->_objects.end(); l_object++ )
+		for ( l_object = this->objects.begin(); l_object != this->objects.end(); l_object++ )
 		{
 			object = (*l_object);
 			delete object;
@@ -50,43 +52,48 @@ bool LuxVirtualSprite::Load( std::string file )
 	}
 
 	reader.ReadDimension( this->rect );
-	reader.ReadObjects( this->_objects, object_cache_count, NULL );
+	reader.ReadObjects( this->objects, object_cache_count, NULL );
 
 	return true;
 }
 
 bool LuxVirtualSprite::InsertToVector( MapObject * parent, std::vector<MapObject *> & object_array, uint32_t & object_cache_count, MokoiMap * map )
 {
-	if ( !this->_objects.size() )
+	if ( !this->objects.size() )
 		return false;
 
 	MapObject * object = NULL;
+	MapObject * cache_object = NULL;
 	std::vector<MapObject*>::iterator l_object;
 	int32_t sx = parent->position.x;
 	int32_t sy = parent->position.y;
 
 
-	for ( l_object = this->_objects.begin(); l_object != this->_objects.end(); l_object++ )
+	for ( l_object = this->objects.begin(); l_object != this->objects.end(); l_object++ )
 	{
 		object = (*l_object);
 		if ( object )
 		{
-
-/*
-			if ( this->dimension_width > 1 || this->dimension_height > 1  )
+			if ( this->rect.w > 1 || this->rect.h > 1  )
 			{
-				while ( sx < x + width )
+				for ( sx = 0; sx < parent->position.w; sx += this->rect.w )
 				{
-					while ( sy < y + height )
+					for ( sy = 0; sy < parent->position.h; sy += this->rect.h )
 					{
+						cache_object = object->clone();
+
+						cache_object->position.x += (parent->position.x + sx);
+						cache_object->position.y += (parent->position.y + sy);
+
+						cache_object->static_map_id = ++object_cache_count;
+
+						object_array.push_back( cache_object );
+
+						this->cache.push_back( cache_object ); // Add to cache
 					}
 				}
 			}
-*/
-			object->static_map_id = ++object_cache_count;
 
-			/* Local object so we add it to the list */
-			object_array.push_back( object );
 
 		}
 	}

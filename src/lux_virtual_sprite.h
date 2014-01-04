@@ -27,7 +27,8 @@ public:
 	~LuxVirtualSprite();
 
 private:
-	std::vector<MapObject *> _objects;
+	std::vector<MapObject *> objects;
+	std::vector<MapObject *> cache;
 
 public:
 	LuxRect rect;

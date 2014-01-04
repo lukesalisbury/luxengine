@@ -258,7 +258,7 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 		tinyxml2::QueryUint8Attribute( effect_element, "alpha", object->effects.primary_colour.a );
 	}
 
-	settings_element = effect_element->FirstChildElement("setting");
+	settings_element = object_element->FirstChildElement("setting");
 	if ( settings_element )
 	{
 		for ( ; settings_element; settings_element = settings_element->NextSiblingElement("setting") )
