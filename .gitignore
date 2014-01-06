@@ -4,6 +4,9 @@
 *.amx
 *.amx64
 
+extra/android-project/jni/SDL2
+extra/android-project/jni/SDL2_mixer
+
 #################
 ## Eclipse
 #################
