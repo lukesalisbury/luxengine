@@ -65,10 +65,10 @@ LuxEngine::LuxEngine( std::string executable )
 	lux::media = new PlatformMedia();
 
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, PROGRAM_NAME" - Version "PROGRAM_VERSION" Log" );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO ) << "-------------------------------------" << std::endl;
 
 	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, PROGRAM_NAME" - Version "PROGRAM_VERSION" Error Log" );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, "-------------------------------------" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR ) << "-------------------------------------" << std::endl;
 
 	if ( executable[0] != 0 )
 	{
@@ -79,15 +79,14 @@ LuxEngine::LuxEngine( std::string executable )
 
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Base Directory: " + base_directory );
 
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "binary_dir: " + base_directory );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO ) << "-------------------------------------" << std::endl;
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User: " + elix::directory::User("") );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User Documents: " + elix::directory::Documents(false) );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Global Documents: " + elix::directory::Documents(true) );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Cache: " + elix::directory::Cache()  );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Resources: " + elix::directory::Resources("examples") );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "examples: " + elix::directory::Resources("examples") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO ) << "-------------------------------------" << std::endl;
 
 	if ( lux::core->Good() )
 	{

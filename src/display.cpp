@@ -797,7 +797,11 @@ bool DisplaySystem::AddObjects(std::list<MapObject*> * objects)
 
 bool DisplaySystem::AddObjectToLayer(uint32_t layer, MapObject * new_object, bool static_objects)
 {
-	if ( layer < this->_layers.size() )
+	if ( layer == 0xFFFFFFFF )
+	{
+		return this->overlay_layer->AddObject(new_object, static_objects);
+	}
+	else if ( layer < this->_layers.size() )
 	{
 		return this->_layers[layer]->AddObject(new_object, static_objects);
 	}

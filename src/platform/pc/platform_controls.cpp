@@ -15,6 +15,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include <SDL/SDL_keysym.h>
 
+void Player::ClearController()
+{
+
+}
+
 bool Player::SetupController( std::string name )
 {
 	memset(this->_buttonConfig, 0, sizeof(Player_Button)*20 );

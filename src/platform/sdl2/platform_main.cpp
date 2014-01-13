@@ -105,7 +105,7 @@ extern "C" int main( int argc, char *argv[] )
 
 	lux::engine = new LuxEngine( base_executable );
 
-
+#if STANDALONE
 	gameAttached = checkForAttachedGame( (argc ? argv[0] : NULL) );
 	if ( gameAttached )
 	{
@@ -113,6 +113,7 @@ extern "C" int main( int argc, char *argv[] )
 		luxportal::use = false;
 		luxportal::active = false;
 	}
+#endif
 
 	main_args( argc, argv, gameAttached );
 

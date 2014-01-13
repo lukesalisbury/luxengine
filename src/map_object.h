@@ -26,7 +26,7 @@ class MapObject;
 class MapObject
 {
 	public:
-		MapObject();
+		MapObject( uint8_t type = 0 );
 		~MapObject();
 
 		MapObject * clone() const { return new MapObject( *this ); }

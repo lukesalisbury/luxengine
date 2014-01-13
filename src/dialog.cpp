@@ -171,7 +171,7 @@ bool LuxEngine::ShowDialog(std::string text, LuxWidget dialog, std::string * ans
 
 void LuxEngine::FatalError(std::string reason)
 {
-	lux::core->SystemMessage(0, reason);
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, reason);
 	if ( lux::display == NULL )
 	{
 		lux::display = new DisplaySystem( 640, 480, 16, false );

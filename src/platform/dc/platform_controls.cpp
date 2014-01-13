@@ -11,6 +11,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "player.h"
 #include <sstream>
+
+void Player::ClearController()
+{
+
+}
+
 void parse_pointer_settings(Player_Pointer * pointer, std::string config)
 {
 	pointer->device = NOINPUT;

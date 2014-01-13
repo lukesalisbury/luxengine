@@ -396,6 +396,12 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	}
 
+	/*  */
+
+	this->CheckTouch( lux::display, touch_events_count );
+
+
+
 	this->RefreshInput( lux::display );
 	this->time = this->GetTime();
 
@@ -434,6 +440,29 @@ bool CoreSystem::TextListen( bool able )
 		SDL_StopTextInput();
 	}
 	return SDL_HasScreenKeyboardSupport();
+}
+
+void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count )
+{
+	if ( display )
+	{
+		for ( std::map<uint32_t, VirtualGamepadButton*>::iterator key = this->virtual_input.begin(); key != this->virtual_input.end(); key++ )
+		{
+			VirtualGamepadButton * button = (*key).second;
+			if ( button->object == 0)
+			{
+				button->object = new MapObject(OBJECT_RECTANGLE);
+				button->object->position.x = ( button->rect.w < 0 ? lux::display->screen_dimension.w + button->rect.x : button->rect.x );
+				button->object->position.y = ( button->rect.h < 0 ? lux::display->screen_dimension.h + button->rect.y : button->rect.y );
+				button->object->position.w = button->rect.w;
+				button->object->position.h = button->rect.h;
+				button->object->effects.primary_colour = { 255, 0,0, 255 };
+
+				display->AddObjectToLayer( 0xFFFFFFFF, button->object, true );
+
+			}
+		}
+	}
 }
 
 bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
@@ -518,6 +547,8 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 			default:
 				break;
 		}
+
+		this->CheckTouch( display, touch_events_count );
 		return 1;
 	}
 	return 0;
@@ -629,7 +660,7 @@ bool CoreSystem::GamepadAdded( int32_t joystick_index )
 void CoreSystem::VirtualGamepadAddItem( uint32_t ident, InputDevice device, std::string value )
 {
 	// -10x-10,20x20
-	VirtualGamepadButton button;
+	VirtualGamepadButton * button = new VirtualGamepadButton;
 	std::string axis;
 	std::string dimension;
 	std::string::size_type split_position;
@@ -645,23 +676,26 @@ void CoreSystem::VirtualGamepadAddItem( uint32_t ident, InputDevice device, std:
 		split_position = axis.find_first_of("x", 0);
 		if ( std::string::npos != split_position )
 		{
-			button.rect.x = elix::string::ToInt32( axis.substr(0, split_position) );
-			button.rect.y = elix::string::ToInt32( axis.substr(split_position+1) );
+			button->rect.x = elix::string::ToInt32( axis.substr(0, split_position) );
+			button->rect.y = elix::string::ToInt32( axis.substr(split_position+1) );
 		}
 
 		//dimension values
 		split_position = dimension.find_first_of("x", 0);
 		if ( std::string::npos != split_position )
 		{
-			button.rect.w = elix::string::ToIntU16( dimension.substr(0, split_position) );
-			button.rect.h = elix::string::ToIntU16( dimension.substr(split_position+1) );
+			button->rect.w = elix::string::ToIntU16( dimension.substr(0, split_position) );
+			button->rect.h = elix::string::ToIntU16( dimension.substr(split_position+1) );
 		}
 
-		button.device = device;
-
-		this->virtual_input.insert( std::pair<uint32_t, VirtualGamepadButton>( ident, button ) );
+		button->device = device;
+		button->object = 0;
+		this->virtual_input.insert( std::pair<uint32_t, VirtualGamepadButton*>( ident, button ) );
 	}
-
+	else
+	{
+		delete button;
+	}
 
 
 }

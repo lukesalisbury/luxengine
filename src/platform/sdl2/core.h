@@ -22,6 +22,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 		int16_t state;
 		LuxRect rect;
 		int16_t radius;
+		MapObject * object;
 	} VirtualGamepadButton;
 
 	typedef struct {
@@ -45,8 +46,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 			SDL_Window * native_window;
 
 			TouchEvent touch_events[10];
-			std::map<uint32_t, VirtualGamepadButton> virtual_input;
-
+			std::map<uint32_t, VirtualGamepadButton*> virtual_input;
+			void CheckTouch( DisplaySystem * display, uint8_t touch_events_count );
 
 			uint32_t fps, fps_time, fps_last, frame_length;
 			bool lockfps;
@@ -56,6 +57,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 			SDL_Window * GetWindow() { return native_window; }
 			bool GamepadAdded( int32_t joystick_index );
 			const char * GamepadName( uint32_t device_number );
+
+
 
 			void VirtualGamepadAddItem( uint32_t ident, InputDevice device, std::string value );
 			void VirtualGamepadRemoveItem( uint32_t ident );

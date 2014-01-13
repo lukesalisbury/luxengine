@@ -17,12 +17,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 extern ObjectEffect default_fx;
 
-MapObject::MapObject()
+MapObject::MapObject( uint8_t type )
 {
 	this->effects = default_fx;
 	this->effects.tile_object = true;
 	this->data = NULL;
 	this->data_type = 0;
+	this->type = type;
 	this->timer = 0;
 	this->speed = 1;
 	this->has_data = false;

@@ -189,16 +189,22 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	return false;
 }
 
-std::ostream& CoreSystem::SystemMessage(uint8_t type, const char * file = NULL, int line = 0 )
+std::ostream& CoreSystem::SystemMessage(uint8_t type, const char * file, int line )
 {
+
 	if ( type == SYSTEM_MESSAGE_LOG )
 	{
-		std::cout << "[" << (int)type << "]";
+		std::cout << "[LOG] ";
 		return std::cout;
 	}
 	else if ( type == SYSTEM_MESSAGE_ERROR || type == SYSTEM_MESSAGE_WARNING )
 	{
-		return lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR);
+		return std::cerr;
+	}
+	else if ( type == SYSTEM_MESSAGE_INFO )
+	{
+		std::cout << "[INFO] ";
+		return std::cout;
 	}
 	else
 	{
@@ -209,21 +215,8 @@ std::ostream& CoreSystem::SystemMessage(uint8_t type, const char * file = NULL, 
 
 void CoreSystem::SystemMessage(uint8_t type, std::string message)
 {
-	if ( type == SYSTEM_MESSAGE_LOG )
-	{
-		//SDL_Log("%s", message.c_str() );
-		std::cout << "LOG:" <<  message << std::endl;
-	}
-	else if ( type == SYSTEM_MESSAGE_ERROR || SYSTEM_MESSAGE_WARNING )
-	{
-		//SDL_Log("%s", message.c_str() );
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << message << std::endl;
-	}
-	else
-	{
-		//SDL_Log("%d: %s", type, message.c_str() );
-		std::cout << type << ":" << message << std::endl;
-	}
+
+	this->SystemMessage(type) << message << std::endl;
 }
 
 bool CoreSystem::Good()
