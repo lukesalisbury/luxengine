@@ -1,6 +1,6 @@
-set JAVA_HOME=F:\Java\jdk1.7.0_03
-REM f:\Android\android-ndk-r8b\ndk-build NDK_DEBUG=1 %1
-F:\Java\ant\bin\ant debug
+set JAVA_HOME=C:\dev\Java\jdk1.7.0_40
+REM C:\dev\Android\android-ndk-r9\ndk-build NDK_DEBUG=1 %1
+C:\dev\Java\ant\bin\ant debug
 
 pause
 

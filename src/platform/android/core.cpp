@@ -211,7 +211,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 
 }
 
-bool CoreSystem::InputLoop(uint16_t & key)
+bool CoreSystem::InputLoopGet(uint16_t & key)
 {
 	// Keyboard Stuff
 	return 0;

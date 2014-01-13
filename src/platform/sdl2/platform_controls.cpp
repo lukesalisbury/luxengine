@@ -33,6 +33,13 @@ typedef struct Player_Pointer {
 		int32_t sym[4];
 } Player_Pointer;
 */
+
+void Player::ClearController( )
+{
+
+
+}
+
 bool Player::SetupController( std::string name )
 {
 	memset(this->_buttonConfig, 0, sizeof(Player_Button)*20 );
@@ -109,7 +116,7 @@ bool Player::SetupController( std::string name )
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "'" << name << "'' Invalid Control String '" << settings << "'"<< std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "'" << name << "'' Invalid Control String '" << settings << "' Array Size:" << values.size() << std::endl;
 		}
 		values.clear();
 
@@ -145,9 +152,12 @@ void Player::ParsePointer(Player_Pointer * pointer, std::string config)
 
 void Player::ParseButton(Player_Button * button, std::string config)
 {
-	if ( config.length() < 3)
+	if ( config.length() < 3 )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Not a valid button '" << config << "'" << std::endl;
+		if ( config != "n" )
+		{
+			lux::core->SystemMessage(SYSTEM_MESSAGE_WARNING) << "Not a valid button '" << config << "'" << std::endl;
+		}
 		return;
 	}
 	uint16_t device_type = config.at(0);
@@ -156,6 +166,8 @@ void Player::ParseButton(Player_Button * button, std::string config)
 
 	button->device_number = device_numb;
 	button->sym = elix::string::ToInt32(dev_butt);
+
+	// r,-10x-10,20x20
 
 	switch (device_type)
 	{
@@ -177,6 +189,15 @@ void Player::ParseButton(Player_Button * button, std::string config)
 			button->device = CONTROLHAT;
 			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [CONTROLHAT] #" << button->device_number << " - " << button->sym << std::endl;
 			break;
+		case 'r':
+		case 'c':
+			button->device = VIRTUALBUTTON;
+			button->sym = elix::string::Hash(dev_butt);
+			lux::core->VirtualGamepadAddItem( button->sym, VIRTUALBUTTON, dev_butt );
+
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [VIRTUALBUTTON] #" << button->device_number << " - " << button->sym << std::endl;
+			break;
+
 		default:
 			button->device = NOINPUT;
 			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [NOINPUT] " << std::endl;

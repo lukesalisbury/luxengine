@@ -57,7 +57,9 @@ public:
 	virtual LuxState HandleFrame(LuxState old_state) = 0;
 	virtual void RefreshInput( DisplaySystem * display ) = 0;
 	virtual int16_t GetInput(InputDevice device, uint32_t device_number, int32_t symbol) = 0;
-	virtual bool InputLoop(DisplaySystem * display, uint16_t & key) = 0;
+	virtual bool InputLoopGet(DisplaySystem * display, uint16_t & key) = 0;
+	virtual bool TextListen( bool able ) = 0;
+
 
 #ifdef NETWORKENABLED
 	virtual bool CreateMessage(uint8_t type, bool reliable) = 0;

@@ -204,7 +204,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 			display->graphics.Display2Screen(&this->mouseposition[0], &this->mouseposition[1]);
 }
 
-bool CoreSystem::InputLoop(uint16_t & key)
+bool CoreSystem::InputLoopGet(uint16_t & key)
 {
 	SDL_Event event;
 	SDL_EnableUNICODE(1);

@@ -56,6 +56,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			/* Drawing Functions */
 			void Display();
+
 		private:
 			LuxRect GetObjectLocation( LuxRect map_location, uint8_t type );
 			bool ObjectOnScreen(LuxRect o, uint8_t flipmode, LuxRect s);

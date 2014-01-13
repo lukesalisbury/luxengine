@@ -52,12 +52,18 @@ void Config::PlatformSettings()
 	SDL_SCANCODE_UP = 82
 	SDL_SCANCODE_F4 = 61
 	*/
+
+
+	/* axis-1|axis-2|pointer|BUTTON_ACTION1|ACTION2|ACTION3|ACTION4|ACTION5|ACTION6|MENU|ARROWUP|ARROWDOWN|ARROWRIGHT|ARROWLEFT|MOUSELEFT|MOUSEMIDDLE|MOUSERIGHT|MOUSEUP|MOUSEDOWN|CONFIRM|CANCEL|POINTER_PRESS|shutdown*/
+
 	this->SetString("control.keyboard1", "arrows|mouse|mouse|k04|k022|k07|k020|k026|k08|k040|k079|k080|k081|k082|m01|m02|m03|m04|k041|k040|k041|m01|k061" );
+	this->SetString("control.virtual1", "arrows|n|n|r,-10x-10,20x20|n|n|n|n|n|k040|r,-10x10,20x20|r,-10x40,20x20|n|n|n|n|n|n|n|k040|k041|m01|k061" );
 
 
+	this->SetString("control.set4", "keyboard1" );
 	this->SetString("control.set2", "gamepad0" );
-	this->SetString("control.set1", "keyboard1" );
 	this->SetString("control.set3", "gamepad1" );
+	this->SetString("control.set1", "virtual1" );
 
 	this->SetBoolean("save.allowed", true );
 	this->SetString("server.ip", "127.0.0.1" );

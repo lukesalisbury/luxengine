@@ -33,7 +33,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			LuxState HandleFrame(LuxState old_state);
 			void RefreshInput( DisplaySystem * display );
 			int16_t GetInput(InputDevice device, uint32_t device_number, uint32_t symbol);
-			bool InputLoop(DisplaySystem * display, uint16_t & key);
+			bool InputLoopGet(DisplaySystem * display, uint16_t & key);
 			
 			#ifdef NETWORKENABLED
 			bool CreateMessage(uint8_t type, bool reliable);

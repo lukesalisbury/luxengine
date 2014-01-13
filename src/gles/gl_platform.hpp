@@ -20,7 +20,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define USING_GLES 1
 #include <OpenGLES/ES1/gl.h>
 #include <OpenGLES/ES1/glext.h>
-#elif defined(ANDROID)
+#elif defined(ANDROID) && !defined(USE_SDL2)
 #define USING_GLES 1
 #include <GLES/gl.h>
 #include <GLES/glext.h>

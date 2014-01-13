@@ -14,6 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include "entity_manager.h"
 #include "elix_path.hpp"
+#include "elix_string.hpp"
 #include "world.h"
 #include <algorithm>
 #include <sys/stat.h>
@@ -41,13 +42,12 @@ CoreSystem::CoreSystem()
 {
 	//SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 
-	SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_HAPTIC | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
+	SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_HAPTIC | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER );
 
 	AbleOutput(true);
 	this->mouse_focus = false;
 
 	memset( this->controller, 0, sizeof(SDL_GameController*)*8);
-
 
 	this->native_window = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320, 240, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE );
 	if ( !this->native_window )
@@ -59,7 +59,7 @@ CoreSystem::CoreSystem()
 	{
 		this->state = RUNNING;
 		this->lockfps = true;
-		this->keystate = SDL_GetKeyboardState(NULL);
+		this->keystate = SDL_GetKeyboardState( &this->keystate_count );
 		this->good = true;
 		this->time = this->GetTime();
 
@@ -82,7 +82,6 @@ CoreSystem::~CoreSystem()
 	{
 		SDL_GameControllerClose( this->controller[i] );
 	}
-
 
 
 	SDL_DestroyWindow( this->native_window );
@@ -135,7 +134,7 @@ void CoreSystem::SystemMessage(uint8_t type, std::string message)
 	else if ( type == SYSTEM_MESSAGE_ERROR || SYSTEM_MESSAGE_WARNING )
 	{
 		//SDL_Log("%s", message.c_str() );
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << message << std::endl;
+		std::cerr << message << std::endl;
 	}
 	else
 	{
@@ -189,7 +188,7 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	{
 		if ( SDL_InitSubSystem(flag) < 0 )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
+			this->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
 			return false;
 		}
 		return true;
@@ -225,16 +224,17 @@ void CoreSystem::Idle()
 LuxState CoreSystem::HandleFrame(LuxState old_state)
 {
 	SDL_Event event;
+	uint8_t touch_events_count = 0;
 
 	this->internal_ms = (this->GetTime() - this->time);
 	this->frame_ms = clamp( this->internal_ms, 0, 33);
 	this->animation_ms = this->frame_ms;
 
-
 	if ( this->state > PAUSED || old_state >= SAVING )
 	{
 		this->state = old_state;
 	}
+
 
 	SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
@@ -243,7 +243,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 		switch( event.type )
 		{
 			case SDL_TEXTINPUT:
-
+			{
 				if ( lux::entities )
 				{
 					if ( lux::entities->_keyboard )
@@ -253,6 +253,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 					}
 				}
 				break;
+			}
 			case SDL_KEYDOWN:
 			{
 				switch ( event.key.keysym.sym )
@@ -335,25 +336,28 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 						break;
 					}
 				}
+				break;
+			}
+			case SDL_FINGERUP:
+			{
 
-				if ( event.key.keysym.sym )
+				if ( touch_events_count < 10 )
 				{
-					if ( lux::entities )
-					{
-						if ( lux::entities->_keyboard )
-						{
-							int32_t key = event.key.keysym.sym;
-							lux::entities->_keyboard->Call((char*)"KeyboardInput", (char*)"d", key);
-						}
-					}
+					this->touch_events[touch_events_count].type = event.tfinger.type;
+					this->touch_events[touch_events_count].x = event.tfinger.x;
+					this->touch_events[touch_events_count].y = event.tfinger.y;
+					this->touch_events[touch_events_count].dx = event.tfinger.dx;
+					this->touch_events[touch_events_count].dy = event.tfinger.dy;
+					this->touch_events[touch_events_count].pressure = event.tfinger.pressure;
+					touch_events_count++;
 				}
-
 				break;
 			}
 			case SDL_QUIT:
-					this->state = EXITING;
+			{
+				this->state = EXITING;
 				break;
-
+			}
 			case SDL_WINDOWEVENT:
 			{
 				if ( this->state == RUNNING || this->state == PAUSED)
@@ -389,10 +393,17 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 			default:
 				break;
 		}
+
 	}
 
 	this->RefreshInput( lux::display );
 	this->time = this->GetTime();
+
+	if ( this->state > PAUSED || old_state >= SAVING )
+	{
+		this->state = old_state;
+	}
+
 
 	return this->state;
 }
@@ -412,17 +423,33 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 	SDL_JoystickUpdate();
 }
 
-bool CoreSystem::InputLoop( DisplaySystem * display, uint16_t & key )
+bool CoreSystem::TextListen( bool able )
+{
+	if ( able )
+	{
+		SDL_StartTextInput();
+	}
+	else
+	{
+		SDL_StopTextInput();
+	}
+	return SDL_HasScreenKeyboardSupport();
+}
+
+bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 {
 	SDL_Event event;
-
+	uint8_t touch_events_count = 0;
 
 	if ( SDL_PollEvent(&event) )
 	{
 		switch( event.type )
 		{
 			case SDL_TEXTINPUT:
+			{
+				key = event.text.text[0];
 				break;
+			}
 			case SDL_KEYDOWN:
 				key = event.key.keysym.sym;
 				if ( event.key.keysym.sym == SDLK_ESCAPE ) { key = 27; }
@@ -437,16 +464,30 @@ bool CoreSystem::InputLoop( DisplaySystem * display, uint16_t & key )
 			case SDL_QUIT:
 				key = 27;
 				break;
-/*
-			case SDL_TOUCHBUTTONDOWN:
-			{
-				break;
-			}
-*/
+
 			case SDL_FINGERDOWN:
+			case SDL_FINGERUP:
 			{
+				if ( touch_events_count < 10 )
+				{
+					this->touch_events[touch_events_count].type = event.tfinger.type;
+					this->touch_events[touch_events_count].x = event.tfinger.x;
+					this->touch_events[touch_events_count].y = event.tfinger.y;
+					this->touch_events[touch_events_count].dx = event.tfinger.dx;
+					this->touch_events[touch_events_count].dy = event.tfinger.dy;
+					this->touch_events[touch_events_count].pressure = event.tfinger.pressure;
+					touch_events_count++;
+				}
 				break;
 			}
+
+			case SDL_DROPFILE:
+			{
+				SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_INFORMATION, "File dropped on window", event.drop.file, NULL );
+				SDL_free(event.drop.file);
+				break;
+			}
+
 			case SDL_WINDOWEVENT:
 			{
 				if ( event.window.event == SDL_WINDOWEVENT_MINIMIZED )
@@ -493,7 +534,7 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 	{
 		case KEYBOARD:
 		{
-			if ( this->keystate && symbol < 0x11A )
+			if ( this->keystate && symbol < keystate_count && symbol >= 0 )
 				return this->keystate[symbol];
 			return 0;
 		}
@@ -506,6 +547,14 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 			return 0;
 		}
 		case MOUSEBUTTON:
+		{
+			if ( this->mousestate & SDL_BUTTON(symbol) )
+			{
+				return 1;
+			}
+			return 0;
+		}
+		case MOUSEWHEEL:
 		{
 			if ( this->mousestate & SDL_BUTTON(symbol) )
 			{
@@ -574,3 +623,51 @@ bool CoreSystem::GamepadAdded( int32_t joystick_index )
 
 	return false;
 }
+
+
+
+void CoreSystem::VirtualGamepadAddItem( uint32_t ident, InputDevice device, std::string value )
+{
+	// -10x-10,20x20
+	VirtualGamepadButton button;
+	std::string axis;
+	std::string dimension;
+	std::string::size_type split_position;
+
+	split_position = value.find_first_of(",", 0);
+
+	if ( std::string::npos != split_position )
+	{
+		axis = value.substr(0, split_position);
+		dimension = value.substr(split_position+1);
+
+		//axis values
+		split_position = axis.find_first_of("x", 0);
+		if ( std::string::npos != split_position )
+		{
+			button.rect.x = elix::string::ToInt32( axis.substr(0, split_position) );
+			button.rect.y = elix::string::ToInt32( axis.substr(split_position+1) );
+		}
+
+		//dimension values
+		split_position = dimension.find_first_of("x", 0);
+		if ( std::string::npos != split_position )
+		{
+			button.rect.w = elix::string::ToIntU16( dimension.substr(0, split_position) );
+			button.rect.h = elix::string::ToIntU16( dimension.substr(split_position+1) );
+		}
+
+		button.device = device;
+
+		this->virtual_input.insert( std::pair<uint32_t, VirtualGamepadButton>( ident, button ) );
+	}
+
+
+
+}
+
+void CoreSystem::VirtualGamepadRemoveItem( uint32_t ident )
+{
+	this->virtual_input.erase( ident );
+}
+

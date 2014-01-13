@@ -70,6 +70,8 @@ typedef struct {
 	int16_t z;
 } LuxRect;
 
+
+
 typedef struct {
 	uint8_t r;
 	uint8_t g;
@@ -129,11 +131,14 @@ typedef enum {
 	KEYBOARD,
 	MOUSEAXIS,
 	MOUSEBUTTON,
+	MOUSEWHEEL,
 	CONTROLAXIS,
 	CONTROLBUTTON,
 	CONTROLHAT,
 	CONTROLBALL,
 	TOUCHSCREEN,
+	VIRTUALBUTTON,
+	VIRTUALAXIS,
 	HARDWARE
 } InputDevice;
 

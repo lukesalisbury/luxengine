@@ -521,7 +521,7 @@ int32_t UserInterface::Loop()
 	}
 
 	// Keyboard Events
-	while ( lux::core->InputLoop(this->_display, key_event) )
+	while ( lux::core->InputLoopGet(this->_display, key_event) )
 	{
 		if ( key_event == 27 )
 		{

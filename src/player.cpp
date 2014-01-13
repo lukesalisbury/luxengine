@@ -73,6 +73,7 @@ Player::Player(uint32_t id, uint8_t control)
 
 Player::~Player()
 {
+	this->ClearController();
 	if ( this->_entity )
 	{
 		this->_entity->Delete();

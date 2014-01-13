@@ -106,6 +106,7 @@ class Player
 		void ParseAxis( Player_Axis * axis, std::string config );
 
 		bool SetupController( std::string name );
+		void ClearController( );
 
 		void CachePointerValues();
 		void CacheAxisValues( uint8_t n );

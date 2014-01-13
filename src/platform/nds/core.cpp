@@ -188,7 +188,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 	this->touch_press = (key_states & KEY_TOUCH);
 }
 
-bool CoreSystem::InputLoop(uint16_t & key)
+bool CoreSystem::InputLoopGet(uint16_t & key)
 {
 	return 0;
 }

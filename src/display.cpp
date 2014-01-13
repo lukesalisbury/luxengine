@@ -162,7 +162,6 @@ bool DisplaySystem::Init()
 {
 	this->graphics.TextSprites(false);
 
-
 	/* Preload Spritesheets */
 	std::stringstream sprite_file;
 	std::string buffer;
@@ -189,17 +188,28 @@ void DisplaySystem::Loop(LuxState engine_state)
 	std::vector<Layer *>::iterator p;
 	for ( p = this->_layers.begin(); p != this->_layers.end(); p++ )
 	{
-		//if ( this->show_3d )
-		//	(*p)->_roll = !(*p)->static_layer;
+
+		Layer * current_layer = (*p);
 		if ( this->show_layers[i] )
-			(*p)->Display();
-		//if ( this->show_3d )
-		//	(*p)->_roll = 0;
+		{
+			if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
+			{
+				this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
+				current_layer->Display();
+				this->graphics.SetRotation(0,0,0);
+			}
+			else
+			{
+				current_layer->Display();
+			}
+		}
 		i++;
 	}
 
-	if ( this->graphics.SetRotation != NULL )
-		this->graphics.SetRotation(0,0,0);
+	if ( this->overlay_layer )
+	{
+		this->overlay_layer->Display();
+	}
 
 	this->DrawCursor();
 	this->ShowMessages();
@@ -208,11 +218,31 @@ void DisplaySystem::Loop(LuxState engine_state)
 
 void DisplaySystem::DrawGameStatic()
 {
+	int i = 0;
 	std::vector<Layer *>::iterator p;
 	for ( p = this->_layers.begin(); p != this->_layers.end(); p++ )
 	{
-		(*p)->Display();
+		Layer * current_layer = (*p);
+		if ( this->show_layers[i] )
+		{
+			if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
+			{
+				this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
+				current_layer->Display();
+				this->graphics.SetRotation(0,0,0);
+			}
+			else
+			{
+				current_layer->Display();
+			}
+		}
+		i++;
 	}
+	if ( this->overlay_layer )
+	{
+		this->overlay_layer->Display();
+	}
+
 }
 
 bool DisplaySystem::Close()
@@ -384,7 +414,7 @@ void DisplaySystem::InitialSetup()
 	}
 
 	this->graphics = GraphicsNone;
-
+	this->overlay_layer = new Layer(this, true);
 	//memset( &this->graphics, 0, sizeof(this->graphics) );
 }
 

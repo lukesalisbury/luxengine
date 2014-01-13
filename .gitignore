@@ -3,9 +3,12 @@
 *.user.*
 *.amx
 *.amx64
+*.res
 
 extra/android-project/jni/SDL2
 extra/android-project/jni/SDL2_mixer
+extra/android-project/libs
+extra/android-project/gen
 
 #################
 ## Eclipse

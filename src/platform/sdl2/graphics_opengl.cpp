@@ -69,7 +69,7 @@ extern SDL_Window * native_window;
 extern SDL_Renderer * native_renderer;
 extern std::string native_window_title;
 extern SDL_Rect native_graphics_dimension;
-
+extern uint32_t sdlgraphics_fps, sdlgraphics_fpstime;
 /* Global Variables */
 LuxColour gles_graphics_colour = { 0, 128, 0, 255 };
 
@@ -79,6 +79,8 @@ float opengl_graphic_ratio_height = 1.00;
 LuxPolygon * opengl_graphic_cursor = NULL;
 SDL_Rect native_screen_position;
 bool native_screen_stretching = false;
+
+
 
 /* Local Function */
 
@@ -216,6 +218,18 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Show()
 {
 	SDL_GL_SwapWindow(native_window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+/*
+	if ( lux::core )
+	{
+		if ( lux::core->GetTime() > (sdlgraphics_fpstime + 1000) )
+		{
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "FPS" << sdlgraphics_fps << std::endl;
+			sdlgraphics_fpstime = lux::core->GetTime();
+			sdlgraphics_fps = 0;
+		}
+	}
+	*/
 }
 
 /* Lux_OGL_Display2Screen

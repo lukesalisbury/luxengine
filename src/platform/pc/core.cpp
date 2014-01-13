@@ -353,7 +353,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 
 }
 
-bool CoreSystem::InputLoop(DisplaySystem * display, uint16_t & key)
+bool CoreSystem::InputLoopGet(DisplaySystem * display, uint16_t & key)
 {
 	SDL_Event event;
 	SDL_EnableUNICODE(1);

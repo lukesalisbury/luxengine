@@ -13,7 +13,21 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 	#include <SDL.h>
 	#include <SDL_thread.h>
+	#include <SDL_touch.h>
 	#include "base_core.h"
+
+
+	typedef struct {
+		InputDevice device;
+		int16_t state;
+		LuxRect rect;
+		int16_t radius;
+	} VirtualGamepadButton;
+
+	typedef struct {
+		uint32_t type;
+		float x, y, dx, dy, pressure;
+	} TouchEvent;
 
 	class CoreSystem: public BaseCoreSystem
 	{
@@ -22,20 +36,29 @@ Permission is granted to anyone to use this software for any purpose, including 
 			~CoreSystem();
 		private:
 			const uint8_t * keystate;
+			int keystate_count;
 			uint8_t mousestate;
 			int32_t mouseposition[2];
 
-			SDL_GameController * controller[8];
 
+			SDL_GameController * controller[8];
 			SDL_Window * native_window;
 
-			/*uint32_t fps = 0, fps_time = 0, fps_last = 0, frame_length;*/
+			TouchEvent touch_events[10];
+			std::map<uint32_t, VirtualGamepadButton> virtual_input;
+
+
+			uint32_t fps, fps_time, fps_last, frame_length;
 			bool lockfps;
 			bool mouse_focus;
+
 		public:
 			SDL_Window * GetWindow() { return native_window; }
 			bool GamepadAdded( int32_t joystick_index );
 			const char * GamepadName( uint32_t device_number );
+
+			void VirtualGamepadAddItem( uint32_t ident, InputDevice device, std::string value );
+			void VirtualGamepadRemoveItem( uint32_t ident );
 
 			void SystemMessage(uint8_t type, std::string message);
 			std::ostream& SystemMessage(uint8_t type, const char *file = NULL, int line = 0);
@@ -51,7 +74,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 			LuxState HandleFrame(LuxState old_state);
 			void RefreshInput( DisplaySystem * display );
 			int16_t GetInput(InputDevice device, uint32_t device_number, int32_t symbol);
-			bool InputLoop(DisplaySystem * display, uint16_t & key);
+			bool InputLoopGet(DisplaySystem * display, uint16_t & key);
+			bool TextListen( bool able );
+
 
 			#ifdef NETWORKENABLED
 			bool CreateMessage(uint8_t type, bool reliable);

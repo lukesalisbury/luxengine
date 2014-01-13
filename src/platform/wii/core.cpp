@@ -187,7 +187,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 
 }
 
-bool CoreSystem::InputLoop(uint16_t & key)
+bool CoreSystem::InputLoopGet(uint16_t & key)
 {
 	if (HWButton != -1) key = 27;
 	

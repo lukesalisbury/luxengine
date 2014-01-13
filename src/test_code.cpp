@@ -154,7 +154,7 @@ void luxtest::loop()
 	controller->Loop();
 
 	uint16_t key_event = 0;
-	while ( lux::core->InputLoop(luxtest::display, key_event) )
+	while ( lux::core->InputLoopGet(luxtest::display, key_event) )
 	{
 		if ( key_event == 27 )
 		{
