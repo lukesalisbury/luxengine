@@ -235,7 +235,6 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 		this->state = old_state;
 	}
 
-
 	SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
 	while( SDL_PollEvent(&event) )
@@ -338,6 +337,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 				}
 				break;
 			}
+			case SDL_FINGERDOWN:
 			case SDL_FINGERUP:
 			{
 
@@ -349,6 +349,27 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 					this->touch_events[touch_events_count].dx = event.tfinger.dx;
 					this->touch_events[touch_events_count].dy = event.tfinger.dy;
 					this->touch_events[touch_events_count].pressure = event.tfinger.pressure;
+					touch_events_count++;
+				}
+				break;
+			}
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+			{
+
+				if ( touch_events_count < 10 )
+				{
+					float x = (float)event.button.x;
+					float y = (float)event.button.y;
+					float w = (float)lux::display->screen_dimension.w;
+					float h = (float)lux::display->screen_dimension.h;
+
+					this->touch_events[touch_events_count].type = event.button.type == SDL_MOUSEBUTTONDOWN ? SDL_FINGERDOWN : SDL_FINGERUP;
+					this->touch_events[touch_events_count].x = (x / w);
+					this->touch_events[touch_events_count].y = (y / h);
+					this->touch_events[touch_events_count].dx = this->touch_events[touch_events_count].x + 0.2;
+					this->touch_events[touch_events_count].dy = this->touch_events[touch_events_count].y + 0.2;
+					this->touch_events[touch_events_count].pressure = 1.0;
 					touch_events_count++;
 				}
 				break;
@@ -396,11 +417,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	}
 
-	/*  */
-
 	this->CheckTouch( lux::display, touch_events_count );
-
-
 
 	this->RefreshInput( lux::display );
 	this->time = this->GetTime();
@@ -446,21 +463,65 @@ void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count
 {
 	if ( display )
 	{
-		for ( std::map<uint32_t, VirtualGamepadButton*>::iterator key = this->virtual_input.begin(); key != this->virtual_input.end(); key++ )
+		int32_t points[2];
+		int16_t previ_state;
+
+
+		for ( std::map<uint32_t, VirtualGamepadButton*>::iterator item = this->virtual_input.begin(); item != this->virtual_input.end(); item++ )
 		{
-			VirtualGamepadButton * button = (*key).second;
-			if ( button->object == 0)
+			VirtualGamepadButton * button = (*item).second;
+
+			if ( button->object )
+			{
+
+
+				if ( touch_events_count )
+				{
+					uint8_t c = 0;
+					while ( c < touch_events_count )
+					{
+						bool hit = false;
+						points[0] = (int32_t)(this->touch_events[c].x * display->screen_dimension.w);
+						points[1] = (int32_t)(this->touch_events[c].y * display->screen_dimension.h);
+
+						display->graphics.Display2Screen( &points[0], &points[1] );
+
+						if ( button->object->position.x <= points[0] && button->object->position.x + button->object->position.w >= points[0] )
+						{
+							if ( button->object->position.y <= points[1] && button->object->position.y + button->object->position.h >= points[1] )
+							{
+								hit = true;
+							}
+						}
+
+						if ( hit )
+						{
+							button->state = (this->touch_events[c].type = SDL_FINGERDOWN ? 1 : 0);
+						}
+
+
+
+						c++;
+					}
+				}
+				else
+				{
+					button->state = 0;
+				}
+
+			}
+			else
 			{
 				button->object = new MapObject(OBJECT_RECTANGLE);
-				button->object->position.x = ( button->rect.w < 0 ? lux::display->screen_dimension.w + button->rect.x : button->rect.x );
-				button->object->position.y = ( button->rect.h < 0 ? lux::display->screen_dimension.h + button->rect.y : button->rect.y );
+				button->object->position.x = ( button->rect.x < 0 ? display->screen_dimension.w + button->rect.x : button->rect.x );
+				button->object->position.y = ( button->rect.y < 0 ? display->screen_dimension.h + button->rect.y : button->rect.y );
 				button->object->position.w = button->rect.w;
 				button->object->position.h = button->rect.h;
 				button->object->effects.primary_colour = { 255, 0,0, 255 };
 
 				display->AddObjectToLayer( 0xFFFFFFFF, button->object, true );
-
 			}
+
 		}
 	}
 }
@@ -484,7 +545,8 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 				if ( event.key.keysym.sym == SDLK_ESCAPE ) { key = 27; }
 				if ( event.key.keysym.sym == SDLK_RETURN && ( event.key.keysym.mod & KMOD_ALT ) ) {
 					SDL_Window *window = SDL_GetWindowFromID(event.key.windowID);
-					if (window) {
+					if (window)
+					{
 						Uint32 flags = SDL_GetWindowFlags(window);
 						display->graphics.SetFullscreen( !!(flags & SDL_WINDOW_FULLSCREEN) );
 					}
@@ -593,6 +655,17 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 			}
 			return 0;
 		}
+		case VIRTUALBUTTON:
+		{
+			std::map<uint32_t, VirtualGamepadButton*>::iterator item = this->virtual_input.find( (uint32_t)symbol );
+			if ( item != this->virtual_input.end() )
+			{
+				VirtualGamepadButton * button = (*item).second;
+				return button->state;
+			}
+			return 0;
+		}
+
 		case TOUCHSCREEN:
 		{
 
@@ -660,7 +733,7 @@ bool CoreSystem::GamepadAdded( int32_t joystick_index )
 void CoreSystem::VirtualGamepadAddItem( uint32_t ident, InputDevice device, std::string value )
 {
 	// -10x-10,20x20
-	VirtualGamepadButton * button = new VirtualGamepadButton;
+	VirtualGamepadButton * button = new VirtualGamepadButton();
 	std::string axis;
 	std::string dimension;
 	std::string::size_type split_position;
@@ -689,7 +762,7 @@ void CoreSystem::VirtualGamepadAddItem( uint32_t ident, InputDevice device, std:
 		}
 
 		button->device = device;
-		button->object = 0;
+
 		this->virtual_input.insert( std::pair<uint32_t, VirtualGamepadButton*>( ident, button ) );
 	}
 	else

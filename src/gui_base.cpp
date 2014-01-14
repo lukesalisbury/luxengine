@@ -549,6 +549,9 @@ int32_t UserInterface::Loop()
 
 	last_mouse = mouse;
 
+
+	this->_display->DisplayOverlay();
+
 	this->_display->graphics.DisplayPointer(1, mousex, mousey, this->controller->PlayerColour );
 	this->_display->graphics.Show();
 	lux::core->Idle( );

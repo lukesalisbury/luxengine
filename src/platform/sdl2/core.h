@@ -27,6 +27,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 	typedef struct {
 		uint32_t type;
+		uint32_t id;
 		float x, y, dx, dy, pressure;
 	} TouchEvent;
 

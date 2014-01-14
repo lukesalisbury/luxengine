@@ -76,6 +76,7 @@ LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_Display2Screen( int32_t * x, int32_t * y)
 {
 
 }
+
 LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_BackgroundObject( MapObject background )
 {
 

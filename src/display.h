@@ -104,6 +104,7 @@ public:
 	void CacheLayers( bool able );
 	void ResortLayer( uint32_t layer );
 	void SetLayerColour( uint32_t layer, LuxColour colour );
+	void DisplayOverlay();
 
 	/* Map Objects */
 	void DrawMapObjectBorder(uint8_t position, SpriteBorder sprite_border, LuxRect object, ObjectEffect new_effects );

@@ -206,10 +206,7 @@ void DisplaySystem::Loop(LuxState engine_state)
 		i++;
 	}
 
-	if ( this->overlay_layer )
-	{
-		this->overlay_layer->Display();
-	}
+	this->DisplayOverlay();
 
 	this->DrawCursor();
 	this->ShowMessages();
@@ -238,6 +235,11 @@ void DisplaySystem::DrawGameStatic()
 		}
 		i++;
 	}
+	DisplayOverlay();
+}
+
+void DisplaySystem::DisplayOverlay()
+{
 	if ( this->overlay_layer )
 	{
 		this->overlay_layer->Display();

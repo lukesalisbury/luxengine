@@ -176,7 +176,6 @@ void Player::Loop()
 		this->CachePointerValues();
 
 		/* Button/Axis */
-
 		for (uint8_t n = 0; n < 19; n++)
 		{
 			if (n < 2)

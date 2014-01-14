@@ -379,10 +379,9 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect r
 	texture->h = texture->th = rect.h;
 	sprite->data = texture;
 	/* PNG image */
-	uint32_t * pixels = new uint32_t[texture->tw*texture->th];
+	uint32_t * pixels = new uint32_t[texture->tw*texture->th]();
 	if ( pixels )
 	{
-		memset(pixels, 0x00, texture->tw * texture->th * 4 );
 		for( uint16_t y = 0; y < texture->h; y++ )
 		{
 			for( uint16_t x = 0; x < texture->w; x++ )
