@@ -308,6 +308,8 @@ int32_t luxportal::browse_page( LuxRect page_rect )
 		luxportal::game * info = new luxportal::game( *iter );
 		if ( info->isDir  )
 			++iter;
+		else if ( info->valid )
+			++iter;
 		#if defined CUSTOMOBJECTS
 		else if ( info->url.find(".qst") != std::string::npos )
 			++iter;

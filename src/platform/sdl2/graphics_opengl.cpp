@@ -112,12 +112,16 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 		native_window_flags |= SDL_WINDOW_FULLSCREEN;
 
 	native_render_flags = SDL_RENDERER_ACCELERATED;
-	native_window_title = lux::config->GetString("project.title") + " (OpenGL Rendering)";
+	native_window_title = lux::config->GetString("project.title");
 
 
 	if ( width > height )
 	{
 		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
+	}
+	else
+	{
+		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
 	}
 
 	native_window = lux::core->GetWindow();
@@ -255,10 +259,19 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t width, uint16_t height)
 
 
 	glViewport(0, 0, width, height);
-	/*
+
 	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
 	SDL_RenderSetLogicalSize(native_renderer, width, height);
-	*/
+
+	if ( width > height )
+	{
+		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
+	}
+	else
+	{
+		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
+	}
+
 	return false;
 }
 

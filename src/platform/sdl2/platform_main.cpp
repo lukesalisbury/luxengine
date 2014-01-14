@@ -116,7 +116,11 @@ extern "C" int main( int argc, char *argv[] )
 #endif
 
 	main_args( argc, argv, gameAttached );
-
+/*
+	lux::global_config->SetString("project.file", "/sdcard/Android/data/info.mokoi.lux/files/mokoi-games/puttytris.game");
+	luxportal::use = false;
+	luxportal::active = false;
+*/
 	if ( luxportal::testmode )
 	{
 		luxtest::run();

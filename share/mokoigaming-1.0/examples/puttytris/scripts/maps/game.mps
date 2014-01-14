@@ -12,6 +12,7 @@
 
 #include <core>
 #include <helper>
+#include <controller>
 
 const DROPANIM = 160;
 const DROPTIMER = 450;
@@ -480,9 +481,9 @@ HandleGame()
 		if ( TimerCountdown(side_timer) )
 		{
 	 	 	side_timer += SIDETIMER;
-			if ( InputAxis(0,0) > 0  && allowed[2] )
+			if ( InputButton(BUTTON_ARROWRIGHT) == 1  && allowed[2] )
 				MoveObject( 1, 0);
-			else if ( InputAxis(0,0) < 0 && allowed[1]  )
+			else if ( InputButton(BUTTON_ARROWLEFT) == 1 && allowed[1]  )
 				MoveObject( -1, 0);
 			if ( InputAxis(1,0) > 16 )
 				MoveObject( 0,1 );
@@ -490,7 +491,7 @@ HandleGame()
 
 		if ( CanRotate(current_piece, (piece_state[0]+1)%4) )
 		{
-			if ( InputButton(0) == 1 )
+			if ( InputButton(BUTTON_ACTION1) == 1 )
 			{
 				piece_state[0]++;
 				piece_state[0] %= 4;
@@ -519,7 +520,7 @@ GameOverScreen()
 {
 	GraphicsDraw("Game Over", TEXT, grid_area[0] + (grid_area[2]/2) - 76, grid_area[1] + (grid_area[3]/2) - 16, 6000, 14,14);
 	GraphicsDraw("Press ❼ to Play Again", TEXT, grid_area[0] + (grid_area[2]/2) - 76, grid_area[1] + (grid_area[3]/2), 6000, 14,14);
-	if ( InputButton(6) == 1 )
+	if ( InputButton(BUTTON_MENU) == 1 )
 	{
 		StartGame()
 	}
@@ -529,7 +530,7 @@ GameOverScreen()
 NewGameScreen()
 {
 	GraphicsDraw("Press ❼ to Play", TEXT, grid_area[0] + (grid_area[2]/2) - 76, grid_area[1] + (grid_area[3]/2) - 8, 6000, 14,14);
-	if ( InputButton(6) == 1 )
+	if ( InputButton(BUTTON_MENU) == 1 )
 	{
 		StartGame();
 	}

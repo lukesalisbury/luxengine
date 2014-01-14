@@ -410,7 +410,6 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 				}
 				break;
 			}
-
 			default:
 				break;
 		}
