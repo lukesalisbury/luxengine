@@ -103,7 +103,7 @@ DisplaySystem::DisplaySystem()
 
 	if ( !is_display_setup )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Graphic System Failed" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Graphic System Failed" << std::endl;
 		if ( lux::engine )
 		{
 			lux::engine->FatalError("display.cpp: Graphic System Failed");
@@ -143,7 +143,7 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp, bool
 
 	if ( !is_display_setup )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Graphic System Failed" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Graphic System Failed" << std::endl;
 		return;
 	}
 

@@ -607,7 +607,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 
 		if ( !sdlgraphics_realscreen )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't set " << width << "x" << height << " video mode. " << SDL_GetError() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Couldn't set " << width << "x" << height << " video mode. " << SDL_GetError() << std::endl;
 			return false;
 		}
 	}
@@ -617,7 +617,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 		sdlgraphics_screen = SDL_SetVideoMode(width, height, bpp, sdlgraphics_flags );
 		if ( !sdlgraphics_screen )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't set " << width << "x" << height << " video mode. " << SDL_GetError() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Couldn't set " << width << "x" << height << " video mode. " << SDL_GetError() << std::endl;
 			return false;
 		}
 	}
@@ -1115,7 +1115,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect e
 {
 	if ( !sdlgraphics_screen )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Not a valid surface." << std::endl;
 		return;
 	}
 
@@ -1147,7 +1147,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y
 {
 	if ( !sdlgraphics_screen )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Not a valid surface." << std::endl;
 		return;
 	}
 
@@ -1189,7 +1189,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect
 {
 	if ( !sdlgraphics_screen )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Not a valid surface." << std::endl;
 		return;
 	}
 	filledEllipseRGBA(sdlgraphics_screen, dest_rect.x +(dest_rect.w/2), dest_rect.y+(dest_rect.h/2), (dest_rect.w/2), (dest_rect.h/2), effects.primary_colour.r, effects.primary_colour.g, effects.primary_colour.b,effects.primary_colour.a);

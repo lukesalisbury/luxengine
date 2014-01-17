@@ -16,6 +16,8 @@ void Config::PlatformSettings()
 {
 	#ifdef __GNUWIN32__
 	platform = "win32";
+	#else
+	platform =  SDL_GetPlatform();
 	#endif
 
 	this->SetNumber("display.bpp", 0);
@@ -60,10 +62,10 @@ void Config::PlatformSettings()
 	this->SetString("control.virtual1", "arrows|n|mouse|r,-50x-50,40x40|n|n|n|n|n|m01|n|n|r,50x-40,30x30|r,10x-40,30x30|n|n|n|n|n|k040|k041|m01|k061" );
 
 
-	this->SetString("control.set4", "keyboard1" );
+	this->SetString("control.set1", "keyboard1" );
 	this->SetString("control.set2", "gamepad0" );
 	this->SetString("control.set3", "gamepad1" );
-	this->SetString("control.set1", "virtual1" );
+	this->SetString("control.set4", "virtual1" );
 
 	this->SetBoolean("save.allowed", true );
 	this->SetString("server.ip", "127.0.0.1" );

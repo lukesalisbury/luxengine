@@ -137,7 +137,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 	native_context = SDL_GL_CreateContext(native_window);
 	if ( !native_context )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't create Renderer. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
 

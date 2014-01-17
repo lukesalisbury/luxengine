@@ -156,16 +156,15 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 	{
 		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
 	}
+	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "0", SDL_HINT_OVERRIDE );
 
-
-//	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "0", SDL_HINT_OVERRIDE );
 
 
 /*
 	native_window = SDL_CreateWindow(sdlgraphics_title.c_str(),SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, native_window_flags);
 	if ( !native_window )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't create Window. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Couldn't create Window. " << SDL_GetError() << std::endl;
 		return false;
 	}
 	SDL_GetWindowSize(native_window, &window_width, &window_height);
@@ -180,7 +179,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 
 	if ( !native_renderer )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't create Renderer. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
 
@@ -655,7 +654,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect e
 {
 	if ( !native_renderer )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Not a valid surface." << std::endl;
 		return;
 	}
 
@@ -674,7 +673,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y
 {
 	if ( !native_renderer )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Not a valid surface." << std::endl;
 		return;
 	}
 
@@ -695,7 +694,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect
 {
 	if ( !native_renderer )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Not a valid surface." << std::endl;
 		return;
 	}
 

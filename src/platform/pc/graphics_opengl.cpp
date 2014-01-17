@@ -127,7 +127,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 										  opengl_window_flags );
 	if ( !opengl_graphic_screen )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't set "
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Couldn't set "
 				  << scaled_width << "x" << scaled_height << " video mode. "
 				  << SDL_GetError() << std::endl;
 		return false;

@@ -258,6 +258,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 				switch ( event.key.keysym.sym )
 				{
 					case SDLK_ESCAPE:
+					case SDLK_AC_BACK:
 						this->state = EXITING;
 						break;
 					case SDLK_PAUSE:
@@ -353,6 +354,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 				}
 				break;
 			}
+#ifdef EMULATE_TOUCH
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
 			{
@@ -374,6 +376,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 				}
 				break;
 			}
+#endif
 			case SDL_QUIT:
 			{
 				this->state = EXITING;
@@ -420,12 +423,6 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	this->RefreshInput( lux::display );
 	this->time = this->GetTime();
-
-	if ( this->state > PAUSED || old_state >= SAVING )
-	{
-		this->state = old_state;
-	}
-
 
 	return this->state;
 }

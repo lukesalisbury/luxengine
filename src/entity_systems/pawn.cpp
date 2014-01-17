@@ -124,7 +124,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error: " << file << " " << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Lux_PawnEntity_LoadFile Error: " << file << " " << std::endl;
 			return false;
 		}
 
@@ -134,7 +134,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 
 		if ( hdr.magic != AMX_MAGIC )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
 			delete[] tempblock;
 			return false;
 		}
@@ -149,7 +149,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 
 		if ( result )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
 			delete[] memblock;
 			return false;
 		}
