@@ -2,9 +2,9 @@
 cls
 @rem Make sure these paths are correct.
 set MAKE=mingw32-make.exe 
-set MINGWPATH=f:\MinGW64
-set MSYSPATH=f:\mingw\msysbasic
-set SUPPORTPATH=f:\supportlibs
+set MINGWPATH=C:\dev\Qt\Tools\mingw48_32
+set MSYSPATH=C:\dev\mingw\msysbasic
+set SUPPORTPATH=C:\dev\supportlibs
 set PATH=%PATH%;%MINGWPATH%\bin\;%MSYSPATH%\bin;%SUPPORTPATH%\bin\
 
 set LDFLAGS=-L"%SUPPORTPATH%/lib" 

@@ -1,0 +1,28 @@
+#include <windows.h> // include for version info constants
+
+1 VERSIONINFO
+FILEVERSION 0,9,5,667
+PRODUCTVERSION 0,9,5,667
+FILETYPE VFT_APP
+{
+	BLOCK "StringFileInfo"
+	{
+		BLOCK "0C0904E4"
+		{
+			VALUE "CompanyName", ""
+			VALUE "FileVersion", "0.95"
+			VALUE "FileDescription", ""
+			VALUE "InternalName", "luxengine"
+			VALUE "LegalCopyright", "Contains Static SDL2 & SDL2_Mixer "
+			VALUE "LegalTrademarks", ""
+			VALUE "OriginalFilename", "luxengine"
+			VALUE "ProductName", "Lux Engine"
+			VALUE "ProductVersion", "0.95"
+		}
+	}
+BLOCK "VarFileInfo"
+	{
+		VALUE "Translation", 0x0C09, 1252
+	}
+}
+

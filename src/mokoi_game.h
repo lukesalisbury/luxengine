@@ -52,7 +52,7 @@ class MokoiGame
 		bool Scan( uint8_t type, std::string path, std::string dest );
 	public:
 		uint32_t id;
-		char name[256];
+		char name[512];
 		uint8_t * png;
 		uint32_t png_length;
 		std::string title;
