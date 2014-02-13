@@ -17,3 +17,4 @@ src/platform/wii
 
 c:/dev/sdl2libs/include/SDL2
 c:/dev/libcurl/include
+/usr/include

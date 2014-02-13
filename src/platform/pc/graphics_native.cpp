@@ -624,11 +624,11 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 	sdlgraphics_dimension.w = width;
 	sdlgraphics_dimension.h = height;
 
-	SDL_Surface * icon = SDL_Surface_LoadImage("./sprites/__icon256.png");
+	SDL_Surface * icon = SDL_Surface_LoadImage("./resources/icon256.png");
 
 	if ( !icon )
 	{
-		icon = SDL_Surface_LoadImage("./sprites/__icon.png");
+		icon = SDL_Surface_LoadImage("./resources/icon32.png");
 	}
 	sdlgraphics_title = lux::config->GetString("project.title") + " (Software Rendering)";
 	SDL_WM_SetCaption(sdlgraphics_title.c_str(), NULL);

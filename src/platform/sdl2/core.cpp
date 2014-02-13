@@ -513,7 +513,10 @@ void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count
 				button->object->position.y = ( button->rect.y < 0 ? display->screen_dimension.h + button->rect.y : button->rect.y );
 				button->object->position.w = button->rect.w;
 				button->object->position.h = button->rect.h;
-				button->object->effects.primary_colour = { 255, 0,0, 255 };
+				button->object->effects.primary_colour.r = button->object->effects.primary_colour.a = 255;
+				button->object->effects.primary_colour.g = button->object->effects.primary_colour.b = 0;
+
+
 
 				display->AddObjectToLayer( 0xFFFFFFFF, button->object, true );
 			}

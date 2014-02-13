@@ -54,10 +54,10 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 
 	if ( lux::game )
 	{
-		if ( lux::game->HasFile("./sprites/__icon256.png") )
-			icon = Lux_SDL2_Image2Surface("./sprites/__icon256.png");
+		if ( lux::game->HasFile("./resources/icon256.png") )
+			icon = Lux_SDL2_Image2Surface("./resources/icon256.png");
 		else
-			icon = Lux_SDL2_Image2Surface("./sprites/__icon.png");
+			icon = Lux_SDL2_Image2Surface("./resources/icon32.png");
 	}
 
 	if ( icon != NULL )

@@ -147,12 +147,12 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 
 	/* */
-	opengl_window_icon = SDL_Surface_LoadImage("./sprites/__icon256.png");
+	opengl_window_icon = SDL_Surface_LoadImage("./resources/icon256.png");
 
 	if ( !opengl_window_icon )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "256x256 icon not found." << std::endl;
-		opengl_window_icon = SDL_Surface_LoadImage("./sprites/__icon.png");
+		opengl_window_icon = SDL_Surface_LoadImage("./resources/icon32.png");
 	}
 	opengl_window_title = lux::config->GetString("project.title") + " (OpenGL Rendering)";
 	SDL_WM_SetCaption( opengl_window_title.c_str(), NULL );
