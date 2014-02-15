@@ -220,6 +220,11 @@ bool LuxEngine::Start( std::string project_file )
 		return false;
 	}
 
+	if ( !lux::game->HasFile( lux::entitysystems->GetMainScriptFile() ) )
+	{
+		this->ShowDialog("Rebuilding Entities");
+		lux::game->CompileScripts();
+	}
 
 
 	uint32_t players = lux::config->GetNumber("player.number");

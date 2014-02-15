@@ -777,3 +777,9 @@ void CoreSystem::VirtualGamepadRemoveItem( uint32_t ident )
 	this->virtual_input.erase( ident );
 }
 
+bool CoreSystem::RunExternalProgram( std::string program, std::string argument )
+{
+	this->SystemMessage( SYSTEM_MESSAGE_LOG ) << "Running " << program << " Status " << execl( program.c_str(),argument.c_str() ) << std::endl;
+	return true;
+}
+

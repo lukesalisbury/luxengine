@@ -80,7 +80,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			int16_t GetInput(InputDevice device, uint32_t device_number, int32_t symbol);
 			bool InputLoopGet(DisplaySystem * display, uint16_t & key);
 			bool TextListen( bool able );
-
+			bool RunExternalProgram( std::string program, std::string argument );
 
 			#ifdef NETWORKENABLED
 			bool CreateMessage(uint8_t type, bool reliable);

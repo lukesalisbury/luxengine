@@ -657,3 +657,26 @@ bool MokoiGame::GetStream(std::string file, std::stringstream * stream)
 	return false;
 }
 
+bool MokoiGame::CompileScripts()
+{
+	if ( this->type == MOKOI_GAME_DIRECTORY )
+	{
+		std::vector<std::string> scripts;
+		elix::path::Children( this->filename, "scripts", scripts, false, false, false );
+		elix::path::Children( this->filename, "scripts/maps", scripts, false, false, false );
+
+		for( std::vector<std::string>::iterator iter = scripts.begin(); iter != scripts.end(); ++iter )
+		{
+
+
+			lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << (*iter) << " ["<< this->filename << "]" <<  std::endl;
+
+			lux::core->RunExternalProgram( "pawn_compiler4", "--project="+ this->filename +" " + this->filename + (*iter) );
+		}
+
+
+
+	}
+	return true;
+}
+

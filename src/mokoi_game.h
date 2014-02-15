@@ -80,8 +80,11 @@ class MokoiGame
 		bool HasFile(std::string file);
 		bool FolderList(std::string folder, std::vector<std::string> *results);
 
+
+		bool CompileScripts();
 		bool LoadPatches( );
 		bool LoadPackage(std::string package_filename );
+
 
 		void Print();
 	private:

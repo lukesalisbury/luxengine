@@ -60,6 +60,7 @@ public:
 	virtual bool InputLoopGet(DisplaySystem * display, uint16_t & key) = 0;
 	virtual bool TextListen( bool able ) = 0;
 
+	bool RunExternalProgram( std::string program, std::string argument ) { return false; }
 
 #ifdef NETWORKENABLED
 	virtual bool CreateMessage(uint8_t type, bool reliable) = 0;

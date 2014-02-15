@@ -26,9 +26,9 @@ typedef struct {
 		bool (*PushString) ( mem_pointer entity_data, std::string str, native_pointer stack_mem);
 		bool (*Push) ( mem_pointer entity_data, int32_t value);
 	#ifdef __x86_64__
-	bool (*PushArrayNative) ( mem_pointer entity_data, native_type array[], uint32_t size, native_pointer stack_mem);
+		bool (*PushArrayNative) ( mem_pointer entity_data, native_type array[], uint32_t size, native_pointer stack_mem);
 	#else
-	bool (*PushArrayNative) ( mem_pointer entity_data, int32_t array[], uint32_t size, native_pointer stack_mem);
+		bool (*PushArrayNative) ( mem_pointer entity_data, int32_t array[], uint32_t size, native_pointer stack_mem);
 	#endif
 
 		
@@ -48,6 +48,15 @@ class EntitySystem
 		~EntitySystem()
 		{
 			Lux_PawnCache_Cleanup();
+		}
+
+		std::string GetMainScriptFile()
+		{
+			#ifdef __x86_64__
+			return "./c/scripts/main.amx64";
+			#else
+			return "./c/scripts/main.amx";
+			#endif
 		}
 
 		void SetSaveMode(uint8_t mode)
