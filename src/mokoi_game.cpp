@@ -667,15 +667,13 @@ bool MokoiGame::CompileScripts()
 
 		for( std::vector<std::string>::iterator iter = scripts.begin(); iter != scripts.end(); ++iter )
 		{
-
-
-			lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << (*iter) << " ["<< this->filename << "]" <<  std::endl;
-
-			lux::core->RunExternalProgram( "pawn_compiler4", "--project="+ this->filename +" " + this->filename + (*iter) );
+			if ( elix::string::HasSuffix( (*iter), ".mps") )
+			{
+				lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << (*iter) << " ["<< this->filename << "]" <<  std::endl;
+				lux::core->RunExternalProgram( "pawn_compiler4", "--project="+ this->filename +" " + this->filename + (*iter) );
+			}
 		}
-
-
-
+		this->ScanDirectory( MOKOI_GAME_DIRECTORY,  this->filename, "", false );
 	}
 	return true;
 }

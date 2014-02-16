@@ -222,7 +222,7 @@ bool LuxEngine::Start( std::string project_file )
 
 	if ( !lux::game->HasFile( lux::entitysystems->GetMainScriptFile() ) )
 	{
-		this->ShowDialog("Rebuilding Entities");
+		lux::screen::display("Rebuilding Entities");
 		lux::game->CompileScripts();
 	}
 

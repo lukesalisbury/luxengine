@@ -777,9 +777,15 @@ void CoreSystem::VirtualGamepadRemoveItem( uint32_t ident )
 	this->virtual_input.erase( ident );
 }
 
+
+#include "elix_program.hpp"
 bool CoreSystem::RunExternalProgram( std::string program, std::string argument )
 {
-	this->SystemMessage( SYSTEM_MESSAGE_LOG ) << "Running " << program << " Status " << execl( program.c_str(),argument.c_str() ) << std::endl;
+	std::string cmdline = elix::program::RootDirectory( ) + ELIX_DIR_SSEPARATOR + program + " " + argument;
+	this->SystemMessage( SYSTEM_MESSAGE_LOG ) << "Running " << program << " Status " << system( cmdline.c_str() ) << std::endl;
+
+
+
 	return true;
 }
 
