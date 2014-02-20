@@ -14,7 +14,7 @@ src/platform/sdl2
 src/platform/sogl
 src/platform/wii
 ../elix/src
-
 c:/dev/sdl2libs/include/SDL2
 c:/dev/libcurl/include
 /usr/include
+/usr/include/SDL2

@@ -190,9 +190,9 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 	opengl_graphic_cursor->SetPoint(2, 0, 12);
 
 
-	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
+//	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
 
-	SDL_RenderSetLogicalSize(native_renderer, width, height);
+//	SDL_RenderSetLogicalSize(native_renderer, width, height);
 
 	Lux_SDL2_SetWindowIcon( native_window );
 	SDL_SetWindowTitle( native_window, native_window_title.c_str() );
@@ -211,9 +211,13 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 		glBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC) SDL_GL_GetProcAddress("glBindFramebufferEXT");
 		glCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC) SDL_GL_GetProcAddress("glCheckFramebufferStatusEXT");
 
-		fbo.w = fbo.tw = native_graphics_dimension.w;
-		fbo.h = fbo.th = native_graphics_dimension.h;
+		fbo.w = (native_graphics_dimension.w);
+		fbo.h = (native_graphics_dimension.h);
+		fbo.tw = lux::OpenGLTexture::power(native_graphics_dimension.w);
+		fbo.th = lux::OpenGLTexture::power(native_graphics_dimension.h);
+
 		fbo.pot = true;
+
 		glGenFramebuffersEXT(1, &fbo_frame);
 		glGenTextures(1, &fbo.pointer);
 
@@ -222,11 +226,12 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fbo.tw, fbo.tw, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbo.tw, fbo.tw, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo.pointer, 0);
+
 
 		GLenum fbo_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 		if ( fbo_status != GL_FRAMEBUFFER_COMPLETE_EXT )
@@ -320,7 +325,6 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t width, uint16_t height)
 	opengl_graphic_ratio_width = (float)native_graphics_dimension.w/(float)width;
 	opengl_graphic_ratio_height = (float)native_graphics_dimension.h/(float)height;
 
-
 	glViewport(0, 0, width, height);
 
 	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
@@ -346,7 +350,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t width, uint16_t height)
 LUX_DISPLAY_FUNCTION bool Lux_OGL_SetFullscreen( bool able )
 {
 
-	SDL_SetWindowFullscreen( native_window, ( able ? SDL_WINDOW_FULLSCREEN : 0 ) );
+	SDL_SetWindowFullscreen( native_window, ( able ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0 ) );
 
 	return true;
 }
@@ -612,6 +616,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
 	if ( fbo_supported )
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER, fbo_frame);
+		glLoadIdentity();
 		return true;
 	}
 
@@ -630,9 +635,9 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer )
 		LuxVertex dest;
 		LuxVertex coords[4];
 		LuxColour colors[4];
-		uint8_t using_shader = SHADER_NEGATIVE;
+		uint8_t using_shader = NUM_SHADERS;
 
-		dest.set( 0, 0, 0 );
+		dest.set( 0, 0, layer );
 
 		OpenGLShader::SetPrimaryColor( 1.0, 1.0, 1.0, 1.00 );
 		OpenGLShader::SetSecondaryColor( 0.0, 1.0,0.0, 1.00 );
@@ -640,7 +645,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer )
 
 		colors[0] = colors[1] = colors[2] = colors[3] = colour::white;
 
-		coords[0].set2( 0, 0, 0.0, 0.0, 1.0);
+		coords[0].set2( 0, 0, 0, 0.0, 1.0);
 		coords[1].set2( fbo.tw, 0, 0.0, 1.0, 1.0 );
 		coords[2].set2( 0, fbo.th, 0.0, 0.0, 0.0 );
 		coords[3].set2( fbo.tw, fbo.th, 0.0, 1.0, 0.0 );

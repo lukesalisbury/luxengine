@@ -309,10 +309,13 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 					}
 					case SDLK_RETURN:
 					{
-						SDL_Window *window = SDL_GetWindowFromID(event.key.windowID);
-						if (window) {
-							Uint32 flags = SDL_GetWindowFlags(window);
-							lux::display->graphics.SetFullscreen( !!(flags & SDL_WINDOW_FULLSCREEN) );
+						if ( (event.key.keysym.mod & KMOD_ALT) )
+						{
+							SDL_Window *window = SDL_GetWindowFromID(event.key.windowID);
+							if (window) {
+								Uint32 flags = SDL_GetWindowFlags(window);
+								lux::display->graphics.SetFullscreen( !(flags & SDL_WINDOW_FULLSCREEN_DESKTOP) );
+							}
 						}
 						break;
 					}
