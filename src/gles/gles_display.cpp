@@ -200,6 +200,9 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawPolygon( int16_t * x_point, int16_t *y_po
 
 	gles::render( GL_TRIANGLE_FAN, coords, point_count, NULL, dest, colors, 0, gles::scale, gles::rotation, using_shader );
 
+	delete[] coords;
+	delete[] colors;
+
 }
 
 LUX_DISPLAY_FUNCTION void Lux_GLES_DrawRect( LuxRect dest_rect, ObjectEffect effect)

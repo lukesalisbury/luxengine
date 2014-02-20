@@ -64,6 +64,7 @@ public:
 	bool show_3d;
 	bool show_cursor;
 	bool show_layers[7];
+
 	bool SetCursor( bool able );
 	void InitialSetup();
 	void DrawCursor();

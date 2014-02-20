@@ -347,7 +347,7 @@ namespace OpenGLShader
 	{
 		if (!OpenGLShaderImpl::supported)
 			return;
-		/* Create one program object to rule them all */
+
 		data->program = OpenGLShaderImpl::CreateProgramObject();
 
 		/* Create the vertex shader */
@@ -366,13 +366,9 @@ namespace OpenGLShader
 			return;
 		}
 
-		/* ... and in the darkness bind them */
 		OpenGLShaderImpl::AttachShader(data->program, data->vert_shader);
-		glError(__FILE__, __LINE__);
 		OpenGLShaderImpl::AttachShader(data->program, data->frag_shader);
-		glError(__FILE__, __LINE__);
 		OpenGLShaderImpl::LinkProgram(data->program);
-		glError(__FILE__, __LINE__);
 	}
 
 	void SetPrimaryColor( float r, float g, float b, float a )

@@ -103,12 +103,19 @@ bool WorldSystem::Init( )
 	return true;
 }
 
+bool WorldSystem::PreClose()
+{
+	if ( this->_entities )
+		this->_entities->PreClose();
+	return true;
+}
+
+
 bool WorldSystem::Close()
 {
 	this->_collision.clear();
 
-	if ( this->_entities )
-		delete this->_entities;
+
 
 	for( std::map<uint32_t, MokoiMap *>::iterator iter = map_list.begin(); iter != map_list.end(); ++iter )
 	{
@@ -122,6 +129,10 @@ bool WorldSystem::Close()
 		delete iter->second;
 	}
 	this->section_list.clear();
+
+	if ( this->_entities )
+		delete this->_entities;
+
 	return true;
 }
 

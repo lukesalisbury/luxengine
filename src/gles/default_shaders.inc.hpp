@@ -137,6 +137,75 @@ Permission is granted to anyone to use this software for any purpose, including 
 		"		gl_FragColor = color;\n"
 		"	}\n"
 		"}"
+		},
+		/* SHADER_GREYSCALE */
+		{ 0, 0, 0,
+		/* vertex shader */
+		"varying vec4 v_color;\n"
+		"varying vec2 v_texCoord;\n"
+		"\n"
+		"void main()\n"
+		"{\n"
+		"	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
+		"	v_color = gl_Color;\n"
+		"	v_texCoord = vec2(gl_MultiTexCoord0);\n"
+		"}",
+		/* fragment shader */
+		"varying vec4 v_color;\n"
+		"varying vec2 v_texCoord;\n"
+		"uniform sampler2D tex0;\n"
+		"uniform vec4 FirstColour;\n"
+		"uniform vec4 SecondColour;\n"
+		"\n"
+		"void main()\n"
+		"{\n"
+		"	vec4 color = texture2D(tex0, v_texCoord);\n"
+		"	float gray = (color.r + color.g + color.b) / 3.0;\n"
+		"	vec3 grayscale = vec3(gray);\n"
+		"	gl_FragColor = vec4(grayscale, color.a);\n"
+		"}"
+		},
+		/* SHADER_CUSTOM1 */
+		{ 0, 0, 0,
+		/* vertex shader */
+		"",
+		/* fragment shader */
+		""
+		},
+		/* SHADER_CUSTOM2 */
+		{ 0, 0, 0,
+		/* vertex shader */
+		"",
+		/* fragment shader */
+		""
+		},
+		/* SHADER_CUSTOM3 */
+		{ 0, 0, 0,
+		/* vertex shader */
+		"",
+		/* fragment shader */
+		""
+		},
+		/* SHADER_CUSTOM4 */
+		{ 0, 0, 0,
+		/* vertex shader */
+		"",
+		/* fragment shader */
+		""
+		},
+		/* SHADER_CUSTOM5 */
+		{ 0, 0, 0,
+		/* vertex shader */
+		"",
+		/* fragment shader */
+		""
+		},
+		/* SHADER_CUSTOM6 */
+		{ 0, 0, 0,
+		/* vertex shader */
+		"",
+		/* fragment shader */
+		""
 		}
 	};
 #endif

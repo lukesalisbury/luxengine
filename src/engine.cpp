@@ -117,6 +117,8 @@ void LuxEngine::Close()
 
 	if ( lux::world )
 	{
+		lux::world->PreClose();
+
 		lux::world->Close();
 	}
 
@@ -175,7 +177,7 @@ bool LuxEngine::Start( std::string project_file )
 		if ( this->state == GAMEERROR )
 			return false;
 
-		lux::game->Print();
+		//lux::game->Print();
 
 		if ( lux::config->Has("package.main") )
 		{

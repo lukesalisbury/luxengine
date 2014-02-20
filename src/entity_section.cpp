@@ -43,6 +43,7 @@ EntitySection::~EntitySection()
 	}
 	if ( this->parent )
 		delete this->parent;
+
 	this->children.clear();
 	this->initialised = false;
 }
@@ -190,6 +191,29 @@ void EntitySection::Switch(fixed x, fixed y)
 			(*iter)->y += y;
 			(*iter)->Update();
 			iter++;
+		}
+	}
+}
+void EntitySection::PreClose()
+{
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < EntitySection Close " << this->map_id << std::endl;
+	if ( this->parent )
+	{
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Section Entity Close()" << std::endl;
+		this->parent->Close();
+	}
+
+	if ( this->children.size() )
+	{
+		std::vector<Entity *>::iterator iter = this->children.begin();
+		while( iter !=  this->children.end() )
+		{
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Entity " << (*iter)->id << " Close()" << std::endl;
+			if ( !(*iter)->deleted )
+			{
+				(*iter)->Close();
+				iter++;
+			}
 		}
 	}
 }

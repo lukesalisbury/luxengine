@@ -113,13 +113,11 @@ DisplaySystem::DisplaySystem()
 
 	this->cache_sprites = (this->graphics.CacheSprite);
 
-	std::string layername = "layer.staticX";
-	for (int i = 0; i < 7; i++)
+
+	for (uint8_t i = 0; i < 7; i++)
 	{
-		layername.erase( layername.end() - 1 );
-		layername.append( 1, i+48 );
 		this->show_layers[i] = true;
-		this->_layers.push_back( new Layer( this, lux::config->GetBoolean(layername) ) );
+		this->_layers.push_back( new Layer( this, i ) );
 	}
 	lux::media->Init(this->graphics);
 }
@@ -192,6 +190,7 @@ void DisplaySystem::Loop(LuxState engine_state)
 		Layer * current_layer = (*p);
 		if ( this->show_layers[i] )
 		{
+			this->graphics.CacheDisplay(current_layer->_z);
 			if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
 			{
 				this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
@@ -202,6 +201,7 @@ void DisplaySystem::Loop(LuxState engine_state)
 			{
 				current_layer->Display();
 			}
+			this->graphics.DrawCacheDisplay( current_layer->_z );
 		}
 		i++;
 	}

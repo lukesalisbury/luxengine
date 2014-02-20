@@ -1,22 +1,23 @@
-Display Styles
+DisplayStyles
 Normal
-Vertical Gradient
-Horizontal Gradient
+VerticalGradient
+HorizontalGradient
 Glow
 Outline
-Replace Colour
+ReplaceColour
 Negative
 Display
-Function Used:
+FunctionUsed
 Line
 Circle
 Rectangle
 Polygon
-Display Objects
+DisplayObjects
 Animation
-asdasd
-asdasd
-asdasdasd
-LANG-19
-LANG-20
-LANG-21
+Tinting
+Rotating
+Text
+Tiling
+Scaling
+Borders
+VirtualSprites

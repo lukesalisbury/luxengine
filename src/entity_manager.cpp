@@ -39,9 +39,7 @@ EntityManager::EntityManager()
 
 EntityManager::~EntityManager()
 {
-	this->_global = this->_keyboard = NULL;
 	this->_entities.clear();
-
 }
 
 void EntityManager::SetSaveMode(uint8_t mode)

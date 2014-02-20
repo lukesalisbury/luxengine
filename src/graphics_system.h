@@ -48,6 +48,9 @@ bool Lux_GRAPHICS_FreeSprite ( LuxSprite * sprite );
 //void * Lux_GRAPHICS_CacheSprite ( LuxSprite * sprite, ObjectEffect fx ); //Use NULL instead
 LuxSprite * Lux_GRAPHICS_PNGtoSprite( uint8_t * data, uint32_t size );
 
+bool Lux_GRAPHICS_CacheDisplay( uint8_t layer );
+bool Lux_GRAPHICS_DrawCacheDisplay(uint8_t layer);
+
 
 
 

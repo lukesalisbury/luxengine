@@ -122,7 +122,7 @@ void LuxSaveState::SetInformation( uint32_t id, uint8_t save_file_type, std::str
 /* LuxSaveState::PreSave
  *
  */
-bool LuxSaveState::PreSave( EntityManager * entity_manager)
+bool LuxSaveState::PreSave( EntityManager * entity_manager )
 {
 	uint8_t allow_access = 0;
 

@@ -54,6 +54,9 @@ typedef struct {
 	void (* DrawPolygon) ( int16_t * x_point, int16_t * y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture );
 	void (* DrawLine) ( LuxRect points, ObjectEffect effects );
 	void (* DrawText) ( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_text );
+
+	bool (* CacheDisplay ) ( uint8_t layer );
+	bool (* DrawCacheDisplay ) ( uint8_t layer );
 } GraphicSystem;
 
 

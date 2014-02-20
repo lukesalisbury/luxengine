@@ -20,7 +20,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	class Layer
 	{
 		public:
-			Layer(DisplaySystem * parent , bool is_static);
+			Layer(DisplaySystem * parent, uint8_t layer_value);
 			~Layer();
 			bool _cachedynamic;
 			LuxColour colour;
@@ -34,6 +34,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			std::list<MapObject *> objects_static;
 			std::list<MapObject *> objects_dynamic;
 			fixed _x, _y, _z, _w, _h;
+			uint8_t display_layer;
 			fixed _mapx, _mapy, _mapz;
 			uint32_t _mapw, _maph, wrap_mapw, wrap_maph;
 			fixed _oldx, _oldy, _oldz;

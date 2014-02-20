@@ -13,6 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "world.h"
 #include "core.h"
 #include "misc_functions.h"
+#include "game_config.h"
 
 #define MAX_LAYER_OBJECTS 20480
 
@@ -49,7 +50,7 @@ ObjectEffect Lux_Util_MergeEffects( LuxColour mod, ObjectEffect source )
 /* Layer
 
 */
-Layer::Layer( DisplaySystem * parent, bool is_static )
+Layer::Layer(DisplaySystem * parent, uint8_t layer_value )
 {
 	this->_x = 0;
 	this->_y = 0;
@@ -60,11 +61,16 @@ Layer::Layer( DisplaySystem * parent, bool is_static )
 	this->_parent = parent;
 	this->_roll = this->_pitch = this->_yaw = 0;
 	this->colour = (LuxColour){ 255, 255, 255, 255 };
-	this->static_layer = is_static;
 	this->display_dimension = parent->screen_dimension;
 	this->display_dimension.x -= 16;
 	this->display_dimension.y -= 16;
 	this->refreshz = true;
+	this->display_layer = layer_value;
+
+	std::string layername = "layer.static";
+	layername.append( 1, this->display_layer + 48 );
+
+	this->static_layer =  lux::config->GetBoolean(layername);
 }
 
 Layer::~Layer()

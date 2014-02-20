@@ -27,7 +27,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "platform_functions.h"
 
-#define GL_GLEXT_PROTOTYPES 1
+
 
 
 
@@ -58,8 +58,10 @@ GraphicSystem GraphicsOpenGL = {
 	&Lux_GLES_DrawCircle,
 	&Lux_GLES_DrawPolygon,
 	&Lux_GLES_DrawLine,
-	&Lux_GLES_DrawText
+	&Lux_GLES_DrawText,
 
+	&Lux_OGL_CacheDisplay,
+	&Lux_OGL_DrawCacheDisplay
 };
 
 /* Shared */
@@ -81,8 +83,16 @@ SDL_Rect native_screen_position;
 bool native_screen_stretching = false;
 
 
+Texture fbo;
+GLuint fbo_frame, fbo_depthBuffer;
+bool fbo_supported = false;
 
 /* Local Function */
+PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffersEXT;
+PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT;
+PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2DEXT;
+PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebufferEXT;
+PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatusEXT;
 
 
 /* Global Function */
@@ -143,9 +153,6 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 	SDL_GL_MakeCurrent(native_window, native_context);
 
-
-
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Video Driver: OpenGL " << std::endl;
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Vendor: " << glGetString(GL_VENDOR) << std::endl;
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Renderer: " << glGetString(GL_RENDERER) << std::endl;
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Version: " << glGetString(GL_VERSION) << std::endl;
@@ -193,6 +200,49 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 	SDL_DisableScreenSaver();
 
+	/* Create FBO */
+
+	if ( SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object") )
+	{
+
+		glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC) SDL_GL_GetProcAddress("glGenFramebuffersEXT");
+		glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC) SDL_GL_GetProcAddress("glDeleteFramebuffersEXT");
+		glFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) SDL_GL_GetProcAddress("glFramebufferTexture2DEXT");
+		glBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC) SDL_GL_GetProcAddress("glBindFramebufferEXT");
+		glCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC) SDL_GL_GetProcAddress("glCheckFramebufferStatusEXT");
+
+		fbo.w = fbo.tw = native_graphics_dimension.w;
+		fbo.h = fbo.th = native_graphics_dimension.h;
+		fbo.pot = true;
+		glGenFramebuffersEXT(1, &fbo_frame);
+		glGenTextures(1, &fbo.pointer);
+
+		glBindFramebufferEXT(GL_FRAMEBUFFER, fbo_frame);
+		glBindTexture(GL_TEXTURE_2D, fbo.pointer);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fbo.tw, fbo.tw, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo.pointer, 0);
+
+		GLenum fbo_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+		if ( fbo_status != GL_FRAMEBUFFER_COMPLETE_EXT )
+		{
+			lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << "Framebuffer error " << fbo_status << std::endl;
+		}
+		else
+		{
+			fbo_supported = true;
+		}
+		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+	}
+	else
+	{
+		lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << "No Framebuffer Support" << std::endl;
+	}
 	return true;
 }
 
@@ -204,6 +254,13 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
 	Lux_GLES_UnloadFont();
 	SDL_GL_DeleteContext(native_context);
 	SDL_EnableScreenSaver();
+
+
+	if ( SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object") )
+	{
+		glDeleteTextures(1, &fbo.pointer);
+		glDeleteFramebuffersEXT(1, &fbo_frame);
+	}
 }
 
 /* Lux_OGL_Update
@@ -223,6 +280,12 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Show()
 	SDL_GL_SwapWindow(native_window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	if ( fbo_supported )
+	{
+		glBindFramebufferEXT(GL_FRAMEBUFFER, fbo_frame);
+		glClear( GL_COLOR_BUFFER_BIT);
+		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+	}
 /*
 	if ( lux::core )
 	{
@@ -247,8 +310,8 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Display2Screen( int32_t * x, int32_t * y)
 	*y = (int32_t)((float)*y * opengl_graphic_ratio_height);
 }
 
-/* Lux_OGL_Display2Screen
- * Converts display location to screen location
+/* Lux_OGL_Resize
+ *
  @ width:
  @ height:
  */
@@ -542,3 +605,61 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_SetRotation( int16_t roll, int16_t pitch, int1
 {
 
 }
+
+
+LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
+{
+	if ( fbo_supported )
+	{
+		glBindFramebufferEXT(GL_FRAMEBUFFER, fbo_frame);
+		return true;
+	}
+
+	return false;
+}
+
+
+
+LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer )
+{
+	if ( fbo_supported )
+	{
+
+		LuxVertex scale = { 1, 1, 1 };
+		LuxVertex rotation = { 0,0, 0 };
+		LuxVertex dest;
+		LuxVertex coords[4];
+		LuxColour colors[4];
+		uint8_t using_shader = SHADER_NEGATIVE;
+
+		dest.set( 0, 0, 0 );
+
+		OpenGLShader::SetPrimaryColor( 1.0, 1.0, 1.0, 1.00 );
+		OpenGLShader::SetSecondaryColor( 0.0, 1.0,0.0, 1.00 );
+
+
+		colors[0] = colors[1] = colors[2] = colors[3] = colour::white;
+
+		coords[0].set2( 0, 0, 0.0, 0.0, 1.0);
+		coords[1].set2( fbo.tw, 0, 0.0, 1.0, 1.0 );
+		coords[2].set2( 0, fbo.th, 0.0, 0.0, 0.0 );
+		coords[3].set2( fbo.tw, fbo.th, 0.0, 1.0, 0.0 );
+
+
+		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+
+		gles::render( GLES_DEFAULT_PRIMITIVE, coords, 4, &fbo, dest, colors, 42, scale, rotation, using_shader );
+
+
+
+		//glBindFramebufferEXT(GL_FRAMEBUFFER, fbo_frame);
+		//glClear( GL_COLOR_BUFFER_BIT);
+		//glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+
+	}
+
+
+	return false;
+}
+
+

@@ -34,7 +34,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			bool Loop();
 			void Init();
+			void PreClose();
 			void Close();
+
 			void Switch(fixed x, fixed y);
 			bool Save(elix::File *current_save_file);
 			bool Restore(elix::File *current_save_file);

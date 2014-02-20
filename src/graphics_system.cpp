@@ -47,8 +47,10 @@ GraphicSystem GraphicsNone = {
 	&Lux_GRAPHICS_DrawCircle,
 	&Lux_GRAPHICS_DrawPolygon,
 	&Lux_GRAPHICS_DrawLine,
-	&Lux_GRAPHICS_DrawText
+	&Lux_GRAPHICS_DrawText,
 
+	&Lux_GRAPHICS_CacheDisplay,
+	&Lux_GRAPHICS_DrawCacheDisplay
 };
 
 
@@ -167,3 +169,14 @@ LUX_DISPLAY_FUNCTION LuxSprite * Lux_GRAPHICS_PNGtoSprite( uint8_t * data, uint3
 {
 	return NULL;
 }
+
+LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_CacheDisplay(uint8_t layer)
+{
+	return false;
+}
+
+LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_DrawCacheDisplay( uint8_t layer )
+{
+	return false;
+}
+

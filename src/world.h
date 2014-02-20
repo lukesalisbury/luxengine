@@ -26,6 +26,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			bool Init( );
 			void Loop(LuxState engine_state);
+			bool PreClose();
 			bool Close();
 
 			/* Save */

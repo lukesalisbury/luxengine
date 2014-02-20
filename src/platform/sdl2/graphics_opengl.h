@@ -36,4 +36,8 @@ bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> 
 bool Lux_OGL_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children);
 bool Lux_OGL_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children);
 bool Lux_OGL_FreeSprite( LuxSprite * sprite );
+
+bool Lux_OGL_CacheDisplay(uint8_t layer);
+bool Lux_OGL_DrawCacheDisplay(uint8_t layer);
+
 #endif
