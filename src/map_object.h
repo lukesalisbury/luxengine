@@ -22,6 +22,7 @@ class MapObject;
 #include "lux_polygon.h"
 #include "lux_virtual_sprite.h"
 
+#define OBJECT_GLOBAL_VALUE 0x80000000
 
 class MapObject
 {
@@ -31,21 +32,29 @@ class MapObject
 
 		MapObject * clone() const { return new MapObject( *this ); }
 
+	private:
+
+	public:
 		ObjectEffect effects;
-		std::string image;
-		std::string id;
 		LuxRect position;
 		uint8_t layer;
+
+		std::string sprite;
+		std::string ident;
+
 		int16_t offset_x, offset_y;
-		uint16_t sprite_width;
-		uint16_t sprite_height;
-		uint32_t static_map_id;
-		uint32_t layer_ref;
+		uint16_t sprite_width, sprite_height;
+
+		uint32_t layer_reference;
+
 		bool hidden;
 		bool can_remove;
-		bool global;
 
-		void Toggle();
+		uint32_t static_map_id;
+		uint32_t GetStaticMapID() const;
+		void SetStaticMapID(const uint32_t &value, const bool global);
+
+		void ToggleHidden();
 		bool CollisionRectangle( LuxRect rect[7] );
 
 		/* Animations */
@@ -65,14 +74,16 @@ class MapObject
 		void SetData(mem_pointer, uint8_t type);
 		void FreeData();
 
+		/* Sprite type */
 		mem_pointer GetImage( ObjectEffect fx );
 		LuxSprite * GetCurrentSprite( );
 		LuxSprite * GetAnimationFrame( LuxSprite * orig, bool no_increment = false);
 
+		/* Polygon type */
 		LuxPolygon * GetPolygon();
 		void SetPolygon(LuxPolygon * data);
 
-		/* canvas type */
+		/* Canvas type */
 		LuxCanvas * GetCanvas();
 		void SetCanvas(LuxCanvas * data);
 
@@ -87,15 +98,16 @@ class MapObject
 
 		/* Save */
 		void Save( elix::File *current_save_file );
-		void Restore(elix::File *current_save_file);
+		void Restore( elix::File *current_save_file );
 
-		/* */
-		std::string Name();
-		std::string Info();
+		/* Information */
+		std::string TypeName();
+		std::string GetInfo();
 		void SetZPos(int32_t z);
 
-	private:
 
+
+private:
 		/* Data */
 		mem_pointer data;
 		LuxSprite * PeekSprite();

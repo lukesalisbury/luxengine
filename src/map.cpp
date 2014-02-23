@@ -441,15 +441,14 @@ uint32_t MokoiMap::AddObject(MapObject * object, bool is_static )
 		this->object_cache_count++;
 		if ( is_static )
 		{
-			object->static_map_id = this->object_cache_count;
+			object->SetStaticMapID( this->object_cache_count, false );
+			object_id = object->GetStaticMapID();
 			this->object_cache[object->static_map_id] = object;
-			if ( this->active )
-				lux::display->AddObjectToLayer(object->layer, object, true);
-			return object->static_map_id;
 		}
-		else if ( this->active )
+
+		if ( this->active )
 		{
-			lux::display->AddObjectToLayer(object->layer, object, false);
+			lux::display->AddObjectToLayer(object->layer, object, is_static );
 		}
 	}
 	return object_id;
@@ -474,12 +473,12 @@ void MokoiMap::ReplaceObjectsSheets( std::string old_sheet, std::string new_shee
 		MapObject * object = (*p);
 		if ( object->type == OBJECT_SPRITE )
 		{
-			std::string sheet = object->image.substr(0, object->image.find_first_of(':'));
+			std::string sheet = object->sprite.substr(0, object->sprite.find_first_of(':'));
 			if ( !old_sheet.compare( sheet ) )
 			{
 				object->FreeData();
-				std::string sprite = object->image.substr(object->image.find_first_of(':'));
-				object->image = new_sheet + sprite;
+				std::string sprite = object->sprite.substr(object->sprite.find_first_of(':'));
+				object->sprite = new_sheet + sprite;
 				object->SetData(NULL, OBJECT_SPRITE);
 			}
 		}
@@ -495,7 +494,7 @@ bool MokoiMap::RemoveObject( uint32_t ident )
 		lux::display->RemoveObject(object->layer, object);
 		this->object_cache.erase(ident);
 
-		if ( !object->layer_ref )
+		if ( !object->layer_reference )
 			delete object;
 
 		return true;

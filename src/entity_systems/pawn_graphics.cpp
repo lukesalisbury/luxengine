@@ -41,6 +41,10 @@ MapObject * Lux_PawnEntity_GetObject(AMX * amx, uint32_t object_id )
 	return object;
 }
 
+
+
+
+
 /** Misc Functions */
 
 /** pawnGraphicsType
@@ -93,7 +97,7 @@ static cell AMX_NATIVE_CALL pawnSheetReplace(AMX *amx, const cell *params)
 static cell AMX_NATIVE_CALL pawnGraphicsDraw(AMX *amx, const cell *params)
 {
 	MapObject * new_object = new MapObject();
-	new_object->image = Lux_PawnEntity_GetString(amx, params[1]);
+	new_object->sprite = Lux_PawnEntity_GetString(amx, params[1]);
 	new_object->type = (uint8_t)params[2];
 	new_object->position.x = params[3];
 	new_object->position.y = params[4];
@@ -195,7 +199,7 @@ static cell AMX_NATIVE_CALL pawnObjectCreate(AMX *amx, const cell *params)
 	if ( lux::world->active_map )
 	{
 		MapObject * new_object = new MapObject();
-		new_object->image = Lux_PawnEntity_GetString(amx, params[1]);
+		new_object->sprite = Lux_PawnEntity_GetString(amx, params[1]);
 		new_object->type = (uint8_t)params[2];
 
 		new_object->position.x = params[3];
@@ -366,7 +370,7 @@ static cell AMX_NATIVE_CALL pawnObjectReplace(AMX *amx, const cell *params)
 			// Check if we are really changing object
 			if ( object->type == type )
 			{
-				if ( !object->image.compare(name) )
+				if ( !object->sprite.compare(name) )
 					return 0;
 			}
 
@@ -378,7 +382,7 @@ static cell AMX_NATIVE_CALL pawnObjectReplace(AMX *amx, const cell *params)
 
 			object->FreeData();
 
-			object->image = name;
+			object->sprite = name;
 			object->type = type;
 			object->timer = 0;
 
@@ -411,7 +415,7 @@ static cell AMX_NATIVE_CALL pawnObjectToggle(AMX *amx, const cell *params)
 	if ( object )
 	{
 		if ( object->hidden == params[2] )
-			object->Toggle();
+			object->ToggleHidden();
 	}
 	return 0;
 }

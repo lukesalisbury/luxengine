@@ -1,0 +1,5 @@
+#ifndef FFI_FUNCTIONS_H
+#define FFI_FUNCTIONS_H
+
+
+#endif // FFI_FUNCTIONS_H

@@ -122,7 +122,7 @@ bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object
 
 		if ( entity_file_name.length() )
 		{
-			Entity * new_entity = lux::entities->NewEntity(object->id, entity_file_name, ( is_global_entity ? 0 : map->Ident() ) );
+			Entity * new_entity = lux::entities->NewEntity(object->ident, entity_file_name, ( is_global_entity ? 0 : map->Ident() ) );
 			if ( new_entity )
 			{
 				cell_colour temporary_colour_value;
@@ -151,7 +151,7 @@ bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object
 					map->object_cache[object->static_map_id] = object;
 				}
 
-				new_entity->AddSetting("object-image", object->image );
+				new_entity->AddSetting("object-image", object->sprite );
 				new_entity->AddSetting("object-type", (uint32_t)object->type );
 				new_entity->AddSetting("object-width", (uint32_t)object->position.w);
 				new_entity->AddSetting("object-height", (uint32_t)object->position.h);
@@ -205,12 +205,12 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 
 
 	tinyxml2::QueryStringAttribute(object_element, "type", obj_type );
-	tinyxml2::QueryStringAttribute(object_element, "value", object->image );
-	tinyxml2::QueryStringAttribute(object_element, "id", object->id );
+	tinyxml2::QueryStringAttribute(object_element, "value", object->sprite );
+	tinyxml2::QueryStringAttribute(object_element, "id", object->ident );
 
-	if ( object->id.length() )
+	if ( object->ident.length() )
 	{
-		elix::string::Trim( &object->id );
+		elix::string::Trim( &object->ident );
 	}
 
 
@@ -287,7 +287,7 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 
 	if ( obj_type == "sprite" )
 	{
-		if ( !object->image.compare( 0, 8, "Virtual:" ) )
+		if ( !object->sprite.compare( 0, 8, "Virtual:" ) )
 		{
 			object->type = OBJECT_VIRTUAL_SPRITE;
 		}
@@ -312,7 +312,7 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 	else if (obj_type == "text")
 	{
 		object->type = OBJECT_TEXT;
-		object->image = this->GetTextString(object_element, object->image);
+		object->sprite = this->GetTextString(object_element, object->sprite);
 	}
 	else if (obj_type == "polygon")
 	{
@@ -325,7 +325,7 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 	else
 	{
 		object->type = OBJECT_TEXT;
-		object->image = "Unknown Type";
+		object->sprite = "Unknown Type";
 	}
 
 	this->ReadPath(object, object_element);
@@ -429,7 +429,7 @@ void MapXMLReader::ReadSettings( MokoiMap * map, std::map<std::string, std::stri
 		map->_background.effects.primary_colour = map->_colour;
 	}
 
-	tinyxml2::QueryStringAttribute( settings_element, "image", map->_background.image );
+	tinyxml2::QueryStringAttribute( settings_element, "image", map->_background.sprite );
 
 	if ( settings_element->Attribute("entity") )
 	{

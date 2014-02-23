@@ -302,6 +302,21 @@ namespace OpenGLShader
 		return false;
 	}
 
+	bool FreeShader( uint8_t i )
+	{
+		if ( OpenGLShaderImpl::supported )
+		{
+			if (i < NUM_SHADERS )
+			{
+				OpenGLShaderImpl::DeleteObject(shaders[i].vert_shader);
+				OpenGLShaderImpl::DeleteObject(shaders[i].frag_shader);
+				OpenGLShaderImpl::DeleteObject(shaders[i].program);
+			}
+			return true;
+		}
+		return false;
+	}
+
 	bool Free()
 	{
 		std::cout << __FILE__ << ": | Freeing Shader" << std::endl;
@@ -421,7 +436,10 @@ namespace OpenGLShader
 	{
 		return false;
 	}
-
+	bool FreeShader( uint8_t i )
+	{
+		return false;
+	}
 	bool Free()
 	{
 		return false;
@@ -433,6 +451,11 @@ namespace OpenGLShader
 	}
 
 	void CompileShader( ShaderData * data )
+	{
+		return;
+	}
+
+	void CompileShader( ShaderData * data, char * vertex_shader, char * fragment_shader  )
 	{
 		return;
 	}

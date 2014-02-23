@@ -526,3 +526,9 @@ makefiles/windows-sdl1.make
 makefiles/windows-sdl2.make
 makefiles/windows-standalone.make
 makefiles/windows.make
+src/entity_systems/ffi_shaders.h
+src/entity_systems/ffi_shaders.cpp
+src/entity_systems/ffi_object.h
+src/entity_systems/ffi_object.cpp
+src/entity_systems/ffi_functions.h
+src/entity_systems/ffi_functions.cpp

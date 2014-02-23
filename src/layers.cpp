@@ -90,7 +90,7 @@ bool Layer::AddObject(MapObject * new_object, bool static_object)
 		if ( this->objects_static.size() < MAX_LAYER_OBJECTS )
 		{
 			this->objects_static.push_back(new_object);
-			new_object->layer_ref++;
+			new_object->layer_reference++;
 			return true;
 		}
 	}
@@ -99,7 +99,7 @@ bool Layer::AddObject(MapObject * new_object, bool static_object)
 		if ( this->objects_dynamic.size() < MAX_LAYER_OBJECTS )
 		{
 			this->objects_dynamic.push_back(new_object);
-			new_object->layer_ref = 1;
+			new_object->layer_reference = 1;
 			return true;
 		}
 	}
@@ -109,9 +109,9 @@ bool Layer::AddObject(MapObject * new_object, bool static_object)
 
 bool Layer::RemoveObject(MapObject * new_object)
 {
-	if ( new_object->layer_ref )
-		new_object->layer_ref--;
-	if ( !new_object->layer_ref )
+	if ( new_object->layer_reference )
+		new_object->layer_reference--;
+	if ( !new_object->layer_reference )
 	{
 		this->objects_static.remove(new_object);
 	}

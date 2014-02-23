@@ -50,20 +50,20 @@ WorldSystem::WorldSystem()
 	this->current_position[0] = this->current_position[1] = this->current_position[2] = MAKE_INT_FIXED(1);
 	this->next_position[0] = this->next_position[1] = this->next_position[2] = -1;
 	this->current_map_ident = 0;
-	this->_cachecount = 0;
+	this->object_cache_count = 0;
 	this->map_movement_direction = 0;
 }
 
 WorldSystem::~WorldSystem()
 {
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing the World" << std::endl;
-	if ( this->_objectscache.size() )
+	if ( this->object_cache.size() )
 	{
-		while ( this->_objectscache.begin() != this->_objectscache.end() )
+		while ( this->object_cache.begin() != this->object_cache.end() )
 		{
-			lux::display->RemoveObject(this->_objectscache.begin()->second->layer, this->_objectscache.begin()->second);
-			delete this->_objectscache.begin()->second;
-			this->_objectscache.erase( this->_objectscache.begin() );
+			lux::display->RemoveObject(this->object_cache.begin()->second->layer, this->object_cache.begin()->second);
+			delete this->object_cache.begin()->second;
+			this->object_cache.erase( this->object_cache.begin() );
 		}
 	}
 
@@ -113,7 +113,7 @@ bool WorldSystem::PreClose()
 
 bool WorldSystem::Close()
 {
-	this->_collision.clear();
+	this->collision_list.clear();
 
 
 
@@ -347,10 +347,10 @@ void WorldSystem::SwitchMap( MokoiMap * next_map, bool move_entities )
 	this->_nextmap = NULL;
 
 	/* Add Global Display objects */
-	if ( this->_objectscache.size() )
+	if ( this->object_cache.size() )
 	{
 		std::map<uint32_t, MapObject *>::iterator p;
-		for ( p = this->_objectscache.begin(); p != this->_objectscache.end(); p++ )
+		for ( p = this->object_cache.begin(); p != this->object_cache.end(); p++ )
 		{
 			lux::display->AddObjectToLayer(p->second->layer, p->second, true);
 		}
@@ -597,14 +597,15 @@ uint32_t WorldSystem::AddObject(MapObject * object, bool is_static)
 	{
 		return 0;
 	}
-	object->global = true;
+
 	if ( is_static )
 	{
-		this->_cachecount++;
-		object->static_map_id = this->_cachecount;
-		this->_objectscache[object->static_map_id] = object;
+		this->object_cache_count++;
+		object->SetStaticMapID( this->object_cache_count, true );
+		this->object_cache[object->static_map_id] = object;
+
 		lux::display->AddObjectToLayer(object->layer, object, true);
-		return object->static_map_id;
+		return object->GetStaticMapID();
 	}
 	else
 	{
@@ -616,10 +617,10 @@ uint32_t WorldSystem::AddObject(MapObject * object, bool is_static)
 
 MapObject * WorldSystem::GetObject( uint32_t ident )
 {
-	if ( this->_objectscache.size() )
+	if ( this->object_cache.size() )
 	{
-		std::map<uint32_t,MapObject *>::iterator iter = this->_objectscache.find(ident);
-		if( iter != this->_objectscache.end() )
+		std::map<uint32_t,MapObject *>::iterator iter = this->object_cache.find(ident);
+		if( iter != this->object_cache.end() )
 			return iter->second;
 	}
 	return NULL;
@@ -628,12 +629,12 @@ MapObject * WorldSystem::GetObject( uint32_t ident )
 void WorldSystem::ClearObjects()
 {
 	std::map<uint32_t, MapObject*>::iterator l_object;
-	if ( this->_objectscache.size() )
+	if ( this->object_cache.size() )
 	{
-		for ( l_object = this->_objectscache.begin(); l_object != this->_objectscache.end(); l_object++ )
+		for ( l_object = this->object_cache.begin(); l_object != this->object_cache.end(); l_object++ )
 		{
 			l_object->second->FreeData();
-			this->_objectscache.erase(l_object);
+			this->object_cache.erase(l_object);
 			delete l_object->second;
 		}
 	}
@@ -647,7 +648,7 @@ bool WorldSystem::RemoveObject(uint32_t ident)
 		if ( lux::display->RemoveObject(object->layer, object) )
 		{
 			object->FreeData();
-			this->_objectscache.erase(ident);
+			this->object_cache.erase(ident);
 			delete object;
 			return true;
 		}
@@ -661,7 +662,7 @@ void WorldSystem::AddCollision( uint32_t name, CollisionObject * rect)
 	if ( !rect->added )
 	{
 		rect->added = true;
-		this->_collision.insert(std::make_pair(name,rect));
+		this->collision_list.insert(std::make_pair(name,rect));
 	}
 }
 
@@ -672,13 +673,13 @@ void WorldSystem::CheckCollision( uint32_t name, CollisionObject *rect)
 
 void WorldSystem::DrawCollisions()
 {
-	if ( this->_collision.size() )
+	if ( this->collision_list.size() )
 	{
 		LuxRect screen_location;
 		ObjectEffect effects;
 
 		std::multimap<uint32_t, CollisionObject*>::iterator p;
-		for( p = this->_collision.begin(); p != this->_collision.end(); p++ )
+		for( p = this->collision_list.begin(); p != this->collision_list.end(); p++ )
 		{
 			if ( p->second->rect.w != 0 && p->second->rect.h != 0 )
 			{
@@ -699,15 +700,15 @@ void WorldSystem::DrawCollisions()
 
 void WorldSystem::ClearCollisions()
 {
-	this->_collision.clear();
+	this->collision_list.clear();
 }
 
 void WorldSystem::ReturnCollisions( std::vector<CollisionResult*> * hits, uint32_t entity, int16_t count, LuxRect rect )
 {
-	if ( this->_collision.size() )
+	if ( this->collision_list.size() )
 	{
 		std::multimap<uint32_t, CollisionObject*>::iterator p;
-		for ( p = this->_collision.begin(); p != this->_collision.end(); p++ )
+		for ( p = this->collision_list.begin(); p != this->collision_list.end(); p++ )
 		{
 			if ( p->first != entity )
 			{
@@ -734,7 +735,7 @@ void WorldSystem::ReturnCollisions( std::vector<CollisionResult*> * hits, uint32
 
 void WorldSystem::RemoveCollisions( uint32_t name )
 {
-	this->_collision.erase(name);
+	this->collision_list.erase(name);
 }
 
 
@@ -775,12 +776,12 @@ bool WorldSystem::Save( elix::File *current_save_file )
 	}
 
 	/* Save Global Display Object */
-	count = this->_objectscache.size();
+	count = this->object_cache.size();
 	current_save_file->WriteWithLabel( "Global Display Object", count );
 	if ( count )
 	{
-		std::map<uint32_t, MapObject *>::iterator iter = this->_objectscache.begin();
-		while( iter != this->_objectscache.end() )
+		std::map<uint32_t, MapObject *>::iterator iter = this->object_cache.begin();
+		while( iter != this->object_cache.end() )
 		{
 			current_save_file->WriteWithLabel( "Global Object ID", iter->first );
 			iter->second->Save( current_save_file );
@@ -886,9 +887,9 @@ bool WorldSystem::Restore( elix::File * current_save_file )
 			if (Lux_GetState() != LOADING )
 				return false;
 			display_object_id = current_save_file->Read_uint32WithLabel( "Global Object ID", true );
-			this->_objectscache[display_object_id] = new MapObject();
-			this->_objectscache[display_object_id]->Restore( current_save_file );
-			lux::display->AddObjectToLayer(this->_objectscache[display_object_id]->layer, this->_objectscache[display_object_id], true); //???
+			this->object_cache[display_object_id] = new MapObject();
+			this->object_cache[display_object_id]->Restore( current_save_file );
+			lux::display->AddObjectToLayer(this->object_cache[display_object_id]->layer, this->object_cache[display_object_id], true); //???
 		}
 	}
 

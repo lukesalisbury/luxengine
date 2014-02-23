@@ -97,6 +97,8 @@ public:
 	LuxRect display_dimension;
 
 	/* Layer System */
+	Layer * GetLayer( uint32_t layer );
+
 	bool AddObjectToLayer( uint32_t layer, MapObject * new_object, bool static_objects );
 	bool AddObjects( std::list<MapObject*> * objects );
 	bool RemoveObject( uint32_t layer, MapObject * new_object );

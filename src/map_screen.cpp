@@ -69,7 +69,7 @@ bool MokoiMapScreen::Init()
 			}
 			if ( !lux::display->AddObjectToLayer((*p)->layer, (*p), true) )
 			{
-				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << (*p)->image << " (" << (*p)->type << ") add failed" << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << (*p)->TypeName() << " (" << (*p)->sprite << ") add failed" << std::endl;
 				(*p)->type = 0;
 			}
 		}

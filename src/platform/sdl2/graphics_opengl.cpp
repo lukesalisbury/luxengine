@@ -71,13 +71,17 @@ extern SDL_Window * native_window;
 extern SDL_Renderer * native_renderer;
 extern std::string native_window_title;
 extern SDL_Rect native_graphics_dimension;
+
+
 extern uint32_t sdlgraphics_fps, sdlgraphics_fpstime;
 /* Global Variables */
 LuxColour gles_graphics_colour = { 0, 128, 0, 255 };
 
+SDL_Rect native_graphics_viewpoint;
 SDL_GLContext native_context;
 float opengl_graphic_ratio_width = 1.00;
 float opengl_graphic_ratio_height = 1.00;
+float opengl_graphic_ratio = 1.33;
 LuxPolygon * opengl_graphic_cursor = NULL;
 SDL_Rect native_screen_position;
 bool native_screen_stretching = false;
@@ -160,6 +164,8 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 	native_graphics_dimension.w = width;
 	native_graphics_dimension.h = height;
+	opengl_graphic_ratio = (float)height / (float)width;
+
 
 	Lux_OGL_Resize( window_width, window_height);
 
@@ -189,9 +195,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 	opengl_graphic_cursor->SetPoint(1, 8, 8);
 	opengl_graphic_cursor->SetPoint(2, 0, 12);
 
-
 //	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
-
 //	SDL_RenderSetLogicalSize(native_renderer, width, height);
 
 	Lux_SDL2_SetWindowIcon( native_window );
@@ -204,17 +208,14 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 	if ( SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object") )
 	{
-
 		glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC) SDL_GL_GetProcAddress("glGenFramebuffersEXT");
 		glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC) SDL_GL_GetProcAddress("glDeleteFramebuffersEXT");
 		glFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) SDL_GL_GetProcAddress("glFramebufferTexture2DEXT");
 		glBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC) SDL_GL_GetProcAddress("glBindFramebufferEXT");
 		glCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC) SDL_GL_GetProcAddress("glCheckFramebufferStatusEXT");
 
-		fbo.w = (native_graphics_dimension.w);
-		fbo.h = (native_graphics_dimension.h);
-		fbo.tw = lux::OpenGLTexture::power(native_graphics_dimension.w);
-		fbo.th = lux::OpenGLTexture::power(native_graphics_dimension.h);
+		fbo.w = fbo.tw = (native_graphics_dimension.w);
+		fbo.h = fbo.th = (native_graphics_dimension.h);
 
 		fbo.pot = true;
 
@@ -228,7 +229,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbo.tw, fbo.tw, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbo.tw, fbo.th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo.pointer, 0);
 
@@ -243,6 +244,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 			fbo_supported = true;
 		}
 		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+
 	}
 	else
 	{
@@ -320,17 +322,45 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Display2Screen( int32_t * x, int32_t * y)
  @ width:
  @ height:
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t width, uint16_t height)
+LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t window_width, uint16_t window_height)
 {
-	opengl_graphic_ratio_width = (float)native_graphics_dimension.w/(float)width;
-	opengl_graphic_ratio_height = (float)native_graphics_dimension.h/(float)height;
+	/*
+	uint16_t guessed_windows_height;
 
-	glViewport(0, 0, width, height);
+	guessed_windows_height = (uint16_t)(opengl_graphic_ratio * (float)window_width);
 
+
+
+
+
+	if ( guessed_windows_height < window_height )// border above
+	{
+		glViewport(0, 100, native_graphics_dimension.w, native_graphics_dimension.h);
+	}
+	else if ( guessed_windows_height > window_height ) // side border
+	{
+		glViewport(100, 0, native_graphics_dimension.w, native_graphics_dimension.h);
+	}
+	else
+	{
+		glViewport(0, 0, native_graphics_dimension.w, native_graphics_dimension.h);
+	}
+	*/
+
+
+	opengl_graphic_ratio_width = (float)native_graphics_dimension.w/(float)window_width;
+	opengl_graphic_ratio_height = (float)native_graphics_dimension.h/(float)window_height;
+
+	native_graphics_viewpoint.w = window_width;
+	native_graphics_viewpoint.h = window_height;
+
+	glViewport(0, 0, native_graphics_viewpoint.w, native_graphics_viewpoint.h);
+
+	SDL_RenderSetLogicalSize(native_renderer, window_width, window_height);
 	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
-	SDL_RenderSetLogicalSize(native_renderer, width, height);
 
-	if ( width > height )
+
+	if ( window_width > window_height )
 	{
 		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
 	}
@@ -616,7 +646,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
 	if ( fbo_supported )
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER, fbo_frame);
-		glLoadIdentity();
+		glViewport(0, 0, native_graphics_dimension.w, native_graphics_dimension.h);
 		return true;
 	}
 
@@ -635,7 +665,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer )
 		LuxVertex dest;
 		LuxVertex coords[4];
 		LuxColour colors[4];
-		uint8_t using_shader = NUM_SHADERS;
+		uint8_t using_shader = SHADER_GRAY;
 
 		dest.set( 0, 0, layer );
 
@@ -652,6 +682,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer )
 
 
 		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, native_graphics_viewpoint.w, native_graphics_viewpoint.h);
 
 		gles::render( GLES_DEFAULT_PRIMITIVE, coords, 4, &fbo, dest, colors, 42, scale, rotation, using_shader );
 

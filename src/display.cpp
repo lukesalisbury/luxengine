@@ -713,7 +713,7 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 
 				if ( this->show_spriteinfo )
 				{
-					msg << object->Info() << std::endl;
+					msg << object->GetInfo() << std::endl;
 					this->graphics.DrawText( msg.str(), new_position, default_fx, false );
 				}
 				if ( this->show_collisions )
@@ -761,7 +761,7 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 			this->graphics.DrawLine(new_position, new_effects);
 			break;
 		case 't':
-			this->graphics.DrawText(object->image, new_position, new_effects, true);
+			this->graphics.DrawText(object->sprite, new_position, new_effects, true);
 			break;
 		default:
 			break;
@@ -809,7 +809,7 @@ bool DisplaySystem::AddObjectToLayer(uint32_t layer, MapObject * new_object, boo
 	}
 	else
 	{
-		MessagePush( (char *)"Failed to Add '%s' to layer %d", new_object->Name().c_str(), layer );
+		MessagePush( (char *)"Failed to Add '%s' to layer %d", new_object->TypeName().c_str(), layer );
 	}
 	return false;
 }

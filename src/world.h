@@ -94,11 +94,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 			uint8_t next_grid_position[2];
 
 			/* DisplayObject */
-			uint32_t _cachecount;
-			std::map<uint32_t, MapObject *> _objectscache;
+			uint32_t object_cache_count;
+			std::map<uint32_t, MapObject *> object_cache;
 
 			/* Colllision Functions */
-			std::multimap<uint32_t, CollisionObject*> _collision;
+			std::multimap<uint32_t, CollisionObject*> collision_list;
 
 
 			void Print();

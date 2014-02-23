@@ -288,6 +288,27 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_SetFullscreen( bool able )
 	}
 }
 
+/* Lux_OGL_Resize
+ *
+ @ width:
+ @ height:
+ */
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Resize( uint16_t width, uint16_t height)
+{
+	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
+	SDL_RenderSetLogicalSize(native_renderer, width, height);
+
+	if ( width > height )
+	{
+		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
+	}
+	else
+	{
+		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
+	}
+
+	return false;
+}
 /* Lux_NATIVE_DisplayPointer
  *
  @ able:

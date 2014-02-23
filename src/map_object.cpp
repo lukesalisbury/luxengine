@@ -35,8 +35,8 @@ MapObject::MapObject( uint8_t type )
 	this->sprite_width = 0;
 	this->sprite_height = 0;
 	this->path_point = 0;
-	this->image = "";
-	this->layer_ref = 0;
+	this->sprite = "";
+	this->layer_reference = 0;
 	this->speed = 1;
 	this->can_remove = false;
 	this->position.x = this->position.y = 0;
@@ -46,13 +46,39 @@ MapObject::MapObject( uint8_t type )
 	this->timer_mode = 0;
 	this->auto_delete = 0;
 	this->path_current_x = this->path_current_y = 0;
-	this->global = false;
+
 }
 
 MapObject::~MapObject()
 {
 	this->FreeData();
 }
+uint32_t MapObject::GetStaticMapID() const
+{
+	return this->static_map_id;
+}
+
+void MapObject::SetStaticMapID(const uint32_t &value, const bool global )
+{
+	if ( value >= OBJECT_GLOBAL_VALUE )
+	{
+		if ( global )
+		{
+			this->static_map_id = value;
+		}
+	}
+	else
+	{
+		this->static_map_id = value;
+		if ( global )
+		{
+			this->static_map_id += OBJECT_GLOBAL_VALUE;
+		}
+	}
+
+
+}
+
 
 void MapObject::Save(elix::File *current_save_file)
 {
@@ -79,7 +105,7 @@ void MapObject::Save(elix::File *current_save_file)
 	current_save_file->WriteWithLabel("Map Object tiling", this->effects.tile_object );
 	current_save_file->WriteWithLabel("Map Object style", this->effects.style );
 	current_save_file->WriteWithLabel("Map Object current path point", this->path_point );
-	current_save_file->WriteWithLabel("Map Object Image", this->image );
+	current_save_file->WriteWithLabel("Map Object Image", this->sprite );
 
 }
 
@@ -108,7 +134,7 @@ void MapObject::Restore( elix::File * current_save_file )
 	this->effects.tile_object = current_save_file->Read_uint8WithLabel("Map Object tiling" );
 	this->effects.style = current_save_file->Read_uint8WithLabel("Map Object style" );
 	this->path_point = 0;current_save_file->Read_uint16WithLabel("Map Object current path point", true );
-	current_save_file->ReadWithLabel("Map Object Image", &this->image );
+	current_save_file->ReadWithLabel("Map Object Image", &this->sprite );
 
 	if ( this->type == OBJECT_SPRITE )
 	{
@@ -116,7 +142,7 @@ void MapObject::Restore( elix::File * current_save_file )
 	}
 }
 
-void MapObject::Toggle()
+void MapObject::ToggleHidden()
 {
 	this->hidden = !this->hidden;
 }
@@ -134,7 +160,7 @@ void MapObject::SetData(void * data, uint8_t type)
 		{
 			this->has_data = false;
 			std::vector<std::string> name_split;
-			elix::string::Split(this->image, ":", &name_split);
+			elix::string::Split(this->sprite, ":", &name_split);
 			if ( name_split.size() == 2 )
 			{
 				LuxSprite * sdata = lux::display->GetSprite( name_split[0], name_split[1]);
@@ -169,7 +195,7 @@ void MapObject::SetData(void * data, uint8_t type)
 				}
 				else
 				{
-					MessagePush( (char*)"Sprite missing: %s", this->image.c_str() );
+					MessagePush( (char*)"Sprite missing: %s", this->sprite.c_str() );
 				}
 			}
 			else
@@ -180,7 +206,7 @@ void MapObject::SetData(void * data, uint8_t type)
 		}
 		else if ( type == 'M' )
 		{
-			this->SetCanvas( new LuxCanvas(this->image) );
+			this->SetCanvas( new LuxCanvas(this->sprite) );
 		}
 		else if ( type == 'p' )
 		{
@@ -208,12 +234,12 @@ void MapObject::SetData(void * data, uint8_t type)
 
 void MapObject::FreeData()
 {
-	this->layer_ref = 0;
+	this->layer_reference = 0;
 	if ( !this->has_data )
 		return;
 	if ( this->type == 's' )
 	{
-		lux::display->UnrefSheet( this->image.substr(0, this->image.find_first_of(':')) );
+		lux::display->UnrefSheet( this->sprite.substr(0, this->sprite.find_first_of(':')) );
 	}
 	else if ( this->data_type == 't' )
 	{
@@ -540,7 +566,7 @@ LuxVirtualSprite * MapObject::GetVirtual()
 
 LuxVirtualSprite * MapObject::InitialiseVirtual( )
 {
-	LuxVirtualSprite * data = new LuxVirtualSprite( this->image );
+	LuxVirtualSprite * data = new LuxVirtualSprite( this->sprite );
 	this->data_type = OBJECT_VIRTUAL_SPRITE;
 	this->data = (mem_pointer)data;
 	this->has_data = true;
@@ -588,10 +614,10 @@ bool MapObject::CollisionRectangle( LuxRect rect[7] )
 }
 
 
-std::string MapObject::Info()
+std::string MapObject::GetInfo()
 {
 	std::stringstream s;
-	s << this->Name() << "\nl" << (int)this->layer << std::hex << " i" << this->static_map_id;
+	s << this->TypeName() << "\nl" << (int)this->layer << std::hex << " i" << this->static_map_id;
 	return s.str();
 }
 
@@ -607,7 +633,7 @@ void MapObject::SetZPos(int32_t z)
 
 }
 
-std::string MapObject::Name()
+std::string MapObject::TypeName()
 {
 	if ( this->type == 'p' )
 		return "Polygon";
@@ -620,6 +646,6 @@ std::string MapObject::Name()
 	else if ( this->type == 'l' )
 		return "LINE";
 
-	return this->image;
+	return this->sprite;
 }
 
