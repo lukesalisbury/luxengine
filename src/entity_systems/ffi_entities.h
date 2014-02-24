@@ -8,12 +8,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef FFI_FUNCTIONS_H
-#define FFI_FUNCTIONS_H
-
-#include "map_object.h"
-
-MapObject * Lux_FFI_Object_Get( uint32_t object_id );
 
 
-#endif // FFI_FUNCTIONS_H
+#ifndef FFI_ENTITIES_H
+#define FFI_ENTITIES_H
+
+
+#include <stdint.h>
+
+
+#endif // FFI_ENTITIES_H

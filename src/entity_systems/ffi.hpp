@@ -14,4 +14,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define FFI_HPP
 
 
+#include <stdint.h>
+
+
+
 #endif // FFI_HPP

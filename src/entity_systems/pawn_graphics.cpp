@@ -20,6 +20,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display_functions.h"
 #include "elix_endian.hpp"
 
+#include "ffi_object.h"
 
 extern const AMX_NATIVE_INFO Graphics_Natives[];
 
@@ -187,44 +188,19 @@ static cell AMX_NATIVE_CALL pawnPolygonAddpoint(AMX *amx, const cell *params)
 /** Display Functions */
 
 /** pawnObjectCreate
-* native ObjectCreate(string[], type, x, y, z, w, h, c = 0xFFFFFFFF, pos = POSITION_MAP, string_size = sizeof string);
+* native ObjectCreate(string[], type, x, y, z, w, h, c = 0xFFFFFFFF, global = false, string_size = sizeof string);
 *
 */
-static cell AMX_NATIVE_CALL pawnObjectCreate(AMX *amx, const cell *params)
+static cell AMX_NATIVE_CALL pawnObjectCreate(AMX *amx, const cell *p )
 {
-	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted == NULL )
-		return -2;
+	uint32_t results = 0;
+	std::string sprite;
 
-	if ( lux::world->active_map )
-	{
-		MapObject * new_object = new MapObject();
-		new_object->sprite = Lux_PawnEntity_GetString(amx, params[1]);
-		new_object->type = (uint8_t)params[2];
+	sprite = Lux_PawnEntity_GetString(amx, p[1]);
 
-		new_object->position.x = params[3];
-		new_object->position.y = params[4];
+	results = Lux_FFI_Object_Create( (uint8_t)p[9], p[2], p[3], p[4], (int32_t)p[5], (uint16_t)p[6], (uint16_t)p[7], p[8], sprite.c_str() );
 
-
-		new_object->SetZPos( (int32_t)params[5] );
-
-		new_object->position.w = (uint16_t)params[6];
-		new_object->position.h = (uint16_t)params[7];
-
-		cell_colour colour;
-		colour.hex = elix::endian::host32(params[8]);
-		new_object->effects.primary_colour = colour.rgba;
-
-		new_object->speed = 1;
-		new_object->timer = 0;
-
-
-		if ( wanted->_mapid == 0 )
-			return lux::world->AddObject(new_object, true);
-		else
-			return lux::world->active_map->AddObject(new_object, true);
-	}
-	return -1;
+	return results;
 
 }
 

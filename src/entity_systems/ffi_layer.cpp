@@ -8,12 +8,38 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef FFI_FUNCTIONS_H
-#define FFI_FUNCTIONS_H
 
-#include "map_object.h"
+#include "ffi_layer.h"
+#include "ffi_functions.h"
+#include "display.h"
 
-MapObject * Lux_FFI_Object_Get( uint32_t object_id );
+/** pawnLayerSetRotation
+* native LayerSetRotation(layer, roll, pitch, yaw);
+*/
+void Lux_FFI_Layer_Rotation( int8_t layer, int16_t roll, int16_t pitch, int16_t yaw )
+{
+	lux::display->ChangeLayerRotation( layer, roll, pitch, yaw );
+}
 
+/** pawnLayerSetOffset
+*
+* int8_t layer, int32_t x, int32_t y
+*/
+void Lux_FFI_Layer_Offset( int8_t layer, int32_t x, int32_t y )
+{
+	if ( layer == -1)
+		lux::display->SetCameraView( (fixed)x, (fixed)y );
+	else
+		lux::display->SetCameraView( layer, (fixed)x, (fixed)y );
+}
 
-#endif // FFI_FUNCTIONS_H
+/** pawnLayerColour
+* native LayerColour(layer, colour);
+*/
+void Lux_FFI_Layer_Colour( int8_t layer, uint32_t colour)
+{
+	cell_colour temp_colour;
+	temp_colour.hex = elix::endian::host32( colour );
+	if ( layer >= 0 )
+		lux::display->SetLayerColour( layer, temp_colour.rgba );
+}

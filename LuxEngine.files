@@ -532,3 +532,9 @@ src/entity_systems/ffi_object.h
 src/entity_systems/ffi_object.cpp
 src/entity_systems/ffi_functions.h
 src/entity_systems/ffi_functions.cpp
+src/entity_systems/ffi_path.h
+src/entity_systems/ffi_path.cpp
+src/entity_systems/ffi_layer.h
+src/entity_systems/ffi_layer.cpp
+src/entity_systems/ffi_entities.h
+src/entity_systems/ffi_entities.cpp

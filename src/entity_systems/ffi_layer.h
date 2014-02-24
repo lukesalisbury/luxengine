@@ -8,12 +8,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef FFI_FUNCTIONS_H
-#define FFI_FUNCTIONS_H
 
-#include "map_object.h"
+#ifndef FFI_LAYER_H
+#define FFI_LAYER_H
 
-MapObject * Lux_FFI_Object_Get( uint32_t object_id );
+void Lux_FFI_Layer_Rotation( int8_t layer, int16_t roll, int16_t pitch, int16_t yaw );
+void Lux_FFI_Layer_Offset( int8_t layer, int32_t x, int32_t y );
+void Lux_FFI_Layer_Colour( int8_t layer, uint32_t colour );
 
-
-#endif // FFI_FUNCTIONS_H
+#endif // FFI_LAYER_H
