@@ -55,6 +55,7 @@ class Player
 		~Player();
 	protected:
 		uint8_t _control;
+		std::string control_name;
 		uint16_t _id;
 		uint16_t net_id;
 		uint32_t timer;
@@ -84,6 +85,8 @@ class Player
 
 		void SetControls(uint8_t preset);
 		void SetControls(std::string controller_name );
+
+		std::string GetControllerName( );
 
 		LuxSprite * GetInputSprite( int8_t axis, int8_t key, int8_t pointer );
 		MapObject * GetPointerObject();

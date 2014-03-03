@@ -9,12 +9,18 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
-#ifndef FFI_FUNCTIONS_H
-#define FFI_FUNCTIONS_H
+#ifndef FFI_COLLISIONS_H
+#define FFI_COLLISIONS_H
 
-#include "map_object.h"
+#include <stdint.h>
 
-MapObject * Lux_FFI_Object_Get( uint32_t object_id );
+int32_t Lux_FFI_Collision_Set( uint32_t hash_entity, int32_t rect, int32_t type, int32_t x, int32_t y, int32_t w, int32_t h );
+uint8_t Lux_FFI_Collision_Get( uint32_t hash_entity, int32_t rect, int32_t * x, int32_t * y, int32_t * w, int32_t * h );
+int32_t Lux_FFI_Collision_Check( uint32_t hash_entity_first, uint32_t hash_entity_second, int32_t rect_first, int32_t rect_second );
+int32_t Lux_FFI_Collision_Calculate( uint32_t hash_entity );
+int32_t Lux_FFI_Collision_Calculate_Current( uint32_t hash_entity, uint32_t * entity_hit, int32_t * angle, int32_t * dist, int32_t * rect, int32_t * type );
+int32_t Lux_FFI_Collision_Set_From_Object( uint32_t hash_entity, uint32_t object_id, int32_t type );
 
 
-#endif // FFI_FUNCTIONS_H
+
+#endif // FFI_COLLISIONS_H

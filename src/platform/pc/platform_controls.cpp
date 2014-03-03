@@ -30,7 +30,7 @@ bool Player::SetupController( std::string name )
 	std::vector<std::string> values;
 	std::string settings;
 
-	settings = lux::config->GetString("control." + name);
+	settings = lux::config->GetString("controller." + name);
 	elix::string::Split(settings, "|", &values);
 
 	if ( values.size() == 23 )

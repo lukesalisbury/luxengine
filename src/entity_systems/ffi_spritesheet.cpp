@@ -9,12 +9,42 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
-#ifndef FFI_FUNCTIONS_H
-#define FFI_FUNCTIONS_H
+#include "ffi_spritesheet.h"
 
-#include "map_object.h"
+/** pawnSheetRef
+*
+*
+*/
+void Lux_FFI_Sheet_Reference( const char * sheet, int8_t ref )
+{
+	if ( sheet )
+	{
+		if ( lux::display )
+		{
+			if ( ref == -1 )
+				lux::display->UnrefSheet( sheet );
+			else
+				lux::display->RefSheet( sheet );
+		}
+	}
+	return 0;
+}
 
-MapObject * Lux_FFI_Object_Get( uint32_t object_id );
+/** Lux_FFI_Sheet_Replace
+*
+*
+*/
+void Lux_FFI_Sheet_Replace( const char * old_sheet, const char * new_sheet )
+{
 
-
-#endif // FFI_FUNCTIONS_H
+	std::string old_sheet = Lux_PawnEntity_GetString(amx, params[1]);
+	std::string new_sheet = Lux_PawnEntity_GetString(amx, params[2]);
+	if ( old_sheet && new_sheet )
+	{
+		if ( lux::world->active_map )
+		{
+			lux::world->active_map->ReplaceObjectsSheets( old_sheet, new_sheet );
+		}
+	}
+	return 0;
+}

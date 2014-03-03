@@ -20,7 +20,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <cmath>
 #include <algorithm>
 #include "elix_string.hpp"
-
+#include "ffi_entities.h"
+#include "ffi_collisions.h"
+#include "ffi_path.h"
 
 extern const AMX_NATIVE_INFO Entity_Natives[];
 
@@ -31,6 +33,8 @@ extern const AMX_NATIVE_INFO Entity_Natives[];
 */
 static cell AMX_NATIVE_CALL pawnFunctionCall(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
 	cell ret = -1;
 	if ( params[1] > 0 )
 	{
@@ -44,27 +48,17 @@ static cell AMX_NATIVE_CALL pawnFunctionCall(AMX *amx, const cell *params)
 * native EntitySetPosition(Fixed:x = Fixed:cellmin, Fixed:y = Fixed:cellmin, Fixed:z = Fixed:cellmin, id = SELF);
 * Updates Entity X/Y Positions
 */
-static cell AMX_NATIVE_CALL pawnEntitySetPosition(AMX *amx, const cell *params)
+static cell AMX_NATIVE_CALL pawnEntitySetPosition(AMX *amx, const cell *p)
 {
-	cell successful = 0;
-#ifdef NETWORKENABLED
-	lux::core->NetLock();
-#endif
-	Entity * wanted = Lux_PawnEntity_GetEntity( amx, params[4] );
-	if ( wanted != NULL )
-	{
-		if ( params[1] != CELLMIN )
-			wanted->x = (fixed)params[1];
-		if ( params[2] != CELLMIN )
-			wanted->y = (fixed)params[2];
-		if ( params[3] != CELLMIN )
-			wanted->z = (fixed)params[3];
+	ASSERT_PAWN_PARAM( amx, p, 4 );
 
-		successful =  1;
-	}
-#ifdef NETWORKENABLED
-	lux::core->NetUnlock();
-#endif
+	uint32_t entity_hash = 0;
+	cell successful = 0;
+
+	entity_hash = p[4]; // note:
+
+	successful = Lux_FFI_Entity_Set_Position( entity_hash, p[1], p[2], p[3] );
+
 	return successful;
 }
 
@@ -74,28 +68,29 @@ static cell AMX_NATIVE_CALL pawnEntitySetPosition(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnEntityGetPosition(AMX *amx, const cell *params)
 {
-#ifdef NETWORKENABLED
-	lux::core->NetLock();
-#endif
+	ASSERT_PAWN_PARAM( amx, params, 4 );
+
+	uint32_t entity_hash = 0;
 	cell successful = 0;
-	Entity * wanted = Lux_PawnEntity_GetEntity( amx, params[4]);
-	if ( wanted != NULL )
+	int32_t fixed_x, fixed_y, fixed_z;
+	cell * xptr, * yptr, * zptr;
+
+	entity_hash = params[4]; // note:
+
+	if ( Lux_FFI_Entity_Get_Position( entity_hash, &fixed_x, &fixed_y, &fixed_z ) )
 	{
-		cell * xptr, * yptr, * zptr;
 		xptr = amx_Address(amx, params[1]);
 		yptr = amx_Address(amx, params[2]);
 		zptr = amx_Address(amx, params[3]);
 		if ( xptr )
-			*xptr = wanted->x;
+			*xptr = fixed_x;
 		if ( yptr )
-			*yptr = wanted->y;
+			*yptr = fixed_y;
 		if ( zptr )
-			*zptr = wanted->z;
+			*zptr = fixed_z;
 		successful = 1;
 	}
-#ifdef NETWORKENABLED
-	lux::core->NetUnlock();
-#endif
+
 	return successful;
 }
 
@@ -107,26 +102,31 @@ static cell AMX_NATIVE_CALL pawnEntityGetPosition(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnEntityGetSetting(AMX *amx, const cell *params)
 {
-	cell response = -1;
-	cell * stringptr;
-	Entity * wanted = Lux_PawnEntity_GetEntity( amx, params[3]);
-	if ( wanted != NULL )
-	{
-		std::string stf_key = Lux_PawnEntity_GetString(amx, params[1] );
-		stringptr = amx_Address(amx, params[2]);
-		if ( stringptr )
-		{
-			std::string str;
-			if ( !stf_key.empty() )
-				str = wanted->GetSetting(stf_key);
-			else
-				str = "";
-			amx_SetString(stringptr, str.c_str(), true, false, UNLIMITED);
-			response = str.length();
-			str.clear();
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
+	uint32_t entity_hash = 0;
+	cell response = -1;
+	cell * string_ptr;
+	char * string = NULL;
+	std::string stf_key = "";
+
+	entity_hash = params[3];
+
+	stf_key = Lux_PawnEntity_GetString( amx, params[1] );
+	string = Lux_FFI_Entity_Get_Setting( entity_hash, stf_key.c_str() );
+
+	if ( string != NULL )
+	{
+		string_ptr = amx_Address(amx, params[2]);
+		if ( string_ptr )
+		{
+			amx_SetString(string_ptr, string, true, false, UNLIMITED);
+			response = strlen( string );
 		}
+
+		delete[] string;
 	}
+
 	return response;
 }
 
@@ -136,20 +136,23 @@ static cell AMX_NATIVE_CALL pawnEntityGetSetting(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnEntityGetSettingHash(AMX *amx, const cell *params)
 {
-	cell response = 0;
-	Entity * wanted = Lux_PawnEntity_GetEntity( amx, params[2]);
-	if ( wanted != NULL )
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	uint32_t entity_hash = 0;
+	cell response = -1;
+	char * string = NULL;
+	std::string stf_key = "";
+
+	entity_hash = params[3];
+
+	stf_key = Lux_PawnEntity_GetString( amx, params[1] );
+	string = Lux_FFI_Entity_Get_Setting( entity_hash, stf_key.c_str() );
+
+	if ( string != NULL )
 	{
-		std::string stf_key = Lux_PawnEntity_GetString(amx, params[1] );
+		response = elix::string::Hash(string);
 
-		if ( !stf_key.empty() )
-		{
-			std::string str;
-			str = wanted->GetSetting(stf_key);
-			response = elix::string::Hash(str);
-			str.clear();
-		}
-
+		delete[] string;
 	}
 	return response;
 }
@@ -161,25 +164,29 @@ static cell AMX_NATIVE_CALL pawnEntityGetSettingHash(AMX *amx, const cell *param
 */
 static cell AMX_NATIVE_CALL pawnEntityGetNumber(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	uint32_t entity_hash = 0;
 	cell response = -1;
-	Entity * wanted = Lux_PawnEntity_GetEntity( amx, params[2]);
-	if ( wanted != NULL )
-	{
-		std::string stf_key = Lux_PawnEntity_GetString( amx, params[1] );
-		if ( !stf_key.empty() )
-		{
-			response =  wanted->GetSettingAsInt(stf_key);
-		}
-	}
+	std::string stf_key = "";
+
+	entity_hash = params[2];
+
+	stf_key = Lux_PawnEntity_GetString( amx, params[1] );
+	response = Lux_FFI_Entity_Get_Setting_Number( entity_hash, stf_key.c_str() );
+
+
 	return response;
 }
 
 /** pawnEntityCreate
-* native EntityCreate(parententity[],id[],x,y,z,map_id,args[],...);
+* native EntityCreate(parententity{}, id_string{}, Fixed:x, Fixed:y, Fixed:z, map_id, args[]='''', {Fixed,_}:...);
 *
 */
 static cell AMX_NATIVE_CALL pawnEntityCreate(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 7 );
+
 	cell response = 0;
 	std::string entity_parent, entity_id;
 	Entity * wanted_entity = NULL;
@@ -300,13 +307,10 @@ static cell AMX_NATIVE_CALL pawnEntityCreate(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnEntityDelete(AMX *amx, const cell *params)
 {
-	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1]);
-	if ( wanted_entity != NULL )
-	{
-		wanted_entity->Delete();
-		amx->error=AMX_ERR_SLEEP;
-		return 1;
-	}
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
+	return Lux_FFI_Entity_Delete( params[1] );
+
 	return 0;
 }
 
@@ -316,6 +320,8 @@ static cell AMX_NATIVE_CALL pawnEntityDelete(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnEntityPublicVariable(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
 	cell ret = 0;
 	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
 	if ( wanted_entity != NULL )
@@ -332,6 +338,8 @@ static cell AMX_NATIVE_CALL pawnEntityPublicVariable(AMX *amx, const cell *param
 */
 static cell AMX_NATIVE_CALL pawnEntityPublicVariableSet(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 3 );
+
 	cell ret = 0;
 	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1]);
 	if ( wanted_entity != NULL )
@@ -345,11 +353,13 @@ static cell AMX_NATIVE_CALL pawnEntityPublicVariableSet(AMX *amx, const cell *pa
 }
 
 /** pawnEntityPublicFunction
-* native EntityPublicFunction(id, function[], args[]="", ...);
+* native EntityPublicFunction(id, function[], args[]='''', ...);
 *
 */
 static cell AMX_NATIVE_CALL pawnEntityPublicFunction(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 3 );
+
 	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
 	if ( wanted_entity != NULL )
 	{
@@ -453,31 +463,14 @@ static cell AMX_NATIVE_CALL pawnEntityPublicFunction(AMX *amx, const cell *param
 */
 static cell AMX_NATIVE_CALL pawnEntitiesList(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
 	uint32_t count = 0;
-	EntitySection * section = NULL;
+	uint32_t map_id = params[1];
 
-	if ( params[1] == 0 ) /* GLOBAL */
-	{
-		section = lux::world->GetEntities();
-	}
-	else if ( params[1] )/* Map */
-	{
-		if ( lux::world->GetMap((uint32_t)params[1]) )
-		{
-			section = lux::world->GetMap((uint32_t)params[1])->GetEntities();
-		}
-	}
+	count = Lux_FFI_Entities_List( map_id );
 
-	if ( section )
-	{
-		count = section->children.size();
-		if ( count )
-			section->iter = section->children.begin();
-		else
-			section->iter = section->children.end();
-		return count;
-	}
-	return 0;
+	return count;
 }
 
 /** pawnEntitiesNext
@@ -486,41 +479,29 @@ static cell AMX_NATIVE_CALL pawnEntitiesList(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnEntitiesNext(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 4 );
+
 	cell respone = 0;
 	cell *cptr, * str;
-	EntitySection * section = NULL;
 	std::string string_value = "";
+	char * entity_name = NULL;
+	uint32_t map_id = params[2];
 
-	if ( params[2] == 0 ) /* GLOBAL */
+	entity_name = Lux_FFI_Entities_Next( map_id );
+
+
+
+	if ( entity_name != NULL )
 	{
-		section = lux::world->GetEntities();
+		// Store String
+		str = amx_Address( amx, params[3] );
+		amx_SetString(str, entity_name, 0, 0, params[4]);
+
+		// Store hash
+		cptr = amx_Address( amx, params[1] );
+		if ( cptr )
+			*cptr = elix::string::Hash(entity_name);
 	}
-	else if ( params[2] )/* Map */
-	{
-		if ( lux::world->GetMap((uint32_t)params[2]) )
-		{
-			section = lux::world->GetMap((uint32_t)params[2])->GetEntities();
-		}
-	}
-
-	cptr = amx_Address( amx, params[1] );
-	str = amx_Address( amx, params[3] );
-
-	if ( section != NULL )
-	{
-		if ( section->iter != section->children.end() )
-		{
-			string_value.assign( (*section->iter)->id );
-			if ( cptr )
-				*cptr = (*section->iter)->hashid;
-
-			section->iter++;
-			respone = 1;
-		}
-	}
-
-	amx_SetString(str, string_value.c_str(), 0, 0, params[4]);
-	string_value.erase();
 
 	return respone;
 }
@@ -532,14 +513,11 @@ static cell AMX_NATIVE_CALL pawnEntitiesNext(AMX *amx, const cell *params)
 * native CollisionSet(id, rect = 0, type = 0, x = 0, y = 0, w = 0, h = 0);
 *
 */
-static cell AMX_NATIVE_CALL pawnCollisionSet(AMX *amx, const cell *params)
+static cell AMX_NATIVE_CALL pawnCollisionSet(AMX *amx, const cell *p)
 {
-	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
-	if ( wanted_entity != NULL )
-	{
-		return wanted_entity->AddCollision(params[2], params[4], params[5], params[6], params[7], params[3]);
-	}
-	return -1;
+	ASSERT_PAWN_PARAM( amx, p, 7 );
+
+	return Lux_FFI_Collision_Set( p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
 }
 
 /** pawnCollisionGet
@@ -548,80 +526,61 @@ static cell AMX_NATIVE_CALL pawnCollisionSet(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnCollisionGet(AMX *amx, const cell *params)
 {
-	cell * valueptr = NULL;
-	if ( params[2] >= 0 && params[2] < 7 )
+	ASSERT_PAWN_PARAM( amx, params, 5 );
+
+	int32_t x, y, w, h;
+	cell * valueptr;
+
+	if ( Lux_FFI_Collision_Get( params[1], params[2], &x, &y, &w, &h ) )
 	{
-		Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1]);
-		if ( wanted_entity != NULL )
-		{
-			if ( wanted_entity->_collisions[params[2]].added )
-			{
-				valueptr = amx_Address(amx, params[3]);
-				if (valueptr)
-					*valueptr = wanted_entity->_collisions[params[2]].rect.x;
+		valueptr = amx_Address(amx, params[3]);
+		if (valueptr)
+			*valueptr = x;
 
-				valueptr = amx_Address(amx, params[4]);
-				if (valueptr)
-					*valueptr = wanted_entity->_collisions[params[2]].rect.y;
+		valueptr = amx_Address(amx, params[4]);
+		if (valueptr)
+			*valueptr = y;
 
-				valueptr = amx_Address(amx, params[5]);
-				if (valueptr)
-					*valueptr = wanted_entity->_collisions[params[2]].rect.w;
+		valueptr = amx_Address(amx, params[5]);
+		if (valueptr)
+			*valueptr = w;
 
-				valueptr = amx_Address(amx, params[6]);
-				if (valueptr)
-					*valueptr = wanted_entity->_collisions[params[2]].rect.h;
-				return 1;
-			}
+		valueptr = amx_Address(amx, params[6]);
+		if (valueptr)
+			*valueptr = h;
 
-		}
+		return 1;
 	}
-	return -1;
+
+	return 0;
 }
 
 /** pawnCollisionCheck
-* native CollisionCheck(id1, id2, rect1 = -1, rect2 = -1, length1=sizeof id1, length2=sizeof id2);
+* native CollisionCheck(id1, id2, rect1 = -1, rect2 = -1);
 *
 */
 static cell AMX_NATIVE_CALL pawnCollisionCheck(AMX *amx, const cell *params)
 {
-	Entity * first_entity, * second_entity;
-	first_entity = Lux_PawnEntity_GetEntity( amx, params[1]);
-	if ( first_entity != NULL )
-	{
-		second_entity = Lux_PawnEntity_GetEntity( amx, params[2]);
-		if ( second_entity != NULL )
-		{
-			if (params[3] == -1)
-			{
-				int icollision= 0;
-				for(int n = 0; n < 7; n++)
-				{
-					icollision += first_entity->CheckCollision(-1, second_entity->_collisions[n].rect);
-				}
-				return icollision;
-			}
-			else if (0 <= params[3] && params[3] < 7)
-			{
-				return first_entity->CheckCollision(params[4], second_entity->_collisions[params[3]].rect);
-			}
-		}
-	}
-	return 0;
+	ASSERT_PAWN_PARAM( amx, params, 4 );
+
+	uint32_t first_entity, second_entity;
+
+	first_entity = params[1];
+	second_entity = params[2];
+
+	return Lux_FFI_Collision_Check( first_entity, second_entity, params[3], params[4] );
+
 }
 
 /** pawnCollisionCalculate
-* native CollisionCalculate(id = SELF, rect = -1, type = -1, length=sizeof id);
+* native CollisionCalculate(id = SELF, rect = -1, type = -1);
 *
 */
 static cell AMX_NATIVE_CALL pawnCollisionCalculate(AMX *amx, const cell *params)
 {
-	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1]);
-	if ( wanted_entity )
-	{
-		return wanted_entity->GetHits();
-	}
-	return -1;
+	ASSERT_PAWN_PARAM( amx, params, 3 );
+
+	return Lux_FFI_Collision_Calculate( (uint32_t) params[1] );
 }
 
 /** pawnCollisionGetCurrent
@@ -630,61 +589,46 @@ static cell AMX_NATIVE_CALL pawnCollisionCalculate(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnCollisionGetCurrent(AMX *amx, const cell *params)
 {
-	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1]);
-	if ( wanted_entity )
+	ASSERT_PAWN_PARAM( amx, params, 6 );
+
+	int32_t hit_count = -1;
+	uint32_t entity_hit  = 0;
+	int32_t angle = 0;
+	int32_t dist = 0;
+	int32_t rect = 0;
+	int32_t type = 0;
+	cell * current_ptr = NULL;
+	cell * angle_ptr = NULL;
+	cell * dist_ptr = NULL;
+	cell * rect_ptr = NULL;
+	cell * type_ptr = NULL;
+
+	hit_count = Lux_FFI_Collision_Calculate_Current( params[1], &entity_hit, &angle, &dist, &rect, &type );
+	if ( hit_count > 0 )
 	{
-		cell * current_ptr = NULL;
-		cell * angle_ptr = NULL;
-		cell * dist_ptr = NULL;
-		cell * rect_ptr = NULL;
-		cell * type_ptr = NULL;
-		CollisionResult * collision_value = NULL;
+		current_ptr = amx_Address( amx, params[2] );
+		angle_ptr = amx_Address( amx, params[3] );
+		dist_ptr = amx_Address( amx, params[4] );
+		rect_ptr = amx_Address( amx, params[5] );
+		type_ptr = amx_Address( amx, params[6] );
 
-		uint32_t hit_count = wanted_entity->GetHitsCount();
+		if ( current_ptr )
+			*current_ptr = entity_hit;
 
-		if ( hit_count )
-		{
-			collision_value = wanted_entity->GetCurrentHit();
+		if ( angle_ptr )
+			*angle_ptr = angle;
 
-			if ( collision_value )
-			{
-				current_ptr = amx_Address( amx, params[2] );
-				angle_ptr = amx_Address( amx, params[3] );
-				dist_ptr = amx_Address( amx, params[4] );
-				rect_ptr = amx_Address( amx, params[5] );
-				type_ptr = amx_Address( amx, params[6] );
+		if ( dist_ptr )
+			*dist_ptr = dist;
 
-				if ( current_ptr )
-				{
-					*current_ptr = collision_value->entity_id;
-				}
+		if ( rect_ptr )
+			*rect_ptr = rect;
 
-				int16_t x_dist = collision_value->rect_x - collision_value->hit_x;
-				int16_t y_dist = collision_value->rect_y - collision_value->hit_y;
+		if ( type_ptr )
+			*type_ptr = type;
 
-				if ( angle_ptr )
-				{
-					*angle_ptr = (cell)(atan2((float)y_dist, (float)x_dist) * 57.29578);
-					*angle_ptr += 90;
-				}
-
-				if ( dist_ptr )
-				{
-					x_dist *= x_dist;
-					y_dist *= y_dist;
-					*dist_ptr = (cell)sqrt( (float)(x_dist + y_dist));
-				}
-
-				if ( rect_ptr )
-					*rect_ptr = collision_value->hit_rect;
-
-				if ( type_ptr )
-					*type_ptr = collision_value->type;
-			}
-		}
-		return hit_count;
 	}
-	return -1;
+	return hit_count;
 }
 
 /** pawnCollisionFromObject
@@ -693,30 +637,9 @@ static cell AMX_NATIVE_CALL pawnCollisionGetCurrent(AMX *amx, const cell *params
 */
 static cell AMX_NATIVE_CALL pawnCollisionFromObject(AMX *amx, const cell *params)
 {
-	Entity * wanted = Lux_PawnEntity_GetEntity( amx, params[3]);
-	if ( wanted != NULL )
-	{
-		if ( lux::world->active_map )
-		{
-			MapObject * object = NULL;
-			if ( wanted->_mapid == 0 )
-				object = lux::world->GetObject(params[1]);
-			else
-				object = lux::world->active_map->GetObject(params[1]);
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-			if ( object )
-			{
-				LuxRect rect[7] = {};
-				object->CollisionRectangle( rect );
-				for ( uint8_t c = 0; c < 7; c++ )
-				{
-					wanted->AddCollision(c, rect[c].x, rect[c].y, rect[c].w, rect[c].h, params[2]);
-				}
-				return 6;
-			}
-		}
-	}
-	return -1;
+	return Lux_FFI_Collision_Set_From_Object( params[3], params[1], params[2] );
 }
 
 /* Paths */
@@ -727,24 +650,9 @@ static cell AMX_NATIVE_CALL pawnCollisionFromObject(AMX *amx, const cell *params
 */
 static cell AMX_NATIVE_CALL pawnPathCount(AMX *amx, const cell *params)
 {
-	Entity * wanted = Lux_PawnEntity_GetEntity( amx, params[3]);
-	if ( wanted != NULL )
-	{
-		if ( lux::world->active_map )
-		{
-			MapObject * object = NULL;
-			if ( wanted->_mapid == 0 )
-				object = lux::world->GetObject(params[1]);
-			else
-				object = lux::world->active_map->GetObject(params[1]);
+	ASSERT_PAWN_PARAM( amx, params, 1 );
 
-			if ( object )
-			{
-				return (cell)object->_path.size();
-			}
-		}
-	}
-	return -1;
+	return Lux_FFI_Path_Count( params[1] );
 }
 
 /** pawnPathPoints
@@ -753,33 +661,33 @@ static cell AMX_NATIVE_CALL pawnPathCount(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnPathPoints(AMX *amx, const cell *params)
 {
-	if ( params[1] < 0 )
-		return 0;
-	Entity * wanted = Lux_PawnEntity_GetEntity( amx, params[3]);
-	if ( wanted != NULL )
-	{
-		if ( lux::world->active_map )
-		{
-			MapObject * object = NULL;
-			if ( wanted->_mapid == 0 )
-				object = lux::world->GetObject(params[1]);
-			else
-				object = lux::world->active_map->GetObject(params[1]);
+	ASSERT_PAWN_PARAM( amx, params, 5 );
 
-			if ( object )
-			{
-				LuxPath next;
-				next = object->_path.at(params[2]);
-				cell * xptr = NULL;
-				xptr = amx_Address(amx, params[3]);
-				if (xptr)
-					*xptr = next.x;
-				xptr = amx_Address(amx, params[4]);
-				if (xptr)
-					*xptr = next.y;
-				return 1;
-			}
-		}
+	uint8_t point = params[2];
+	int16_t x = 0;
+	int16_t y = 0;
+	uint32_t ms_length = 0;
+
+
+	if ( Lux_FFI_Path_Point( params[1], point, &x, &y, &ms_length ) )
+	{
+		cell * value_ptr = NULL;
+
+		value_ptr = amx_Address(amx, params[3]);
+		if (value_ptr)
+			*value_ptr = x;
+
+		value_ptr = amx_Address(amx, params[4]);
+		if (value_ptr)
+			*value_ptr = y;
+
+		value_ptr = amx_Address(amx, params[5]);
+		if (value_ptr)
+			*value_ptr = ms_length;
+
+
+		return 1;
+
 	}
 
 	return 0;

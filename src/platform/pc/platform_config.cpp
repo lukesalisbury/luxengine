@@ -34,11 +34,11 @@ void Config::PlatformSettings()
 
 	this->SetString("project.id", "unknowngame" );
 
-	this->SetString("control.keyboard1", "arrows|mouse|mouse|k97|k115|k100|k113|k119|k101|k13|k273|k274|k275|k276|m1|m2|m3|k112|k27|k13|k27|m1|k27" );
-	this->SetString("control.gamepad0", "controlaxisA0|controlaxisA1|controlaxisA1|b100|b101|b102|b103|b104|b105|b109|b106|b107|b108|b109|m1|m2|m3|k112|k27|b109|b108|b101|k27" );
+	this->SetString("controller.keyboard1", "arrows|mouse|mouse|k97|k115|k100|k113|k119|k101|k13|k273|k274|k275|k276|m1|m2|m3|k112|k27|k13|k27|m1|k27" );
+	this->SetString("controller.gamepad0", "controlaxisA0|controlaxisA1|controlaxisA1|b100|b101|b102|b103|b104|b105|b109|b106|b107|b108|b109|m1|m2|m3|k112|k27|b109|b108|b101|k27" );
 
-	this->SetString("control.set1", "keyboard1" );
-	this->SetString("control.set2", "gamepad0" );
+	this->SetString("player.controller1", "keyboard1" );
+	this->SetString("player.controller2", "gamepad0" );
 
 
 	this->SetBoolean("save.allowed", true );

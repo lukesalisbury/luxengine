@@ -21,6 +21,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "elix_endian.hpp"
 
 #include "ffi_object.h"
+#include "ffi_spritesheet.h"
 
 extern const AMX_NATIVE_INFO Graphics_Natives[];
 
@@ -61,17 +62,12 @@ static cell AMX_NATIVE_CALL pawnGraphicsType(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnSheetRef(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
 	std::string sheet_name = Lux_PawnEntity_GetString(amx, params[1]);
-	if ( sheet_name.length() )
-	{
-		if ( lux::display )
-		{
-			if ( params[2] == -1 )
-				lux::display->UnrefSheet( sheet_name );
-			else
-				lux::display->RefSheet( sheet_name );
-		}
-	}
+
+	Lux_FFI_Sheet_Reference( sheet_name.c_str(), (int8_t)params[2] );
+
 	return 0;
 }
 
@@ -80,14 +76,14 @@ static cell AMX_NATIVE_CALL pawnSheetRef(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnSheetReplace(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
 	std::string old_sheet = Lux_PawnEntity_GetString(amx, params[1]);
 	std::string new_sheet = Lux_PawnEntity_GetString(amx, params[2]);
+
 	if ( old_sheet.length() && new_sheet.length() )
 	{
-		if ( lux::world->active_map )
-		{
-			lux::world->active_map->ReplaceObjectsSheets( old_sheet, new_sheet );
-		}
+		Lux_FFI_Sheet_Replace( old_sheet.c_str(), new_sheet.c_str() );
 	}
 	return 0;
 }
@@ -97,6 +93,8 @@ static cell AMX_NATIVE_CALL pawnSheetReplace(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnGraphicsDraw(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 8 );
+
 	MapObject * new_object = new MapObject();
 	new_object->sprite = Lux_PawnEntity_GetString(amx, params[1]);
 	new_object->type = (uint8_t)params[2];
@@ -115,20 +113,25 @@ static cell AMX_NATIVE_CALL pawnGraphicsDraw(AMX *amx, const cell *params)
 		return 1;
 	}
 	delete new_object;
+
 	return 0;
 }
 
 /** Animation */
-
+uint32_t Lux_FFI_Animation_Length( const char * sheet, const char * sprite );
+uint32_t Lux_FFI_Animation_Create( const char * animation_name );
+uint32_t Lux_FFI_Animation_Insert( const char * animation_name, const char * sprite, const uint32_t time_ms );
 /** pawnAnimationGetLength
 * native AnimationGetLength(sheet[], anim[]);
 */
 static cell AMX_NATIVE_CALL pawnAnimationGetLength(AMX *amx, const cell *params)
 {
-	char * sprite_name, * sheet_name;
-	amx_StrParam_Type(amx, params[1], sheet_name, char*);
-	amx_StrParam_Type(amx, params[2], sprite_name, char*);
-	return (cell)lux::display->isAnimation(sheet_name, sprite_name);
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	std::string sheet_name = Lux_PawnEntity_GetString(amx, params[1]);
+	std::string sprite_name = Lux_PawnEntity_GetString(amx, params[2]);
+
+	return Lux_FFI_Animation_Length( sheet_name.c_str(), sprite_name.c_str() );
 }
 
 /** pawnAnimationCreate
@@ -136,8 +139,11 @@ static cell AMX_NATIVE_CALL pawnAnimationGetLength(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnAnimationCreate(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 1 );
 
-	return -1;
+	std::string animation_name = Lux_PawnEntity_GetString(amx, params[1]);
+
+	return Lux_FFI_Animation_Create( animation_name.c_str() );
 }
 
 /** pawnAnimationAddFrame
@@ -145,8 +151,12 @@ static cell AMX_NATIVE_CALL pawnAnimationCreate(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnAnimationAddFrame(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-	return -1;
+	std::string animation_name = Lux_PawnEntity_GetString(amx, params[1]);
+	std::string sprite_name = Lux_PawnEntity_GetString(amx, params[2]);
+
+	return Lux_FFI_Animation_Insert( animation_name.c_str(), sprite_name.c_str(), params[3] );
 }
 
 /** Text */
@@ -157,10 +167,12 @@ static cell AMX_NATIVE_CALL pawnAnimationAddFrame(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnTextSprites(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
 	bool enable_text_font = !!params[1];
 	std::string new_text_sheet = Lux_PawnEntity_GetString(amx, params[2]);
 
-	lux::display->SetTextFont( enable_text_font, new_text_sheet );
+	Lux_FFI_Text_Sprites( enable_text_font, new_text_sheet.c_str() );
 
 	return (cell)enable_text_font;
 }
@@ -172,7 +184,10 @@ static cell AMX_NATIVE_CALL pawnTextSprites(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnPolygonCreate(AMX *amx, const cell *params)
 {
-	return -1;
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+	std::string name = Lux_PawnEntity_GetString(amx, params[1]);
+
+	return Lux_FFI_Polygon_Create( name.c_str() );
 }
 
 /** pawnPolygonAddpoint
@@ -181,8 +196,11 @@ static cell AMX_NATIVE_CALL pawnPolygonCreate(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnPolygonAddpoint(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-	return -1;
+	std::string name = Lux_PawnEntity_GetString(amx, params[1]);
+	return Lux_FFI_Polygon_Add_Point( name.c_str(), params[2], params[3] );
+
 }
 
 /** Display Functions */

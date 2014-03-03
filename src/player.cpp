@@ -83,13 +83,14 @@ Player::~Player()
 
 void Player::SetControls( std::string controller_name )
 {
+	this->control_name = controller_name;
 	this->SetupController( controller_name );
 }
 
 void Player::SetControls(uint8_t preset)
 {
 	std::string control_value;
-	std::string control_name = "control.set";
+	std::string control_name = "player.controller";
 	control_name.append( 1, (char)(preset + '0'));
 
 	control_value = lux::config->GetString(control_name);

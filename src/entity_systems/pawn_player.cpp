@@ -15,31 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 extern const AMX_NATIVE_INFO Player_Natives[];
 
 /** Player Management Functions  */
-/** pawnPlayerAdd
-* native PlayerAdd();
-*
-*/
-static cell AMX_NATIVE_CALL pawnPlayerAdd(AMX *amx, const cell *params)
-{
-	return 0;
-}
-/** pawnPlayerRemove
-* native PlayerRemove(ident);
-*
-*/
-static cell AMX_NATIVE_CALL pawnPlayerRemove(AMX *amx, const cell *params)
-{
-	return 0;
-}
 
-/** pawnPlayerCount
-* native PlayerCount();
-*
-*/
-static cell AMX_NATIVE_CALL pawnPlayerCount(AMX *amx, const cell *params)
-{
-	return lux::engine->_players.size();
-}
 /** pawnPlayerUpdateControl
 * native PlayerUpdateControl(player, controlset);
 *
@@ -145,9 +121,9 @@ static cell AMX_NATIVE_CALL pawnPlayerGetName(AMX *amx, const cell *params)
 
 const AMX_NATIVE_INFO Player_Natives[] = {
 	/** Player Management Functions */
-	{ "PlayerAdd", pawnPlayerAdd}, ///native PlayerAdd();
-	{ "PlayerRemove", pawnPlayerRemove}, ///native PlayerRemove();
-	{ "PlayerCount", pawnPlayerCount}, ///native PlayerCount();
+	{ "PlayerAdd", pawnDeprecatedFunction}, ///native PlayerAdd();
+	{ "PlayerRemove", pawnDeprecatedFunction}, ///native PlayerRemove();
+	{ "PlayerCount", pawnDeprecatedFunction}, ///native PlayerCount();
 	{ "PlayerUpdateControl", pawnPlayerUpdateControl}, ///native PlayerUpdateControl(player);
 	{ "PlayerSetAI", pawnDeprecatedFunction}, ///native PlayerSetAI(player, entity);
 	{ "PlayerSetColour", pawnPlayerSetColour},///native PlayerSetColour(player, colour);

@@ -23,7 +23,7 @@ void Config::PlatformSettings()
 	this->SetNumber("screen.height", 192);
 	this->SetBoolean("debug.enable", false);
 	this->SetBoolean("audio.able", false);
-	this->SetString("control.set1", "arrows|mouse|mouse|k0|k1|k10|k11|k8|k9|k2|k4|k5|k6|k7|m1|k3|k13|k12|k12" );
-	this->SetString("control.buttons1", "k2|k1|t1" );
+	this->SetString("player.controller1", "arrows|mouse|mouse|k0|k1|k10|k11|k8|k9|k2|k4|k5|k6|k7|m1|k3|k13|k12|k12" );
+	this->SetString("controller.buttons1", "k2|k1|t1" );
 
 }

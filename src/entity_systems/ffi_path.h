@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013 Luke Salisbury
+Copyright © 2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -12,5 +12,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef FFI_PATH_H
 #define FFI_PATH_H
 
+#include <stdint.h>
+
+int32_t Lux_FFI_Path_Move_Object( uint32_t object_id, int32_t fixed_speed, int16_t * x, int16_t * y, uint8_t loop );
+int32_t Lux_FFI_Path_Count( uint32_t object_id );
+uint8_t Lux_FFI_Path_Point( uint32_t object_id, uint8_t point, int16_t * x, int16_t * y, uint32_t *ms_length );
 
 #endif // FFI_PATH_H

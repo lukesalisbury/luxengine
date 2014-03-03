@@ -49,14 +49,14 @@ void Config::PlatformSettings()
 	this->SetString("project.title", "Open Zelda" );
 	this->SetString("project.id", "0" );
 
-	this->SetString("control.set1", "arrows|mouse|mouse|k97|k115|k100|k113|k119|k101|k13|k273|k274|k275|k276|m1|m2|m3|k112|k27" );
-	this->SetString("control.buttons1", "k13|k27|m1" );
+	this->SetString("player.controller1", "arrows|mouse|mouse|k97|k115|k100|k113|k119|k101|k13|k273|k274|k275|k276|m1|m2|m3|k112|k27" );
+	this->SetString("controller.buttons1", "k13|k27|m1" );
 
-	this->SetString("control.set2", "controlaxisA0|controlaxisA1|controlaxisA1|b100|b101|b102|b103|b104|b105|b108|b106|b107|b108|b109|m1|m2|m3|k112|k27" );
-	this->SetString("control.buttons2", "b107|b106|b101" );
+	this->SetString("player.controller2", "controlaxisA0|controlaxisA1|controlaxisA1|b100|b101|b102|b103|b104|b105|b108|b106|b107|b108|b109|m1|m2|m3|k112|k27" );
+	this->SetString("controller.buttons2", "b107|b106|b101" );
 
-	this->SetString("control.set3", "controlaxisB0|controlaxisB1|controlaxisB1|b200|b201|b202|b203|b204|b205|b208|b206|b207|b208|b209|m1|m2|m3|k112|k27" );
-	this->SetString("control.buttons3", "b207|b206|b201" );
+	this->SetString("player.controller3", "controlaxisB0|controlaxisB1|controlaxisB1|b200|b201|b202|b203|b204|b205|b208|b206|b207|b208|b209|m1|m2|m3|k112|k27" );
+	this->SetString("controller.buttons3", "b207|b206|b201" );
 
 
 

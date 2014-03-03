@@ -396,7 +396,7 @@ src/amx4/amx.c
 src/amx4/sclinux.h
 src/entity_systems/pawn.inc
 custom/oloz.make
-src/entity_systems/ffi.hpp
+src/entity_systems/ffi.h
 src/entity_systems/ffi.cpp
 makefiles/windows-sdl2.make
 makefiles/windows.make
@@ -538,3 +538,9 @@ src/entity_systems/ffi_layer.h
 src/entity_systems/ffi_layer.cpp
 src/entity_systems/ffi_entities.h
 src/entity_systems/ffi_entities.cpp
+src/entity_systems/ffi_collisions.h
+src/entity_systems/ffi_collisions.cpp
+src/entity_systems/ffi_spritesheet.h
+src/entity_systems/ffi_spritesheet.cpp
+src/entity_systems/ffi_player.h
+src/entity_systems/ffi_player.cpp

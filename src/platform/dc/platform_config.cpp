@@ -24,7 +24,7 @@ void Config::PlatformSettings()
 	this->SetString("project.title", "Lux Engine" );
 	this->SetString("project.language", "en" );
 	this->SetString("project.id", "unknowngame" );
-	this->SetString("control.set1", "controlaxisA0|controlaxisA2|controlaxisA0|b102|b101|b110|b109|t14|t15|b101|b101|b104|b105|b106|b107|t14|b101|b101|b101" );
-	this->SetString("control.buttons1", "b103|b101|b102" );
+	this->SetString("player.controller1", "controlaxisA0|controlaxisA2|controlaxisA0|b102|b101|b110|b109|t14|t15|b101|b101|b104|b105|b106|b107|t14|b101|b101|b101" );
+	this->SetString("controller.buttons1", "b103|b101|b102" );
 
 }
