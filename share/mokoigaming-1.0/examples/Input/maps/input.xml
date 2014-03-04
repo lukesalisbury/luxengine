@@ -3,130 +3,129 @@
 	<dimensions width="1" height="1" />
 	<color red="24" blue="150" green="122" mode="0" />
 </settings>
-<object value="Player 1 buttons" type="text">
-	<position x="0" y="16" w="80" h="9" z="0" l="0" r="0" f="0"/>
+<object value="buttons" type="text">
+	<position x="0" y="16" w="35" h="7" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" />
+	<setting key="text-string" value="2" />
 </object>
-<object value="Player 1 Axis" type="text">
-	<position x="272" y="16" w="65" h="9" z="0" l="0" r="0" f="0"/>
+<object value="axis" type="text">
+	<position x="272" y="16" w="20" h="7" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" />
+	<setting key="text-string" value="3" />
 </object>
 <object value="Player 1 Pointer" type="text">
 	<position x="488" y="16" w="78" h="9" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" />
-	<setting key="player" value="" type=""/>
+	<setting key="text-string" value="4" />
 	<entity value="input-pointer" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="0" y="32" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="0" y="40" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="0" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="32" y="32" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="32" y="40" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="1" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="32" y="64" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="32" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="2" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="64" y="64" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="64" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="3" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="96" y="64" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="96" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="4" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="64" y="32" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="64" y="40" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="5" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="128" y="32" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="128" y="40" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="6" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="160" y="32" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="160" y="40" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="7" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="192" y="32" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="192" y="40" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="8" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="224" y="32" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="224" y="40" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="9" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="0" y="64" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="0" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="10" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="128" y="64" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="128" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="11" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="160" y="64" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="160" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="12" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="192" y="64" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="192" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="13" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="224" y="64" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="224" y="72" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="14" />
 	<entity value="input-button" language="mps" global="false"/>
 </object>
 <object value="input-images.png:button" type="sprite">
-	<position x="96" y="32" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="96" y="40" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="1" />
 	<setting key="button" value="15" />
@@ -135,17 +134,17 @@
 <object value="Player 2 Axis" type="text">
 	<position x="272" y="120" w="65" h="9" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="14" />
+	<setting key="text-string" value="14" />
 </object>
 <object value="Player 2 buttons (Try your Gamepad)" type="text">
 	<position x="0" y="120" w="172" h="9" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" />
+	<setting key="text-string" value="" />
 </object>
 <object value="Player 2 Pointer" type="text">
 	<position x="488" y="120" w="78" h="9" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" />
+	<setting key="text-string" value="" />
 	<setting key="player" value="" type=""/>
 	<entity value="input-pointer" language="mps" global="false"/>
 </object>
@@ -264,17 +263,17 @@
 <object value="Player 3 Axis" type="text">
 	<position x="272" y="224" w="65" h="9" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" />
+	<setting key="text-string" value="" />
 </object>
 <object value="Player 3 buttons (Try your Gamepad)" type="text">
 	<position x="0" y="224" w="172" h="9" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" />
+	<setting key="text-string" value="" />
 </object>
 <object value="Player 3 Pointer" type="text">
 	<position x="488" y="224" w="78" h="9" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" />
+	<setting key="text-string" value="" />
 	<setting key="player" value="" type=""/>
 	<entity value="input-pointer" language="mps" global="false"/>
 </object>
@@ -394,8 +393,18 @@
 	<position x="207" y="366" w="256" h="64" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
+<object value="Text" type="text">
+	<position x="774" y="97" w="39" h="6" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="text-string" value="-1" type="hidden"/>
+</object>
+<object value="Text" type="text">
+	<position x="496" y="56" w="39" h="6" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="text-string" value="-1" type="hidden"/>
+</object>
 <object value="input-images.png:axis" type="sprite">
-	<position x="272" y="32" w="96" h="64" z="4000" l="4" r="0" f="0"/>
+	<position x="272" y="40" w="96" h="64" z="4000" l="4" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="player" value="" />
 	<entity value="input-display" language="mps" global="false"/>

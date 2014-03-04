@@ -1,1 +1,8 @@
 Edit Me
+Function Used
+buttons
+axis
+pointer
+player1
+player2
+player3
