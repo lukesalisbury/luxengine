@@ -190,7 +190,7 @@ void DisplaySystem::Loop(LuxState engine_state)
 		Layer * current_layer = (*p);
 		if ( this->show_layers[i] )
 		{
-			this->graphics.CacheDisplay(current_layer->_z);
+			this->graphics.CacheDisplay(current_layer->_z  );
 			if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
 			{
 				this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
@@ -201,7 +201,7 @@ void DisplaySystem::Loop(LuxState engine_state)
 			{
 				current_layer->Display();
 			}
-			this->graphics.DrawCacheDisplay( current_layer->_z );
+			this->graphics.DrawCacheDisplay( current_layer->_z, current_layer->shader );
 		}
 		i++;
 	}
@@ -786,6 +786,19 @@ LuxSprite * DisplaySystem::GetInputSprite(uint32_t player_id, int8_t axis, int8_
 
 
 /* Layer System */
+Layer * DisplaySystem::GetLayer( uint32_t layer )
+{
+	Layer * requested_layer = NULL;
+
+	if ( layer < this->_layers.size() )
+	{
+		requested_layer = this->_layers[layer];
+
+	}
+
+	return requested_layer;
+}
+
 bool DisplaySystem::AddObjects(std::list<MapObject*> * objects)
 {
 	std::list<MapObject*>::iterator object;

@@ -38,6 +38,6 @@ bool Lux_OGL_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children);
 bool Lux_OGL_FreeSprite( LuxSprite * sprite );
 
 bool Lux_OGL_CacheDisplay(uint8_t layer);
-bool Lux_OGL_DrawCacheDisplay(uint8_t layer);
+bool Lux_OGL_DrawCacheDisplay(uint8_t layer, uint8_t shader);
 
 #endif

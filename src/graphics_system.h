@@ -49,7 +49,7 @@ bool Lux_GRAPHICS_FreeSprite ( LuxSprite * sprite );
 LuxSprite * Lux_GRAPHICS_PNGtoSprite( uint8_t * data, uint32_t size );
 
 bool Lux_GRAPHICS_CacheDisplay( uint8_t layer );
-bool Lux_GRAPHICS_DrawCacheDisplay(uint8_t layer);
+bool Lux_GRAPHICS_DrawCacheDisplay(uint8_t layer, uint8_t shader);
 
 
 

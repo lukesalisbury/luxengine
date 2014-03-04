@@ -12,6 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_path.h"
 #include "ffi_functions.h"
 #include <cmath>
+#include "core.h"
 
 #define FIXEDPI  3.1415926535897932384626433832795
 
@@ -74,7 +75,7 @@ int32_t Lux_FFI_Path_Move_Object( uint32_t object_id, int32_t fixed_speed, int16
 
 			prev.x = map_object->position.x;
 			prev.y = map_object->position.y;
-			prev = map_object->_path.at(object->path_point);
+			prev = map_object->_path.at(map_object->path_point);
 			next = map_object->_path.at(next_path_point);
 		}
 		else
@@ -87,13 +88,13 @@ int32_t Lux_FFI_Path_Move_Object( uint32_t object_id, int32_t fixed_speed, int16
 		map_object->path_current_x -= MAKE_FLOAT_FIXED(movex);
 		map_object->path_current_y -= MAKE_FLOAT_FIXED(movey);
 
-		map_object->position.x = MAKE_FIXED_INT(object->path_current_x);
-		map_object->position.y = MAKE_FIXED_INT(object->path_current_y);
+		map_object->position.x = MAKE_FIXED_INT(map_object->path_current_x);
+		map_object->position.y = MAKE_FIXED_INT(map_object->path_current_y);
 
 		if ( map_object->position.x == next.x && map_object->position.y == next.y)
 		{
-			map_object->path_current_x = MAKE_INT_FIXED(object->position.x);
-			map_object->path_current_y = MAKE_INT_FIXED(object->position.y);
+			map_object->path_current_x = MAKE_INT_FIXED(map_object->position.x);
+			map_object->path_current_y = MAKE_INT_FIXED(map_object->position.y);
 			map_object->path_point = next_path_point;
 		}
 
@@ -137,7 +138,7 @@ uint8_t Lux_FFI_Path_Point( uint32_t object_id, uint8_t point, int16_t * x, int1
 
 	if ( map_object )
 	{
-		next = object->_path.at(params[2]);
+		next = map_object->_path.at(point);
 		if (x)
 			*x = next.x;
 		if (y)

@@ -655,7 +655,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
 
 
 
-LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer )
+LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer, uint8_t shader )
 {
 	if ( fbo_supported )
 	{
@@ -665,7 +665,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer )
 		LuxVertex dest;
 		LuxVertex coords[4];
 		LuxColour colors[4];
-		uint8_t using_shader = SHADER_GRAY;
+
 
 		dest.set( 0, 0, layer );
 
@@ -684,7 +684,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer )
 		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, native_graphics_viewpoint.w, native_graphics_viewpoint.h);
 
-		gles::render( GLES_DEFAULT_PRIMITIVE, coords, 4, &fbo, dest, colors, 42, scale, rotation, using_shader );
+		gles::render( GLES_DEFAULT_PRIMITIVE, coords, 4, &fbo, dest, colors, 42, scale, rotation, shader );
 
 
 

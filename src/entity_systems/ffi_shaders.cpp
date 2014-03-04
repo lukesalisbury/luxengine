@@ -14,6 +14,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "stdheader.h"
 #include "map_object.h"
 
+#include "display.h"
+#include "layers.h"
+
+
 
 int32_t Lux_FFI_Layer_Apply_Shader( uint32_t layer, uint8_t shader )
 {
@@ -22,7 +26,7 @@ int32_t Lux_FFI_Layer_Apply_Shader( uint32_t layer, uint8_t shader )
 
 	Layer * requested_layer = NULL;
 
-	requested_layer = lux::display->GetLayer( lux::display );
+	requested_layer = lux::display->GetLayer( layer );
 
 	if ( requested_layer != NULL )
 	{
@@ -40,15 +44,16 @@ int32_t Lux_FFI_Object_Apply_Shader( MapObject * object, uint8_t shader )
 {
 
 
+	return 0;
 }
 
 
 int32_t Lux_FFI_Shaders_Create( uint8_t shader, char * vertex_shader, char * fragment_shader )
 {
 
-	OpenGLShader::
 
 
+	return 0;
 }
 
 

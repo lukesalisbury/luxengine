@@ -56,7 +56,7 @@ typedef struct {
 	void (* DrawText) ( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_text );
 
 	bool (* CacheDisplay ) ( uint8_t layer );
-	bool (* DrawCacheDisplay ) ( uint8_t layer );
+	bool (* DrawCacheDisplay ) ( uint8_t layer, uint8_t shader );
 } GraphicSystem;
 
 

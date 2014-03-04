@@ -14,6 +14,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_functions.h"
 #include "engine.h"
 #include "game_config.h"
+#include "world.h"
+
+#include "elix_endian.hpp"
+#include "entity_manager.h"
+
 
 /** Lux_FFI_Player_Set_Controller
 *
@@ -61,13 +66,13 @@ char * Lux_FFI_Player_Get_Controller( uint32_t player_number )
 * native PlayerSetColour(player, colour);
 *
 */
-uint8_t Lux_FFI_Player_Set_Colour( uint32_t player_number )
+uint8_t Lux_FFI_Player_Set_Colour( uint32_t player_number, uint32_t new_colour )
 {
 	Player * player = lux::engine->GetPlayer( player_number );
 	if ( player )
 	{
 		cell_colour colour;
-		colour.hex = elix::endian::host32( params[2] );
+		colour.hex = elix::endian::host32( new_colour );
 		player->PlayerColour.primary_colour = colour.rgba;
 		return 1;
 	}

@@ -43,7 +43,7 @@ main()
 	mode = InputButton( button, player );
 	mode = clamp( mode, 0, 2);
 
-	//DebugText("%d %d  %d", player, button, mode);
+	DebugText("%d %d  %d", player, button, mode);
 
 	ObjectEffect( obj, color[mode] );
 }

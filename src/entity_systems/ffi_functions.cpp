@@ -11,6 +11,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "ffi_functions.h"
 
+#include "world.h"
+
 MapObject * Lux_FFI_Object_Get( uint32_t object_id )
 {
 	MapObject * object = NULL;

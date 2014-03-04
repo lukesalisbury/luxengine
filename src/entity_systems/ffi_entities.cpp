@@ -13,6 +13,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 #include <stdint.h>
 
+#include "core.h"
+#include "world.h"
+
+#define FIXED_MIN 0x7FFFFFFF
+
 /** Entity Position Functions  */
 
 /** Lux_FFI_Entity_Set_Position
@@ -27,11 +32,11 @@ uint8_t Lux_FFI_Entity_Set_Position(uint32_t hash_entity , int32_t fixed_x, int3
 	Entity * wanted = lux::entities->GetEntity(hash_entity);
 	if ( wanted != NULL )
 	{
-		if ( fixed_x != INT32_MIN )
+		if ( fixed_x != FIXED_MIN )
 			wanted->x = (fixed)fixed_x;
-		if ( fixed_y != INT32_MIN )
+		if ( fixed_y != FIXED_MIN )
 			wanted->y = (fixed)fixed_y;
-		if ( fixed_z != CELLMIN )
+		if ( fixed_z != FIXED_MIN )
 			wanted->z = (fixed)fixed_z;
 	}
 	#ifdef NETWORKENABLED
@@ -111,11 +116,9 @@ int32_t Lux_FFI_Entity_Get_Setting_Number(uint32_t hash_entity, const char * key
 */
 uint32_t Lux_FFI_Entity_Create( const char * script_file, const char * ident, int32_t x, int32_t y, int32_t z, uint32_t map_id )
 {
-	cell response = 0;
+	uint32_t response = 0;
 	std::string entity_parent, entity_id;
-	uint32_t id_length = 0;
 	Entity * wanted_entity = NULL;
-	cell * id_ptr;
 
 	entity_parent = script_file;
 	entity_id = ident;
@@ -128,7 +131,7 @@ uint32_t Lux_FFI_Entity_Create( const char * script_file, const char * ident, in
 		wanted_entity->y = y;
 		wanted_entity->z = z;
 
-		response = wanted_entity->id;
+		response = wanted_entity->hashid;
 	}
 
 	return response;
@@ -195,15 +198,15 @@ char * Lux_FFI_Entities_Next( uint32_t map_id )
 	std::string string_value = "";
 	EntitySection * section = NULL;
 
-	if ( params[2] == 0 ) /* GLOBAL */
+	if ( map_id == 0 ) /* GLOBAL */
 	{
 		section = lux::world->GetEntities();
 	}
-	else if ( params[2] )/* Map */
+	else if ( map_id )/* Map */
 	{
-		if ( lux::world->GetMap((uint32_t)params[2]) )
+		if ( lux::world->GetMap( map_id ) )
 		{
-			section = lux::world->GetMap((uint32_t)params[2])->GetEntities();
+			section = lux::world->GetMap( map_id )->GetEntities();
 		}
 	}
 
@@ -222,8 +225,6 @@ char * Lux_FFI_Entities_Next( uint32_t map_id )
 		string = new char[string_value.length() + 1];
 		std::copy(string_value.begin(), string_value.end(), string);
 	}
-
-	amx_SetString(cptr, string_value.c_str(), 0, 0, params[3]);
 
 	return string;
 }

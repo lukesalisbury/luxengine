@@ -21,8 +21,6 @@ void Config::PlatformSettings()
 	#endif
 
 	this->SetNumber("display.bpp", 0);
-	this->SetString("display.surface", "software");
-	this->SetBoolean("display.dbuff", true);
 	this->SetBoolean("display.fullscreen", false);
 	this->SetNumber("display.scale", 1);
 	this->SetNumber("display.limit", 60);
@@ -34,9 +32,12 @@ void Config::PlatformSettings()
 	this->SetNumber("screen.height", 384);
 	this->SetBoolean("debug.enable", false);
 	this->SetBoolean("audio.able", true);
+	this->SetBoolean("entities.rebuild", true);
 	this->SetString("project.title", "Lux Engine" );
 
 	this->SetString("project.id", "unknowngame" );
+
+
 
 	/* PC inputuse SDL_SCANCODE */
 	/*

@@ -11,6 +11,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "ffi_spritesheet.h"
 
+#include "display.h"
+#include "world.h"
+
 /** pawnSheetRef
 *
 *
@@ -27,7 +30,6 @@ void Lux_FFI_Sheet_Reference( const char * sheet, int8_t ref )
 				lux::display->RefSheet( sheet );
 		}
 	}
-	return 0;
 }
 
 /** Lux_FFI_Sheet_Replace
@@ -37,8 +39,6 @@ void Lux_FFI_Sheet_Reference( const char * sheet, int8_t ref )
 void Lux_FFI_Sheet_Replace( const char * old_sheet, const char * new_sheet )
 {
 
-	std::string old_sheet = Lux_PawnEntity_GetString(amx, params[1]);
-	std::string new_sheet = Lux_PawnEntity_GetString(amx, params[2]);
 	if ( old_sheet && new_sheet )
 	{
 		if ( lux::world->active_map )
@@ -46,5 +46,5 @@ void Lux_FFI_Sheet_Replace( const char * old_sheet, const char * new_sheet )
 			lux::world->active_map->ReplaceObjectsSheets( old_sheet, new_sheet );
 		}
 	}
-	return 0;
+
 }

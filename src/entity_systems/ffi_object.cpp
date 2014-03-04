@@ -13,6 +13,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_functions.h"
 
 #include "display.h"
+#include "world.h"
+#include "elix_endian.hpp"
+
 
 /** Display Object Functions */
 
@@ -199,8 +202,8 @@ int32_t Lux_FFI_Object_Replace( uint32_t object_id, uint8_t type, char * sprite 
 
 		if ( map_object->type == OBJECT_SPRITE && type != OBJECT_SPRITE )
 		{
-			object->position.w = map_object->position.w ? map_object->position.w : 32;
-			object->position.h = map_object->position.h ? map_object->position.h : 32;
+			map_object->position.w = map_object->position.w ? map_object->position.w : 32;
+			map_object->position.h = map_object->position.h ? map_object->position.h : 32;
 		}
 
 		map_object->FreeData();
@@ -268,6 +271,7 @@ uint8_t Lux_FFI_Object_Delete( uint32_t object_id )
 		else
 			return lux::world->active_map->RemoveObject( object_id );
 	}
+	return 0;
 }
 
 

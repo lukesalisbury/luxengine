@@ -36,7 +36,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define CHARBITS (8*sizeof(char))
 	#define CELLMIN (-1 << (8*sizeof(cell) - 1))
 
-	#define ASSERT_PAWN_PARAM(a,p,m) if ( m > p[0] / sizeof(cell) ) { amx_RaiseError(a,AMX_ERR_PARAMS); return CELLMIN; }
+	#define ASSERT_PAWN_PARAM(a,p,m) if ( m > p[0] / sizeof(cell) ) { amx_RaiseError(a,AMX_ERR_PARAMS); return 0x7FFFFFFF; }
 
 	char * Lux_PawnEntity_StrError(unsigned int errnum);
 	cell AMX_NATIVE_CALL pawnDeprecatedFunction(AMX *amx, const cell *params);

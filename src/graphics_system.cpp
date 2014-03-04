@@ -175,7 +175,7 @@ LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_CacheDisplay(uint8_t layer)
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_DrawCacheDisplay( uint8_t layer )
+LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_DrawCacheDisplay( uint8_t layer, uint8_t shader )
 {
 	return false;
 }

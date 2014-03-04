@@ -13,6 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_functions.h"
 #include "entity_manager.h"
 #include <stdint.h>
+#include <cmath>
 
 
 /** Collision Functions */
@@ -154,7 +155,7 @@ int32_t Lux_FFI_Collision_Calculate_Current( uint32_t hash_entity, uint32_t * en
 				if ( rect )
 					*rect = collision_value->hit_rect;
 
-				if ( type_ptr )
+				if ( type )
 					*type = collision_value->type;
 			}
 		}

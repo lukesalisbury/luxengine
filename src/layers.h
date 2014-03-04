@@ -29,6 +29,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 			int16_t _roll, _pitch, _yaw;
 			bool refreshz;
 
+			uint8_t shader;
+
 		private:
 			DisplaySystem * _parent;
 			std::list<MapObject *> objects_static;
@@ -40,6 +42,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			fixed _oldx, _oldy, _oldz;
 			LuxRect display_dimension;
 			LuxRect wrap_dimension;
+
 
 		public:
 			/* Object Management Functions */
@@ -58,6 +61,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			/* Drawing Functions */
 			void Display();
 
+			void SetShader( uint8_t new_shader ) { this->shader = new_shader; };
 		private:
 			LuxRect GetObjectLocation( LuxRect map_location, uint8_t type );
 			bool ObjectOnScreen(LuxRect o, uint8_t flipmode, LuxRect s);

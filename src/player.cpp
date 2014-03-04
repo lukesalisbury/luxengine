@@ -80,6 +80,11 @@ Player::~Player()
 		this->_entity = NULL;
 	}
 }
+std::string Player::GetControllerName()
+{
+	return this->control_name;
+
+}
 
 void Player::SetControls( std::string controller_name )
 {
