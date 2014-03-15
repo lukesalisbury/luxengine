@@ -1,0 +1,3 @@
+<entity>
+	<option name="min" value="50" type="number" />
+</entity>

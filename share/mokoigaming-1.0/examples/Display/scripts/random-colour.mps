@@ -1,4 +1,3 @@
-#include <helper>
 #include <core>
 
 new obj = -1;
@@ -27,6 +26,8 @@ main()
 	SetColourBits( acolor, random(255), 16); // Blue
 	SetColourBits( acolor, random(255), 8); // Green
 	SetColourBits( acolor, random(255), 0); // Red
+
+	DebugText("%d %x", obj, acolor );
 
 	ObjectEffect( object:obj, acolor );
 
