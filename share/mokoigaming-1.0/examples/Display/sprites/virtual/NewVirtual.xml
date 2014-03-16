@@ -1,0 +1,8 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+	<settings>
+		<dimensions width="64" height="64"/>
+	</settings>
+	<object value="dpad1.png:1" type="sprite">
+		<position x="24" y="16" w="128" h="128" z="0" l="0" r="0" f="0"/>
+	</object>
+</map>

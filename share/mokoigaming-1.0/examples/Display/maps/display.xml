@@ -1,15 +1,17 @@
 <map xmlns="http://mokoi.info/projects/mokoi">
 <settings>
 	<dimensions width="1" height="1" />
-	<color red="0" blue="0" green="95" mode="0" />
+	<color red="5" blue="135" green="90" mode="0" />
+	<option name="music" value="" type="music" />
+	<option name="name" value="" type="" />
 </settings>
 <object value="planetcute.png:1" type="sprite">
-	<position x="344" y="32" w="48" h="80" z="0" l="0" r="0" f="0"/>
+	<position x="288" y="40" w="48" h="80" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<entity value="random-colour" language="mps" global="false"/>
 </object>
-<object value="Line" type="line" id="*">
-	<position x="8" y="40" w="38" h="87" z="0" l="0" r="0" f="0"/>
+<object value="Line" type="line">
+	<position x="9" y="68" w="53" h="73" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<entity value="random-colour" language="mps" global="false"/>
 </object>
@@ -49,7 +51,7 @@
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
 <object value="Line" type="line">
-	<position x="506" y="73" w="596" h="74" z="0" l="0" r="0" f="0"/>
+	<position x="376" y="72" w="466" h="73" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
 <object value="player1.png:side" type="sprite">
@@ -57,46 +59,43 @@
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
 <object value="Line" type="line">
-	<position x="42" y="37" w="44" h="80" z="0" l="0" r="0" f="0"/>
+	<position x="26" y="38" w="40" h="89" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="random-colour" language="mps" global="false"/>
 </object>
 <object value="Rectangle" type="rect">
-	<position x="352" y="224" w="72" h="72" z="0" l="0" r="0" f="0"/>
+	<position x="184" y="224" w="72" h="72" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<entity value="style_change" language="mps" global="false"/>
 </object>
 <object value="player1.png:back_4" type="sprite">
-	<position x="432" y="224" w="32" h="40" z="0" l="0" r="0" f="0"/>
+	<position x="184" y="328" w="32" h="40" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<entity value="style_change" language="mps" global="false"/>
 </object>
 <object value="Polygon" type="polygon">
-	<position x="184" y="40" w="75" h="60" z="0" l="0" r="0" f="0"/>
+	<position x="193" y="40" w="56" h="38" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="0" green="255" alpha="255" />
 	<option points="5"/>
-	<point x="50" y="25"/>
-	<point x="75" y="40"/>
-	<point x="60" y="60"/>
-	<point x="40" y="60"/>
-	<point x="25" y="40"/>
-</object>
-<object value="sprite-border.png:5" type="sprite">
-	<position x="386" y="356" w="16" h="16" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
+	<point x="34" y="3"/>
+	<point x="56" y="10"/>
+	<point x="47" y="38"/>
+	<point x="21" y="35"/>
+	<point x="11" y="14"/>
 </object>
 <object value="process.png:process" type="sprite">
-	<position x="8" y="360" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="312" y="224" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<entity value="tile-image" language="mps" global="false"/>
 </object>
 <object value="process.png:process" type="sprite">
-	<position x="170" y="367" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<position x="504" y="224" w="32" h="32" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="min" value="50" type="number"/>
 	<entity value="scale-image" language="mps" global="false"/>
 </object>
 <object value="sprite-border.png:5" type="sprite">
-	<position x="208" y="240" w="96" h="64" z="0" l="0" r="0" f="0"/>
+	<position x="24" y="368" w="96" h="64" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
 <object value="Polygon" type="text">
@@ -105,14 +104,23 @@
 	<setting key="text-string" value="13" />
 </object>
 <object value="Borders" type="text">
-	<position x="192" y="208" w="28" h="6" z="0" l="0" r="0" f="0"/>
+	<position x="8" y="336" w="28" h="6" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="number" value="" type="hidden"/>
 	<setting key="text-string" value="-1" />
 </object>
 <object value="Line" type="line">
-	<position x="546" y="34" w="547" h="120" z="0" l="0" r="0" f="0"/>
+	<position x="416" y="32" w="417" h="118" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="Virtual:LogoTest" type="sprite">
+	<position x="480" y="32" w="152" h="160" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="VirtualSprites" type="text">
+	<position x="480" y="24" w="48" h="8" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="text-string" value="22" />
 </object>
 <object value="Rectangle" type="rect">
 	<position x="64" y="40" w="46" h="47" z="1000" l="1" r="0" f="0"/>
@@ -123,13 +131,13 @@
 	<position x="40" y="224" w="32" h="40" z="1000" l="1" r="0" f="1"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
-<object value="String 0" type="text">
-	<position x="352" y="208" w="30" h="8" z="1000" l="1" r="0" f="0"/>
+<object value="Effects" type="text">
+	<position x="184" y="208" w="24" h="6" z="1000" l="1" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="-1" />
+	<setting key="text-string" value="23" />
 </object>
 <object value="planetcute.png:2" type="sprite" id="*">
-	<position x="528" y="32" w="48" h="80" z="2000" l="2" r="0" f="0"/>
+	<position x="392" y="40" w="48" h="80" z="2000" l="2" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<entity value="rotate-image" language="mps" global="false"/>
 </object>
@@ -139,12 +147,12 @@
 	<setting key="text-string" value="-1" />
 </object>
 <object value="Tinting" type="text">
-	<position x="344" y="24" w="26" h="8" z="4000" l="4" r="0" f="0"/>
+	<position x="288" y="24" w="26" h="8" z="4000" l="4" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="text-string" value="16" />
 </object>
 <object value="Rotating" type="text">
-	<position x="520" y="16" w="30" h="8" z="4000" l="4" r="0" f="0"/>
+	<position x="376" y="24" w="30" h="8" z="4000" l="4" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="text-string" value="-1" />
 </object>
@@ -164,12 +172,12 @@
 	<setting key="text-string" value="12" />
 </object>
 <object value="Scaling" type="text">
-	<position x="128" y="344" w="28" h="8" z="6000" l="6" r="0" f="0"/>
+	<position x="504" y="208" w="28" h="8" z="6000" l="6" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="text-string" value="-1" />
 </object>
 <object value="Tiling" type="text">
-	<position x="8" y="344" w="22" h="8" z="6000" l="6" r="0" f="0"/>
+	<position x="312" y="208" w="22" h="8" z="6000" l="6" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="text-string" value="-1" />
 </object>

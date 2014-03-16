@@ -2,10 +2,6 @@
 <settings>
 	<dimensions width="1" height="1" />
 	<color red="127" blue="127" green="127" mode="0" />
-	<option name="independent" value="false" type="" />
-	<option name="wrap" value="0" type="" />
-	<option name="centerview" value="false" type="" />
-	<option name="aaa" value="asd" type="" />
 </settings>
 <object value="This message and animation are from canvas_overlay map" type="text">
 	<position x="40" y="72" w="197" h="8" z="0" l="0" r="0" f="0"/>

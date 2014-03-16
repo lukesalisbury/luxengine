@@ -21,3 +21,5 @@ Tiling
 Scaling
 Borders
 VirtualSprites
+Effects
+LayerEffects

@@ -55,7 +55,7 @@ static cell AMX_NATIVE_CALL pawnEntitySetPosition(AMX *amx, const cell *p)
 	uint32_t entity_hash = 0;
 	cell successful = 0;
 
-	entity_hash = p[4]; // note:
+	entity_hash = p[4] ? p[4] : Lux_PawnEntity_GetEntityHash( amx );
 
 	successful = Lux_FFI_Entity_Set_Position( entity_hash, p[1], p[2], p[3] );
 
@@ -75,7 +75,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetPosition(AMX *amx, const cell *params)
 	int32_t fixed_x, fixed_y, fixed_z;
 	cell * xptr, * yptr, * zptr;
 
-	entity_hash = params[4]; // note:
+	entity_hash = params[4] ? params[4] : Lux_PawnEntity_GetEntityHash( amx );
 
 	if ( Lux_FFI_Entity_Get_Position( entity_hash, &fixed_x, &fixed_y, &fixed_z ) )
 	{
@@ -110,7 +110,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetSetting(AMX *amx, const cell *params)
 	char * string = NULL;
 	std::string stf_key = "";
 
-	entity_hash = params[3];
+	entity_hash = params[3] ? params[3] : Lux_PawnEntity_GetEntityHash( amx );
 
 	stf_key = Lux_PawnEntity_GetString( amx, params[1] );
 	string = Lux_FFI_Entity_Get_Setting( entity_hash, stf_key.c_str() );
@@ -143,7 +143,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetSettingHash(AMX *amx, const cell *param
 	char * string = NULL;
 	std::string stf_key = "";
 
-	entity_hash = params[3];
+	entity_hash = params[2] ? params[2] : Lux_PawnEntity_GetEntityHash( amx );
 
 	stf_key = Lux_PawnEntity_GetString( amx, params[1] );
 	string = Lux_FFI_Entity_Get_Setting( entity_hash, stf_key.c_str() );
@@ -170,7 +170,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetNumber(AMX *amx, const cell *params)
 	cell response = -1;
 	std::string stf_key = "";
 
-	entity_hash = params[2];
+	entity_hash = params[2] ? params[2] : Lux_PawnEntity_GetEntityHash( amx );
 
 	stf_key = Lux_PawnEntity_GetString( amx, params[1] );
 	response = Lux_FFI_Entity_Get_Setting_Number( entity_hash, stf_key.c_str() );

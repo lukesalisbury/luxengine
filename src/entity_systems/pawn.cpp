@@ -284,6 +284,8 @@ bool Lux_PawnEntity_Init(std::string entity_id, std::string entity_base, mem_poi
 		}
 		amx_SetUserData((AMX *)entity_data, 1162690895, (void*)entity);
 		amx_SetUserData((AMX *)entity_data, 1162690890, strdup(entity_base.c_str()) );
+		amx_SetUserData( (AMX *)entity_data, 1162690895, (void*)entity);
+
 		return true;
 	}
 	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Lux_PawnEntity_Init FAILED" << std::endl;
@@ -717,6 +719,26 @@ Entity * Lux_PawnEntity_GetEntity(AMX *amx, cell text_param)
 	}
 
 	return wanted;
+}
+
+
+/** Lux_PawnEntity_GetEntityHash
+* Checks to see if string contains something.
+* \param amx - Pointer to current pawn script
+* \return Entity Hash
+*/
+uint32_t Lux_PawnEntity_GetEntityHash(AMX *amx)
+{
+	uint32_t hash = 0;
+	Entity * wanted = Lux_PawnEntity_GetParent(amx);
+
+	if ( wanted )
+	{
+		hash = wanted->hashid;
+	}
+
+
+	return hash;
 }
 
 

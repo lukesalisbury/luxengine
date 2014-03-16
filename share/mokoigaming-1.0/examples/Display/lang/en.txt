@@ -9,4 +9,17 @@ Negative
 Display
 Function Used:\n EntityGetNumber\n ObjectFollowPath\n ObjectEffect\n LanguageString\n\nAdditional Features:\n Display Styles\n Path\n Map Canvas\n
 Line
-(null)
+Circle
+Rectangle
+Polygon
+Display Objects
+Animation
+Tinting
+Rotating
+Text
+Tiling
+Scaling
+Borders
+Virtual Sprites
+Effects
+Layer Effects

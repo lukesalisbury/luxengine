@@ -1,0 +1,23 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+	<settings>
+		<dimensions width="152" height="160"/>
+	</settings>
+	<object value="dpad1.png:1" type="sprite">
+		<position x="-8" y="-8" w="128" h="128" z="0" l="0" r="0" f="0"/>
+	</object>
+	<object value="alpha02.png:77" type="sprite">
+		<position x="16" y="112" w="8" h="16" z="0" l="0" r="0" f="0"/>
+	</object>
+	<object value="alpha02.png:79" type="sprite">
+		<position x="32" y="112" w="8" h="16" z="0" l="0" r="0" f="0"/>
+	</object>
+	<object value="alpha02.png:75" type="sprite">
+		<position x="48" y="112" w="8" h="16" z="0" l="0" r="0" f="0"/>
+	</object>
+	<object value="alpha02.png:79" type="sprite">
+		<position x="64" y="112" w="8" h="16" z="0" l="0" r="0" f="0"/>
+	</object>
+	<object value="alpha02.png:73" type="sprite">
+		<position x="80" y="112" w="8" h="16" z="0" l="0" r="0" f="0"/>
+	</object>
+</map>

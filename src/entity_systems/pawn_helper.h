@@ -42,6 +42,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	cell AMX_NATIVE_CALL pawnDeprecatedFunction(AMX *amx, const cell *params);
 
 	Entity * Lux_PawnEntity_GetEntity(AMX * amx, cell text_param);
+	uint32_t Lux_PawnEntity_GetEntityHash(AMX *amx);
 
 	uint32_t Lux_PawnEntity_HasString(AMX * amx, cell str_param);
 	uint32_t Lux_PawnEntity_SetString(cell * dest, const char * source, size_t size );

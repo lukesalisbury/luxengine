@@ -1,0 +1,8 @@
+<sheet xmlns="http://mokoi.info/format/sheet">
+	<sprite name="Add New" mask="0" hidden="hidden">
+		<position x="0" y="0" w="0" h="0" />
+	</sprite>
+	<sprite name="LogoTest" mask="0">
+		<position x="0" y="0" w="0" h="0" />
+	</sprite>
+</sheet>
