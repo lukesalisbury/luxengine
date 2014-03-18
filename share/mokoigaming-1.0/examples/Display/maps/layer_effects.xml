@@ -1,0 +1,56 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="128" blue="128" green="128" mode="0" />
+	<option name="music" value="" type="music" />
+	<option name="name" value="" type="" />
+</settings>
+<object value="Rectangle" type="rect">
+	<position x="16" y="80" w="473" h="123" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="130" y="322" w="48" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="215" y="349" w="48" h="80" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:1" type="sprite">
+	<position x="32" y="104" w="192" h="80" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:2" type="sprite">
+	<position x="224" y="104" w="48" h="80" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="320" y="104" w="144" h="80" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:1" type="sprite">
+	<position x="272" y="104" w="48" h="80" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="287" y="329" w="48" h="80" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="352" y="332" w="48" h="80" z="3000" l="3" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="428" y="337" w="48" h="80" z="4000" l="4" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="493" y="316" w="48" h="80" z="5000" l="5" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="560" y="292" w="48" h="80" z="6000" l="6" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+</map>
