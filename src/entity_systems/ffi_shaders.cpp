@@ -18,7 +18,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "layers.h"
 
 
-
+/** Lux_FFI_Layer_Apply_Shader
+*
+*
+*/
 int32_t Lux_FFI_Layer_Apply_Shader( uint32_t layer, uint8_t shader )
 {
 	if ( lux::display == NULL )
@@ -40,14 +43,19 @@ int32_t Lux_FFI_Layer_Apply_Shader( uint32_t layer, uint8_t shader )
 
 }
 
-int32_t Lux_FFI_Object_Apply_Shader( MapObject * object, uint8_t shader )
+/** Lux_FFI_Object_Apply_Shader
+*
+*
+*/
+int32_t Lux_FFI_Object_Apply_Shader(uint32_t object_id, uint8_t shader )
 {
-
-
 	return 0;
 }
 
-
+/** Lux_FFI_Shaders_Create
+*
+*
+*/
 int32_t Lux_FFI_Shaders_Create( uint8_t shader, char * vertex_shader, char * fragment_shader )
 {
 

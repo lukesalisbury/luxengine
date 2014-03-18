@@ -107,6 +107,8 @@ public:
 	void CacheLayers( bool able );
 	void ResortLayer( uint32_t layer );
 	void SetLayerColour( uint32_t layer, LuxColour colour );
+
+
 	void DisplayOverlay();
 
 	/* Map Objects */
@@ -127,7 +129,7 @@ public:
 	void ChangeLayerRotation( uint32_t layer, int16_t roll, int16_t pitch, int16_t yaw );
 
 
-
+	/* Background */
 	void SetBackgroundColour( LuxColour fillcolor );
 	void SetBackgroundEffect( ObjectEffect effect );
 	void SetBackgroundObject( MapObject background );

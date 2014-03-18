@@ -61,8 +61,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 			/* Drawing Functions */
 			void Display();
 
-			void SetShader( uint8_t new_shader ) { this->shader = new_shader; };
-		private:
+			void SetShader( uint8_t new_shader );
+
+	private:
 			LuxRect GetObjectLocation( LuxRect map_location, uint8_t type );
 			bool ObjectOnScreen(LuxRect o, uint8_t flipmode, LuxRect s);
 			bool ObjectOnVirtualScreen(LuxRect & o, uint8_t flipmode, LuxRect s, uint32_t offx, uint32_t offy );

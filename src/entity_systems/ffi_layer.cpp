@@ -15,15 +15,16 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include "elix_endian.hpp"
 
-/** pawnLayerSetRotation
-* native LayerSetRotation(layer, roll, pitch, yaw);
+/** Lux_FFI_Layer_Rotation
+*
+*
 */
 void Lux_FFI_Layer_Rotation( int8_t layer, int16_t roll, int16_t pitch, int16_t yaw )
 {
 	lux::display->ChangeLayerRotation( layer, roll, pitch, yaw );
 }
 
-/** pawnLayerSetOffset
+/** Lux_FFI_Layer_Offset
 *
 * int8_t layer, int32_t x, int32_t y
 */
@@ -35,8 +36,9 @@ void Lux_FFI_Layer_Offset( int8_t layer, int32_t x, int32_t y )
 		lux::display->SetCameraView( layer, (fixed)x, (fixed)y );
 }
 
-/** pawnLayerColour
-* native LayerColour(layer, colour);
+/** Lux_FFI_Layer_Colour
+*
+*
 */
 void Lux_FFI_Layer_Colour( int8_t layer, uint32_t colour)
 {

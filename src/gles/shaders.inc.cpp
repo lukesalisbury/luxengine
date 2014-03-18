@@ -349,10 +349,10 @@ namespace OpenGLShader
 			char *info = NULL;
 
 			OpenGLShaderImpl::GetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-			info = new char(length+1);
+			info = new char[length+1];
 			OpenGLShaderImpl::GetShaderInfoLog(shader, length, NULL, info);
 			std::cout << "Failed to compile shader (" << source << "):" << info << std::endl;
-			delete info;
+			delete[] info;
 
 		}
 		return !!status;

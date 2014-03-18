@@ -20,16 +20,16 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 /** Entity Position Functions  */
 
-/** Lux_FFI_Entity_Set_Position
+/** Lux_FFI_Entity_Object_Set_Position
 *
 * Updates Entity X/Y Positions
 */
-uint8_t Lux_FFI_Entity_Set_Position(uint32_t hash_entity , int32_t fixed_x, int32_t fixed_y, int32_t fixed_z)
+uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, int32_t fixed_z)
 {
 	#ifdef NETWORKENABLED
 	lux::core->NetLock();
 	#endif
-	Entity * wanted = lux::entities->GetEntity(hash_entity);
+
 	if ( wanted != NULL )
 	{
 		if ( fixed_x != FIXED_MIN )
@@ -45,16 +45,16 @@ uint8_t Lux_FFI_Entity_Set_Position(uint32_t hash_entity , int32_t fixed_x, int3
 	return ( wanted != NULL );
 }
 
-/** Lux_FFI_Entity_Get_Position
+/** Lux_FFI_Entity_Object_Get_Position
 *
 * return Entity X/Y Positions
 */
-uint8_t Lux_FFI_Entity_Get_Position(uint32_t hash_entity , int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z)
+uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z)
 {
 	#ifdef NETWORKENABLED
 	lux::core->NetLock();
 	#endif
-	Entity * wanted = lux::entities->GetEntity(hash_entity);
+
 	if ( wanted != NULL )
 	{
 		if ( fixed_x )
@@ -70,15 +70,13 @@ uint8_t Lux_FFI_Entity_Get_Position(uint32_t hash_entity , int32_t * fixed_x, in
 	return ( wanted != NULL );
 }
 
-/** Lux_FFI_Entity_Get_Setting
+/** Lux_FFI_Entity_Object_Get_Setting
 *
-* uint32_t hash_entity, const char * key
+* Entity * wanted, const char * key
 */
-char * Lux_FFI_Entity_Get_Setting( uint32_t hash_entity, const char * key )
+char * Lux_FFI_Entity_Object_Get_Setting( Entity * wanted, const char * key )
 {
 	char * string = NULL;
-
-	Entity * wanted = lux::entities->GetEntity(hash_entity);
 
 	if ( wanted != NULL )
 	{
@@ -93,14 +91,13 @@ char * Lux_FFI_Entity_Get_Setting( uint32_t hash_entity, const char * key )
 	return string;
 }
 
-/** Lux_FFI_Entity_Get_Number
+/** Lux_FFI_Entity_Object_Get_Setting_Number
 *
-* uint32_t hash_entity, const char * key
+* Entity * wanted, const char * key
 */
-int32_t Lux_FFI_Entity_Get_Setting_Number(uint32_t hash_entity, const char * key)
+int32_t Lux_FFI_Entity_Object_Get_Setting_Number(Entity * wanted, const char * key)
 {
 	int32_t response = 0;
-	Entity * wanted = lux::entities->GetEntity(hash_entity);
 
 	if ( wanted != NULL )
 	{
@@ -108,6 +105,69 @@ int32_t Lux_FFI_Entity_Get_Setting_Number(uint32_t hash_entity, const char * key
 	}
 
 	return response;
+}
+
+/** Lux_FFI_Entity_Object_Delete
+*
+* Entity * wanted
+*/
+uint8_t Lux_FFI_Entity_Object_Delete( Entity * wanted )
+{
+
+	if ( wanted != NULL )
+	{
+		wanted->Delete();
+		return 1;
+	}
+	return 0;
+}
+
+
+
+/** Entity Position Functions  */
+
+/** Lux_FFI_Entity_Set_Position
+*
+* Updates Entity X/Y Positions
+*/
+uint8_t Lux_FFI_Entity_Set_Position(uint32_t hash_entity , int32_t fixed_x, int32_t fixed_y, int32_t fixed_z)
+{
+	Entity * wanted = lux::entities->GetEntity(hash_entity);
+
+	return Lux_FFI_Entity_Object_Set_Position( wanted, fixed_x, fixed_y, fixed_z );
+}
+
+/** Lux_FFI_Entity_Get_Position
+*
+* return Entity X/Y Positions
+*/
+uint8_t Lux_FFI_Entity_Get_Position(uint32_t hash_entity , int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z)
+{
+	Entity * wanted = lux::entities->GetEntity(hash_entity);
+
+	return Lux_FFI_Entity_Object_Get_Position( wanted, fixed_x, fixed_y, fixed_z );
+}
+
+/** Lux_FFI_Entity_Get_Setting
+*
+* uint32_t hash_entity, const char * key
+*/
+char * Lux_FFI_Entity_Get_Setting( uint32_t hash_entity, const char * key )
+{
+	Entity * wanted = lux::entities->GetEntity(hash_entity);
+
+	return Lux_FFI_Entity_Object_Get_Setting( wanted, key );
+}
+
+/** Lux_FFI_Entity_Get_Number
+*
+* uint32_t hash_entity, const char * key
+*/
+int32_t Lux_FFI_Entity_Get_Setting_Number(uint32_t hash_entity, const char * key)
+{
+	Entity * wanted = lux::entities->GetEntity(hash_entity);
+
+	return Lux_FFI_Entity_Object_Get_Setting_Number( wanted, key );
 }
 
 /** Lux_FFI_Entity_Create
@@ -144,12 +204,8 @@ uint32_t Lux_FFI_Entity_Create( const char * script_file, const char * ident, in
 uint8_t Lux_FFI_Entity_Delete( uint32_t hash_entity )
 {
 	Entity * wanted = lux::entities->GetEntity(hash_entity);
-	if ( wanted != NULL )
-	{
-		wanted->Delete();
-		return 1;
-	}
-	return 0;
+
+	return Lux_FFI_Entity_Object_Delete( wanted );
 }
 
 

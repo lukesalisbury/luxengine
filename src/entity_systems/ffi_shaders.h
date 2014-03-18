@@ -12,7 +12,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef FFI_SHADERS_H
 #define FFI_SHADERS_H
 
+#include <stdint.h>
 
+int32_t Lux_FFI_Layer_Apply_Shader( uint32_t layer, uint8_t shader );
+int32_t Lux_FFI_Object_Apply_Shader( uint32_t object_id, uint8_t shader );
+int32_t Lux_FFI_Shaders_Create( uint8_t shader, char * vertex_shader, char * fragment_shader );
 
 
 

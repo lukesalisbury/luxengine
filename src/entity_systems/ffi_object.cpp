@@ -185,7 +185,7 @@ int32_t Lux_FFI_Object_Effect( uint32_t object_id, uint32_t primary_colour, uint
 * uint8_t type,
 * char * sprite
 */
-int32_t Lux_FFI_Object_Replace( uint32_t object_id, uint8_t type, char * sprite )
+int32_t Lux_FFI_Object_Replace(uint32_t object_id, uint8_t type, const char *sprite )
 {
 	MapObject * map_object = NULL;
 

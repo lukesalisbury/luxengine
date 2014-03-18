@@ -15,6 +15,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "misc_functions.h"
 #include "game_config.h"
 
+#include "gles/gles.hpp"
+
 #define MAX_LAYER_OBJECTS 20480
 
 bool ObjectSort(MapObject * a, MapObject * b )
@@ -67,10 +69,12 @@ Layer::Layer(DisplaySystem * parent, uint8_t layer_value )
 	this->refreshz = true;
 	this->display_layer = layer_value;
 
+
 	std::string layername = "layer.static";
 	layername.append( 1, this->display_layer + 48 );
 
 	this->static_layer =  lux::config->GetBoolean(layername);
+	this->shader = SHADER_DEFAULT;
 }
 
 Layer::~Layer()
@@ -318,5 +322,16 @@ void Layer::Display()
 		{
 			this->objects_dynamic.clear();
 		}
+	}
+}
+
+
+
+
+void Layer::SetShader( uint8_t new_shader )
+{
+	if ( new_shader < NUM_SHADERS )
+	{
+		this->shader = new_shader;
 	}
 }

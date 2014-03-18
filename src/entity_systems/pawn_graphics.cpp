@@ -22,6 +22,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "ffi_object.h"
 #include "ffi_spritesheet.h"
+#include "ffi_path.h"
+#include "ffi_layer.h"
+#include "ffi_shaders.h"
 
 extern const AMX_NATIVE_INFO Graphics_Natives[];
 
@@ -118,9 +121,7 @@ static cell AMX_NATIVE_CALL pawnGraphicsDraw(AMX *amx, const cell *params)
 }
 
 /** Animation */
-uint32_t Lux_FFI_Animation_Length( const char * sheet, const char * sprite );
-uint32_t Lux_FFI_Animation_Create( const char * animation_name );
-uint32_t Lux_FFI_Animation_Insert( const char * animation_name, const char * sprite, const uint32_t time_ms );
+
 /** pawnAnimationGetLength
 * native AnimationGetLength(sheet[], anim[]);
 */
@@ -211,6 +212,8 @@ static cell AMX_NATIVE_CALL pawnPolygonAddpoint(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnObjectCreate(AMX *amx, const cell *p )
 {
+	ASSERT_PAWN_PARAM( amx, p, 9 );
+
 	uint32_t results = 0;
 	std::string sprite;
 
@@ -227,38 +230,16 @@ static cell AMX_NATIVE_CALL pawnObjectCreate(AMX *amx, const cell *p )
 */
 static cell AMX_NATIVE_CALL pawnObjectPosition(AMX *amx, const cell *params)
 {
-	if ( params[1] == 0 )
-		return -3;
+	ASSERT_PAWN_PARAM( amx, params, 7 );
 
-	MapObject * object = Lux_PawnEntity_GetObject( amx, (uint32_t) params[1] );
-	if ( object )
-	{
-		object->position.x = params[2];
-		object->position.y = params[3];
-		object->position.w = params[5];
-		object->position.h = params[6];
+	uint32_t object_id = params[1];
+	int32_t x = params[2];
+	int32_t y = params[3];
+	int32_t z = params[4];
+	uint16_t w = params[5];
+	uint16_t h = params[6];
 
-		if ( params[4] >= 0 )
-		{
-			uint8_t current_layer = object->layer;
-
-			object->SetZPos((int32_t)params[4]);
-
-			if ( current_layer != object->layer )
-			{
-				lux::display->RemoveObject(current_layer, object);
-				lux::display->AddObjectToLayer(object->layer, object, true);
-			}
-			else
-			{
-				lux::display->ResortLayer(object->layer);
-			}
-		}
-
-		return 1;
-
-	}
-	return 0;
+	return Lux_FFI_Object_Postion( object_id, x, y, z, w, h );
 }
 
 /** pawnObjectInfo
@@ -266,30 +247,24 @@ static cell AMX_NATIVE_CALL pawnObjectPosition(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnObjectInfo(AMX *amx, const cell *params)
 {
-	if ( params[1] < 0 )
-		return 0;
-	cell * xptr, * yptr;
-	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted == NULL )
-		return -2;
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-	if ( lux::world->active_map )
+	cell * xptr, * yptr;
+	uint16_t w;
+	uint16_t h;
+	uint32_t object_id = params[1];
+
+	if ( Lux_FFI_Object_Info( object_id, &w, &h ) )
 	{
-		MapObject * object = NULL;
-		if ( wanted->_mapid == 0 )
-			object = lux::world->GetObject(params[1]);
-		else
-			object = lux::world->active_map->GetObject(params[1]);
-		if ( object )
-		{
-			xptr  = amx_Address(amx, params[2]);
-			if (xptr )
-				*xptr = object->position.w;
-			yptr = amx_Address(amx, params[3]);
-			if (yptr)
-				*yptr = object->position.h;
-			return 1;
-		}
+		xptr = amx_Address(amx, params[2]);
+		yptr = amx_Address(amx, params[3]);
+
+		if ( xptr )
+			*xptr = w;
+
+		if ( yptr )
+			*yptr = h;
+		return 1;
 	}
 	return 0;
 }
@@ -299,37 +274,20 @@ static cell AMX_NATIVE_CALL pawnObjectInfo(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnObjectEffect(AMX *amx, const cell *params)
 {
-	if ( params[1] < 0 )
-		return 0;
-	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted == NULL )
-		return -2;
+	ASSERT_PAWN_PARAM( amx, params, 8 );
 
-	if ( lux::world->active_map )
-	{
-		MapObject * object = NULL;
-		if ( wanted->_mapid == 0 )
-			object = lux::world->GetObject(params[1]);
-		else
-			object = lux::world->active_map->GetObject(params[1]);
-		if ( object )
-		{
-			cell_colour colour;
-			colour.hex = elix::endian::host32(params[2]);
-			object->effects.primary_colour = colour.rgba;
+	uint32_t object_id = params[1];
+	uint32_t colour1 = params[2];
+	uint32_t colour2 = params[8];
 
-			colour.hex = elix::endian::host32(params[8]);
-			object->effects.secondary_colour = colour.rgba;
+	uint16_t rotate = params[3];
+	uint16_t scale_w = params[4];
+	uint16_t scale_h = params[5];
+	uint8_t flipmode = params[6];
+	uint8_t style = params[7];
 
-			object->effects.rotation = params[3];
-			object->effects.scale_xaxis = params[4];
-			object->effects.scale_yaxis = params[5];
-			object->effects.flip_image = params[6];
-			object->effects.style = params[7];
-			return 1;
-		}
-	}
-	return 0;
+	return Lux_FFI_Object_Effect( object_id, colour1, colour2, rotate, scale_w, scale_h, flipmode, style );
+
 }
 
 /** pawnObjectReplace
@@ -337,57 +295,15 @@ static cell AMX_NATIVE_CALL pawnObjectEffect(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnObjectReplace(AMX *amx, const cell *params)
 {
-	if ( params[1] < 0 )
-		return 0;
+	ASSERT_PAWN_PARAM( amx, params, 4 );
 
-	std::string name;
+	std::string sprite;
 	uint32_t object_id = (uint32_t)params[1];
 	uint8_t type = (uint8_t)params[3];
-	Entity * wanted = Lux_PawnEntity_GetParent(amx);
 
-	if ( wanted == NULL )
-		return -3;
+	sprite = Lux_PawnEntity_GetString(amx, params[2]);
 
-	if ( lux::world->active_map )
-	{
-		MapObject * object = NULL;
-		if ( wanted->_mapid == 0 )
-			object = lux::world->GetObject(object_id);
-		else
-			object = lux::world->active_map->GetObject(object_id);
-
-
-		name = Lux_PawnEntity_GetString(amx, params[2]);
-
-		if ( object )
-		{
-			// Check if we are really changing object
-			if ( object->type == type )
-			{
-				if ( !object->sprite.compare(name) )
-					return 0;
-			}
-
-			if ( object->type == OBJECT_SPRITE && type != OBJECT_SPRITE )
-			{
-				object->position.w = object->position.w ? object->position.w : 32;
-				object->position.h = object->position.h ? object->position.h : 32;
-			}
-
-			object->FreeData();
-
-			object->sprite = name;
-			object->type = type;
-			object->timer = 0;
-
-
-
-			//object->SetData(NULL, object->type);
-
-			return object->has_data ? 1 : -1;
-		}
-	}
-	return -2;
+	return Lux_FFI_Object_Replace( object_id, type, sprite.c_str() );
 }
 
 /** pawnObjectToggle
@@ -395,23 +311,12 @@ static cell AMX_NATIVE_CALL pawnObjectReplace(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnObjectToggle(AMX *amx, const cell *params)
 {
-	if ( params[1] < 0 )
-		return 0;
-	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted == NULL )
-		return -2;
+	ASSERT_PAWN_PARAM( amx, params, 2 );
 
-	MapObject * object = NULL;
-	if ( wanted->_mapid == 0 )
-		object = lux::world->GetObject(params[1]);
-	else
-		object = lux::world->active_map->GetObject(params[1]);
-	if ( object )
-	{
-		if ( object->hidden == params[2] )
-			object->ToggleHidden();
-	}
-	return 0;
+	uint32_t object_id = (uint32_t)params[1];
+
+	return Lux_FFI_Object_Flag( object_id, 6, (bool)params[2] );
+
 }
 
 
@@ -420,41 +325,12 @@ static cell AMX_NATIVE_CALL pawnObjectToggle(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnObjectFlag(AMX *amx, const cell *params)
 {
-	if ( params[1] < 0 )
-		return 0;
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted == NULL )
-		return -2;
+	uint32_t object_id = (uint32_t)params[1];
 
-	MapObject * object = NULL;
-	if ( wanted->_mapid == 0 )
-		object = lux::world->GetObject(params[1]);
-	else
-		object = lux::world->active_map->GetObject(params[1]);
-	if ( object )
-	{
-		switch ( params[2] )
-		{
-			case 0:
-				object->speed = (int16_t)params[3];
-				break;
-			case 1:
-				object->loop = (bool)params[3];
-				break;
-			case 2:
-				object->reverse = (bool)params[3];
-				break;
-			case 4:
-				object->timer = (int16_t)params[3];
-				break;
-			case 5:
-				object->auto_delete = (bool)params[3];
-				break;
-		}
-	}
+	return Lux_FFI_Object_Flag( object_id, (uint8_t)params[2], (int16_t)params[3] );
 
-	return 0;
 }
 
 /** pawnObjectDelete
@@ -462,122 +338,44 @@ static cell AMX_NATIVE_CALL pawnObjectFlag(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnObjectDelete(AMX *amx, const cell *params)
 {
-	if ( params[1] < 0 )
-		return 0;
+	ASSERT_PAWN_PARAM( amx, params, 1 );
 
-	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted == NULL )
-		return -2;
+	uint32_t object_id = (uint32_t)params[1];
 
-
-	if ( wanted->_mapid == 0 )
-		return lux::world->RemoveObject(params[1]);
-	else
-		return lux::world->active_map->RemoveObject(params[1]);
+	return Lux_FFI_Object_Delete( object_id );
 
 }
 
 /** pawnObjectFollowPath
 * native ObjectFollowPath(object:id, speed, &x, &y, loop);
 */
-#include <cmath>
-#define FIXEDPI  3.1415926535897932384626433832795
 static cell AMX_NATIVE_CALL pawnObjectFollowPath(AMX *amx, const cell *params)
 {
-	if ( params[1] < 0 )
-		return 0;
-	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted == NULL )
-		return -2;
+	ASSERT_PAWN_PARAM( amx, params, 5 );
 
-	MapObject * object = NULL;
-	if ( wanted->_mapid == 0 )
-		object = lux::world->GetObject(params[1]);
-	else
-		object = lux::world->active_map->GetObject(params[1]);
+	uint32_t object_id = (uint32_t)params[1];
+	int32_t fixed_speed = params[2];
+	int16_t x;
+	int16_t y;
+	uint8_t loop = params[5];
 
-	if ( object )
+	int32_t result = Lux_FFI_Path_Move_Object( object_id, fixed_speed, &x, &y, loop );
+
+	if ( result >= 0 )
 	{
-		float movex, movey, speed, angle = 0;
-		LuxPath next, prev;
-		uint16_t next_path_point = 0;
-
-		speed = MAKE_FIXED_FLOAT(params[1]) * (float)lux::core->GetFrameDelta();
-		if ( !object->_path.size() )
-		{
-			return -2;
-		}
-
-		if ( speed > 0.0 )
-		{
-			next_path_point = object->path_point+1;
-			if ( params[5] ) // Loop
-			{
-				if ( object->path_point >= object->_path.size()-1 )
-				{
-					next_path_point = 0;
-				}
-			}
-			else
-			{
-				if ( object->path_point >= object->_path.size()-1 )
-					return object->path_point;
-			}
-
-			prev.x = object->position.x;
-			prev.y = object->position.y;
-			next = object->_path.at(next_path_point);
-		}
-		else if ( speed < 0.0 )
-		{
-			next_path_point = object->path_point-1;
-			if ( params[5] ) // Loop
-			{
-				if ( (object->path_point == 0) && object->path_point > object->_path.size() )
-				{
-					next_path_point = object->_path.size()-1;
-				}
-			}
-			else
-			{
-				if ( (object->path_point == 0) && object->path_point > object->_path.size() )
-					return object->path_point;
-			}
-
-			prev.x = object->position.x;
-			prev.y = object->position.y;
-			prev = object->_path.at(object->path_point);
-			next = object->_path.at(next_path_point);
-		}
-		else
-			return -1;
-
-		angle = atan2( (float)(prev.y - next.y), (float)(prev.x - next.x));
-		movey = sin(angle) * speed;
-		movex = cos(angle) * speed;
-		object->path_current_x -= MAKE_FLOAT_FIXED(movex);
-		object->path_current_y -= MAKE_FLOAT_FIXED(movey);
-
-		object->position.x = MAKE_FIXED_INT(object->path_current_x);
-		object->position.y = MAKE_FIXED_INT(object->path_current_y);
-
-		if (object->position.x == next.x && object->position.y == next.y)
-		{
-			object->path_current_x = MAKE_INT_FIXED(object->position.x);
-			object->path_current_y = MAKE_INT_FIXED(object->position.y);
-			object->path_point = next_path_point;
-		}
-
 		cell * xptr = NULL;
+
 		xptr = amx_Address(amx, params[3]);
 		if (xptr)
-			*xptr = object->position.x;
+			*xptr = x;
+
 		xptr = amx_Address(amx, params[4]);
 		if (xptr)
-			*xptr = object->position.y;
-		return object->path_point;
+			*xptr = y;
 	}
-	return -1;
+
+	return result;
+
 }
 
 
@@ -591,16 +389,14 @@ static cell AMX_NATIVE_CALL pawnCameraSetScroll(AMX *amx, const cell *params)
 	return 0;
 }
 
+
 /** pawnLayerSetRotation
 * native LayerSetRotation(layer, roll, pitch, yaw);
 */
 static cell AMX_NATIVE_CALL pawnLayerSetRotation(AMX *amx, const cell *params)
 {
+	Lux_FFI_Layer_Rotation( params[1], params[2], params[3], params[4] );
 
-	/* Todo
-	*
-	*/
-	lux::display->ChangeLayerRotation(params[1], params[2], params[3], params[4]);
 	return 0;
 }
 
@@ -609,10 +405,20 @@ static cell AMX_NATIVE_CALL pawnLayerSetRotation(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnLayerSetOffset(AMX *amx, const cell *params)
 {
-	if ( params[1] == -1)
-		lux::display->SetCameraView( params[2], params[3] );
-	else
-		lux::display->SetCameraView( params[1], params[2], params[3] );
+	Lux_FFI_Layer_Offset( params[1], params[2], params[3] );
+
+	return 0;
+}
+
+/** pawnLayerSetEffect
+* native LayerSetEffect(layer, x, y);
+*/
+static cell AMX_NATIVE_CALL pawnLayerSetEffect(AMX *amx, const cell *params)
+{
+
+
+	Lux_FFI_Layer_Apply_Shader( params[1], params[2] );
+
 	return 0;
 }
 
@@ -621,13 +427,7 @@ static cell AMX_NATIVE_CALL pawnLayerSetOffset(AMX *amx, const cell *params)
 */
 static cell AMX_NATIVE_CALL pawnLayerColour(AMX *amx, const cell *params)
 {
-	LuxColour temp = {255,255,255,255};
-	cell_colour colour;
-	colour.hex = elix::endian::host32(params[2]);
-	temp = colour.rgba;
-
-	if ( params[1] >= 0 )
-		lux::display->SetLayerColour( (uint32_t)params[1], temp );
+	Lux_FFI_Layer_Colour( params[1], params[2] );
 	return 0;
 }
 
@@ -660,6 +460,7 @@ const AMX_NATIVE_INFO Graphics_Natives[] = {
 	{ "CameraSetScroll", pawnCameraSetScroll }, ///native CameraSetScroll(bool:scroll);
 	{ "LayerSetRotation", pawnLayerSetRotation }, ///native LayerSetRotation(layer, roll, pitch, yaw);
 	{ "LayerSetOffset", pawnLayerSetOffset }, ///native LayerSetOffset(layer, x, y);
+	{ "LayerSetEffect", pawnLayerSetEffect }, ///native LayerSetEffect(layer, effect);
 	{ "LayerColour", pawnLayerColour }, ///native LayerColour(layer, colour = 0xFFFFFFFF);
 	{ 0, 0 }
 };

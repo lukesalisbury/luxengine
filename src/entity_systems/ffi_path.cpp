@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #define FIXEDPI  3.1415926535897932384626433832795
 
-/** pawnObjectFollowPath
+/** Lux_FFI_Path_Move_Object
 * native ObjectFollowPath(object:id, speed, &x, &y, loop);
 */
 int32_t Lux_FFI_Path_Move_Object( uint32_t object_id, int32_t fixed_speed, int16_t * x, int16_t * y, uint8_t loop )

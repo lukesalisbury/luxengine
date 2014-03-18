@@ -190,18 +190,28 @@ void DisplaySystem::Loop(LuxState engine_state)
 		Layer * current_layer = (*p);
 		if ( this->show_layers[i] )
 		{
-			this->graphics.CacheDisplay(current_layer->_z  );
-			if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
+			if ( current_layer->shader )
 			{
-				this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
+				this->graphics.CacheDisplay( current_layer->display_layer );
 				current_layer->Display();
-				this->graphics.SetRotation(0,0,0);
+
+				this->debug_msg << "Layer: " << (int)current_layer->display_layer << " using FBO" << std::endl;
+
+				this->graphics.DrawCacheDisplay( current_layer->display_layer, current_layer->shader );
 			}
 			else
 			{
-				current_layer->Display();
+				if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
+				{
+					this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
+					current_layer->Display();
+					this->graphics.SetRotation(0,0,0);
+				}
+				else
+				{
+					current_layer->Display();
+				}
 			}
-			this->graphics.DrawCacheDisplay( current_layer->_z, current_layer->shader );
 		}
 		i++;
 	}
