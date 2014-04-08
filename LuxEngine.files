@@ -544,3 +544,8 @@ src/entity_systems/ffi_spritesheet.h
 src/entity_systems/ffi_spritesheet.cpp
 src/entity_systems/ffi_player.h
 src/entity_systems/ffi_player.cpp
+src/custom/custom_config.cpp
+src/custom/custom_main.cpp
+src/custom/custom_portal.cpp
+src/custom/custom_screen.cpp
+src/custom/project_media.cpp

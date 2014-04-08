@@ -1,213 +1,230 @@
+
 /****************************
-Copyright © 2009-2012  Luke Salisbury
+Copyright © 2007-2014 Luke Salisbury
+This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
-http://creativecommons.org/licenses/by-nc-sa/3.0/
+Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
-You are free:
-to Share — to copy, distribute and transmit the work
-to Remix — to adapt the work
-
-Under the following conditions:
-Attribution — You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
-Noncommercial — You may not use this work for commercial purposes.
-Share Alike — If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
-
-With the understanding that:
-Waiver — Any of the above conditions can be waived if you get permission from the copyright holder.
-Public Domain — Where the work or any of its elements is in the public domain under applicable law, that status is in no way affected by the license.
-Other Rights — In no way are any of the following rights affected by the license:
- - Your fair dealing or fair use rights, or other applicable copyright exceptions and limitations;
- - The author's moral rights;
- - Rights other persons may have either in the work itself or in how the work is used, such as publicity or privacy rights.
-Notice — For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
-
+1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "engine.h"
 #include "portal.h"
 #include "core.h"
 #include "config.h"
+
+#include "elix_file.hpp"
 #include "elix_string.hpp"
-
-#ifdef FLASCC
-#include <AS3/AS3.h>
-
-#define MODULE_EXPORT extern "C"
-
-MODULE_EXPORT void update_lux_engine()
-{
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "update_lux_engine" << std::endl;
-	if ( lux::engine->state > NOTRUNNING )
-	{
-		lux::engine->Refresh();
-	}
-}
-
-int main(int argc, char * argv[])
-{
-	lux::engine = new LuxEngine( "/test.game", "/" );
-	if ( lux::engine->Start() )
-	{
-		while ( lux::engine->state > NOTRUNNING )
-		{
-			update_lux_engine();
-		}
-	}
-	lux::engine->Close();
-	delete lux::engine;
-}
-
-
-
-#else
-
-void main_args( int argc, char *argv[] )
-{
-	int c = argc;
-	while ( c > 1 ) {
-		--c;
-		if ( strcmp(argv[c], "--portal") == 0 )
-		{
-			luxportal::use = true;
-		}
-		else if ( strcmp(argv[c], "--window") == 0 )
-		{
-			lux::config->SetBoolean("display.fullscreen", false);
-		}
-		else if ( strcmp(argv[c], "--fullscreen") == 0 )
-		{
-			lux::config->SetBoolean("display.fullscreen", true);
-		}
-		else if ( strcmp(argv[c], "--test") == 0 )
-		{
-			luxportal::testmode = true;
-		}
-		else if ( strcmp(argv[c], "--ogl") == 0 )
-		{
-			luxportal::opengl = true;
-			luxtest::opengl = true;
-			lux::config->SetString("display.mode", "OpenGL");
-		}
-		else if ( strcmp(argv[c], "--native") == 0 )
-		{
-			luxportal::opengl = false;
-			luxtest::opengl = false;
-			lux::config->SetString("display.mode", "native");
-		}
-		else if ( strcmp(argv[c], "--limitframes") == 0 )
-		{
-			lux::config->SetBoolean("display.limit", true);
-		}
-		else if ( argv[c][0] == '-' && strlen(argv[c]) == 6 )
-		{
-			if (argv[c][2] == 'b' && argv[c][3] == 'p' && argv[c][4] == 'p' )
-			{
-				if (argv[c][5] >= 48 && argv[c][5] < 52)
-				{
-					lux::config->SetNumber("display.bpp", argv[c][5] - 48);
-				}
-			}
-		}
-		else if ( argv[c][0] != '-' )
-		{
-			lux::config->SetString("project.file", argv[c]);
-			luxportal::add( argv[c] );
-			luxportal::use = false;
-			luxportal::active = false;
-		}
-	}
-}
-
-#define DEFAULT_LOCATION ""
 
 
 bool StartEngine()
 {
-	std::string quest_filename = lux::config->GetString("project.file");
-	std::string classic_filename = lux::config->GetString("directory.program") + "ozc";
-
-
-	#ifdef __GNUWIN32__
-	if ( !classic_filename.compare("./ozc") )
-	{
-		classic_filename = "ozc";
-	}
-	#endif
 
 
 
-	if ( quest_filename.at(0) == '\'' )
-	{
-		quest_filename = quest_filename.substr(1, quest_filename.length() -2);
-	}
 
-	std::vector<std::string> name_split;
-	elix::string::Split(quest_filename, ".", &name_split);
-	if ( name_split.size() >= 2 )
-	{
-		if ( !name_split.at(name_split.size()-1).compare("qst") )
-		{
-			classic_filename.append(" ");
-			classic_filename.append(quest_filename);
-			classic_filename.append("");
 
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "classic_filename " << classic_filename << std::endl;
 
-			system( classic_filename.c_str() );
-			return true;
-		}
-	}
 
-	if ( lux::engine->Start() )
-	{
-		lux::engine->Loop();
-	}
-	lux::engine->Close();
-	return true;
 }
 
-
-extern "C" int main( int argc, char *argv[] )
-{
-
-	std::string base_directory;
-
-	base_directory = elix::path::GetBase( (argc ? argv[0] : DEFAULT_LOCATION ), true );
-	lux::engine = new LuxEngine( base_directory + "demos"LUX_DIR_SSEPARATOR"Collision"LUX_DIR_SSEPARATOR, base_directory );
-	main_args( argc, argv );
-
-
-	if ( luxportal::testmode )
+	bool is_classic_quest( std::string quest_filename )
 	{
-		luxtest::run();
-		return 0;
-	}
-
-	luxportal::open();
-
-	if ( luxportal::use )
-	{
-		while ( luxportal::active )
+		if ( quest_filename.at(0) == '\'' )
 		{
-			if ( luxportal::run() )
-			{
-				StartEngine();
-			}
+			quest_filename = quest_filename.substr(1, quest_filename.length() -2);
 		}
 
+		std::vector<std::string> name_split;
+		elix::string::Split(quest_filename, ".", &name_split);
+		if ( name_split.size() >= 2 )
+		{
+			if ( !name_split.at(name_split.size()-1).compare("qst") )
+			{
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	bool launch_classic( std::string game )
+	{
+		std::string classic_filename = lux::config->GetString("directory.program") + "ozc";
+		#ifdef __GNUWIN32__
+		if ( !classic_filename.compare("./ozc") )
+		{
+			classic_filename = "ozc";
+		}
+		#endif
+
+		classic_filename.append(" ");
+		classic_filename.append(quest_filename);
+		classic_filename.append("");
+
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "classic_filename " << classic_filename << std::endl;
+
+		system( classic_filename.c_str() );
+
+
+	}
+
+
+extern "C" void lux_engine_loop()
+{
+	std::string quest_filename = lux::config->GetString("project.file");
+	if ( is_classic_quest( quest_filename ) )
+	{
+		launch_classic( quest_filename );
 	}
 	else
 	{
-		StartEngine();
+		if ( lux::engine->Start() )
+		{
+			lux::engine->Loop();
+		}
+		lux::engine->Close();
 	}
-	luxportal::close();
-	delete lux::engine;
-
-
-	return 0;
 }
 
+#if defined(STANDALONE)
+	extern "C" int main( int argc, char *argv[] )
+	{
+		if ( argc )
+		{
+			std::string base_executable = (argc ? argv[0] : "/lux" );
+			lux::engine = new LuxEngine( base_executable );
+			lux::global_config->SetString("project.file", argv[0]);
+			lux_engine_loop();
+			delete lux::engine;
+		}
+		return 0;
+	}
+
+#else
+
+
+	void main_args( int argc, char *argv[], bool skipProjectFile )
+	{
+		int c = argc;
+		while ( c > 1 ) {
+			--c;
+			if ( strcmp(argv[c], "--portal") == 0 )
+			{
+				luxportal::use = true;
+				luxportal::active = true;
+			}
+			else if ( strcmp(argv[c], "--window") == 0 )
+			{
+				lux::global_config->SetBoolean("display.fullscreen", false);
+			}
+			else if ( strcmp(argv[c], "--fullscreen") == 0 )
+			{
+				lux::global_config->SetBoolean("display.fullscreen", true);
+			}
+			else if ( strcmp(argv[c], "--test") == 0 )
+			{
+				luxportal::testmode = true;
+			}
+			else if ( strcmp(argv[c], "--ogl") == 0 )
+			{
+				luxportal::opengl = true;
+				luxtest::opengl = true;
+				lux::global_config->SetString("display.mode", "OpenGL");
+			}
+			else if ( strcmp(argv[c], "--native") == 0 )
+			{
+				luxportal::opengl = false;
+				luxtest::opengl = false;
+				lux::global_config->SetString("display.mode", "native");
+			}
+			else if ( argv[c][0] != '-' )
+			{
+				if ( !skipProjectFile )
+				{
+					lux::global_config->SetString("project.file", argv[c]);
+					luxportal::add( argv[c] );
+					luxportal::use = false;
+					luxportal::active = false;
+				}
+			}
+			else
+			{
+				// Unknown argument.
+			}
+		}
+	}
+
+
+	namespace Mokoi {
+		int32_t gameSignatureOffset( elix::File * file );
+	}
+
+	bool checkForAttachedGame( char * argv )
+	{
+		bool result = false;
+		elix::File * file = new elix::File( std::string(argv), false );
+
+		result = Mokoi::gameSignatureOffset( file ) > 1 ? true : false;
+
+
+		return result;
+	}
+
+	extern "C" void lux_engine_init()
+	{
+
+	}
+
+
+
+	extern "C" int main( int argc, char *argv[] )
+	{
+		bool gameAttached = false;
+		std::string base_executable = (argc ? argv[0] : "/luxengine" );
+
+		lux::engine = new LuxEngine( base_executable );
+
+		main_args( argc, argv, gameAttached );
+	/*
+		lux::global_config->SetString("project.file", "/sdcard/Android/data/info.mokoi.lux/files/mokoi-games/puttytris.game");
+		luxportal::use = false;
+		luxportal::active = false;
+	*/
+		if ( luxportal::testmode )
+		{
+			luxtest::run();
+		}
+
+		luxportal::open();
+		if ( luxportal::use )
+		{
+			while ( luxportal::active )
+			{
+				if ( luxportal::run() )
+				{
+					lux_engine_loop();
+				}
+			}
+
+		}
+		else
+		{
+			lux_engine_loop();
+		}
+		luxportal::close();
+
+
+		delete lux::engine;
+
+
+
+		return 0;
+	}
 
 #endif
+
 
 
 

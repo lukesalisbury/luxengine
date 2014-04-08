@@ -649,7 +649,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
 
 	return false;
 }
-
+/*
 void Lux_OGL_ScreenSuface( Texture * texture, const char * filename )
 {
 
@@ -672,7 +672,7 @@ void Lux_OGL_ScreenSuface( Texture * texture, const char * filename )
 
 
 }
-
+*/
 
 #include <sstream>
 /* Lux_OGL_DrawCacheDisplay

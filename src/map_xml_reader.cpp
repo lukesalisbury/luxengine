@@ -57,7 +57,7 @@ std::string MapXMLReader::GetTextString( tinyxml2::XMLElement * object_element, 
 		std::string attrkey;
 		if (  tinyxml2::QueryStringAttribute(setting_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
 		{
-			if ( !attrkey.compare("number") )
+			if ( !attrkey.compare("text-string") )
 			{
 				tinyxml2::QueryIntAttribute( setting_element, "value", language_string_id, -1 );
 

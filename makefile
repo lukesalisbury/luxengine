@@ -63,9 +63,9 @@ ifeq ($(DOWNLOADER_MODE), curl)
 endif
 
 ifeq ($(CUSTOMOBJECTS), TRUE)
-	OBJ += $(OBJDIR)/custom/custom_config.o $(OBJDIR)/custom/custom_main.o $(OBJDIR)/custom/custom_screen.o $(OBJDIR)/custom/project_media.o
+	OBJ += $(OBJDIR)/custom_main.o $(OBJDIR)/custom_screen.o $(OBJDIR)/project_media.o
 else
-	OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_config.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_main.o $(OBJDIR)/lux_screen.o $(OBJDIR)/project_media.o
+	OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_main.o $(OBJDIR)/lux_screen.o $(OBJDIR)/project_media.o
 endif
 
 ifeq ($(INCLUDE_PAWN), TRUE)
@@ -74,7 +74,7 @@ ifeq ($(INCLUDE_PAWN), TRUE)
                 OBJ += $(OBJDIR)/scripting/amx4/amx.o $(OBJDIR)/scripting/amx4/amxcons.o $(OBJDIR)/scripting/amx4/amxcore.o
 		COMPILER_FLAGS += -DPAWN_VERSION=4
 		ifdef ASM
-                        OBJ += $(OBJDIR)/scripting/amx4/amxexecn.o
+            OBJ += $(OBJDIR)/scripting/amx4/amxexecn.o
 			COMPILER_FLAGS += -DAMX_ASM
 		else
 			ifdef PAWNSIMPLEEXEC
@@ -155,6 +155,11 @@ clean-bin:
 	@${RM} $(BUILDDIR)/$(BIN)
 
 $(OBJDIR)/%.o : src/%.cpp
+	@echo Compiling $@ $(MESSAGE)
+	@-mkdir -p $(dir $@)
+	@$(CPP) -c $(COMPILER_FLAGSPP) -o $@ $<
+
+$(OBJDIR)/%.o : $(CUSTOMPATH)/%.cpp
 	@echo Compiling $@ $(MESSAGE)
 	@-mkdir -p $(dir $@)
 	@$(CPP) -c $(COMPILER_FLAGSPP) -o $@ $<
