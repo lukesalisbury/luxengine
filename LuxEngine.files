@@ -549,3 +549,5 @@ src/custom/custom_main.cpp
 src/custom/custom_portal.cpp
 src/custom/custom_screen.cpp
 src/custom/project_media.cpp
+setting.mk
+platform.mk

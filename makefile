@@ -15,9 +15,9 @@ include setting.mk
 BIN = luxengine
 DOWNLOADER_MODE = none
 
-COMPILER_LIBS = $(OPTIMIZER) $(DEBUG) -L'lib' $(PLATFORM_LIBS)
-COMPILER_FLAGS = $(OPTIMIZER) $(DEBUG) -I'../elix/src/' -I'src' -I'src/$(PLATFORM_DIRECTORY)' -I'include'  -DTIXML_USE_STL -D$(PLATFORM) $(PLATFORM_FLAGS)
-COMPILER_FLAGSPP = -Wno-write-strings -fno-access-control -fno-exceptions -fno-rtti $(COMPILER_FLAGS)
+COMPILER_LIBS += $(OPTIMIZER) $(DEBUG) -L'lib' $(PLATFORM_LIBS)
+COMPILER_FLAGS += $(OPTIMIZER) $(DEBUG) -I'../elix/src/' -I'src' -I'src/$(PLATFORM_DIRECTORY)' -I'include'  -DTIXML_USE_STL -D$(PLATFORM) $(PLATFORM_FLAGS)
+COMPILER_FLAGSPP += -Wno-write-strings -fno-access-control -fno-exceptions -fno-rtti $(COMPILER_FLAGS)
 
 #Read platform and custom settings
 include makefiles/$(BUILDOS).make
@@ -165,7 +165,11 @@ install: $(BIN)
 	@echo --------------------------------
 	@echo Installing $< to $(INSTALLDIR)
 	@-$(MKDIR) $(INSTALLDIR)
-	@cp $(BUILDDIR)/$(BIN) $(INSTALLDIR)
+	@-$(MKDIR) $(INSTALLDIR)/bin
+	@cp $(BUILDDIR)/$(BIN) $(INSTALLDIR)/bin/
+	@cp -rv ./share/ $(INSTALLDIR)
+
+
 
 input_header:
 	$(CPP) -o $(OBJDIR)/update_input_header.o -c update_input_header.cpp

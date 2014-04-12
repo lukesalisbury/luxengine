@@ -1,11 +1,12 @@
-
+COMPILER_LIBS =
+COMPILER_FLAGS =
 
 ifeq ($(OBJDIR), )
 	OBJDIR = ./objects
 endif
 
 ifeq ($(BUILDDIR), )
-	BUILDDIR = ./build
+	BUILDDIR = ./bin
 endif
 
 ifeq ($(INSTALLDIR), )
