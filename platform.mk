@@ -1,11 +1,11 @@
 
 
 ifeq ($(OBJDIR), )
-	OBJDIR = objects
+	OBJDIR = ./objects
 endif
 
 ifeq ($(BUILDDIR), )
-	BUILDDIR = bin
+	BUILDDIR = ./build
 endif
 
 ifeq ($(INSTALLDIR), )
@@ -29,6 +29,15 @@ endif
 ifeq ($(PLATFORMBITS), )
 	PLATFORMBITS = other
 endif
+ifeq ($(PLATFORMBITS), 64)
+	COMPILER_FLAGS += -m64
+	COMPILER_LIBS +=  -m64
+endif
+ifeq ($(PLATFORMBITS), 32)
+	COMPILER_FLAGS +=  -m32
+	COMPILER_LIBS +=  -m32
+endif
+
 
 #Build platform & target
 ifeq ($(BUILDOS), )

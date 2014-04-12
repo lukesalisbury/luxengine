@@ -10,7 +10,7 @@ MESSAGE =
 PAWN=4
 
 #OBJDIR = objects
-#BUILDDIR = bin
+#BUILDDIR = build
 #INSTALLDIR = ../MokoiGaming/bin
 #BUILDOS =
 

@@ -1,1 +1,1 @@
-Requires a copy of SDL and SDL_mixer source codes
+Requires a copy of SDL2 and SDL2_mixer source codes
