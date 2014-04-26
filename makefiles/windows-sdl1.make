@@ -42,7 +42,7 @@ PLATFORM_DIRECTORY = platform/pc
 
 PLATFORM_LIBS = -lmingw32 -lSDLmain -lSDL -lSDL_image -lSDL_gfx -lz -lSDL_mixer -lwinmm -static-libgcc -lopengl32 -lws2_32
 PLATFORM_FLAGS = -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DUSE_SDL1
-PLATFORM_OBJECTS = $(OBJDIR)/enet/win32.o $(OBJDIR)/lux.res
+PLATFORM_OBJECTS = $(OBJDIR)/gles/gl_camera.o $(OBJDIR)/enet/win32.o $(OBJDIR)/lux.res
 
 ifeq ($(BUILDDEBUG), TRUE)
 	PLATFORM_LIBS += -mconsole

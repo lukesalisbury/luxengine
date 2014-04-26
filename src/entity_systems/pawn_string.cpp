@@ -828,11 +828,11 @@ static cell AMX_NATIVE_CALL n_urldecode(AMX *amx,const cell *params)
   return idx_dst;
 }
 
-#define INVALIDURI(c) ((c)<','               \
-                       || (c)>'9' && (c)<'A' \
-                       || (c)>'Z' && (c)<'_' \
-                       || (c)>'_' && (c)<'a' \
-                       || (c)>'z' && (unsigned)(c)<0xa1)
+#define INVALIDURI(c) ( ((c)<',')              \
+					   || ((c)>'9' && (c)<'A') \
+					   || ((c)>'Z' && (c)<'_') \
+					   || ((c)>'_' && (c)<'a') \
+					   || ((c)>'z' && (unsigned)(c)<0xa1))
 
 #define TOHEX(c)      (TCHAR)((c)<10 ? '0'+(c) : 'A'-10+(c))
 

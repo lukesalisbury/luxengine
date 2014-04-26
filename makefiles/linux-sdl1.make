@@ -17,7 +17,7 @@ PLATFORM_DIRECTORY = platform/pc
 
 PLATFORM_LIBS = -lSDL -lSDL_image -lSDL_gfx -lz -lSDL_mixer -Wl,-rpath -Wl,\$$ORIGIN/lib
 PLATFORM_FLAGS = `sdl-config --cflags` -DHAS_SOCKLEN_T -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DFLOATPOINT
-PLATFORM_OBJECTS = $(OBJDIR)/enet/unix.o
+PLATFORM_OBJECTS = $(OBJDIR)/enet/unix.o $(OBJDIR)/gles/gl_camera.o
 
 #Raspberry PI check
 ifeq (${shell grep -q BCM2708 /proc/cpuinfo && echo 1}, 1)

@@ -701,13 +701,13 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y
 	SDL_Point * points = new SDL_Point[point_count];
 	for(uint8_t i = 0; i < point_count; i++)
 	{
-		points[i].x = x_point[i];
-		points[i].y = y_point[i];
+		points[i].x = position.x + x_point[i];
+		points[i].y = position.y + y_point[i];
 	}
 
 
 	SDL_SetRenderDrawColor(native_renderer,effects.primary_colour.r,effects.primary_colour.g,effects.primary_colour.b,effects.primary_colour.a);
-	SDL_RenderDrawPoints( native_renderer, points,point_count);
+	SDL_RenderDrawPoints( native_renderer, points, point_count);
 
 }
 
@@ -740,7 +740,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawLine( LuxRect points, ObjectEffect effe
 {
 	SDL_SetRenderDrawColor(native_renderer,effects.primary_colour.r,effects.primary_colour.g,effects.primary_colour.b,effects.primary_colour.a);
 	SDL_RenderDrawLine(native_renderer,points.x, points.y, points.w, points.h);
-
 }
 
 LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, ObjectEffect effects, bool allow_custom )
@@ -755,7 +754,6 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 	int8_t axis;
 	int8_t button;
 	int8_t pointer;
-
 
 	UnicodeToInput( cchar, &axis, &button, &pointer );
 
@@ -874,8 +872,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 			object++;
 			next = (*object) & 0xff;
 			cchar += (next << 6) & 0xfff;
-
-
 
 			object++;
 			next = (*object) & 0x3f;

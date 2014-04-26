@@ -20,6 +20,7 @@ typedef enum DisplayStylesEnum {
 	STYLE_OUTLINE,
 	STYLE_REPCOLOUR,
 	STYLE_NEGATIVE,
+	STYLE_GREY,
 	STYLE_COUNT
 } DisplayStyles;
 

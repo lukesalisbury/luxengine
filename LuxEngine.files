@@ -341,7 +341,7 @@ src/platform/sdl2/audio.cpp
 ../elix/src/stb_image_write.h
 ../elix/src/elix_directory.cpp
 src/gles/gles.hpp
-src/gles/shaders.inc.cpp
+src/gles/shaders.cpp
 src/gles/draw_vertex2.inc.cpp
 src/gles/draw_vertex1.inc.cpp
 src/platform/android/graphics_native.inc
@@ -360,7 +360,6 @@ src/platform/sogl/core_network.cpp
 src/platform/sogl/core.cpp
 src/platform/sogl/audio.cpp
 makefiles/sogl.make
-src/gles/default_shaders.inc.hpp
 src/platform/pc/shaders.inc
 src/gles/gl_camera.hpp
 src/gles/gl_camera.cpp
@@ -551,3 +550,8 @@ src/custom/custom_screen.cpp
 src/custom/project_media.cpp
 setting.mk
 platform.mk
+src/gles/shaders.hpp
+src/gles/shaders_desktop.cpp
+src/gles/shaders_gles.cpp
+src/gles/shaders_shared.inc.cpp
+src/gles/shaders_none.cpp

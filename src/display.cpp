@@ -85,7 +85,7 @@ DisplaySystem::DisplaySystem()
 
 	if ( !is_display_setup )
 	{
-		#ifndef OPENGLONLY
+		#if DISPLAYMODE_NATIVE
 		if ( lux::config->GetString("display.opengl") == "required" )
 		{
 			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Requires OpenGL " << std::endl;
@@ -113,7 +113,6 @@ DisplaySystem::DisplaySystem()
 
 	this->cache_sprites = (this->graphics.CacheSprite);
 
-
 	for (uint8_t i = 0; i < 7; i++)
 	{
 		this->show_layers[i] = true;
@@ -127,7 +126,7 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp, bool
 	bool is_display_setup = false;
 
 	this->InitialSetup();
-	#ifdef OPENGLONLY
+	#if DISPLAYMODE_OPENGL
 	if ( GraphicsOpenGL.InitGraphics( width, height, bpp, fullscreen ) )
 	{
 		this->graphics = GraphicsOpenGL;

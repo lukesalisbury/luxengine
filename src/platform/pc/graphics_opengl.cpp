@@ -133,15 +133,6 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 		return false;
 	}
 
-#if REQUIRE_EGL
-	if ( !gles::openDisplay(width, height, fullscreen , bpp) )
-	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "EGL Failed " << std::endl;
-		return false;
-	}
-#endif
-
-
 	opengl_graphic_ratio_width = (float)width/(float)opengl_graphic_screen->w;
 	opengl_graphic_ratio_height = (float)height/(float)opengl_graphic_screen->h;
 

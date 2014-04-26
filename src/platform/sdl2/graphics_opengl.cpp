@@ -130,7 +130,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 	int window_width = width;
 	int window_height = height;
 
-	#ifndef OPENGLONLY
+	#if DISPLAYMODE_NATIVE
 	if ( lux::config->GetString("display.mode") != "OpenGL" )
 		return false;
 	#endif
@@ -184,13 +184,16 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 	Lux_OGL_Resize( window_width, window_height);
 
+	gles::setOrtho( 0.0f, (float)width, (float)height, 0.0f, -10.0f, 10.0f );
+
+/*
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0d, (double)width, (double)height, 0, -10.0d, 10.0d);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
+*/
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST );
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);

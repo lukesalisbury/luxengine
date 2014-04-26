@@ -12,36 +12,34 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef GL_PLATFORM_H
 #define GL_PLATFORM_H
 
-#if !defined(USE_SDL2)
-#define USE_SDL1 1
-#endif
+/* Note
+ * OpenGL ES 2 render is broken.
+ */
+
 
 #ifdef __IPHONEOS__
-#define USING_GLES 1
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES1/glext.h>
+	#define SHADER_IMPL_NONE 1
+	#define USING_GLES 1
+	#include <OpenGLES/ES1/gl.h>
+	#include <OpenGLES/ES1/glext.h>
 #elif defined(ANDROID) && !defined(USE_SDL2)
-#define USING_GLES 1
-#include <GLES/gl.h>
-#include <GLES/glext.h>
+	#define SHADER_IMPL_NONE 1
+	#define USING_GLES 1
+	#include <GLES/gl.h>
+	#include <GLES/glext.h>
 #elif defined(FLASCC)
-#define USING_GLES 1
-#include <GLES/gl.h>
-#elif RASPBERRYPI
-#define USING_GLES 1
-#define USING_GLDESKTOP 0
-#define REQUIRE_EGL 1
-#include <GLES/gl.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_syswm.h>
+	#define SHADER_IMPL_NONE 1
+	#define USING_GLES 1
+	#include <GLES/gl.h>
 #elif defined(USE_SDL1)
-#define USING_GLDESKTOP 1
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+	#define USING_GLDESKTOP 2
+	#include <SDL/SDL.h>
+	#include <SDL/SDL_opengl.h>
 #elif defined(USE_SDL2)
-#define USING_GLDESKTOP 1
-#include <SDL.h>
-#include <SDL_opengl.h>
+	#define USING_GLDESKTOP 2
+	#define SHADER_IMPL_DESKTOP 1
+	#include <SDL.h>
+	#include <SDL_opengl.h>
 #endif
 
 

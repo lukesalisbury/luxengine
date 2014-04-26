@@ -8,12 +8,18 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
+#include "gl_platform.hpp"
 
-#ifndef _GLES_DRAW_
-	#define _GLES_DRAW_
+#if USING_GLES == 1 || USING_GLDESKTOP < 4
+
 	#include "gles.hpp"
 
 	namespace gles {
+		void setOrtho( float left, float right, float bottom, float top, float nearVal, float farVal )
+		{
+			glOrtho( left, right, bottom, top, nearVal, farVal);
+		}
+
 		void render( GLenum mode, LuxVertex * vertexs, uint16_t count, Texture * texture, LuxVertex dest, LuxColour * colour, float angle, LuxVertex scale, LuxVertex rotation, uint8_t shader )
 		{
 
@@ -57,4 +63,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 			glPopMatrix();
 		}
 	}
+
+
 #endif

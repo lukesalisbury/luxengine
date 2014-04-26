@@ -19,12 +19,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_DISPLAY_FUNCTION
 #endif
 
-
-#if USING_GLES == 1 || USING_GLDESKTOP != 4
-#include "draw_vertex1.inc.cpp"
-#else
+/*
+#if USING_GLES == 2 || USING_GLDESKTOP == 4
 #include "draw_vertex2.inc.cpp"
+#else
+#include "draw_vertex1.inc.cpp"
 #endif
+*/
 
 namespace gles {
 	Texture font[95];
@@ -81,6 +82,10 @@ uint8_t Lux_GLES_GetShader(  ObjectEffect effect )
 	else if ( effect.style == STYLE_GLOW || effect.style == STYLE_OUTLINE )
 	{
 		s = SHADER_GLOW;
+	}
+	else if ( effect.style == STYLE_GREY )
+	{
+		s = SHADER_GREY;
 	}
 	return s;
 }

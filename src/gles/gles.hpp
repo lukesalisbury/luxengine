@@ -33,7 +33,7 @@ enum {
 	SHADER_GLOW,
 	SHADER_NEGATIVE,
 	SHADER_REPLACE,
-	SHADER_GRAY,
+	SHADER_GREY,
 	SHADER_CUSTOM1,
 	SHADER_CUSTOM2,
 	SHADER_CUSTOM3,
@@ -93,8 +93,9 @@ typedef struct {
 } LuxVertex;
 
 namespace gles {
+	void setOrtho(float left, float right, float bottom, float top, float nearV, float farV );
 	void render( GLenum mode, LuxVertex * vertexs, uint16_t count, Texture * texture, LuxVertex dest, LuxColour * colour, float angle, LuxVertex scale, LuxVertex rotation, uint8_t shader );
-	bool openDisplay(uint32_t window_width, uint32_t window_height, bool window_fullscreen, uint8_t colour_depth);
+
 }
 
 namespace OpenGLShader
@@ -105,9 +106,11 @@ namespace OpenGLShader
 	void CompileShader( ShaderData * data );
 	void ClearShader( );
 	void ApplyShader( uint8_t s );
-	void SetPrimaryColor( float r, float g, float b, float a );
 
+	void SetPrimaryColor( float r, float g, float b, float a );
 	void SetSecondaryColor( float r, float g, float b, float a );
+
+	void CheckError( const char * file, int line );
 }
 
 #endif
