@@ -144,31 +144,19 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 		native_window_flags |= SDL_WINDOW_FULLSCREEN;
 
 	native_render_flags = SDL_RENDERER_ACCELERATED;
-	native_window_title = lux::config->GetString("project.title") + " (SDL2 Rendering)";
-/*
-	if ( SDL_WasInit(SDL_INIT_VIDEO) == SDL_INIT_VIDEO )
-	{
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);
-	}
-	SDL_InitSubSystem(SDL_INIT_VIDEO);
-*/
+
 	if ( width > height )
 	{
 		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
 	}
+	else
+	{
+		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
+	}
+
 	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "0", SDL_HINT_OVERRIDE );
 
 
-
-/*
-	native_window = SDL_CreateWindow(sdlgraphics_title.c_str(),SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, native_window_flags);
-	if ( !native_window )
-	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Couldn't create Window. " << SDL_GetError() << std::endl;
-		return false;
-	}
-	SDL_GetWindowSize(native_window, &window_width, &window_height);
-*/
 	native_window = lux::core->GetWindow();
 
 	SDL_SetWindowSize(native_window, width, height );
@@ -201,7 +189,9 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 	Lux_Native_LoadFont();
 
 	Lux_SDL2_SetWindowIcon( native_window );
+	SDL_SetWindowTitle( native_window, native_window_title.c_str() );
 
+	SDL_DisableScreenSaver();
 
 	return true;
 }
@@ -212,8 +202,8 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
 {
 	SDL_DestroyRenderer(native_renderer);
-	//SDL_DestroyWindow(native_window);
-	//SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	SDL_EnableScreenSaver();
+
 }
 
 /* Lux_NATIVE_UpdateRect
@@ -581,8 +571,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 
 	NativeTexture * surface = (NativeTexture*) sprite->GetData(effect);
 
-	#ifndef EMSCRIPTEN
-
 	double angle = (double)effect.rotation;
 	SDL_RendererFlip flipmode = SDL_FLIP_NONE;
 
@@ -601,10 +589,25 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 	repeat.x = dest_rect.w / surface->w;
 	repeat.y = dest_rect.h / surface->h;
 
-	if ( effect.flip_image&16 )
+	/* Flip image, rotates image either 90, 180, 270 and/or mirrors. */
+	if ( effect.flip_image&16 ) // Mirror Sprite.
 	{
 		effect.flip_image -= 16;
 		flipmode = SDL_FLIP_HORIZONTAL;
+	}
+
+	if ( effect.flip_image == 1 )// Switch Axis
+	{
+		angle += 90.0;
+	}
+	else if ( effect.flip_image == 2 )// Switch Axis
+	{
+		angle += 180.0;
+	}
+	else if ( effect.flip_image == 3 )// Switch Axis
+	{
+		angle += 90.0;
+		flipmode = (SDL_RendererFlip)(SDL_FLIP_VERTICAL | SDL_FLIP_HORIZONTAL);
 	}
 
 	SDL_SetTextureColorMod(surface->texnum,effect.primary_colour.r,effect.primary_colour.g,effect.primary_colour.b);
@@ -612,9 +615,9 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 
 	if ( repeat.x > 1 || repeat.y > 1 )
 	{
-		for( int32_t rx = 1; rx < repeat.x; rx++ )
+		for( int32_t rx = 0; rx < repeat.x; rx++ )
 		{
-			for( int32_t ry = 1; ry < repeat.y; ry++ )
+			for( int32_t ry = 0; ry < repeat.y; ry++ )
 			{
 				draw.x = dest_rect.x + (draw.w*rx);
 				draw.y = dest_rect.y + (draw.h*ry);
@@ -626,48 +629,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 	{
 		SDL_RenderCopyEx( native_renderer, surface->texnum, NULL, &draw, angle, &point, flipmode );
 	}
-	#else
-	SDL_Rect draw, area;
-	SDL_Point point;
-	SDL_Point repeat;
 
-	draw.x = dest_rect.x;
-	draw.y = dest_rect.y;
-	draw.w = surface->w;
-	draw.h = surface->h;
-
-	point.x = draw.w/2;
-	point.y = draw.h/2;
-
-	repeat.x = dest_rect.w / surface->w;
-	repeat.y = dest_rect.h / surface->h;
-
-	if ( effect.flipmode&16 )
-	{
-		effect.flipmode -= 16;
-	}
-
-	SDL_SetTextureColorMod(surface->texnum,effect.primary_colour.r,effect.primary_colour.g,effect.primary_colour.b);
-	SDL_SetTextureAlphaMod(surface->texnum,effect.primary_colour.a);
-
-	if ( repeat.x > 1 || repeat.y > 1 )
-	{
-		for( int32_t rx = 1; rx < repeat.x; rx++ )
-		{
-			for( int32_t ry = 1; ry < repeat.y; ry++ )
-			{
-				draw.x = dest_rect.x + (draw.w*rx);
-				draw.y = dest_rect.y + (draw.h*ry);
-				SDL_RenderCopy( native_renderer, surface->texnum, NULL, &draw );
-			}
-		}
-	}
-	else
-	{
-		SDL_RenderCopy( native_renderer, surface->texnum, NULL, &draw);
-	}
-
-	#endif
 
 }
 

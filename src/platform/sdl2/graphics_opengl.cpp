@@ -142,7 +142,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 		native_window_flags |= SDL_WINDOW_FULLSCREEN;
 
 	native_render_flags = SDL_RENDERER_ACCELERATED;
-	native_window_title = lux::config->GetString("project.title");
+	native_window_title = lux::config->GetString("project.title")  + " (OpenGL Rendering)";
 
 
 	if ( width > height )
@@ -186,21 +186,12 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 
 	gles::setOrtho( 0.0f, (float)width, (float)height, 0.0f, -10.0f, 10.0f );
 
-/*
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0.0d, (double)width, (double)height, 0, -10.0d, 10.0d);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-*/
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST );
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	OpenGLShader::Check();
 	Lux_GLES_LoadFont();
-
 
 	glEnable(GL_TEXTURE_2D);
 	glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
