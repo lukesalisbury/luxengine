@@ -44,7 +44,7 @@ PLATFORM_DIRECTORY = platform/sdl2
 
 PLATFORM_LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lwinmm -static-libgcc -lws2_32 -lcurldll -lssl.dll -lcrypto.dll
 PLATFORM_LIBS += -lopengl32 -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lversion -luuid
-PLATFORM_FLAGS = -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DNO_ZLIB -DUSE_SDL2 -DDISPLAYMODE_NATIVE -Dmain=SDL_main
+PLATFORM_FLAGS = -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DNO_ZLIB -DUSE_SDL2 -DDISPLAYMODE_OPENGL -Dmain=SDL_main
 PLATFORM_OBJECTS = $(OBJDIR)/enet/win32.o $(OBJDIR)/lux.res
 
 ifeq ($(BUILDDEBUG), TRUE)

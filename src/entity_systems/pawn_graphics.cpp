@@ -355,8 +355,8 @@ static cell AMX_NATIVE_CALL pawnObjectFollowPath(AMX *amx, const cell *params)
 
 	uint32_t object_id = (uint32_t)params[1];
 	int32_t fixed_speed = params[2];
-	int16_t x;
-	int16_t y;
+	int16_t x = 0;
+	int16_t y = 0;
 	uint8_t loop = params[5];
 
 	int32_t result = Lux_FFI_Path_Move_Object( object_id, fixed_speed, &x, &y, loop );

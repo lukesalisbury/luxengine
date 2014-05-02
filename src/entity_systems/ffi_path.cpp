@@ -36,7 +36,7 @@ int32_t Lux_FFI_Path_Move_Object( uint32_t object_id, int32_t fixed_speed, int16
 
 
 		// Movement direction
-		speed = MAKE_FIXED_FLOAT(fixed_speed) * (float)lux::core->GetFrameDelta();
+		speed = MAKE_FIXED_FLOAT(fixed_speed) * MAKE_FIXED_FLOAT(lux::core->GetFrameDelta() );
 		if ( speed > 0.0 )
 		{
 			next_path_point = map_object->path_point+1;
