@@ -215,7 +215,7 @@ int32_t Config::GetNumber( std::string key )
 bool Config::GetBoolean( std::string key )
 {
 	std::string value_string = this->GetString(key);
-	if ( !value_string.compare("true") )
+	if ( value_string.compare("true") == 0 )
 		return true;
 	else
 		return false;

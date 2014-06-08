@@ -32,7 +32,7 @@ void Config::PlatformSettings()
 	this->SetNumber("screen.height", 384);
 	this->SetBoolean("debug.enable", false);
 	this->SetBoolean("audio.able", true);
-	this->SetBoolean("entities.rebuild", true);
+	this->SetBoolean("entities.rebuild", false);
 	this->SetString("project.title", "Lux Engine" );
 
 	this->SetString("project.id", "unknowngame" );

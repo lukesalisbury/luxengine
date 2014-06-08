@@ -291,11 +291,11 @@ static cell AMX_NATIVE_CALL pawnObjectEffect(AMX *amx, const cell *params)
 }
 
 /** pawnObjectReplace
-* native ObjectReplace(id, string[], type, string_size = sizeof string);
+* native ObjectReplace(id, string[], type);
 */
 static cell AMX_NATIVE_CALL pawnObjectReplace(AMX *amx, const cell *params)
 {
-	ASSERT_PAWN_PARAM( amx, params, 4 );
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
 	std::string sprite;
 	uint32_t object_id = (uint32_t)params[1];

@@ -26,13 +26,20 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 extern const AMX_NATIVE_INFO Entity_Natives[];
 
-
+/* Extra Entity Object FFI interface */
 uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, int32_t fixed_z);
 uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z);
 char * Lux_FFI_Entity_Object_Get_Setting( Entity * wanted, const char * key );
 int32_t Lux_FFI_Entity_Object_Get_Setting_Number( Entity * wanted, const char * key );
 uint8_t Lux_FFI_Entity_Object_Delete( Entity * wanted );
 
+int32_t Lux_FFI_Entity_Object_Collision_Set( Entity * wanted, int32_t rect, int32_t type, int32_t x, int32_t y, int32_t w, int32_t h );
+uint8_t Lux_FFI_Entity_Object_Collision_Get( Entity * wanted, int32_t rect, int32_t * x, int32_t * y, int32_t * w, int32_t * h );
+int32_t Lux_FFI_Entity_Object_Collision_Calculate( Entity * wanted );
+int32_t Lux_FFI_Entity_Object_Collision_Calculate_Current(Entity * wanted, uint32_t * entity_hit, int32_t * angle, int32_t * dist, int32_t * rect, int32_t * type );
+int32_t Lux_FFI_Entity_Object_Collision_Set_From_Object( Entity * wanted, uint32_t object_id, int32_t type );
+
+uint8_t Lux_FFI_Entity_Object_Player_Set_Entity( uint32_t player_number, Entity * wanted );
 
 /** pawnFunctionCall
 * native FunctionCall(function);
@@ -105,12 +112,12 @@ static cell AMX_NATIVE_CALL pawnEntityGetPosition(AMX *amx, const cell *params)
 /** Entity Functions */
 
 /** pawnEntityGetSetting
-* native EntityGetSetting(key[], string[], id = SELF);
+* native EntityGetSetting(key[], string[], id = SELF, length = sizeof string);
 *
 */
 static cell AMX_NATIVE_CALL pawnEntityGetSetting(AMX *amx, const cell *params)
 {
-	ASSERT_PAWN_PARAM( amx, params, 3 );
+	ASSERT_PAWN_PARAM( amx, params, 4 );
 
 	cell response = -1;
 	cell * string_ptr;
@@ -129,7 +136,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetSetting(AMX *amx, const cell *params)
 		string_ptr = amx_Address(amx, params[2]);
 		if ( string_ptr )
 		{
-			amx_SetString(string_ptr, string, true, false, UNLIMITED);
+			amx_SetString(string_ptr, string, true, false, params[4]);
 			response = strlen( string );
 		}
 
@@ -317,8 +324,14 @@ static cell AMX_NATIVE_CALL pawnEntityCreate(AMX *amx, const cell *params)
 static cell AMX_NATIVE_CALL pawnEntityDelete(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
+	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
 
-	return Lux_FFI_Entity_Delete( params[1] );
+	if ( wanted_entity != NULL )
+	{
+		wanted_entity->Delete();
+		return 1;
+	}
+	return 0;
 
 }
 
@@ -355,7 +368,6 @@ static cell AMX_NATIVE_CALL pawnEntityPublicVariableSet(AMX *amx, const cell *pa
 		int32_t value = (int32_t)params[3];
 		std::string varname = Lux_PawnEntity_GetString(amx, params[2]);
 		ret = (cell)Lux_PawnEntity_PublicVariable( (AMX *)wanted_entity->_data, varname, NULL );
-
 	}
 	return ret;
 }
@@ -497,8 +509,6 @@ static cell AMX_NATIVE_CALL pawnEntitiesNext(AMX *amx, const cell *params)
 
 	entity_name = Lux_FFI_Entities_Next( map_id );
 
-
-
 	if ( entity_name != NULL )
 	{
 		// Store String
@@ -525,7 +535,9 @@ static cell AMX_NATIVE_CALL pawnCollisionSet(AMX *amx, const cell *p)
 {
 	ASSERT_PAWN_PARAM( amx, p, 7 );
 
-	return Lux_FFI_Collision_Set( p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
+	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, p[1] );
+
+	return Lux_FFI_Entity_Object_Collision_Set( wanted_entity, p[2], p[3], p[4], p[5], p[6], p[7]);
 }
 
 /** pawnCollisionGet
@@ -538,8 +550,9 @@ static cell AMX_NATIVE_CALL pawnCollisionGet(AMX *amx, const cell *params)
 
 	int32_t x, y, w, h;
 	cell * valueptr;
+	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
 
-	if ( Lux_FFI_Collision_Get( params[1], params[2], &x, &y, &w, &h ) )
+	if ( Lux_FFI_Entity_Object_Collision_Get( wanted_entity, params[2], &x, &y, &w, &h ) )
 	{
 		valueptr = amx_Address(amx, params[3]);
 		if (valueptr)
@@ -573,8 +586,8 @@ static cell AMX_NATIVE_CALL pawnCollisionCheck(AMX *amx, const cell *params)
 
 	uint32_t first_entity, second_entity;
 
-	first_entity = params[1];
-	second_entity = params[2];
+	first_entity = ( params[1] ? params[1] : Lux_PawnEntity_GetEntityHash(amx) );// Get Entity ID
+	second_entity = ( params[2] ? params[2] : Lux_PawnEntity_GetEntityHash(amx) );// Get Entity ID
 
 	return Lux_FFI_Collision_Check( first_entity, second_entity, params[3], params[4] );
 
@@ -588,7 +601,9 @@ static cell AMX_NATIVE_CALL pawnCollisionCalculate(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-	return Lux_FFI_Collision_Calculate( (uint32_t) params[1] );
+	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
+
+	return Lux_FFI_Entity_Object_Collision_Calculate( wanted_entity );
 }
 
 /** pawnCollisionGetCurrent
@@ -598,6 +613,8 @@ static cell AMX_NATIVE_CALL pawnCollisionCalculate(AMX *amx, const cell *params)
 static cell AMX_NATIVE_CALL pawnCollisionGetCurrent(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 6 );
+
+	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
 
 	int32_t hit_count = -1;
 	uint32_t entity_hit  = 0;
@@ -611,7 +628,7 @@ static cell AMX_NATIVE_CALL pawnCollisionGetCurrent(AMX *amx, const cell *params
 	cell * rect_ptr = NULL;
 	cell * type_ptr = NULL;
 
-	hit_count = Lux_FFI_Collision_Calculate_Current( params[1], &entity_hit, &angle, &dist, &rect, &type );
+	hit_count = Lux_FFI_Entity_Object_Collision_Calculate_Current( wanted_entity, &entity_hit, &angle, &dist, &rect, &type );
 	if ( hit_count > 0 )
 	{
 		current_ptr = amx_Address( amx, params[2] );
@@ -647,7 +664,9 @@ static cell AMX_NATIVE_CALL pawnCollisionFromObject(AMX *amx, const cell *params
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-	return Lux_FFI_Collision_Set_From_Object( params[3], params[1], params[2] );
+	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[3] );
+
+	return Lux_FFI_Entity_Object_Collision_Set_From_Object( wanted_entity, params[1], params[2] );
 }
 
 /* Paths */

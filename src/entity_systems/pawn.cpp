@@ -90,7 +90,7 @@ int AMXAPI Lux_PawnEntity_Monitor(AMX * amx)
 		if ( time > entity->starting_run_time + 2000 )
 		{
 			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Script '" << entity->_base << "' running to long" << std::endl;
-			//return AMX_ERR_EXIT;
+			return AMX_ERR_EXIT;
 		}
 	}
 	return AMX_ERR_NONE;
@@ -154,7 +154,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 			return false;
 		}
 
-		//amx_SetDebugHook(temp_amx, Lux_PawnEntity_Monitor);
+		amx_SetDebugHook(temp_amx, Lux_PawnEntity_Monitor);
 
 		extern const AMX_NATIVE_INFO core_Natives[];
 		extern const AMX_NATIVE_INFO string_Natives[];
@@ -282,8 +282,6 @@ bool Lux_PawnEntity_Init(std::string entity_id, std::string entity_base, mem_poi
 			entity_data = NULL;
 			return false;
 		}
-		amx_SetUserData((AMX *)entity_data, 1162690895, (void*)entity);
-		amx_SetUserData((AMX *)entity_data, 1162690890, strdup(entity_base.c_str()) );
 		amx_SetUserData( (AMX *)entity_data, 1162690895, (void*)entity);
 
 		return true;
@@ -300,20 +298,18 @@ void Lux_PawnEntity_Destroy(mem_pointer entity_data)
 {
 	if ( entity_data )
 	{
-		char * name = NULL;
 		AMX * entity = (AMX*)entity_data;
 
 		amx_SetDebugHook(entity, NULL);
-		amx_GetUserData( (AMX*)entity_data, 1162690890, (void**)&name);
 
 
-		free(name);
 
 		if( entity->base != NULL )
 		{
 			amx_Cleanup(entity);
 			memset(entity,0,sizeof(AMX));
 		}
+
 	}
 }
 
@@ -477,15 +473,14 @@ bool Lux_PawnEntity_Run(mem_pointer entity_data, bool & scriptcontinue )
 		return false;
 
 	int32_t error = 0;
-	char * name = NULL;
 	Entity * entity = NULL;
 	AMX_HEADER * hdr = (AMX_HEADER *)((AMX*)entity_data)->base;
 
-	amx_GetUserData( (AMX*)entity_data, 1162690890, (void**)&name);
 	amx_GetUserData((AMX*)entity_data, 1162690895, (void**)&entity);
 
 	if ( magiccheck(hdr) )
 	{
+		//amx_SetUserData( (AMX*)entity_data, AMX_USERTAG('T','I','M','E'),  );
 		error = amx_Exec((AMX*)entity_data, NULL, (scriptcontinue ? AMX_EXEC_CONT : AMX_EXEC_MAIN));
 	}
 	else
@@ -504,8 +499,9 @@ bool Lux_PawnEntity_Run(mem_pointer entity_data, bool & scriptcontinue )
 		{
 			if ( entity )
 			{
-				MessagePush( (char*)"%s(%s) [Main] %s", entity->id.c_str(), entity->_base.c_str(), Lux_PawnEntity_StrError(error) );
-				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, "Entity:" + entity->id + "(" + entity->_base + ") Main Runtime Error " + Lux_PawnEntity_StrError(error) );
+				MessagePush( (char*)"%s [ID:%s] [Main Runtime Error] %s", entity->_base.c_str(), entity->id.c_str(), Lux_PawnEntity_StrError(error) );
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity:" << entity->_base << "[ID:" << entity->id << "]";
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Main Runtime Error - " << Lux_PawnEntity_StrError(error) << std::endl;
 			}
 			return false;
 		}
@@ -661,8 +657,10 @@ int32_t Lux_PawnEntity_Call( mem_pointer entity_data, char * function, native_po
 		if ( error )
 		{
 			MessagePush( (char*)"%s(%s): [Public] %s", entity->_base.c_str(),function,Lux_PawnEntity_StrError(error) );
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity:" << entity->id.c_str() << "(" << entity->_base.c_str() << ") - Public Runtime Error " << Lux_PawnEntity_StrError(error) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity:" << entity->_base << "[ID:" << entity->id << "]";
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Public Runtime Error - " << Lux_PawnEntity_StrError(error) << "[" << function << "]" << std::endl;
 		}
+
 	}
 
 	if ( memstack )

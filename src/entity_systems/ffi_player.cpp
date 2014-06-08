@@ -20,6 +20,29 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 
 
+/** Lux_FFI_Player_Set_Entity
+*
+* uint32_t player_number, uint32_t hash_entity
+*/
+uint8_t Lux_FFI_Entity_Object_Player_Set_Entity( uint32_t player_number, Entity * wanted )
+{
+	Player * player = NULL;
+
+	player = lux::engine->GetPlayer( player_number );
+
+	if ( wanted != NULL )
+	{
+		if ( player != NULL )
+		{
+			player->SetEntity(wanted);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
+
 /** Lux_FFI_Player_Set_Controller
 *
 *
@@ -53,6 +76,7 @@ char * Lux_FFI_Player_Get_Controller( uint32_t player_number )
 		if ( str.length() )
 		{
 			string = new char[str.length() + 1];
+			memset(string, 0, str.length() + 1 );
 			std::copy(str.begin(), str.end(), string);
 		}
 
@@ -136,6 +160,7 @@ char * Lux_FFI_Player_Get_Name( uint32_t player_number )
 		if ( str.length() )
 		{
 			string = new char[str.length() + 1];
+			memset(string, 0, str.length() + 1 );
 			std::copy(str.begin(), str.end(), string);
 		}
 
@@ -162,6 +187,7 @@ char * Lux_FFI_Controller_Config( const char * controller_name )
 	if ( str.length() )
 	{
 		string = new char[str.length() + 1];
+		memset(string, 0, str.length() + 1 );
 		std::copy(str.begin(), str.end(), string);
 	}
 

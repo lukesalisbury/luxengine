@@ -19,7 +19,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 uint8_t Lux_FFI_Entity_Set_Position( uint32_t hash_entity, int32_t fixed_x, int32_t fixed_y, int32_t fixed_z  );
 uint8_t Lux_FFI_Entity_Get_Position( uint32_t hash_entity, int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z );
 char * Lux_FFI_Entity_Get_Setting( uint32_t hash_entity, const char * key );
-int32_t Lux_FFI_Entity_Get_Setting_Number(uint32_t hash_entity, const char * key);
+int32_t Lux_FFI_Entity_Get_Setting_Number( uint32_t hash_entity, const char * key);
 uint32_t Lux_FFI_Entity_Create( const char * script_file, const char * ident, int32_t x, int32_t y, int32_t z, uint32_t map_id );
 uint8_t Lux_FFI_Entity_Delete( uint32_t hash_entity );
 

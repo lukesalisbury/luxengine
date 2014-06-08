@@ -555,3 +555,9 @@ src/gles/shaders_desktop.cpp
 src/gles/shaders_gles.cpp
 src/gles/shaders_shared.inc.cpp
 src/gles/shaders_none.cpp
+src/scripting/amx4/amx.c
+src/scripting/amx4/amx.h
+src/scripting/amx4/amxcons.c
+src/scripting/amx4/amxcons.h
+src/scripting/amx4/amxcore.c
+src/scripting/amx4/amxexec_gcc.c

@@ -52,11 +52,13 @@ class EntitySystem
 
 		std::string GetMainScriptFile()
 		{
+			std::string file;
 			#ifdef __x86_64__
-			return "./c/scripts/main.amx64";
+			file = "./c/scripts/main.amx64";
 			#else
-			return "./c/scripts/main.amx";
+			file = "./c/scripts/main.amx";
 			#endif
+			return file;
 		}
 
 		void SetSaveMode(uint8_t mode)

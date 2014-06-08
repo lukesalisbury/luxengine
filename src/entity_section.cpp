@@ -147,6 +147,7 @@ bool EntitySection::Loop()
 	}
 
 	uint32_t count = this->children.size();
+	std::vector<Entity *>::iterator iter = this->children.begin();
 	if ( count )
 	{
 		for( uint32_t i = 0; i < count; i++ )
@@ -155,7 +156,8 @@ bool EntitySection::Loop()
 				this->children[i]->Loop();
 		}
 
-		std::vector<Entity *>::iterator iter = this->children.begin();
+		// Clean up
+		iter = this->children.begin();
 		while( iter != this->children.end() )
 		{
 			if ( (*iter)->deleted )
@@ -209,11 +211,9 @@ void EntitySection::PreClose()
 		while( iter !=  this->children.end() )
 		{
 			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Entity " << (*iter)->id << " Close()" << std::endl;
-			if ( !(*iter)->deleted )
-			{
-				(*iter)->Close();
-				iter++;
-			}
+			(*iter)->Close();
+			iter++;
+
 		}
 	}
 }

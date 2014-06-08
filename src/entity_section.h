@@ -38,8 +38,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void Close();
 
 			void Switch(fixed x, fixed y);
-			bool Save(elix::File *current_save_file);
-			bool Restore(elix::File *current_save_file);
+			bool Save( elix::File * current_save_file );
+			bool Restore( elix::File * current_save_file );
 
 			void Append( Entity * enw );
 			Entity * GetEntity( uint32_t entity_id );

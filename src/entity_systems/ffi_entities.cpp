@@ -84,9 +84,9 @@ char * Lux_FFI_Entity_Object_Get_Setting( Entity * wanted, const char * key )
 		if ( str.length() )
 		{
 			string = new char[str.length() + 1];
+			memset(string, 0, str.length() + 1 );
 			std::copy(str.begin(), str.end(), string);
 		}
-
 	}
 	return string;
 }
@@ -113,7 +113,6 @@ int32_t Lux_FFI_Entity_Object_Get_Setting_Number(Entity * wanted, const char * k
 */
 uint8_t Lux_FFI_Entity_Object_Delete( Entity * wanted )
 {
-
 	if ( wanted != NULL )
 	{
 		wanted->Delete();
@@ -279,6 +278,7 @@ char * Lux_FFI_Entities_Next( uint32_t map_id )
 	if ( string_value.length() )
 	{
 		string = new char[string_value.length() + 1];
+		memset(string, 0, string_value.length() + 1 );
 		std::copy(string_value.begin(), string_value.end(), string);
 	}
 

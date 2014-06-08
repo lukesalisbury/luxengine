@@ -42,6 +42,7 @@ Entity::~Entity()
 	{
 		this->Delete();
 	}
+	FreeData();
 }
 
 
@@ -90,7 +91,9 @@ void Entity::Init()
 	if ( !this->firstran )
 	{
 		this->SetMapCollsion();
+		this->callbacks->Call(this->_data, (char*)"AutoPreInit", NULL);
 		this->callbacks->Call(this->_data, (char*)"Init", NULL);
+		this->callbacks->Call(this->_data, (char*)"AutoPostInit", NULL);
 		this->firstran = true;
 	}
 }
@@ -101,6 +104,7 @@ bool Entity::Loop()
 	{
 		return false;
 	}
+
 	if ( this->_data )
 	{
 		if ( this->active )
@@ -110,10 +114,10 @@ bool Entity::Loop()
 			{
 				this->Init();
 			}
+
 			#ifdef NETWORKENABLED
 			lux::core->NetLock();
 			this->onscreen = (lux::world->active_map->Ident() == this->displaymap ? true : false);
-			starting_run_time = lux::core->GetTime();
 			this->active = this->callbacks->Run( this->_data, this->sleeping );
 			lux::core->NetUnlock();
 			#else
@@ -140,6 +144,7 @@ void Entity::Update()
 		this->Init();
 	}
 	this->callbacks->Call(this->_data, (char*)"UpdatePosition", NULL);
+	this->callbacks->Call(this->_data, (char*)"AutoUpdatePosition", NULL);
 }
 
 void Entity::Close()
@@ -147,17 +152,22 @@ void Entity::Close()
 	if ( this->_data && !this->deleted)
 	{
 		this->ClearMapCollsion();
+		this->callbacks->Call(this->_data, (char*)"AutoPreClose", NULL);
 		this->callbacks->Call(this->_data, (char*)"Close", NULL);
+		this->callbacks->Call(this->_data, (char*)"AutoPostClose", NULL);
 	}
 	this->firstran = false;
 }
 
 void Entity::Delete()
 {
-	this->ClearMapCollsion();
 	this->Close();
 	this->active = false;
 	this->deleted = true;
+}
+
+void Entity::FreeData()
+{
 	if ( this->_data )
 	{
 		this->callbacks->Destroy(this->_data);
@@ -167,6 +177,9 @@ void Entity::Delete()
 
 int32_t Entity::Call(std::string function, char * format, ...)
 {
+	if ( this->deleted )
+		return -1;
+
 	if ( this->_data != NULL )
 	{
 		uint8_t c = 0;

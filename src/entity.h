@@ -84,6 +84,7 @@ class Entity
 		/* Data Functions */
 		bool deleted, firstran, active, loaded, onscreen;
 		void * _data;
+		void FreeData();
 
 		/* Infomation */
 		std::string Infomation();
