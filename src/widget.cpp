@@ -10,52 +10,52 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "luxengine.h"
 #include "widget.h"
+#include <cstdlib>
 
-Widget::Widget(LuxRect region, LuxWidget type, CSSParser * style)
+Widget::Widget( LuxRect region, LuxWidget type, CSSParser * style )
 {
 	this->bgbox = this->borders[0] = this->borders[1] = this->borders[2] = this->borders[3] = this->textbox = NULL;
-	this->_data = NULL;
+	this->data = NULL;
 	this->_value = 0;
-	this->_original = this->_state = ENABLED;
+	this->original_state = this->state = ENABLED;
 	this->_type = type;
 	this->_region = region;
-	this->_parent = NULL;
-	this->_state = ENABLED;
+	this->parent = NULL;
+	this->state = ENABLED;
 
 	if ( type == EMPTYWINDOW )
 	{
-		this->bgbox = this->borders[0] = this->borders[1] = this->borders[2] = this->borders[3] = this->textbox = NULL;
 		return;
 	}
 	else if (  type == THROBBER )
 	{
-		this->_value = 0;
-
 		int16_t center_point = (this->_region.w/2);
 		this->_region.h += 40;
-		this->bgbox = this->InsertWidgetObject( OBJECT_RECTANGLE, this->_region.x, this->_region.y, this->_region.w, this->_region.h - 2 );
-		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, this->_region.x + 4, this->_region.y + 32, this->_region.w, this->_region.h - 4 ); /* Text */
-		this->borders[0] = this->InsertWidgetObject( OBJECT_THOBBER, this->_region.x + center_point - 8, this->_region.y + 16, 8, 8 );
-		this->borders[1] = this->InsertWidgetObject( OBJECT_THOBBER, this->_region.x + center_point, this->_region.y + 8, 8, 8 );
-		this->borders[2] = this->InsertWidgetObject( OBJECT_THOBBER, this->_region.x + center_point + 8, this->_region.y + 16, 8, 8 );
-		this->borders[3] = this->InsertWidgetObject( OBJECT_THOBBER, this->_region.x + center_point, this->_region.y + 24, 8, 8 );
 
-		this->GenerateBorderColours(style, this->borders[0], 0);
-		this->GenerateBorderColours(style, this->borders[1], 0);
-		this->GenerateBorderColours(style, this->borders[2], 0);
-		this->GenerateBorderColours(style, this->borders[3], 0);
-		this->GenerateColours(style, this->textbox, false);
-		this->GenerateColours(style, this->bgbox, true);
+		this->bgbox = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, this->_region.w, this->_region.h - 2 );
+		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, 4, 32, this->_region.w, this->_region.h - 4 ); /* Text */
+
+		this->InsertWidgetObject( OBJECT_THOBBER, center_point - 8, 16, 8, 8 );
+		this->InsertWidgetObject( OBJECT_THOBBER, center_point, 8, 8, 8 );
+		this->InsertWidgetObject( OBJECT_THOBBER, center_point + 8, 16, 8, 8 );
+		this->InsertWidgetObject( OBJECT_THOBBER, center_point, 24, 8, 8 );
+
+		this->GenerateBorderColours( style, this->borders[0], 0 );
+		this->GenerateBorderColours( style, this->borders[1], 0 );
+		this->GenerateBorderColours( style, this->borders[2], 0 );
+		this->GenerateBorderColours( style, this->borders[3], 0 );
+		this->GenerateColours( style, this->textbox, false );
+		this->GenerateColours( style, this->bgbox, true );
 		return;
 	}
 
 	if ( type == DIALOG || type >= DIALOGTEXT )
 	{
-		this->GenerateBox(style);
+		this->GenerateBox( style );
 	}
 	else if ( type == IMAGE )
 	{
-		this->InsertWidgetObject( OBJECT_SPRITE, this->_region.x, this->_region.y, this->_region.w, this->_region.h );
+		this->InsertWidgetObject( OBJECT_SPRITE, 0, 0, this->_region.w, this->_region.h );
 		return;
 	}
 	else if ( type != TEXT && type != CHECKBOX )
@@ -71,7 +71,6 @@ Widget::Widget(LuxRect region, LuxWidget type, CSSParser * style)
 		}
 	}
 
-
 	if ( type == INPUTTEXT )
 	{
 		this->bgbox->style = 4;
@@ -79,25 +78,30 @@ Widget::Widget(LuxRect region, LuxWidget type, CSSParser * style)
 		this->borders[2]->style = this->borders[3]->style = 1;
 	}
 
-
 	if ( type == IMAGEBUTTON )
 	{
-		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, this->_region.x + 4, this->_region.y + 4, this->_region.w, this->_region.h ); /* Text */
+		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, 40, 4, this->_region.w, this->_region.h ); /* Text */
+
+		this->InsertWidgetObject( OBJECT_SPRITE, 2, 2, 32, 32 );
+
 		this->GenerateColours(style, this->textbox, false);
-		this->InsertWidgetObject( OBJECT_SPRITE, this->_region.x + 2, this->_region.y + 2, 32, 32 );
-		this->textbox->position.x += 36;
+
 	}
 	else if ( type == CHECKBOX )
 	{
-		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, this->_region.x + 4, this->_region.y + 4, this->_region.w, this->_region.h ); /* Text */
-		this->GenerateColours(style, this->textbox, false);
-		WidgetObject * toggle = this->InsertWidgetObject( OBJECT_CIRCLE, this->_region.x + 2, this->_region.y + 2, 6, 6 );
-		this->GenerateColours(style, toggle, true);
-		this->textbox->position.x += 12;
+		WidgetObject * toggle;
+
+		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, 16, 4, this->_region.w, this->_region.h ); /* Text */
+
+		toggle = this->InsertWidgetObject( OBJECT_CIRCLE, 2, 2, 6, 6 );
+
+		this->GenerateColours( style, this->textbox, false);
+		this->GenerateColours( style, toggle, true);
 	}
 	else
 	{
-		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, this->_region.x + 4, this->_region.y + 4, this->_region.w, this->_region.h ); /* Text */
+
+		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, 2, 2, 0, 0 ); /* Text */
 		this->GenerateColours(style, this->textbox, false);
 	}
 }
@@ -112,38 +116,40 @@ Widget::~Widget()
 	this->objects.clear();
 }
 
-WidgetObject * Widget::InsertTextObject(uint8_t type, uint32_t x, uint32_t y, uint32_t w, uint32_t h, std::string t )
+WidgetObject * Widget::InsertTextObject(uint8_t type, int16_t x, int16_t y, int16_t w, int16_t h, std::string t , uint8_t alignment)
 {
 	WidgetObject * object = new WidgetObject;
 	object->style = 0;
 	object->type = type;
 	object->text = t;
-	object->position.x = x;
-	object->position.y = y;
-	object->position.w = w;
-	object->position.h = h;
-	object->position.z = 3000;
-	object->image_width = (uint16_t)w;
-	object->image_height = (uint16_t)h;
+	object->offset.x = x;
+	object->offset.y = y;
+	object->offset.w = w;
+	object->offset.h = h;
+	object->offset.alignment = alignment;
+	object->image_width = (uint16_t)abs(w);
+	object->image_height = (uint16_t)abs(h);
+	object->background = false;
 
 	this->objects.push_back(object);
 
 	return object;
 }
 
-WidgetObject * Widget::InsertWidgetObject(uint8_t type, uint32_t x, uint32_t y, uint32_t w, uint32_t h )
+WidgetObject * Widget::InsertWidgetObject(uint8_t type, int16_t x, int16_t y, int16_t w, int16_t h , uint8_t alignment)
 {
 	WidgetObject * object = new WidgetObject;
 	object->style = (type == OBJECT_TEXT ? 3 : 0);
 	object->type = type;
 	object->text = "";
-	object->position.x = x;
-	object->position.y = y;
-	object->position.w = w;
-	object->position.h = h;
-	object->position.z = 3000;
+	object->offset.x = x;
+	object->offset.y = y;
+	object->offset.w = w;
+	object->offset.h = h;
+	object->offset.alignment = alignment;
 	object->image_width = 0;
 	object->image_height = 0;
+	object->background = false;
 
 	this->objects.push_back(object);
 
@@ -171,6 +177,9 @@ void Widget::GenerateColours( CSSParser * style, WidgetObject * object, bool bac
 		if ( style->HasKey(this->_type, q, (background ? "background-style" : "style")) )
 			object->colours[q].style = style->GetStyle(this->_type, q, (background ? "background-style" : "style") );
 	}
+
+	object->alignment = style->GetAlign( this->_type, ENABLED, "text-align" );
+
 }
 
 void Widget::GenerateBorderColours( CSSParser * style, WidgetObject * object, uint8_t position )
@@ -208,74 +217,54 @@ void Widget::GenerateBox(CSSParser * style)
 	if ( style == NULL )
 		return;
 
-	bool using_border_model = !(style->GetString(this->_type, this->_state, "box-model").compare("border"));
 	LuxRect boxregion = this->_region;
-	uint16_t border_width = style->GetSize(this->_type, this->_state, "border-width");
-	uint16_t min_height = style->GetSize(this->_type, this->_state, "min-height");
+	uint16_t border_width = style->GetSize(this->_type, this->state, "border-width");
+	uint16_t min_height = style->GetSize(this->_type, this->state, "min-height");
 
 	if ( min_height > this->_region.h )
 	{
 		this->_region.h = boxregion.h = min_height;
 	}
 
-	if ( using_border_model )
-	{
-		this->padding.w = style->GetSize(this->_type, this->_state, "padding");
-		this->padding.h = style->GetSize(this->_type, this->_state, "padding");
-		boxregion.x += border_width;
-		boxregion.y += border_width;
-		boxregion.w -= border_width*2;
-		boxregion.h -= border_width*2;
+	this->padding.w = style->GetSize(this->_type, this->state, "padding");
+	this->padding.h = style->GetSize(this->_type, this->state, "padding");
 
-	}
-	else
-	{
-/*
-		this->_region.x += border_width;
-		this->_region.y += border_width;
-		this->_region.w -= border_width*2;
-		this->_region.h -= border_width*2;
-*/
-		this->padding.w = style->GetSize(this->_type, this->_state, "padding");
-		this->padding.h = style->GetSize(this->_type, this->_state, "padding");
-	}
 
-	if ( style->HasKey(this->_type, this->_state, "border-image") )
+	if ( style->HasKey(this->_type, this->state, "border-image") )
 	{
-		std::string image = style->GetString(this->_type, this->_state, "border-image");
+		std::string image = style->GetString(this->_type, this->state, "border-image");
 
 		/* Resize box to be a multiple of the border widths */
 		if ( border_width )
 		{
-			boxregion.w = (1+(boxregion.w/border_width))*border_width;
-			boxregion.h = (1+(boxregion.h/border_width))*border_width;
+			boxregion.w = ((boxregion.w%border_width ? 1 : 0)+(boxregion.w/border_width))*border_width;
+			boxregion.h = ((boxregion.h%border_width ? 1 : 0)+(boxregion.h/border_width))*border_width;
 		}
 
+		this->bgbox = this->InsertTextObject( OBJECT_IMAGE, 0, 0, 0, 0, image + ":4", 0); /* box background  */
+		this->borders[0] = this->InsertTextObject( OBJECT_IMAGE, 0, -border_width, 0, border_width, image + ":1", LEFTTOP ); /* top border */
+		this->borders[1] = this->InsertTextObject( OBJECT_IMAGE, 0, 0, border_width, 0, image + ":5", RIGHTTOP ); /* right border */
+		this->borders[2] = this->InsertTextObject( OBJECT_IMAGE, 0, 0, 0, border_width, image + ":7", LEFTBOTTOM ); /* bottom border */
+		this->borders[3] = this->InsertTextObject( OBJECT_IMAGE, -border_width, 0, border_width, 0, image + ":3", LEFTTOP ); /* left border */
 
-		this->bgbox = this->InsertTextObject( OBJECT_IMAGE, boxregion.x, boxregion.y, boxregion.w, boxregion.h, image + ":4"); /* box background  */
-		this->borders[0] = this->InsertTextObject( OBJECT_IMAGE, boxregion.x, boxregion.y - border_width, boxregion.w, border_width, image + ":1" ); /* top border */
-		this->borders[1] = this->InsertTextObject( OBJECT_IMAGE, boxregion.x + boxregion.w, boxregion.y, border_width, boxregion.h, image + ":5" ); /* right border */
-		this->borders[2] = this->InsertTextObject( OBJECT_IMAGE, boxregion.x, boxregion.y + boxregion.h, boxregion.w, border_width, image + ":7" ); /* bottom border */
-		this->borders[3] = this->InsertTextObject( OBJECT_IMAGE, boxregion.x - border_width, boxregion.y, border_width, boxregion.h, image + ":3" ); /* left border */
-
-		this->InsertTextObject( OBJECT_IMAGE, boxregion.x-border_width, boxregion.y-border_width, border_width, border_width, image + ":0" );
-		this->InsertTextObject( OBJECT_IMAGE, boxregion.x+boxregion.w, boxregion.y-border_width, border_width, border_width, image + ":2" );
-		this->InsertTextObject( OBJECT_IMAGE, boxregion.x+boxregion.w, boxregion.y + boxregion.h, border_width, border_width, image + ":8" );
-		this->InsertTextObject( OBJECT_IMAGE, boxregion.x-border_width, boxregion.y + boxregion.h, border_width, border_width, image + ":6" );
+		this->InsertTextObject( OBJECT_IMAGE, -border_width, -border_width, border_width, border_width, image + ":0", LEFTTOP ); /* TOP LEFT */
+		this->InsertTextObject( OBJECT_IMAGE, 0, -border_width, border_width, border_width, image + ":2", RIGHTTOP );/* TOP RIGHT */
+		this->InsertTextObject( OBJECT_IMAGE, -border_width, 0, border_width, border_width, image + ":6", LEFTBOTTOM );/* bottom right */
+		this->InsertTextObject( OBJECT_IMAGE, 0, 0, border_width, border_width, image + ":8", RIGHTBOTTOM ); /* bottom left */
 
 		this->bgbox->image_width = this->borders[0]->image_width = this->borders[1]->image_width = this->borders[2]->image_width = this->borders[3]->image_width = border_width;
 		this->bgbox->image_height = this->borders[0]->image_height = this->borders[1]->image_height = this->borders[2]->image_height = this->borders[3]->image_height = border_width;
 	}
 	else
 	{
-		this->bgbox = this->InsertWidgetObject( OBJECT_RECTANGLE, boxregion.x, boxregion.y, boxregion.w, boxregion.h ); /* box background */
+		this->bgbox = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, 0, 0 ); /* box background */
 
 		if ( border_width > 0 )
 		{
-			this->borders[0] = this->InsertWidgetObject( OBJECT_RECTANGLE, boxregion.x - border_width, boxregion.y - border_width, boxregion.w+border_width+border_width, border_width ); /* top border */
-			this->borders[1] = this->InsertWidgetObject( OBJECT_RECTANGLE, boxregion.x + boxregion.w, boxregion.y, border_width, boxregion.h ); /* right border */
-			this->borders[2] = this->InsertWidgetObject( OBJECT_RECTANGLE, boxregion.x - border_width, boxregion.y + boxregion.h, boxregion.w + border_width + border_width, border_width ); /* bottom border */
-			this->borders[3] = this->InsertWidgetObject( OBJECT_RECTANGLE, boxregion.x - border_width, boxregion.y, border_width, boxregion.h ); /* left border */
+			this->borders[0] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, 0, border_width, LEFTTOP ); /* top border */
+			this->borders[1] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, border_width, 0, RIGHTTOP  ); /* right border */
+			this->borders[2] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, -border_width, 0, border_width, LEFTBOTTOM ); /* bottom border */
+			this->borders[3] = this->InsertWidgetObject( OBJECT_RECTANGLE, -border_width, 0, border_width, 0, LEFTTOP ); /* left border */
 		}
 	}
 
@@ -303,9 +292,15 @@ std::string Widget::SetText( std::string text, uint32_t length )
 	if ( this->textbox )
 	{
 		this->textbox->text = text;
-		if ( length && this->bgbox )
+		if ( length )
 		{
-			this->bgbox->position.w = (length * 8) + 4;
+			this->textbox->offset.w = (length * 8);
+
+			if ( this->textbox->alignment )
+			{
+				this->textbox->offset.alignment = CENTERCENTER;
+				this->textbox->offset.h = 8;
+			}
 		}
 	}
 	return this->GetText();
@@ -366,7 +361,7 @@ bool Widget::SendEvent( int32_t event_code )
 		if ( event_code == 32 || event_code == 1 || event_code == 13  )
 		{
 			this->_value = !this->_value;
-			this->_original = (this->_value == 1 ? ENABLED : DISABLED);
+			this->original_state = (this->_value == 1 ? ENABLED : DISABLED);
 		}
 	}
 	else
@@ -385,6 +380,16 @@ void Widget::Refresh()
 
 }
 
+void Widget::SetRegion( LuxRect q )
+{
+	this->_region = q;
+}
+
+LuxRect Widget::GetRegion( )
+{
+	return this->_region;
+}
+
 int32_t Widget::SetValue(int32_t value)
 {
 	this->_value = value;
@@ -393,12 +398,12 @@ int32_t Widget::SetValue(int32_t value)
 
 _WidgetStates Widget::GetState()
 {
-	if (this->_type == CHECKBOX && this->_state <= DISABLED )
+	if (this->_type == CHECKBOX && this->state <= DISABLED )
 	{
 		return (this->_value == 1 ? ENABLED : DISABLED);
 	}
 	else
-		return this->_state;
+		return this->state;
 }
 
 _WidgetStates Widget::SetState(_WidgetStates state)
@@ -406,13 +411,20 @@ _WidgetStates Widget::SetState(_WidgetStates state)
 	if (this->_type == CHECKBOX  )
 	{
 		if ( state == ACTIVE )
-			this->_state = this->_original;
+			this->state = this->original_state;
 		else
-			this->_state = state;
+			this->state = state;
 	}
 	else if (this->_type > CHECKBOX)
 	{
-		this->_state = state;
+		this->state = state;
 	}
-	return this->_state;
+	return this->state;
 }
+
+uint32_t Widget::GetAreaHeight()
+{
+	return this->_region.h + this->padding.h;
+}
+
+

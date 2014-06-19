@@ -169,6 +169,8 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		extern const AMX_NATIVE_INFO Time_Natives[];
 		extern const AMX_NATIVE_INFO console_Natives[];
 		extern const AMX_NATIVE_INFO Maps_Natives[];
+		extern const AMX_NATIVE_INFO System_Natives[];
+		extern const AMX_NATIVE_INFO Game_Natives[];
 
 		amx_Register(temp_amx, Maps_Natives, -1);
 		amx_Register(temp_amx, Entity_Natives, -1);
@@ -182,6 +184,8 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		amx_Register(temp_amx, Online_Natives, -1);
 		amx_Register(temp_amx, Time_Natives, -1);
 		amx_Register(temp_amx, console_Natives, -1);
+		amx_Register(temp_amx, System_Natives, -1);
+		amx_Register(temp_amx, Game_Natives, -1);
 
 		int error = amx_Register(temp_amx, core_Natives, -1);
 

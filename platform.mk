@@ -10,7 +10,7 @@ ifeq ($(BUILDDIR), )
 endif
 
 ifeq ($(INSTALLDIR), )
-	INSTALLDIR = ../MokoiGaming/bin
+	INSTALLDIR = /opt/mokoi
 endif
 
 #Plaform bits

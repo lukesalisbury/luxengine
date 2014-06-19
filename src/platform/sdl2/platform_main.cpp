@@ -49,8 +49,8 @@ extern "C" void lux_engine_loop()
 			--c;
 			if ( strcmp(argv[c], "--portal") == 0 )
 			{
-				luxportal::use = true;
-				luxportal::active = true;
+				LuxPortal::use = true;
+				LuxPortal::active = true;
 			}
 			else if ( strcmp(argv[c], "--window") == 0 )
 			{
@@ -62,17 +62,17 @@ extern "C" void lux_engine_loop()
 			}
 			else if ( strcmp(argv[c], "--test") == 0 )
 			{
-				luxportal::testmode = true;
+				LuxPortal::testmode = true;
 			}
 			else if ( strcmp(argv[c], "--ogl") == 0 )
 			{
-				luxportal::opengl = true;
+				LuxPortal::opengl = true;
 				luxtest::opengl = true;
 				lux::global_config->SetString("display.mode", "OpenGL");
 			}
 			else if ( strcmp(argv[c], "--native") == 0 )
 			{
-				luxportal::opengl = false;
+				LuxPortal::opengl = false;
 				luxtest::opengl = false;
 				lux::global_config->SetString("display.mode", "native");
 			}
@@ -81,9 +81,9 @@ extern "C" void lux_engine_loop()
 				if ( !skipProjectFile )
 				{
 					lux::global_config->SetString("project.file", argv[c]);
-					luxportal::add( argv[c] );
-					luxportal::use = false;
-					luxportal::active = false;
+					LuxPortal::add_previous_game( argv[c] );
+					LuxPortal::use = false;
+					LuxPortal::active = false;
 				}
 			}
 			else
@@ -126,20 +126,20 @@ extern "C" void lux_engine_loop()
 		main_args( argc, argv, gameAttached );
 	/*
 		lux::global_config->SetString("project.file", "/sdcard/Android/data/info.mokoi.lux/files/mokoi-games/puttytris.game");
-		luxportal::use = false;
-		luxportal::active = false;
+		LuxPortal::use = false;
+		LuxPortal::active = false;
 	*/
-		if ( luxportal::testmode )
+		if ( LuxPortal::testmode )
 		{
 			luxtest::run();
 		}
 
-		luxportal::open();
-		if ( luxportal::use )
+		LuxPortal::open();
+		if ( LuxPortal::use )
 		{
-			while ( luxportal::active )
+			while ( LuxPortal::active )
 			{
-				if ( luxportal::run() )
+				if ( LuxPortal::run() )
 				{
 					lux_engine_loop();
 				}
@@ -150,7 +150,7 @@ extern "C" void lux_engine_loop()
 		{
 			lux_engine_loop();
 		}
-		luxportal::close();
+		LuxPortal::close();
 
 
 		delete lux::engine;

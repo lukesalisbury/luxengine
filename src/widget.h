@@ -21,14 +21,31 @@ class Widget;
 #include "sprite_sheet.h"
 #include <list>
 
+typedef enum {
+	LEFTTOP,
+	RIGHTTOP,
+	LEFTBOTTOM,
+	RIGHTBOTTOM,
+	CENTERCENTER
+} WidgetAlignment;
+
+
 typedef struct {
-	uint8_t type, style;
-	LuxRect position;
+	int16_t x, y;
+	int16_t w, h;
+	uint8_t alignment;
+} WidgetObjectPosition;
+
+
+typedef struct {
+	uint8_t type, style, alignment;
+	WidgetObjectPosition offset;
 	std::string text;
 	ObjectEffect colour;
 	ObjectEffect colours[WIDGET_STATES_SIZE];
 	uint16_t image_width;
 	uint16_t image_height;
+	bool background;
 } WidgetObject;
 
 class Widget
@@ -38,36 +55,40 @@ class Widget
 		Widget( LuxRect region, LuxWidget type, CSSParser * style = NULL );
 		~Widget();
 
-		void * _data;
 	private:
 		LuxRect _region;
 		LuxRect padding;
 		std::list<WidgetObject *> objects;
+
 		WidgetObject * textbox;
 		WidgetObject * bgbox;
 		WidgetObject * borders[4];
 
 	private:
-		Widget * _parent;
-		_WidgetStates _state;
-		_WidgetStates _original;
+		Widget * parent;
+		_WidgetStates state;
+		_WidgetStates original_state;
 
+		void * data;
 		int32_t _value;
 		bool _focus;
 		LuxSprite * _sprite;
 		LuxWidget _type;
 
-		void GenerateBox(CSSParser * style);
+		void GenerateBox( CSSParser * style );
 		void GenerateColours( CSSParser * style, WidgetObject * object, bool background );
 		void GenerateBorderColours( CSSParser * style, WidgetObject * object, uint8_t position );
 
 	public:
 		void Exit();
-		void ResetState() { this->_state = this->_original; }
+		void ResetState() { this->state = this->original_state; }
 		void Refresh();
 
-		WidgetObject * InsertTextObject(uint8_t type, uint32_t x, uint32_t y, uint32_t w, uint32_t h, std::string t );
-		WidgetObject * InsertWidgetObject(uint8_t type, uint32_t x, uint32_t y, uint32_t w, uint32_t h );
+		void SetRegion( LuxRect q );
+		LuxRect GetRegion( );
+
+		WidgetObject * InsertTextObject(uint8_t type, int16_t x, int16_t y, int16_t w, int16_t h, std::string t, uint8_t alignment = LEFTTOP );
+		WidgetObject * InsertWidgetObject(uint8_t type, int16_t x, int16_t y, int16_t w, int16_t h, uint8_t alignment = LEFTTOP );
 
 		_WidgetStates GetState();
 		_WidgetStates SetState(_WidgetStates state);
@@ -78,12 +99,12 @@ class Widget
 		int32_t GetValue() { return this->_value; }
 		int32_t SetValue(int32_t value);
 
-		void * GetData() { return this->_data; }
-		void SetData(void * data) { this->_data = data; }
+		void * GetData() { return this->data; }
+		void SetData(void * data) { this->data = data; }
 
 		bool SendEvent(int32_t event_code);
 
-		uint32_t GetAreaHeight() { return this->_region.h + this->padding.h; }
+		uint32_t GetAreaHeight();
 
 
 

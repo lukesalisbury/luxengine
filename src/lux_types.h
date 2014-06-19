@@ -45,6 +45,7 @@ typedef enum {
 	TEXT,
 	INPUTTEXT,
 	BUTTON,
+	LIST,
 	IMAGEBUTTON,
 	IMAGE,
 	BOX,
@@ -64,12 +65,30 @@ inline LuxWidget& operator^=(LuxWidget& a, LuxWidget b) {
 	return a;
 }
 
+
 typedef struct {
 	int32_t x, y;
 	uint16_t w, h;
 	int16_t z;
 } LuxRect;
 
+
+
+inline LuxRect & operator+=(LuxRect& a, LuxRect& b) {
+	a.x += b.x;
+	a.y += b.y;
+	a.w += b.w;
+	a.h += b.h;
+	a.z += b.z;
+
+	if ( b.x < 0 )
+		a.x += a.w;
+
+	if ( b.y < 0 )
+		a.y += a.h;
+
+	return a;
+}
 
 
 typedef struct {

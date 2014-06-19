@@ -3487,6 +3487,7 @@ int AMXAPI amx_SetString(cell *dest,const char *source,int pack,int use_wchar,si
   int len, i;
 
   assert_static(UNLIMITED>0);
+
   #if defined AMX_ANSIONLY
     (void)use_wchar;
     len=strlen(source);
@@ -3505,7 +3506,7 @@ int AMXAPI amx_SetString(cell *dest,const char *source,int pack,int use_wchar,si
         for (i=0; i<len; i++)
           ((char*)dest)[i]=(char)(((wchar_t*)source)[i]);
       } else {
-        memcpy(dest,source,len);
+		memcpy(dest,source,len);
       } /* if */
     #endif
     /* On Big Endian machines, the characters are well aligned in the

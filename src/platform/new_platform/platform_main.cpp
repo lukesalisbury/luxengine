@@ -27,7 +27,7 @@ void main_args( int argc, char *argv[] )
 		--c;
 		if ( strcmp(argv[c], "--portal") == 0 )
 		{
-			luxportal::use = true;
+			LuxPortal::use = true;
 		}
 		else if ( strcmp(argv[c], "--window") == 0 )
 		{
@@ -39,7 +39,7 @@ void main_args( int argc, char *argv[] )
 		}
 		else if ( strcmp(argv[c], "--ogl") == 0 )
 		{
-			luxportal::opengl = true;
+			LuxPortal::opengl = true;
 			lux::config->SetString("display.mode", "OpenGL");
 		}
 		else if ( strcmp(argv[c], "--sw") == 0 )
@@ -73,9 +73,9 @@ void main_args( int argc, char *argv[] )
 		else if ( argv[c][0] != '-' )
 		{
 			lux::config->SetString("project.file", argv[c]);
-			luxportal::add( argv[c] );
-			luxportal::use = false;
-			luxportal::active = false;
+			LuxPortal::add_previous_game( argv[c] );
+			LuxPortal::use = false;
+			LuxPortal::active = false;
 		}
 	}
 }
@@ -94,22 +94,22 @@ extern "C" int main( int argc, char *argv[] )
 
 	base_directory = elix::path::GetBase( (argc ? argv[0] : DEFAULT_LOCATION ), true );
 	/*
-	luxportal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Audio"LUX_DIR_SSEPARATOR );
-	luxportal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Camera"LUX_DIR_SSEPARATOR );
-	luxportal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Collision"LUX_DIR_SSEPARATOR );
-	luxportal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Display"LUX_DIR_SSEPARATOR );
-	luxportal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Entity"LUX_DIR_SSEPARATOR );
-	luxportal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Input"LUX_DIR_SSEPARATOR );
-	luxportal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Save"LUX_DIR_SSEPARATOR );
+	LuxPortal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Audio"LUX_DIR_SSEPARATOR );
+	LuxPortal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Camera"LUX_DIR_SSEPARATOR );
+	LuxPortal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Collision"LUX_DIR_SSEPARATOR );
+	LuxPortal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Display"LUX_DIR_SSEPARATOR );
+	LuxPortal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Entity"LUX_DIR_SSEPARATOR );
+	LuxPortal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Input"LUX_DIR_SSEPARATOR );
+	LuxPortal::add( base_directory + "demos"LUX_DIR_SSEPARATOR"Save"LUX_DIR_SSEPARATOR );
 	*/
 	lux::engine = new LuxEngine( base_directory + "demos"LUX_DIR_SSEPARATOR"Collision"LUX_DIR_SSEPARATOR, base_directory );
 	main_args( argc, argv );
-	luxportal::open();
-	if ( luxportal::use )
+	LuxPortal::open();
+	if ( LuxPortal::use )
 	{
-		while ( luxportal::active )
+		while ( LuxPortal::active )
 		{
-			if ( luxportal::run() )
+			if ( LuxPortal::run() )
 			{
 				if ( lux::engine->Start() )
 				{
@@ -127,7 +127,7 @@ extern "C" int main( int argc, char *argv[] )
 		}
 		lux::engine->Close();
 	}
-	luxportal::close();
+	LuxPortal::close();
 	delete lux::engine;
 	
 

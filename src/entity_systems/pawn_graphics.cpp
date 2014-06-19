@@ -52,18 +52,10 @@ MapObject * Lux_PawnEntity_GetObject(AMX * amx, uint32_t object_id )
 
 /** Misc Functions */
 
-/** pawnGraphicsType
-* native GraphicsType();
-*/
-static cell AMX_NATIVE_CALL pawnGraphicsType(AMX *amx, const cell *params)
-{
-	return 0;
-}
-
-/** pawnSheetRef
+/** pawnSheetReference
 * native SheetReference(sheet[], rev);
 */
-static cell AMX_NATIVE_CALL pawnSheetRef(AMX *amx, const cell *params)
+static cell AMX_NATIVE_CALL pawnSheetReference(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -90,6 +82,32 @@ static cell AMX_NATIVE_CALL pawnSheetReplace(AMX *amx, const cell *params)
 	}
 	return 0;
 }
+
+/** pawnSheetSpriteDimension
+* native SheetSpriteDimension(sprite[], &w, &h);
+*
+*/
+static cell AMX_NATIVE_CALL pawnSheetSpriteDimension(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 3 );
+
+	cell responed = 0;
+	std::string request_string = Lux_PawnEntity_GetString(amx, params[1]);
+
+	if ( request_string.size() )
+	{
+		LuxSprite * sdata = lux::display->GetSprite( request_string );
+		if ( sdata )
+		{
+			write_amx_address( amx, params[2], sdata->sheet_area.w );
+			write_amx_address( amx, params[3], sdata->sheet_area.h );
+			responed = 1;
+		}
+	}
+	return responed;
+}
+
+/** Graphics Functions */
 
 /** pawnGraphicsDraw
 * native GraphicsDraw(string[], type, x, y, z, w, h, c = 0xFFFFFFFF, string_size = sizeof string );
@@ -435,17 +453,25 @@ static cell AMX_NATIVE_CALL pawnLayerColour(AMX *amx, const cell *params)
 const AMX_NATIVE_INFO Graphics_Natives[] = {
 	/** Misc */
 	{ "GraphicsDraw", pawnGraphicsDraw },
-	{ "GraphicsType", pawnGraphicsType },
-	{ "TextSprites", pawnTextSprites }, //native TextSprites(able);
-	{ "SheetReference", pawnSheetRef }, //native SheetReference(sheet[], ref = 1);
-	{ "SheetReplace", pawnSheetReplace },
+	{ "GraphicsType", pawnDeprecatedFunction },
+	{ "TextSprites", pawnTextSprites }, ///native TextSprites(able);
+
+	/** Sheet */
+	{ "SheetReference", pawnSheetReference }, ///native SheetReference(sheet[], ref = 1);
+	{ "SheetReplace", pawnSheetReplace }, ///native SheetReplace(old[], new[]);
+	{ "SheetSpriteDimension", pawnSheetSpriteDimension }, ///native SheetSpriteDimension(sprite[], &w, &h);
+
 	/** Animation */
 	{ "AnimationGetLength", pawnAnimationGetLength }, ///native AnimationGetLength(sheet[], anim[]);
 	{ "AnimationCreate", pawnAnimationCreate }, ///native AnimationCreate(string[]);
 	{ "AnimationAddFrame", pawnAnimationAddFrame }, ///native AnimationAddFrame(string[], sprite[], string_size = sizeof string, sprite_size = sizeof sprite);
+	{ "AnimationDelete", pawnDeprecatedFunction }, ///native AnimationDelete(string[]);
+
 	/** Polygon */
 	{ "PolygonCreate", pawnPolygonCreate }, ///native PolygonCreate(string[]);
 	{ "PolygonAddPoint", pawnPolygonAddpoint }, ///native PolygonAddpoint(string[], x, y, string_size = sizeof string);
+	{ "PolygonDelete", pawnDeprecatedFunction }, ///native AnimationDelete(string[]);
+
 	/** Display Functions */
 	{ "ObjectCreate", pawnObjectCreate }, ///native ObjectCreate(string[], type, c = 0xFFFFFFFF, string_size = sizeof string);
 	{ "ObjectPosition", pawnObjectPosition }, ///native ObjectPosition(id, x, y, z, w, h);
@@ -456,8 +482,10 @@ const AMX_NATIVE_INFO Graphics_Natives[] = {
 	{ "ObjectToggle", pawnObjectToggle }, ///native ObjectToggle(object:id, show);
 	{ "ObjectInfo", pawnObjectInfo }, ///native ObjectInfo(object:id, &w, &h);
 	{ "ObjectFollowPath", pawnObjectFollowPath }, ///native ObjectFollowPath(object:id, speed,&x, &y);
+
 	/** Camera Functions */
 	{ "CameraSetScroll", pawnCameraSetScroll }, ///native CameraSetScroll(bool:scroll);
+	{ "CameraSetZoom", pawnDeprecatedFunction }, ///native CameraSetZoom(zoom);
 	{ "LayerSetRotation", pawnLayerSetRotation }, ///native LayerSetRotation(layer, roll, pitch, yaw);
 	{ "LayerSetOffset", pawnLayerSetOffset }, ///native LayerSetOffset(layer, x, y);
 	{ "LayerSetEffect", pawnLayerSetEffect }, ///native LayerSetEffect(layer, effect);

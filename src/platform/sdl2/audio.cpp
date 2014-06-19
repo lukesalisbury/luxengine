@@ -23,6 +23,12 @@ void Lux_Audio_DialogEnded()
 AudioSystem::AudioSystem()
 {
 	enabled = lux::config->GetBoolean("audio.able");
+
+	this->master_volume = 128;
+	this->music_volume = 96;
+	this->effects_volume = 96;
+	this->dialog_volume = 96;
+
 	if ( enabled )
 	{
 		lux::screen::display("Loading Audio System");
@@ -219,19 +225,70 @@ int32_t AudioSystem::PlayMusic ( std::string requestMusic, int32_t loop, int32_t
 	return 0;
 }
 
+/*
+	this->master_volume = 128;
+	this->music_volume = 96;
+	this->effects_volume = 96;
+	this->dialog_volume = 96;
+*/
+
+int32_t AudioSystem::SetMasterVolume(int32_t volume)
+{
+	if ( !enabled )
+		return 0;
+
+	if ( volume >= 0 )
+	{
+		this->master_volume = clamp(volume, 0, 128 );
+	}
+	return this->master_volume;
+}
+
 int32_t AudioSystem::SetMusicVolume(int32_t volume)
 {
 	if ( !enabled )
 		return 0;
-	return Mix_VolumeMusic(volume);
+
+	if ( volume >= 0 )
+	{
+		this->music_volume = clamp(volume, 0, 128 );
+
+		Mix_VolumeMusic(this->music_volume);
+	}
+	return this->music_volume;
+
 }
 
 int32_t AudioSystem::SetEffectsVolume(int32_t volume)
 {
 	if ( !enabled )
 		return 0;
-	return Mix_Volume(-1, volume);
+
+	if ( volume >= 0 )
+	{
+		this->effects_volume = clamp(volume, 0, 128 );
+
+		Mix_Volume(-1, this->effects_volume);
+	}
+	return this->effects_volume;
+
 }
+
+
+
+int32_t AudioSystem::SetDialogVolume(int32_t volume)
+{
+	if ( !enabled )
+		return 0;
+	if ( volume >= 0 )
+	{
+		this->dialog_volume = clamp(volume, 0, 128 );
+
+		Mix_Volume(-1, this->dialog_volume);
+	}
+	return this->dialog_volume;
+}
+
 
 void AudioSystem::Pause()
 {

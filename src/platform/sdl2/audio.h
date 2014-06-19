@@ -30,6 +30,11 @@ class AudioSystem: public BaseAudioSystem
 		int32_t bits, buffers, frequency, channels, mixchannels;
 		uint16_t outformat;
 
+		int32_t master_volume;
+		int32_t music_volume;
+		int32_t effects_volume;
+		int32_t dialog_volume;
+
 		/* Resource Management */
 		Mix_Music * dialog;
 		Mix_Music * music;
@@ -53,8 +58,11 @@ class AudioSystem: public BaseAudioSystem
 		void StopDialog();
 
 		/* Volume */
+		int32_t SetMasterVolume( int32_t volume );
 		int32_t SetMusicVolume( int32_t volume );
 		int32_t SetEffectsVolume( int32_t volume );
+		int32_t SetDialogVolume( int32_t volume );
+
 };
 
 namespace lux

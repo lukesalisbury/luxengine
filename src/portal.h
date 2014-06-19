@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define _PORTAL_H_
 
 #include <test_code.h>
-	namespace luxportal {
+	namespace LuxPortal {
 		extern bool active;
 		extern bool use;
 		extern bool testmode;
@@ -21,12 +21,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 		int32_t recent_page(LuxRect page_rect);
 		int32_t online_page(LuxRect page_rect);
 		int32_t browse_page(LuxRect page_rect);
-		int32_t browse_demos(LuxRect page_rect);
+		int32_t demos_page(LuxRect page_rect);
 		int32_t directory_page();
-		void add( std::string path );
+		void add_previous_game( std::string path );
 		void open();
 		void close();
-		void clear();
+		void clear_listed_games();
 
 	}
 #endif /* _PORTAL_H_ */

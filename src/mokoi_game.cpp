@@ -33,15 +33,12 @@ namespace Mokoi {
 	static uint8_t patch_magic[6] = {139, 'M', 'o', 'k', 'o', 'i'};
 	static uint8_t resource_magic[6] = {138, 'M', 'o', 'k', 'o', 'i'};
 	std::string folderlist_prefix;
+
 	bool folder_check( std::pair<std::string, StoredFileInfo *> p )
 	{
 		return !p.first.compare( 2, folderlist_prefix.length(), folderlist_prefix );
 	}
-}
 
-
-
-namespace Mokoi {
 	int32_t gameSignatureOffset( elix::File * file )
 	{
 		uint8_t game_sign[8] = {137, 'M', 'o', 'k', 'o', 'i', '0', '\n'};
@@ -50,19 +47,9 @@ namespace Mokoi {
 		{
 			game_sign[6] = '1';
 			p = file->Scan( 0, game_sign, 8 );
-
 		}
 		return p;
 	}
-}
-
-MokoiGame::MokoiGame(  )
-{
-	this->id = 0;
-	this->png = NULL;
-	this->type = MOKOI_GAME_UNKNOWN;
-	this->filename = "";
-	this->valid = false;
 }
 
 MokoiGame::MokoiGame( std::string path, bool checkonly )
@@ -88,12 +75,16 @@ MokoiGame::MokoiGame( std::string path, bool checkonly )
 		this->valid = false;
 		return;
 	}
-	if ( !checkonly )
+
+	if ( type != MOKOI_GAME_ONLINE )
 	{
-		this->Scan( type, this->filename, "" );
-		if ( this->SetProjectDirectory() )
+		if ( !checkonly )
 		{
-			this->Scan( MOKOI_GAME_DIRECTORY, this->public_directory, "");
+			this->Scan( type, this->filename, "" );
+			if ( this->SetProjectDirectory() )
+			{
+				this->Scan( MOKOI_GAME_DIRECTORY, this->public_directory, "");
+			}
 		}
 	}
 	this->valid = true;
@@ -450,7 +441,7 @@ bool MokoiGame::ScanDirectory( uint8_t type, std::string path, std::string dest,
 bool MokoiGame::Scan( uint8_t type, std::string path, std::string dest )
 {
 	bool results = false;
-	if ( type == MOKOI_GAME_PACK|| type == MOKOI_GAME_EXECUTABLE || type == MOKOI_GAME_RESOURCE || type == MOKOI_GAME_PATCH )
+	if ( type == MOKOI_GAME_PACK || type == MOKOI_GAME_EXECUTABLE || type == MOKOI_GAME_RESOURCE || type == MOKOI_GAME_PATCH )
 	{
 		results = MokoiGame::ScanPackage( type, path, dest );
 	}
@@ -463,7 +454,7 @@ bool MokoiGame::Scan( uint8_t type, std::string path, std::string dest )
 			std::string savepath = this->public_directory + basename;
 			std::string file_name = "./" + basename;
 
-			Lux_Util_FileDownloaderBackground( path, savepath, lux::gui);
+			Lux_Util_FileDownloaderBackground( path, savepath, lux::gui );
 
 			this->files[file_name] = info;
 			info->len = 0;
@@ -673,8 +664,39 @@ bool MokoiGame::CompileScripts()
 				lux::core->RunExternalProgram( "pawn_compiler4", "--project="+ this->filename +" " + this->filename + (*iter) );
 			}
 		}
-		this->ScanDirectory( MOKOI_GAME_DIRECTORY,  this->filename, "", false );
+		this->ScanDirectory( MOKOI_GAME_DIRECTORY, this->filename, "", false );
 	}
 	return true;
+}
+
+
+std::string MokoiGame::GetTitle()
+{
+	return title;
+}
+
+std::string MokoiGame::GetIdent()
+{
+	return localid;
+}
+
+std::string MokoiGame::GetAuthor()
+{
+	return author;
+}
+
+std::string MokoiGame::GetCreation()
+{
+	return creation;
+}
+
+std::string MokoiGame::GetFilename()
+{
+	return filename;
+}
+
+std::string MokoiGame::GetPublicDirectory()
+{
+	return public_directory;
 }
 

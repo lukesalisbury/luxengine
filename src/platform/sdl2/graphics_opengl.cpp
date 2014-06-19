@@ -72,7 +72,7 @@ extern SDL_Rect native_graphics_dimension;
 
 extern uint32_t sdlgraphics_fps, sdlgraphics_fpstime;
 /* Global Variables */
-LuxColour gles_graphics_colour = { 0, 128, 0, 255 };
+LuxColour gles_graphics_colour = { 0, 0, 0, 255 };
 
 SDL_Rect native_graphics_viewpoint;
 SDL_GLContext native_context;
@@ -82,7 +82,7 @@ float opengl_graphic_ratio = 1.33;
 LuxPolygon * opengl_graphic_cursor = NULL;
 SDL_Rect native_screen_position;
 bool native_screen_stretching = false;
-
+bool native_screen_match = false;
 
 Texture fbo_textures[8] = {0};
 GLuint fbo_frame, fbo_depthBuffer;
@@ -115,6 +115,7 @@ void opengl_graphic_create_fbotexture( Texture & fbo )
 
 	fbo.loaded = true;
 }
+
 /* Global Function */
 
 /* Lux_OGL_Init
@@ -144,6 +145,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 	native_render_flags = SDL_RENDERER_ACCELERATED;
 	native_window_title = lux::config->GetString("project.title")  + " (OpenGL Rendering)";
 
+	//native_screen_match = lux::config->GetBoolean("screen.matchdisplay");
 
 	if ( width > height )
 	{
@@ -182,9 +184,9 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 	native_graphics_dimension.h = height;
 	opengl_graphic_ratio = (float)height / (float)width;
 
-	Lux_OGL_Resize( window_width, window_height);
+	Lux_OGL_Resize( window_width, window_height );
 
-	gles::setOrtho( 0.0f, (float)width, (float)height, 0.0f, -10.0f, 10.0f );
+	gles::setOrtho( 0.0f, (float)native_graphics_dimension.w, (float)native_graphics_dimension.h, 0.0f, -10.0f, 10.0f );
 
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST );
 	glEnable(GL_BLEND);
@@ -255,7 +257,6 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
 	SDL_GL_DeleteContext(native_context);
 	SDL_EnableScreenSaver();
 
-
 	if ( SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object") )
 	{
 		glDeleteTextures(1, &fbo_textures[0].pointer);
@@ -321,16 +322,51 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Display2Screen( int32_t * x, int32_t * y)
  */
 LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t window_width, uint16_t window_height)
 {
-	opengl_graphic_ratio_width = (float)native_graphics_dimension.w/(float)window_width;
-	opengl_graphic_ratio_height = (float)native_graphics_dimension.h/(float)window_height;
+	native_screen_position.w = window_width;
+	native_screen_position.h = window_height;
 
-	native_graphics_viewpoint.w = window_width;
-	native_graphics_viewpoint.h = window_height;
-
-	glViewport(0, 0, native_graphics_viewpoint.w, native_graphics_viewpoint.h);
 
 	SDL_RenderSetLogicalSize(native_renderer, window_width, window_height);
-	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
+
+	if ( native_screen_match )
+	{
+		glViewport(0, 0, window_width, window_height);
+		SDL_RenderSetViewport(native_renderer, NULL);
+
+		//gles::setOrtho( 0.0f, (float)window_width, (float)window_height, 0.0f, -10.0f, 10.0f );
+	}
+	else if ( native_screen_stretching )
+	{
+		float w_scale = (float)window_width/(float)native_graphics_dimension.w;
+		float h_scale = (float)window_height/(float)native_graphics_dimension.h;
+
+		if ( w_scale > h_scale)
+		{
+			native_screen_position.w = h_scale * native_graphics_dimension.w;
+			native_screen_position.h = h_scale * native_graphics_dimension.h;
+		}
+		else
+		{
+			native_screen_position.w = w_scale * native_graphics_dimension.w;
+			native_screen_position.h = w_scale * native_graphics_dimension.h;
+		}
+		opengl_graphic_ratio_width = opengl_graphic_ratio_height = 1.0;
+
+		glViewport(0, 0, native_screen_position.w, native_screen_position.h);
+		SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
+
+
+	}
+	else
+	{
+		opengl_graphic_ratio_width = (float)native_graphics_dimension.w/(float)window_width;
+		opengl_graphic_ratio_height = (float)native_graphics_dimension.h/(float)window_height;
+
+		glViewport(0, 0, native_screen_position.w, native_screen_position.h);
+		SDL_RenderSetViewport(native_renderer, &native_screen_position);
+
+		//gles::setOrtho( 0.0f, (float)native_graphics_dimension.w, (float)native_graphics_dimension.h, 0.0f, -10.0f, 10.0f );
+	}
 
 
 	if ( window_width > window_height )

@@ -201,6 +201,26 @@ static cell AMX_NATIVE_CALL pawnMapSaveToFile(AMX *amx, const cell *params)
 	return 0;
 }
 
+/** pawnMapGetDimension
+* native MapGetDimension( &w, &h);
+* Get Dimension of Map or Screen
+*/
+static cell AMX_NATIVE_CALL pawnMapGetDimension(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	cell responed = 0;
+	if ( lux::world->active_map != NULL )
+	{
+		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::world->active_map->map_width) );
+		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::world->active_map->map_height) );
+		responed = 1;
+	}
+	return responed;
+}
+
+
+
 /** Map Collision Functions */
 /** pawnMapCollisionList
 * native MapCollisionList();

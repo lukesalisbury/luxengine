@@ -21,6 +21,42 @@ Permission is granted to anyone to use this software for any purpose, including 
 ObjectEffect default_cursor_fx( (LuxColour){0,0,0,255}, (LuxColour){255,255,255,255} );
 extern ObjectEffect default_fx;
 
+void LuxWidget_MergeRect(LuxRect & a, WidgetObjectPosition& b)
+{
+
+	if ( b.alignment == RIGHTBOTTOM || b.alignment == RIGHTTOP )
+	{
+		a.x += a.w;
+	}
+
+	if ( b.alignment == RIGHTBOTTOM || b.alignment == LEFTBOTTOM )
+	{
+		a.y += a.h;
+	}
+
+	if ( b.alignment == CENTERCENTER )
+	{
+		a.x += (a.w - b.w)/2;
+		a.y += (a.h - b.h)/2;
+	}
+	else
+	{
+		a.x += b.x;
+		a.y += b.y;
+
+		if ( b.w < 0 )
+			a.w += b.w;
+		else if ( b.w > 0 )
+			a.w = b.w;
+
+		if ( b.h < 0 )
+			a.h += b.h;
+		else if ( b.h > 0 )
+			a.h = b.h;
+	}
+
+}
+
 UserInterface::UserInterface(LuxRect region, DisplaySystem * display)
 {
 	this->controller = NULL;
@@ -33,6 +69,7 @@ UserInterface::UserInterface(LuxRect region, DisplaySystem * display)
 	this->controller = new Player(1,LOCAL);
 	this->children_iter = this->_children.begin();
 
+	this->last_mouse = 0;
 }
 
 UserInterface::UserInterface()
@@ -48,7 +85,7 @@ UserInterface::~UserInterface()
 	this->_children.clear();
 
 	this->_display = NULL;
-	if (this->controller)
+	if ( this->controller )
 		delete this->controller;
 }
 
@@ -267,13 +304,18 @@ void UserInterface::DrawWidget(Widget * child, uint16_t z)
 	{
 		for ( l_object = child->objects.begin(); l_object != child->objects.end(); l_object++ )
 		{
-			object = (*l_object);
-			object->position.z = z;
 			_WidgetStates cur_state = child->GetState();
+			LuxRect area = child->GetRegion();
+
+			object = (*l_object);
+			area.z = z;
+
+			LuxWidget_MergeRect(area, object->offset);
+
 			switch( object->type )
 			{
 				case 'r':
-					this->_display->graphics.DrawRect(object->position, object->colours[cur_state] );
+					this->_display->graphics.DrawRect( area, object->colours[cur_state] );
 					break;
 				case 'q': /* Thobber */
 				{
@@ -284,41 +326,50 @@ void UserInterface::DrawWidget(Widget * child, uint16_t z)
 						child->_value = 0;
 					_WidgetStates q_state = (_WidgetStates)child->_value;
 
-					this->_display->graphics.DrawCircle(object->position, object->colours[q_state] );
+					this->_display->graphics.DrawCircle( area, object->colours[q_state] );
 					break;
 				}
 				case OBJECT_CIRCLE:
-					this->_display->graphics.DrawCircle(object->position, object->colours[cur_state] );
+					this->_display->graphics.DrawCircle( area, object->colours[cur_state] );
 					break;
 				case OBJECT_LINE:
-					this->_display->graphics.DrawLine(object->position, object->colours[cur_state] );
+					this->_display->graphics.DrawLine( area, object->colours[cur_state] );
 					break;
 				case OBJECT_TEXT:
-					this->_display->graphics.DrawText(object->text, object->position, object->colours[cur_state], false );
+					this->_display->graphics.DrawText(object->text, area, object->colours[cur_state], false );
 					break;
 				case OBJECT_IMAGE:
 					spr = this->GetSprite(object->text, object->image_width, object->image_height );
 					if ( spr )
-						this->_display->graphics.DrawSprite( spr, object->position, default_fx );
+						this->_display->graphics.DrawSprite( spr, area, default_fx );
 					else
-						this->_display->graphics.DrawRect( object->position, default_fx );
+						this->_display->graphics.DrawRect( area, default_fx );
 					spr = NULL;
 					break;
 				case OBJECT_SPRITE:
 					if ( child->GetData() )
 					{
 						spr = (LuxSprite*)child->GetData();
-						this->_display->graphics.DrawSprite( spr, object->position, default_fx );
+						this->_display->graphics.DrawSprite( spr, area, default_fx );
 						spr = NULL;
 					}
 					else
-						this->_display->graphics.DrawRect(object->position, default_fx );
+						this->_display->graphics.DrawRect( area, default_fx );
 					break;
 				default:
 					break;
 			}
 
 		}
+	}
+}
+
+void UserInterface::AddChild(Widget * child)
+{
+	if ( child )
+	{
+		this->_children.push_back(child);
+		this->_activechild = child;
 	}
 }
 
@@ -381,43 +432,38 @@ int32_t UserInterface::Show()
 	return 1;
 }
 
-int16_t last_mouse = 0;
+
 int32_t UserInterface::Loop()
 {
 	if ( !this->_display || !this->controller || !lux::core )
 		return 0;
 
-	if ( this->_children.size() )
-	{
-		if (!this->_activechild)
-		{
-			this->_activechild = (*this->_children.begin());
-		}
-
-	}
-
-
 	std::list<Widget *>::iterator wid_iter;
 	int32_t return_value = 0;
 	uint16_t z = 7000;
-	//uint8_t delay_time = 5;
 	uint16_t key_event = 0;
+
+	// Set a Active Child Widget
+	if ( this->_children.size() )
+	{
+		if ( !this->_activechild )
+		{
+			this->_activechild = (*this->_children.begin());
+		}
+	}
+
 
 	/* Update Inputs */
 	lux::core->RefreshInput( this->_display );
 	this->controller->Loop();
 
-	// a = 0, enter = 6
-	// mouse = 11
-	// escape = 15
-
 	int16_t confirm = (this->controller->GetButton(PLAYER_CONFIRM) > 0);
 	int16_t cancel = (this->controller->GetButton(PLAYER_CANCEL) > 0);
-	int16_t mouse = (this->controller->GetButton(PLAYER_POINTER) > 0);
+	int16_t mouse_button = (this->controller->GetButton(PLAYER_POINTER) > 0);
 	int16_t move_x = this->controller->GetControllerAxis(0);
 	int16_t move_y = this->controller->GetControllerAxis(1);
-	int16_t mousex = this->controller->GetPointer(0);
-	int16_t mousey = this->controller->GetPointer(1);
+	int16_t mouse_x = this->controller->GetPointer(0);
+	int16_t mouse_y = this->controller->GetPointer(1);
 
 	if (move_x != 0)
 		move_x /= 160;
@@ -428,31 +474,32 @@ int32_t UserInterface::Loop()
 	wid_iter = this->_children.begin();
 	while( wid_iter != this->_children.end())
 	{
-		if ( Lux_Util_PointCollide((*wid_iter)->_region, mousex, mousey) )
+		Widget * w = (*wid_iter);
+		if ( Lux_Util_PointCollide( w->_region, mouse_x, mouse_y ) )
 		{
-			if (mouse == 1)
+			if (mouse_button == 1)
 			{
-				(*wid_iter)->SetState(PRESSED);
+				w->SetState(PRESSED);
 			}
-			else if (mouse == 0 && last_mouse == 1)
+			else if ( mouse_button == 0 && last_mouse == 1 )
 			{
-				if ( (*wid_iter)->GetState() == PRESSED || (*wid_iter)->GetState() == ACTIVEPRESSED )
+				if ( w->GetState() == PRESSED || w->GetState() == ACTIVEPRESSED )
 				{
-					(*wid_iter)->SetState(CLICKED);
-					if ( !(*wid_iter)->SendEvent(1) )
-						return_value = (*wid_iter)->GetValue();
+					w->SetState(CLICKED);
+					if ( !w->SendEvent(1) )
+						return_value = w->GetValue();
 					else
-						this->_activechild = (*wid_iter);
+						this->_activechild = w;
 				}
 			}
 			else
 			{
-				(*wid_iter)->SetState(HOVER);
+				w->SetState(HOVER);
 			}
 		}
 		else
 		{
-			(*wid_iter)->ResetState();
+			w->ResetState();
 		}
 		wid_iter++;
 	}
@@ -460,9 +507,8 @@ int32_t UserInterface::Loop()
 	// Axis Events
 	if ( move_y > 0 )
 	{
-		if ( this->_children.begin() == this->_children.end() )
+		if ( this->_children.begin() == this->_children.end() ) //do nothing
 		{
-			//do nothing
 			this->_activechild = NULL;
 		}
 		else if ( this->children_iter == this->_children.end() )
@@ -474,17 +520,20 @@ int32_t UserInterface::Loop()
 		{
 			this->children_iter++;
 			if ( this->children_iter != this->_children.end() )
+			{
 				this->_activechild = (*this->children_iter);
+			}
 			else
+			{
 				this->_activechild = NULL;
+			}
 		}
 
 	}
 	else if ( move_y < 0 )
 	{
-		if ( this->_children.begin() == this->_children.end() )
+		if ( this->_children.begin() == this->_children.end() ) //do nothing
 		{
-			//do nothing
 			this->_activechild = NULL;
 		}
 		else if ( this->children_iter == this->_children.begin() )
@@ -506,15 +555,18 @@ int32_t UserInterface::Loop()
 	if ( this->_activechild && !return_value )
 	{
 		this->_activechild->_focus = true;
+
 		if ( this->_activechild->GetState() == HOVER )
-			this->_activechild->SetState(ACTIVEHOVER);
+			this->_activechild->SetState( ACTIVEHOVER );
 		else if ( this->_activechild->GetState() == PRESSED )
-			this->_activechild->SetState(ACTIVEPRESSED);
+			this->_activechild->SetState( ACTIVEPRESSED );
 		else
-			this->_activechild->SetState(ACTIVE);
+			this->_activechild->SetState( ACTIVE );
+
 		if ( confirm )
 			if ( !this->_activechild->SendEvent( confirm ) )
 				return_value = this->_activechild->GetValue();
+
 		if ( cancel )
 			if ( !this->_activechild->SendEvent( cancel ) )
 				return_value = this->_activechild->GetValue();
@@ -527,6 +579,7 @@ int32_t UserInterface::Loop()
 		{
 			return_value = GUI_EXIT;
 		}
+
 		if ( this->_activechild != NULL && !return_value )
 		{
 			if ( !this->_activechild->SendEvent( key_event ) )
@@ -536,6 +589,8 @@ int32_t UserInterface::Loop()
 		}
 	}
 
+
+	/* Start Drawing */
 	this->_region.z = z;
 	this->_display->graphics.DrawRect(this->_region, this->background);
 
@@ -547,12 +602,11 @@ int32_t UserInterface::Loop()
 		}
 	}
 
-	last_mouse = mouse;
-
+	last_mouse = mouse_button;
 
 	this->_display->DisplayOverlay();
 
-	this->_display->graphics.DisplayPointer(1, mousex, mousey, this->controller->PlayerColour );
+	this->_display->graphics.DisplayPointer(1, mouse_x, mouse_y, this->controller->PlayerColour );
 	this->_display->graphics.Show();
 	lux::core->Idle( );
 

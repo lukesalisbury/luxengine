@@ -49,6 +49,7 @@ class CSSParser
 		LuxColour GetColour( LuxWidget element, _WidgetStates state, std::string key );
 		ObjectEffect GetEffect( LuxWidget element, _WidgetStates state );
 		uint16_t GetSize( LuxWidget element, _WidgetStates state, std::string key );
+		uint8_t GetAlign( LuxWidget element, _WidgetStates state, std::string key );
 		std::string GetString( LuxWidget element, _WidgetStates state, std::string key );
 		DisplayStyles GetStyle( LuxWidget element, _WidgetStates state, std::string key );
 };

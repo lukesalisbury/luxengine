@@ -59,7 +59,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 	}
 	#endif
 
-
+	inline void write_amx_address( AMX * amx, cell param, cell value )
+	{
+		if ( param != CELLMIN )
+		{
+			cell * cptr = amx_Address(amx, param);
+			if ( cptr )
+				*cptr = value;
+		}
+	}
 
 
 #endif

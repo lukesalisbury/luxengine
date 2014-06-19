@@ -86,6 +86,17 @@ class MokoiGame
 		bool LoadPackage(std::string package_filename );
 
 
+
+
+
+		std::string GetTitle();
+		std::string GetIdent();
+		std::string GetAuthor();
+		std::string GetCreation();
+		std::string GetFilename();
+		std::string GetPublicDirectory();
+
+
 		void Print();
 	private:
 		bool ScanPackage( uint8_t type, std::string path, std::string dest );

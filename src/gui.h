@@ -43,6 +43,7 @@ class UserInterface
 		std::list<Widget *> _children;
 		std::list<Widget *>::iterator children_iter;
 
+		int16_t last_mouse;
 		Player * controller;
 		CSSParser * css;
 		LuxPolygon * cursor;
@@ -54,6 +55,8 @@ class UserInterface
 		void SetBackground( ObjectEffect effect );
 		int32_t Loop( );
 		int32_t Show( );
+
+		void AddChild( Widget * child );
 		Widget * AddChild( LuxRect region, LuxWidget type, LuxColour colour, std::string text );
 		Widget * AddWidgetChild( Widget * parent, LuxRect region, LuxWidget type );
 		Widget * AddWidgetChild( Widget * parent, int32_t x, int32_t y, uint16_t w, uint16_t h, LuxWidget type, std::string text = "");

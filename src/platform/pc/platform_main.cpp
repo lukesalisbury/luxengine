@@ -20,7 +20,7 @@ void main_args( int argc, char *argv[] )
 		--c;
 		if ( strcmp(argv[c], "--portal") == 0 )
 		{
-			luxportal::use = true;
+			LuxPortal::use = true;
 		}
 		else if ( strcmp(argv[c], "--window") == 0 )
 		{
@@ -32,17 +32,17 @@ void main_args( int argc, char *argv[] )
 		}
 		else if ( strcmp(argv[c], "--test") == 0 )
 		{
-			luxportal::testmode = true;
+			LuxPortal::testmode = true;
 		}
 		else if ( strcmp(argv[c], "--ogl") == 0 )
 		{
-			luxportal::opengl = true;
+			LuxPortal::opengl = true;
 			luxtest::opengl = true;
 			lux::global_config->SetString("display.mode", "OpenGL");
 		}
 		else if ( strcmp(argv[c], "--native") == 0 )
 		{
-			luxportal::opengl = false;
+			LuxPortal::opengl = false;
 			luxtest::opengl = false;
 			lux::global_config->SetString("display.mode", "native");
 		}
@@ -59,9 +59,9 @@ void main_args( int argc, char *argv[] )
 		else if ( argv[c][0] != '-' )
 		{
 			lux::global_config->SetString("project.file", argv[c]);
-			luxportal::add( argv[c] );
-			luxportal::use = false;
-			luxportal::active = false;
+			LuxPortal::add_previous_game( argv[c] );
+			LuxPortal::use = false;
+			LuxPortal::active = false;
 		}
 	}
 }
@@ -74,16 +74,16 @@ extern "C" int main( int argc, char *argv[] )
 	lux::engine = new LuxEngine( base_directory );
 	main_args( argc, argv );
 
-	if ( luxportal::testmode )
+	if ( LuxPortal::testmode )
 	{
 		luxtest::run();
 	}
-	luxportal::open();
-	if ( luxportal::use )
+	LuxPortal::open();
+	if ( LuxPortal::use )
 	{
-		while ( luxportal::active )
+		while ( LuxPortal::active )
 		{
-			if ( luxportal::run() )
+			if ( LuxPortal::run() )
 			{
 				if ( lux::engine->Start() )
 				{
@@ -102,7 +102,7 @@ extern "C" int main( int argc, char *argv[] )
 		}
 		lux::engine->Close();
 	}
-	luxportal::close();
+	LuxPortal::close();
 	delete lux::engine;
 
 

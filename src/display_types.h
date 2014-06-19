@@ -48,7 +48,7 @@ typedef struct {
 	bool (* FreeSprite) ( LuxSprite * sprite );
 	LuxSprite * (* PNGtoSprite) ( uint8_t * data, uint32_t size );
 
-	void (* DrawSprite) (LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect );
+	void (* DrawSprite) ( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect );
 	void (* DrawRect) ( LuxRect dest_rect, ObjectEffect effects );
 	void (* DrawCircle) ( LuxRect dest_rect, ObjectEffect effects );
 	void (* DrawPolygon) ( int16_t * x_point, int16_t * y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture );

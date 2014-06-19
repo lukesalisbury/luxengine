@@ -31,7 +31,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 			virtual void StopDialog() = 0;
 
 			/* Volume */
+			virtual int32_t SetMasterVolume( int32_t volume ) = 0;
 			virtual int32_t SetMusicVolume( int32_t volume ) = 0;
 			virtual int32_t SetEffectsVolume( int32_t volume ) = 0;
+			virtual int32_t SetDialogVolume( int32_t volume ) = 0;
 	};
 #endif

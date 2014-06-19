@@ -11,57 +11,148 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "game_info.h"
 #include "elix_path.hpp"
+#include "elix_string.hpp"
+#include "tinyxml/tinyxml2ext.h"
 
-namespace luxportal {
-	game::game( std::string gamepack, UserInterface * gui )
-	{
-		this->isDir = elix::path::Exist(gamepack);
-		this->url = gamepack;
-		this->file = new MokoiGame(gamepack, true);
-		this->valid = this->file->valid;
-		this->button = NULL;
-		this->icon = NULL;
-		this->_gui = gui;
-	}
-	game::game( UserInterface * gui )
-	{
-		this->url = "";
-		this->file = new MokoiGame();
-		this->valid = this->file->valid;
-		this->isDir = false;
-		this->button = NULL;
-		this->icon = NULL;
-		this->_gui = gui;
-	}
+GameInfo::GameInfo( std::string game_path, UserInterface * gui )
+{
+	this->button = NULL;
+	this->icon = NULL;
+	this->gui = gui;
 
-	game::~game(  )
-	{
-		if ( this->file )
-			delete this->file;
-		if ( this->icon )
-			delete this->icon;
-		if ( this->_gui)
-			this->_gui->RemoveChild( this->button );
-		if ( this->button )
-			delete this->button;
-	}
+	this->url = game_path;
+	this->isDir = elix::path::Exist( this->url );
+	this->file = new MokoiGame( this->url, true);
+	this->valid = this->file->valid;
 
-	bool game::SetIcon( DisplaySystem * display )
+	this->information = this->file->GetTitle() + "\nAuthor: " + this->file->GetAuthor() + "\nPath: " + this->file->GetFilename();
+
+	this->hash = elix::string::Hash( this->url );
+
+
+}
+
+GameInfo::GameInfo( tinyxml2::XMLElement * xml_element, UserInterface * gui )
+{
+	this->button = NULL;
+	this->icon = NULL;
+	this->gui = gui;
+
+	tinyxml2::QueryStringAttribute( xml_element->FirstChildElement("download"), "url", this->url );
+
+	this->isDir = false;
+	this->file = new MokoiGame( this->url, true);
+	this->valid = this->file->valid;
+
+	std::string title = xml_element->FirstChildElement("title")->GetText();
+	std::string author = xml_element->FirstChildElement("author")->GetText();
+	this->information = title + "\nAuthor: " + author + "\nURL: " + this->url;
+
+	this->hash = elix::string::Hash( this->url );
+
+
+}
+
+
+
+GameInfo::~GameInfo( )
+{
+	this->ClearGUI();
+/*
+	if ( this->file )
+		delete this->file;
+
+	if ( this->button )
+		delete this->button;
+		*/
+}
+
+void GameInfo::ClearGUI()
+{
+	if ( this->button )
 	{
-		if ( this->file->png && this->file->png_length )
+		if ( this->gui )
 		{
-			this->icon = display->graphics.PNGtoSprite( this->file->png, this->file->png_length );
+			this->gui->RemoveChild( this->button );
 		}
-		return (this->icon ? true : false);
-	}
-	bool game::ClearIcon( DisplaySystem * display )
-	{
-		if ( this->icon )
-		{
-			display->graphics.FreeSprite( this->icon );
-		}
-		return (this->icon ? false : true);
 	}
 }
+
+uint32_t GameInfo::SetGUI( int32_t value, int32_t x, int32_t y, uint16_t width, uint16_t height  )
+{
+	std::string button_text;
+
+	this->buttonArea.x = x;
+	this->buttonArea.y = y;
+	this->buttonArea.w = width;
+	this->buttonArea.h = height;
+
+	button_text = this->information;
+
+	elix::string::TruncateLines( button_text, width / 8 );
+
+	if ( CreateButton( ) )
+	{
+		this->button->SetRegion( this->buttonArea );
+		this->button->SetText( button_text );
+		this->button->SetValue( value );
+
+		if ( this->gui )
+			this->gui->AddChild( this->button );
+
+		return this->button->GetAreaHeight() + 4;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
+bool GameInfo::CreateButton( )
+{
+	if ( this->gui )
+	{
+		this->button = new Widget( buttonArea, IMAGEBUTTON, this->gui->GetCSSParser() );
+		this->button->SetText( this->information );
+		return true;
+	}
+	else
+	{
+		this->button = NULL;
+
+		return false;
+	}
+}
+
+void GameInfo::AddButtonToGUI()
+{
+	if ( CreateButton( ) )
+	{
+		this->gui->AddChild( this->button );
+	}
+}
+
+bool GameInfo::SetIcon( DisplaySystem * display )
+{
+	if ( this->file->png && this->file->png_length )
+	{
+		this->icon = display->graphics.PNGtoSprite( this->file->png, this->file->png_length );
+		if ( this->icon )
+			this->button->SetData( this->icon );
+	}
+	return (this->icon ? true : false);
+}
+
+bool GameInfo::ClearIcon( DisplaySystem * display )
+{
+	if ( this->icon )
+	{
+		display->graphics.FreeSprite( this->icon );
+		this->icon = NULL;
+	}
+	return (this->icon ? false : true);
+}
+
 
 

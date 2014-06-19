@@ -30,6 +30,7 @@
 	#include <windows.h>
 	#include <mmsystem.h>
 #endif
+
 extern const AMX_NATIVE_INFO Time_Natives[];
 
 #define CELLMIN	 (-1 << (8*sizeof(cell) - 1))
@@ -43,12 +44,12 @@ extern const AMX_NATIVE_INFO Time_Natives[];
 	#define CLOCKS_PER_SEC CLK_TCK
 #endif
 
-
 static const unsigned char monthdays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-void stamp2datetime(unsigned long sec1970, int *year, int *month, int *day, int *hour, int *minute, int *second)
+
+void stamp2datetime( time_t sec1970, cell * year, cell * month, cell * day, cell * hour, cell * minute, cell * second)
 {
-	int days, seconds;
+	cell days, seconds;
 
 	/* find the year */
 	assert(year!=NULL);
@@ -90,33 +91,29 @@ void stamp2datetime(unsigned long sec1970, int *year, int *month, int *day, int 
 	*second = (int)sec1970;
 }
 
-/* gettime(&hour, &minute, &second)
+/* pawnTimeGet
+ * Time(&hour, &minute, &second)
  * The return value is the number of seconds since 1 January 1970 (Unix system
  * time).
  */
-static cell AMX_NATIVE_CALL n_gettime(AMX *amx, const cell *params)
+static cell AMX_NATIVE_CALL pawnTimeGet(AMX *amx, const cell *params)
 {
 	time_t sec1970;
 	struct tm gtm;
 	cell *cptr;
 
-	assert(params[0]==(int)(3*sizeof(cell)));
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
 	time(&sec1970);
 
 	/* on DOS/Windows, the timezone is usually not set for the C run-time
 	 * library; in that case gmtime() and localtime() return the same value
 	 */
-	gtm=*localtime(&sec1970);
-	cptr = amx_Address(amx, params[1]);
-if (cptr)
-		*cptr=gtm.tm_hour;
-	cptr = amx_Address(amx, params[2]);
-if (cptr)
-		*cptr=gtm.tm_min;
-	cptr = amx_Address(amx, params[3]);
-if (cptr)
-		*cptr=gtm.tm_sec;
+	gtm = *localtime(&sec1970);
+
+	write_amx_address(amx, params[1], gtm.tm_hour );
+	write_amx_address(amx, params[2], gtm.tm_min );
+	write_amx_address(amx, params[3], gtm.tm_sec );
 
 	/* the time() function returns the number of seconds since January 1 1970
 	 * in Universal Coordinated Time (the successor to Greenwich Mean Time)
@@ -124,30 +121,30 @@ if (cptr)
 	return (cell)sec1970;
 }
 
-/* getdate(&year, &month, &day)
+/* pawnDateGet
+ * Date(&year, &month, &day)
  * The return value is the number of days since the start of the year. January
  * 1 is day 1 of the year.
  */
-static cell AMX_NATIVE_CALL n_getdate(AMX *amx, const cell *params)
+static cell AMX_NATIVE_CALL pawnDateGet(AMX *amx, const cell *params)
 {
 	time_t sec1970;
 	struct tm gtm;
 	cell *cptr;
 
-	assert(params[0]==(int)(3*sizeof(cell)));
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
 	time(&sec1970);
 
-	gtm=*localtime(&sec1970);
-	cptr = amx_Address(amx, params[1]);
-if (cptr)
-		*cptr=gtm.tm_year+1900;
-	cptr = amx_Address(amx, params[2]);
-if (cptr)
-		*cptr=gtm.tm_mon+1;
-	cptr = amx_Address(amx, params[3]);
-if (cptr)
-		*cptr=gtm.tm_mday;
+	/* on DOS/Windows, the timezone is usually not set for the C run-time
+	 * library; in that case gmtime() and localtime() return the same value
+	 */
+	gtm = *localtime(&sec1970);
+
+	write_amx_address(amx, params[1], gtm.tm_year + 1900);
+	write_amx_address(amx, params[2], gtm.tm_mon + 1);
+	write_amx_address(amx, params[3], gtm.tm_mday );
+
 
 	return gtm.tm_yday+1;
 }
@@ -156,49 +153,42 @@ if (cptr)
  */
 static cell AMX_NATIVE_CALL n_cvttimestamp(AMX *amx, const cell *params)
 {
-	int year, month, day, hour, minute, second;
-	cell *cptr;
+	time_t timestamp;
+	cell year, month, day, hour, minute, second;
+	cell * cptr;
 
-	stamp2datetime(params[1], &year, &month, &day, &hour, &minute, &second);
+	timestamp = (time_t)params[1];
 
-	cptr = amx_Address(amx, params[2]);
-if (cptr)
-		*cptr=year;
-	cptr = amx_Address(amx, params[3]);
-if (cptr)
-		*cptr=month;
-	cptr = amx_Address(amx, params[4]);
-if (cptr)
-		*cptr=day;
-	cptr = amx_Address(amx, params[5]);
-if (cptr)
-		*cptr=hour;
-	cptr = amx_Address(amx, params[6]);
-if (cptr)
-		*cptr=minute;
-	cptr = amx_Address(amx, params[7]);
-if (cptr)
-		*cptr=second;
+	stamp2datetime(timestamp, &year, &month, &day, &hour, &minute, &second);
+
+	write_amx_address(amx, params[2], year);
+	write_amx_address(amx, params[3], month);
+	write_amx_address(amx, params[4], day);
+	write_amx_address(amx, params[5], hour);
+	write_amx_address(amx, params[6], minute);
+	write_amx_address(amx, params[7], second);
 
 	return 0;
 }
 
-/* timestamp()
- */
-static cell AMX_NATIVE_CALL n_timestamp(AMX *amx, const cell *params)
+/** TimestampCurrent
+* native TimestampCurrent();
+*
+*/
+static cell AMX_NATIVE_CALL pawnTimestampCurrent(AMX *amx, const cell *params)
 {
-	time_t sec1970;
+	time_t timestamp;
 
-	time(&sec1970);
+	time( &timestamp );
 
-	return (cell)sec1970;
+	return (cell)timestamp;
 }
 
 
 const AMX_NATIVE_INFO Time_Natives[] = {
-	{ "TimestampCurrent", n_timestamp },
-	{ "Time", n_gettime },
-	{ "Date", n_getdate },
+	{ "TimestampCurrent", pawnTimestampCurrent },
+	{ "Time", pawnTimeGet },
+	{ "Date", pawnDateGet },
 	{ "TimestampDetails", n_cvttimestamp },
 	{ 0, 0 }
 };

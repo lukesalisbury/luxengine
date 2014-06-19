@@ -181,6 +181,30 @@ LuxColour CSSParser::GetColour( LuxWidget element, _WidgetStates state, std::str
 	return (LuxColour){255,255,255,255};
 }
 
+uint8_t CSSParser::GetAlign( LuxWidget element, _WidgetStates state, std::string key )
+{
+	CSSElement * css = this->FindElement(element, state);
+	if ( css )
+	{
+		for ( std::map<std::string, std::string>::iterator keys = css->key.begin(); keys != css->key.end(); keys++ )
+		{
+			if ( !(*keys).first.compare(key) )
+			{
+
+				/*	0 left
+					1 right
+					2 center
+				*/
+				uint8_t value = (*keys).second.at(0);
+				value = ( value == 'r' ? 1 : ( value == 'c' ? 2 : 0));
+
+				return value;
+			}
+		}
+
+	}
+	return 0;
+}
 uint16_t CSSParser::GetSize( LuxWidget element, _WidgetStates state, std::string key )
 {
 	CSSElement * css = this->FindElement(element, state);

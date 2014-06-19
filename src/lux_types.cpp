@@ -8,51 +8,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef _GAMEINFO_H_
-	#define _GAMEINFO_H_
 
-	#include "gui.h"
-	#include "lux_types.h"
-	#include "mokoi_game.h"
-	#include "display.h"
-	#include "tinyxml/tinyxml2.h"
-
-	class GameInfo
-	{
-		public:
-			GameInfo( std::string game_path, UserInterface * gui = NULL );
-			GameInfo( tinyxml2::XMLElement * xml_element, UserInterface * gui = NULL );
-			~GameInfo();
-
-		private:
-			bool CreateButton( );
-
-		public:
-			void AddButtonToGUI();
-
-			bool SetIcon( DisplaySystem * display );
-			bool ClearIcon( DisplaySystem * display );
-
-			uint32_t SetGUI( int32_t value, int32_t x, int32_t y, uint16_t width, uint16_t height  );
-			void ClearGUI();
-		public:
-
-			bool valid;
-			bool isDir;
-
-		private:
-			uint32_t hash;
-			LuxRect buttonArea;
-			Widget * button;
-			UserInterface * gui;
-
-			std::string information;
-			std::string url;
-
-			LuxSprite * icon;
-			MokoiGame * file;
+#include "lux_types.h"
 
 
-	};
 
-#endif
