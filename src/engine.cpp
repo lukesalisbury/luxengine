@@ -203,7 +203,7 @@ bool LuxEngine::Start( std::string project_file )
 			std::vector<std::string> patch_list = lux::config->GetArray("patches.list");
 			for( uint8_t i = 0; i < patch_list.size(); i++ )
 			{
-				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Patch " << patch_list[i] << " " << lux::game->Add( patch_list[i] ) << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Patch " << patch_list[i] << " " << lux::game->AddPackage( patch_list[i] ) << std::endl;
 			}
 		}
 	}
@@ -587,7 +587,7 @@ bool LuxEngine::RestoreSaveGame( uint8_t slot )
 bool LuxEngine::WriteSaveGame( uint8_t slot, int32_t * info, uint32_t length )
 {
 	LuxSaveState saved_game;
-	saved_game.SetInformation( lux::game->id, LUX_SAVE_COOKIE_TYPE, "", NULL );
+	saved_game.SetInformation( lux::game->ident, LUX_SAVE_COOKIE_TYPE, "", NULL );
 	saved_game.SetSlot( slot );
 	saved_game.Save( lux::world, lux::entities, info, length );
 

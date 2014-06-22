@@ -147,7 +147,7 @@ static cell AMX_NATIVE_CALL pawnGameGetDetails(AMX *amx, const cell *params)
 
 	if ( lux::engine )
 	{
-		if ( lux::engine->ReadSaveInfo( requested_save_slot, cookie_data, 64, lux::game->id) )
+		if ( lux::engine->ReadSaveInfo( requested_save_slot, cookie_data, 64, lux::game->ident ) )
 		{
 			for (uint8_t count = 0; count < 64; count++)
 			{

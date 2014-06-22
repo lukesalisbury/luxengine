@@ -49,19 +49,20 @@ class MokoiGame
 		MokoiGame(  );
 		MokoiGame( std::string path, bool checkonly = false );
 		~MokoiGame();
-		bool Scan( uint8_t type, std::string path, std::string dest );
+
 	public:
-		uint32_t id;
+		uint32_t ident;
 		char name[512];
 		uint8_t * png;
 		uint32_t png_length;
+		std::string project_ident;
 		std::string title;
-		std::string localid;
 		std::string author;
 		std::string creation;
 		std::string filename;
 		std::string public_directory;
 		bool valid;
+
 	private:
 		uint8_t file_magic[6];
 		uint8_t patch_magic[7];
@@ -69,26 +70,31 @@ class MokoiGame
 		std::vector< elix::File * > loaded_files;
 		uint8_t type;
 		int32_t start_offset;
+
 	public:
+		bool Scan( uint8_t type, std::string path, std::string dest );
 		bool SetProjectDirectory();
-		uint8_t GetType(std::string &path, bool info );
-		uint8_t Type( ) { return type; }
-		bool Add( std::string path );
+		uint8_t ReadType( std::string &path, bool read_info);
+
+		bool LoadPatches( );
+		bool LoadPackage( std::string package_filename );
+		bool AddPackage( std::string path );
+
+		bool HasFile(std::string file);
 		uint32_t GetFile(std::string file, uint8_t ** data, bool addnull);
 		uint32_t SetFile(std::string file, uint8_t * data);
 		bool GetStream(std::string file, std::stringstream * stream);
-		bool HasFile(std::string file);
+
 		bool FolderList(std::string folder, std::vector<std::string> *results);
 
 
 		bool CompileScripts();
-		bool LoadPatches( );
-		bool LoadPackage(std::string package_filename );
 
 
 
 
 
+		uint8_t GetType( ) { return type; }
 		std::string GetTitle();
 		std::string GetIdent();
 		std::string GetAuthor();

@@ -40,7 +40,7 @@ GameConfig::GameConfig()
 
 		this->LoadFromStream(config_file);
 
-		if ( lux::game->id )
+		if ( lux::game->ident )
 		{
 			this->path = lux::game->public_directory;
 
@@ -67,7 +67,7 @@ GameConfig::GameConfig()
 GameConfig::~GameConfig()
 {
 	/* Save if valid game */
-	if ( lux::game && lux::game->id && has_config_file )
+	if ( lux::game && lux::game->ident && has_config_file )
 	{
 		if ( this->modified_values.size() )
 		{

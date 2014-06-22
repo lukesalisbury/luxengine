@@ -207,8 +207,8 @@ int32_t LuxPortal::recent_page( LuxRect page_rect )
 		GameInfo * selected = games_list.at( return_value-1 );
 		if ( selected )
 		{
-			lux::global_config->SetString( "project.file", selected->file->filename );
-			LuxPortal::add_previous_game( selected->file->filename );
+			lux::global_config->SetString( "project.file", selected->url );
+			LuxPortal::add_previous_game( selected->url );
 			return_value = GUI_PORTAL_PLAY;
 		}
 	}
@@ -259,8 +259,8 @@ int32_t LuxPortal::demos_page( LuxRect page_rect )
 		GameInfo * selected = games_list.at( return_value-1 );
 		if ( selected )
 		{
-			lux::global_config->SetString( "project.file", selected->file->filename );
-			LuxPortal::add_previous_game( selected->file->filename );
+			lux::global_config->SetString( "project.file", selected->url );
+			LuxPortal::add_previous_game( selected->url );
 			return_value = GUI_PORTAL_PLAY;
 		}
 	}
@@ -311,8 +311,8 @@ int32_t LuxPortal::browse_page( LuxRect page_rect )
 			}
 			else
 			{
-				lux::global_config->SetString( "project.file", selected->file->filename );
-				LuxPortal::add_previous_game( selected->file->filename );
+				lux::global_config->SetString( "project.file", selected->url );
+				LuxPortal::add_previous_game( selected->url);
 				return_value = GUI_PORTAL_PLAY;
 			}
 		}

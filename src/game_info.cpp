@@ -25,7 +25,11 @@ GameInfo::GameInfo( std::string game_path, UserInterface * gui )
 	this->file = new MokoiGame( this->url, true);
 	this->valid = this->file->valid;
 
-	this->information = this->file->GetTitle() + "\nAuthor: " + this->file->GetAuthor() + "\nPath: " + this->file->GetFilename();
+
+	if ( this->isDir && !this->valid )
+		this->information = "Directory\n" + this->url;
+	else
+		this->information = this->file->GetTitle() + "\nAuthor: " + this->file->GetAuthor() + "\nPath: " + this->file->GetFilename();
 
 	this->hash = elix::string::Hash( this->url );
 
@@ -46,6 +50,7 @@ GameInfo::GameInfo( tinyxml2::XMLElement * xml_element, UserInterface * gui )
 
 	std::string title = xml_element->FirstChildElement("title")->GetText();
 	std::string author = xml_element->FirstChildElement("author")->GetText();
+
 	this->information = title + "\nAuthor: " + author + "\nURL: " + this->url;
 
 	this->hash = elix::string::Hash( this->url );
@@ -58,13 +63,13 @@ GameInfo::GameInfo( tinyxml2::XMLElement * xml_element, UserInterface * gui )
 GameInfo::~GameInfo( )
 {
 	this->ClearGUI();
-/*
+
 	if ( this->file )
 		delete this->file;
 
 	if ( this->button )
 		delete this->button;
-		*/
+
 }
 
 void GameInfo::ClearGUI()

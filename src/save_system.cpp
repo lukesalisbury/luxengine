@@ -310,7 +310,7 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 		uint8_t allow_access = 0;
 		uint8_t file_mime_magic[7];
 
-		if ( !lux::game->id )
+		if ( !lux::game->ident )
 			return false;
 
 		this->save_file->ErrorCallback = Lux_LoadFileFailed;
