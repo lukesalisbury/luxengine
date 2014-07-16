@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -52,7 +52,7 @@ ObjectEffect Lux_Util_MergeEffects( LuxColour mod, ObjectEffect source )
 /* Layer
 
 */
-Layer::Layer(DisplaySystem * parent, uint8_t layer_value )
+Layer::Layer(DisplaySystem * parent, uint8_t layer_value, bool static_layer )
 {
 	this->_x = 0;
 	this->_y = 0;
@@ -70,10 +70,9 @@ Layer::Layer(DisplaySystem * parent, uint8_t layer_value )
 	this->display_layer = layer_value;
 
 
-	std::string layername = "layer.static";
-	layername.append( 1, this->display_layer + 48 );
 
-	this->static_layer =  lux::config->GetBoolean(layername);
+
+	this->static_layer = static_layer;
 	this->shader = SHADER_DEFAULT;
 }
 
@@ -221,18 +220,18 @@ void Layer::Display()
 {
 	MapObject * object;
 	std::list<MapObject*>::iterator l_object;
-	if ( lux::world )
+	if ( lux::gameworld )
 	{
-		if ( lux::world->active_map )
+		if ( lux::gameworld->active_map )
 		{
 			/* Map Offsets */
-			this->_mapx = lux::world->active_map->GetPosition(0);
-			this->_mapy = lux::world->active_map->GetPosition(1);
+			this->_mapx = lux::gameworld->active_map->GetPosition(0);
+			this->_mapy = lux::gameworld->active_map->GetPosition(1);
 
-			this->_mapw = MAKE_FIXED_INT(lux::world->active_map->map_width);
-			this->_maph = MAKE_FIXED_INT(lux::world->active_map->map_height);
+			this->_mapw = MAKE_FIXED_INT(lux::gameworld->active_map->map_width);
+			this->_maph = MAKE_FIXED_INT(lux::gameworld->active_map->map_height);
 
-			this->wrap_layer = lux::world->active_map->_wrap;
+			this->wrap_layer = lux::gameworld->active_map->wrap_mode;
 			if ( this->wrap_layer )
 			{
 				/* Get valid top left poisition */

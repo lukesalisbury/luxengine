@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -111,29 +111,29 @@ void MapObject::Save(elix::File *current_save_file)
 
 void MapObject::Restore( elix::File * current_save_file )
 {
-	this->type = current_save_file->Read_uint8WithLabel("Map Object Type" );
-	this->timer = current_save_file->Read_uint32WithLabel("Map Object Timer", true );
-	this->timer_mode = current_save_file->Read_uint8WithLabel("Map Object Timer Mode");
-	this->position.x = (int32_t)current_save_file->Read_uint32WithLabel("Map Object X", true );
-	this->position.y = (int32_t)current_save_file->Read_uint32WithLabel("Map Object Y", true );
-	this->position.w = current_save_file->Read_uint16WithLabel("Map Object W", true );
-	this->position.h = current_save_file->Read_uint16WithLabel("Map Object H", true );
-	this->position.z = (int16_t)current_save_file->Read_uint16WithLabel("Map Object Z", true );
-	this->effects.primary_colour.r = current_save_file->Read_uint8WithLabel("Map Object r1" );
-	this->effects.primary_colour.b = current_save_file->Read_uint8WithLabel("Map Object g1" );
-	this->effects.primary_colour.g = current_save_file->Read_uint8WithLabel("Map Object b1" );
-	this->effects.primary_colour.a = current_save_file->Read_uint8WithLabel("Map Object a1" );
-	this->effects.secondary_colour.r = current_save_file->Read_uint8WithLabel("Map Object r2" );
-	this->effects.secondary_colour.b = current_save_file->Read_uint8WithLabel("Map Object g2" );
-	this->effects.secondary_colour.g = current_save_file->Read_uint8WithLabel("Map Object b2" );
-	this->effects.secondary_colour.a = current_save_file->Read_uint8WithLabel("Map Object a2" );
-	this->effects.rotation = current_save_file->Read_uint16WithLabel("Map Object rotation", true );
-	this->effects.scale_xaxis = current_save_file->Read_uint16WithLabel("Map Object scale x", true );
-	this->effects.scale_yaxis = current_save_file->Read_uint16WithLabel("Map Object scale y", true );
-	this->effects.flip_image = current_save_file->Read_uint8WithLabel("Map Object flip mode" );
-	this->effects.tile_object = current_save_file->Read_uint8WithLabel("Map Object tiling" );
-	this->effects.style = current_save_file->Read_uint8WithLabel("Map Object style" );
-	this->path_point = 0;current_save_file->Read_uint16WithLabel("Map Object current path point", true );
+	this->type = current_save_file->ReadUint8WithLabel("Map Object Type" );
+	this->timer = current_save_file->ReadUint32WithLabel("Map Object Timer", true );
+	this->timer_mode = current_save_file->ReadUint8WithLabel("Map Object Timer Mode");
+	this->position.x = (int32_t)current_save_file->ReadUint32WithLabel("Map Object X", true );
+	this->position.y = (int32_t)current_save_file->ReadUint32WithLabel("Map Object Y", true );
+	this->position.w = current_save_file->ReadUint16WithLabel("Map Object W", true );
+	this->position.h = current_save_file->ReadUint16WithLabel("Map Object H", true );
+	this->position.z = (int16_t)current_save_file->ReadUint16WithLabel("Map Object Z", true );
+	this->effects.primary_colour.r = current_save_file->ReadUint8WithLabel("Map Object r1" );
+	this->effects.primary_colour.b = current_save_file->ReadUint8WithLabel("Map Object g1" );
+	this->effects.primary_colour.g = current_save_file->ReadUint8WithLabel("Map Object b1" );
+	this->effects.primary_colour.a = current_save_file->ReadUint8WithLabel("Map Object a1" );
+	this->effects.secondary_colour.r = current_save_file->ReadUint8WithLabel("Map Object r2" );
+	this->effects.secondary_colour.b = current_save_file->ReadUint8WithLabel("Map Object g2" );
+	this->effects.secondary_colour.g = current_save_file->ReadUint8WithLabel("Map Object b2" );
+	this->effects.secondary_colour.a = current_save_file->ReadUint8WithLabel("Map Object a2" );
+	this->effects.rotation = current_save_file->ReadUint16WithLabel("Map Object rotation", true );
+	this->effects.scale_xaxis = current_save_file->ReadUint16WithLabel("Map Object scale x", true );
+	this->effects.scale_yaxis = current_save_file->ReadUint16WithLabel("Map Object scale y", true );
+	this->effects.flip_image = current_save_file->ReadUint8WithLabel("Map Object flip mode" );
+	this->effects.tile_object = current_save_file->ReadUint8WithLabel("Map Object tiling" );
+	this->effects.style = current_save_file->ReadUint8WithLabel("Map Object style" );
+	this->path_point = 0;current_save_file->ReadUint16WithLabel("Map Object current path point", true );
 	current_save_file->ReadWithLabel("Map Object Image", &this->sprite );
 
 	if ( this->type == OBJECT_SPRITE )

@@ -38,7 +38,6 @@ src/enet/win32.cpp
 src/enet/win32.h
 src/entity_systems/pawn.cpp
 src/entity_systems/pawn.h
-src/entity_systems/pawn_canvas.cpp
 src/entity_systems/pawn_console.cpp
 src/entity_systems/pawn_core.cpp
 src/entity_systems/pawn_entity.cpp
@@ -395,8 +394,6 @@ src/amx4/amx.c
 src/amx4/sclinux.h
 src/entity_systems/pawn.inc
 custom/oloz.make
-src/entity_systems/ffi.h
-src/entity_systems/ffi.cpp
 makefiles/windows-sdl2.make
 makefiles/windows.make
 makefiles/wii.make
@@ -423,8 +420,6 @@ src/sprite_sheet.h
 src/sprite_sheet.cpp
 src/object_effect.h
 src/object_effect.cpp
-src/map_object_data.h
-src/map_object_data.cpp
 src/platform/pc/graphics_native.inc
 src/graphics_system.h
 src/graphics_system.cpp
@@ -448,7 +443,6 @@ src/platform/pc/platform_media.h
 src/platform/pc/platform_media.cpp
 src/base_platform_media.h
 include/pc/keyboard.h
-src/map_masks.cpp
 src/map_network.cpp
 src/map_xml_reader.h
 src/map_xml_reader.cpp
@@ -566,3 +560,16 @@ src/entity_systems/ffi_system.cpp
 src/entity_systems/pawn_system.cpp
 src/entity_systems/pawn_game.cpp
 src/lux_types.cpp
+src/entity_systems/ffi_world.h
+src/entity_systems/ffi_world.cpp
+src/entity_systems/ffi_map.h
+src/entity_systems/ffi_map.cpp
+src/entity_systems/ffi_mask.h
+src/entity_systems/ffi_mask.cpp
+src/entity_systems/ffi_game.h
+src/entity_systems/ffi_game.cpp
+src/entity_systems/ffi_input.h
+src/entity_systems/ffi_input.cpp
+src/options.h
+src/options.cpp
+src/entity_systems/pawn_input.cpp

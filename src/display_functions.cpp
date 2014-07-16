@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -70,7 +70,7 @@ bool Lux_Path_Load(std::string filename, std::vector<LuxPath> * path )
 {
 	uint8_t * data = NULL;
 	uint32_t length, c = 0;
-	length = lux::game->GetFile("./paths/" + filename, &data, false);
+	length = lux::game_data->GetFile("./paths/" + filename, &data, false);
 	if ( length )
 	{
 		while ( c < length )

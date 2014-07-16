@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -133,7 +133,7 @@ tinyxml2::XMLDocument * MokoiGame_GetXML( std::string file )
 {
 	tinyxml2::XMLDocument * xml_doc = new tinyxml2::XMLDocument;
 	uint8_t * data = NULL;
-	if ( lux::game->GetFile(file, &data, true) )
+	if ( lux::game_data->GetFile(file, &data, true) )
 	{
 		xml_doc->Parse( (char *)data );
 		delete[] data;

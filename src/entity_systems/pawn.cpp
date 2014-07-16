@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -115,9 +115,9 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 	AMX_HEADER hdr;
 	int32_t result = 0;
 
-	if ( lux::game->HasFile( file ) )
+	if ( lux::game_data->HasFile( file ) )
 	{
-		uint32_t read = lux::game->GetFile( file, &tempblock, false );
+		uint32_t read = lux::game_data->GetFile( file, &tempblock, false );
 		if ( read > sizeof(hdr) )
 		{
 			memcpy( &hdr, tempblock, sizeof(hdr) );
@@ -171,6 +171,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		extern const AMX_NATIVE_INFO Maps_Natives[];
 		extern const AMX_NATIVE_INFO System_Natives[];
 		extern const AMX_NATIVE_INFO Game_Natives[];
+		extern const AMX_NATIVE_INFO Input_Natives[];
 
 		amx_Register(temp_amx, Maps_Natives, -1);
 		amx_Register(temp_amx, Entity_Natives, -1);
@@ -186,6 +187,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		amx_Register(temp_amx, console_Natives, -1);
 		amx_Register(temp_amx, System_Natives, -1);
 		amx_Register(temp_amx, Game_Natives, -1);
+		amx_Register(temp_amx, Input_Natives, -1);
 
 		int error = amx_Register(temp_amx, core_Natives, -1);
 
@@ -357,7 +359,7 @@ void Lux_PawnEntity_Restore(elix::File * current_save_file, mem_pointer entity_d
 		uint32_t unsigned_header_area_size = 0;
 		long int header_area_size = 1;
 
-		saved_data_size = current_save_file->Read_uint32WithLabel( "Entity Header Size", true );
+		saved_data_size = current_save_file->ReadUint32WithLabel( "Entity Header Size", true );
 
 		amx_MemInfo(amx, NULL, &header_area_size, NULL);
 		unsigned_header_area_size = (uint32_t)header_area_size;
@@ -380,14 +382,14 @@ void Lux_PawnEntity_Restore(elix::File * current_save_file, mem_pointer entity_d
 	{
 		uint32_t count = 0;
 
-		saved_data_size = current_save_file->Read_uint32WithLabel("Entity Data Size",  true );
+		saved_data_size = current_save_file->ReadUint32WithLabel("Entity Data Size",  true );
 
 		if ( saved_data_size )
 		{
 			for ( ; count < saved_data_size; count++ )
 			{
 				std::string variable_name = current_save_file->ReadStringWithLabel("Public Variable Name" );
-				int32_t variable_value = (int32_t)current_save_file->Read_uint32WithLabel("Public variable", true );
+				int32_t variable_value = (int32_t)current_save_file->ReadUint32WithLabel("Public variable", true );
 				Lux_PawnEntity_PublicVariable(amx, variable_name, &variable_value );
 
 			}

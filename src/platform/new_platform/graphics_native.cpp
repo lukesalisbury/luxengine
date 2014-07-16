@@ -26,7 +26,7 @@ struct Texture {
 };
 
 
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
 {
 	return true;
 }

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -50,7 +50,7 @@ class MokoiGame
 		MokoiGame( std::string path, bool checkonly = false );
 		~MokoiGame();
 
-	public:
+	private:
 		uint32_t ident;
 		char name[512];
 		uint8_t * png;
@@ -63,7 +63,7 @@ class MokoiGame
 		std::string public_directory;
 		bool valid;
 
-	private:
+
 		uint8_t file_magic[6];
 		uint8_t patch_magic[7];
 		std::map< std::string, StoredFileInfo * > files;
@@ -72,27 +72,19 @@ class MokoiGame
 		int32_t start_offset;
 
 	public:
-		bool Scan( uint8_t type, std::string path, std::string dest );
-		bool SetProjectDirectory();
-		uint8_t ReadType( std::string &path, bool read_info);
 
+		bool CompileScripts();
 		bool LoadPatches( );
 		bool LoadPackage( std::string package_filename );
 		bool AddPackage( std::string path );
+
 
 		bool HasFile(std::string file);
 		uint32_t GetFile(std::string file, uint8_t ** data, bool addnull);
 		uint32_t SetFile(std::string file, uint8_t * data);
 		bool GetStream(std::string file, std::stringstream * stream);
 
-		bool FolderList(std::string folder, std::vector<std::string> *results);
-
-
-		bool CompileScripts();
-
-
-
-
+		bool FolderList(std::string folder, std::vector<std::string> * results);
 
 		uint8_t GetType( ) { return type; }
 		std::string GetTitle();
@@ -101,18 +93,22 @@ class MokoiGame
 		std::string GetCreation();
 		std::string GetFilename();
 		std::string GetPublicDirectory();
-
+		uint32_t GetProjectIdent() { return ident;}
 
 		void Print();
 	private:
+		bool Scan( uint8_t type, std::string path, std::string dest );
 		bool ScanPackage( uint8_t type, std::string path, std::string dest );
 		bool ScanDirectory(uint8_t type, std::string path, std::string dest , bool overwrite = false);
+
+		bool SetProjectDirectory();
+		uint8_t ReadType( std::string &path, bool read_info );
 };
 
 
 namespace lux
 {
-	extern MokoiGame * game;
+	extern MokoiGame * game_data;
 }
 
 

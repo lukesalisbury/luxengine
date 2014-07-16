@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013 Luke Salisbury
+Copyright © 2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -8,13 +8,21 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef MAP_OBJECT_DATA_H
-#define MAP_OBJECT_DATA_H
 
-class MapObjectData
-{
-public:
-	MapObjectData();
-};
 
-#endif // MAP_OBJECT_DATA_H
+#ifndef FFI_WORLD_H
+#define FFI_WORLD_H
+
+#include <stdint.h>
+
+uint32_t Lux_FFI_World_Get( const uint32_t section_hash, const uint8_t grid_x, const uint8_t grid_y );
+uint32_t Lux_FFI_World_Set( const uint32_t section_hash, const uint8_t grid_x, const uint8_t grid_y );
+
+uint32_t Lux_FFI_World_Exist( const char * section_name );
+
+uint32_t Lux_FFI_World_Edit_New( const char * section_name, const uint8_t width, const uint8_t height );
+uint8_t Lux_FFI_World_Edit_Set( const uint32_t section_hash, uint32_t map_ident, const uint8_t x, const uint8_t y );
+uint8_t Lux_FFI_World_Edit_Save( const uint32_t section_hash );
+
+
+#endif // FFI_WORLD_H

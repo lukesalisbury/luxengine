@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -19,7 +19,7 @@ EntitySection::EntitySection( std::string parent_entity, uint32_t id )
 {
 	this->initialised = false;
 	this->map_id = id;
-	this->parent = new Entity(parent_entity, "parent", this->map_id, lux::entitysystems->GetSystem(parent_entity) );
+	this->parent = new Entity(parent_entity, "parent", this->map_id, lux::entity_system->GetSystem(parent_entity) );
 	if ( id == 0 )
 	{
 		lux::entities->_global = this->parent;
@@ -85,9 +85,7 @@ bool EntitySection::Restore( elix::File * current_save_file )
 {
 	lux::screen::display("Loading Saved Game");
 
-	uint32_t count = current_save_file->Read_uint32WithLabel( "Section Entity Count", true );
-
-
+	uint32_t count = current_save_file->ReadUint32WithLabel( "Section Entity Count", true );
 
 	/* Parent Entity always exists, It Might have no content be t should exist */
 	this->parent->Restore( current_save_file );
@@ -99,7 +97,7 @@ bool EntitySection::Restore( elix::File * current_save_file )
 	{
 		for ( uint32_t i = 0 ; i < count; i++ )
 		{
-			if (Lux_GetState() != LOADING )
+			if ( Lux_GetState() != LOADING )
 				return false;
 
 			Entity * restored_entity = new Entity( current_save_file, this->map_id );
@@ -196,27 +194,6 @@ void EntitySection::Switch(fixed x, fixed y)
 		}
 	}
 }
-void EntitySection::PreClose()
-{
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < EntitySection Close " << this->map_id << std::endl;
-	if ( this->parent )
-	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Section Entity Close()" << std::endl;
-		this->parent->Close();
-	}
-
-	if ( this->children.size() )
-	{
-		std::vector<Entity *>::iterator iter = this->children.begin();
-		while( iter !=  this->children.end() )
-		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Entity " << (*iter)->id << " Close()" << std::endl;
-			(*iter)->Close();
-			iter++;
-
-		}
-	}
-}
 
 void EntitySection::Close()
 {
@@ -229,10 +206,19 @@ void EntitySection::Close()
 
 	if ( this->children.size() )
 	{
+		/* Close Entities */
 		std::vector<Entity *>::iterator iter = this->children.begin();
 		while( iter !=  this->children.end() )
 		{
 			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Entity " << (*iter)->id << " Close()" << std::endl;
+			(*iter)->Close();
+			iter++;
+		}
+
+		/* Remove Deleted Entities */
+		iter = this->children.begin();
+		while( iter !=  this->children.end() )
+		{
 			if ( (*iter)->deleted )
 			{
 				delete (*iter);
@@ -240,7 +226,6 @@ void EntitySection::Close()
 			}
 			else
 			{
-				(*iter)->Close();
 				iter++;
 			}
 		}

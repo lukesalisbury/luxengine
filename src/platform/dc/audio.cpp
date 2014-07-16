@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -40,7 +40,7 @@ AudioSystem::AudioSystem()
 
 	std::string buffer;
 	std::stringstream audiolist_file;
-	if ( lux::game->GetStream( "./preload/audio.txt", &audiolist_file ) )
+	if ( lux::game_data->GetStream( "./preload/audio.txt", &audiolist_file ) )
 	{
 		do
 		{
@@ -81,7 +81,7 @@ bool AudioSystem::LoadAudio(std::string filename)
 {
 	uint8_t * data = NULL;
 	uint32_t size;
-	size = lux::game->GetFile(filename, &data, false);
+	size = lux::game_data->GetFile(filename, &data, false);
 	if ( size )
 	{
 		SDL_RWops * src = SDL_RWFromMem(data, size);
@@ -98,7 +98,7 @@ Mix_Chunk * AudioSystem::ReturnAudio(std::string filename)
 {
 	uint8_t * data = NULL;
 	uint32_t size;
-	size = lux::game->GetFile(filename, &data, false);
+	size = lux::game_data->GetFile(filename, &data, false);
 	if ( size )
 	{
 		SDL_RWops * src = SDL_RWFromMem(data, size);
@@ -159,7 +159,7 @@ int32_t AudioSystem::PlayDialog( int32_t requestSound )
 	filename << "./dialog/en." << requestSound << ".ogg" ;
 	uint8_t * data = NULL;
 	uint32_t size;
-	size = lux::game->GetFile(filename.str(), &data, false);
+	size = lux::game_data->GetFile(filename.str(), &data, false);
 	if ( size )
 	{
 		SDL_RWops * src = SDL_RWFromMem(data, size);
@@ -182,7 +182,7 @@ int32_t AudioSystem::PlayMusic ( std::string requestMusic, int32_t loop, int32_t
 {
 	uint8_t * data = NULL;
 	uint32_t size;
-	size = lux::game->GetFile("./music/" + requestMusic, &data, false);
+	size = lux::game_data->GetFile("./music/" + requestMusic, &data, false);
 	if ( size )
 	{
 		SDL_RWops * src = SDL_RWFromMem(data, size);

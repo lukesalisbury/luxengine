@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -15,7 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_DISPLAY_FUNCTION
 #endif
 
-bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+bool Lux_NATIVE_Init( std::string title,  uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
 void Lux_NATIVE_Destory();
 void Lux_NATIVE_UpdateRect(LuxRect rect);
 void Lux_NATIVE_Show();

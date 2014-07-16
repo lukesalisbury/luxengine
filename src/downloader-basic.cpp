@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -304,7 +304,7 @@ int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserI
 
 	if ( ui )
 	{
-		LuxRect region = {ui->_region.w, ui->_region.h, ui->_region.w, 50, 0 };
+		LuxRect region = {ui->ui_region.w, ui->ui_region.h, ui->ui_region.w, 50, 0 };
 		region.x /= 4;
 		region.y = (region.y / 2) - 25;
 		region.w /= 2;
@@ -533,8 +533,8 @@ Remove "chunked" from Transfer-Encoding
 int32_t Lux_Util_FileDownloaderBackground( std::string urlArg, std::string origFile, UserInterface * ui )
 {
 	int32_t res = 0;
-	LuxRect region = {10, ui->_region.h, ui->_region.w, 50, 0 };
-	region.y = (ui->_region.h/2)-25;
+	LuxRect region = {10, ui->ui_region.h, ui->ui_region.w, 50, 0 };
+	region.y = (ui->ui_region.h/2)-25;
 	region.w -= 20;
 
 

@@ -12,14 +12,20 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_collisions.h"
 #include "ffi_functions.h"
 #include "entity_manager.h"
-#include <stdint.h>
 #include <cmath>
 
 
-/** Lux_FFI_Entity_Object_Collision_Set
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Entity_Object_Collision_Set
+ * @param wanted
+ * @param rect
+ * @param type
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @return
+ */
 int32_t Lux_FFI_Entity_Object_Collision_Set( Entity * wanted, int32_t rect, int32_t type, int32_t x, int32_t y, int32_t w, int32_t h )
 {
 	if ( wanted != NULL )
@@ -29,10 +35,16 @@ int32_t Lux_FFI_Entity_Object_Collision_Set( Entity * wanted, int32_t rect, int3
 	return -1;
 }
 
-/** Lux_FFI_Entity_Object_Collision_Get
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Entity_Object_Collision_Get
+ * @param wanted
+ * @param rect
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @return
+ */
 uint8_t Lux_FFI_Entity_Object_Collision_Get( Entity * wanted, int32_t rect, int32_t * x, int32_t * y, int32_t * w, int32_t * h )
 {
 	if ( rect >= 0 && rect < 7 )
@@ -59,10 +71,11 @@ uint8_t Lux_FFI_Entity_Object_Collision_Get( Entity * wanted, int32_t rect, int3
 	return 0;
 }
 
-/** Lux_FFI_Entity_Object_Collision_Calculate
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Entity_Object_Collision_Calculate
+ * @param wanted
+ * @return
+ */
 int32_t Lux_FFI_Entity_Object_Collision_Calculate( Entity * wanted )
 {
 
@@ -73,10 +86,16 @@ int32_t Lux_FFI_Entity_Object_Collision_Calculate( Entity * wanted )
 	return 0;
 }
 
-/** Lux_FFI_Entity_Object_Collision_Calculate_Current
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Entity_Object_Collision_Calculate_Current
+ * @param wanted
+ * @param entity_hit
+ * @param angle
+ * @param dist
+ * @param rect
+ * @param type
+ * @return
+ */
 int32_t Lux_FFI_Entity_Object_Collision_Calculate_Current(Entity * wanted, uint32_t * entity_hit, int32_t * angle, int32_t * dist, int32_t * rect, int32_t * type )
 {
 	CollisionResult * collision_value = NULL;
@@ -126,10 +145,13 @@ int32_t Lux_FFI_Entity_Object_Collision_Calculate_Current(Entity * wanted, uint3
 	return hit_count;
 }
 
-/** Lux_FFI_Entity_Object_Collision_Set_From_Object
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Entity_Object_Collision_Set_From_Object
+ * @param wanted
+ * @param object_id
+ * @param type
+ * @return
+ */
 int32_t Lux_FFI_Entity_Object_Collision_Set_From_Object( Entity * wanted, uint32_t object_id, int32_t type )
 {
 	MapObject * object = NULL;
@@ -155,10 +177,18 @@ int32_t Lux_FFI_Entity_Object_Collision_Set_From_Object( Entity * wanted, uint32
 
 
 /** Collision Functions */
-/** Lux_FFI_Collision_Set
-*
-*
-*/
+
+/**
+ * @brief Lux_FFI_Collision_Set
+ * @param hash_entity
+ * @param rect
+ * @param type
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @return
+ */
 int32_t Lux_FFI_Collision_Set( uint32_t hash_entity, int32_t rect, int32_t type, int32_t x, int32_t y, int32_t w, int32_t h )
 {
 
@@ -170,10 +200,16 @@ int32_t Lux_FFI_Collision_Set( uint32_t hash_entity, int32_t rect, int32_t type,
 	return -1;
 }
 
-/** Lux_FFI_Collision_Get
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Collision_Get
+ * @param hash_entity
+ * @param rect
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @return
+ */
 uint8_t Lux_FFI_Collision_Get( uint32_t hash_entity, int32_t rect, int32_t * x, int32_t * y, int32_t * w, int32_t * h )
 {
 	if ( rect >= 0 && rect < 7 )
@@ -202,10 +238,14 @@ uint8_t Lux_FFI_Collision_Get( uint32_t hash_entity, int32_t rect, int32_t * x, 
 	return 0;
 }
 
-/** Lux_FFI_Collision_Check
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Collision_Check
+ * @param hash_entity_first
+ * @param hash_entity_second
+ * @param rect_first
+ * @param rect_second
+ * @return
+ */
 int32_t Lux_FFI_Collision_Check( uint32_t hash_entity_first, uint32_t hash_entity_second, int32_t rect_first, int32_t rect_second )
 {
 	Entity * first_entity, * second_entity;
@@ -234,10 +274,11 @@ int32_t Lux_FFI_Collision_Check( uint32_t hash_entity_first, uint32_t hash_entit
 	return 0;
 }
 
-/** Lux_FFI_Collision_Calculate
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Collision_Calculate
+ * @param hash_entity
+ * @return
+ */
 int32_t Lux_FFI_Collision_Calculate( uint32_t hash_entity )
 {
 	Entity * wanted_entity = lux::entities->GetEntity(hash_entity);
@@ -248,10 +289,16 @@ int32_t Lux_FFI_Collision_Calculate( uint32_t hash_entity )
 	return 0;
 }
 
-/** Lux_FFI_Collision_Calculate_Current
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Collision_Calculate_Current
+ * @param hash_entity
+ * @param entity_hit
+ * @param angle
+ * @param dist
+ * @param rect
+ * @param type
+ * @return
+ */
 int32_t Lux_FFI_Collision_Calculate_Current( uint32_t hash_entity, uint32_t * entity_hit, int32_t * angle, int32_t * dist, int32_t * rect, int32_t * type )
 {
 	Entity * wanted_entity = lux::entities->GetEntity(hash_entity);
@@ -302,10 +349,13 @@ int32_t Lux_FFI_Collision_Calculate_Current( uint32_t hash_entity, uint32_t * en
 	return hit_count;
 }
 
-/** Lux_FFI_Collision_Set_From_Object
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Collision_Set_From_Object
+ * @param hash_entity
+ * @param object_id
+ * @param type
+ * @return
+ */
 int32_t Lux_FFI_Collision_Set_From_Object( uint32_t hash_entity, uint32_t object_id, int32_t type )
 {
 	MapObject * object = NULL;

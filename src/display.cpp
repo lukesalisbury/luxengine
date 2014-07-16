@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -74,67 +74,54 @@ DisplaySystem::DisplaySystem()
 
 	this->InitialSetup();
 
-	#ifdef OPENGLENABLED
-	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, this->fullscreen ) )
+	#if DISPLAYMODE_OPENGL
+	if ( GraphicsOpenGL.InitGraphics( this->title, this->screen_dimension.w, this->screen_dimension.h, this->bpp, this->fullscreen ) )
 	{
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
 	}
-	#endif
-
-
-	if ( !is_display_setup )
+	#else
+	if ( GraphicsNative.InitGraphics( this->title, this->screen_dimension.w, this->screen_dimension.h, this->bpp, this->fullscreen ) )
 	{
-		#if DISPLAYMODE_NATIVE
-		if ( lux::config->GetString("display.opengl") == "required" )
-		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Requires OpenGL " << std::endl;
-			return;
-		}
-
-		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, this->fullscreen ) )
-		{
-			this->graphics = GraphicsNative;
-			is_display_setup = true;
-		}
-		#endif
+		this->graphics = GraphicsNative;
+		is_display_setup = true;
 	}
-
+	#endif
 
 	if ( !is_display_setup )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Graphic System Failed" << std::endl;
-		if ( lux::engine )
-		{
-			lux::engine->FatalError("display.cpp: Graphic System Failed");
-		}
 		return;
 	}
 
 	this->cache_sprites = (this->graphics.CacheSprite);
+	if ( lux::media != NULL )
+		lux::media->Init(this->graphics);
 
-	for (uint8_t i = 0; i < 7; i++)
-	{
-		this->show_layers[i] = true;
-		this->_layers.push_back( new Layer( this, i ) );
-	}
-	lux::media->Init(this->graphics);
 }
 
-DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen  )
+DisplaySystem::DisplaySystem( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen  )
 {
 	bool is_display_setup = false;
 
 	this->InitialSetup();
+
+	this->screen_dimension.w = width;
+	this->screen_dimension.h = height;
+	this->bpp = bpp;
+	this->fullscreen = fullscreen;
+
 	#if DISPLAYMODE_OPENGL
-	if ( GraphicsOpenGL.InitGraphics( width, height, bpp, fullscreen ) )
+	if ( GraphicsOpenGL.InitGraphics( title, width, height, bpp, fullscreen ) )
 	{
 		this->graphics = GraphicsOpenGL;
+		is_display_setup = true;
 	}
 	#else
-	if ( GraphicsNative.InitGraphics( width, height, bpp, fullscreen ) )
+	if ( GraphicsNative.InitGraphics( title, width, height, bpp, fullscreen ) )
 	{
 		this->graphics = GraphicsNative;
+		is_display_setup = true;
 	}
 	#endif
 
@@ -145,24 +132,71 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp, bool
 	}
 
 	this->cache_sprites = (this->graphics.CacheSprite);
-	lux::media->Init(this->graphics);
+	if ( lux::media != NULL )
+		lux::media->Init( this->graphics );
 }
 
 DisplaySystem::~DisplaySystem()
 {
-	if ( lux::media )
+	if ( lux::media != NULL )
 		lux::media->Free();
 	this->Close();
 }
 
+void DisplaySystem::InitialSetup()
+{
+	if ( lux::core == NULL )
+	{
+		return;
+	}
+
+	this->title = "";
+	this->frame_skip = 0;
+	this->screen_dimension.x = 0;
+	this->screen_dimension.y = 0;
+	this->sprite_font = "";
+	this->show_cursor = true;
+	this->cache_sprites = false;
+
+	if ( lux::config )
+	{
+		this->title = lux::config->GetString("project.title");
+		this->screen_dimension.w = lux::config->GetNumber("screen.width");
+		this->screen_dimension.h = lux::config->GetNumber("screen.height");
+		this->bpp = (uint8_t)lux::config->GetNumber("display.bpp") * 8;
+		this->fullscreen = lux::config->GetBoolean("display.fullscreen");
+		this->sprite_quick_access = lux::config->GetBoolean("sprite.shortname");
+		this->show_3d = lux::config->GetBoolean("fun.able");
+		this->show_debug = lux::config->GetBoolean("debug.able");
+		this->show_mask = lux::config->GetBoolean("debug.masks");
+		this->show_spriteinfo = lux::config->GetBoolean("debug.sprite");
+		this->show_collisions = lux::config->GetBoolean("debug.collision");
+	}
+
+	this->graphics = GraphicsNone;
+	this->overlay_layer = new Layer(this, 7, true);
+
+}
+
+/**/
 bool DisplaySystem::Init()
 {
-	this->graphics.TextSprites(false);
+	this->graphics.TextSprites( false );
+
+	for (uint8_t i = 0; i < 7; i++)
+	{
+		std::string layername = "layer.static";
+		layername.append( 1, i + 48 );
+
+		this->show_layers[i] = true;
+
+		this->_layers.push_back( new Layer( this, i, lux::config->GetBoolean(layername) ) );
+	}
 
 	/* Preload Spritesheets */
 	std::stringstream sprite_file;
 	std::string buffer;
-	if ( lux::game->GetStream("./preload/spritesheets.txt", &sprite_file) )
+	if ( lux::game_data->GetStream("./preload/spritesheets.txt", &sprite_file) )
 	{
 		do
 		{
@@ -362,7 +396,7 @@ void DisplaySystem::ShowMessages()
 
 	if ( this->show_collisions )
 	{
-		lux::world->DrawCollisions();
+		lux::gameworld->DrawCollisions();
 	}
 	if ( this->show_debug )
 	{
@@ -375,7 +409,7 @@ void DisplaySystem::ShowMessages()
 
 	if ( this->show_mask )
 	{
-		lux::world->active_map->DrawMask();
+		lux::gameworld->active_map->DrawMask();
 	}
 
 
@@ -395,39 +429,7 @@ void DisplaySystem::ShowMessages()
 
 
 
-void DisplaySystem::InitialSetup()
-{
-	if ( !lux::core->InitSubSystem(LUX_INIT_VIDEO) )
-	{
-		return;
-	}
 
-
-	this->frame_skip = 0;
-	this->screen_dimension.x = 0;
-	this->screen_dimension.y = 0;
-	this->sprite_font = "";
-	this->show_cursor = true;
-	this->cache_sprites = false;
-
-	if ( lux::config )
-	{
-		this->screen_dimension.w = lux::config->GetNumber("screen.width");
-		this->screen_dimension.h = lux::config->GetNumber("screen.height");
-		this->bpp = (uint8_t)lux::config->GetNumber("display.bpp") * 8;
-		this->fullscreen = lux::config->GetBoolean("display.fullscreen");
-		this->sprite_quick_access = lux::config->GetBoolean("sprite.shortname");
-		this->show_3d = lux::config->GetBoolean("fun.able");
-		this->show_debug = lux::config->GetBoolean("debug.able");
-		this->show_mask = lux::config->GetBoolean("debug.masks");
-		this->show_spriteinfo = lux::config->GetBoolean("debug.sprite");
-		this->show_collisions = lux::config->GetBoolean("debug.collision");
-	}
-
-	this->graphics = GraphicsNone;
-	this->overlay_layer = new Layer(this, true);
-	//memset( &this->graphics, 0, sizeof(this->graphics) );
-}
 
 
 void DisplaySystem::SetTextFont(bool enable, std::string font_sheet )
@@ -917,8 +919,8 @@ void DisplaySystem::SetLayerColour( uint32_t layer,  LuxColour colour )
 	if ( layer < this->_layers.size() )
 	{
 		this->_layers[layer]->colour = colour;
-		if ( layer == 0 && lux::world->active_map )
-			lux::world->active_map->SetBackgroundModifier( colour );
+		if ( layer == 0 && lux::gameworld->active_map )
+			lux::gameworld->active_map->SetBackgroundModifier( colour );
 	}
 }
 

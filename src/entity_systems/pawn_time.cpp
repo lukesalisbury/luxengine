@@ -96,7 +96,7 @@ void stamp2datetime( time_t sec1970, cell * year, cell * month, cell * day, cell
  * The return value is the number of seconds since 1 January 1970 (Unix system
  * time).
  */
-static cell AMX_NATIVE_CALL pawnTimeGet(AMX *amx, const cell *params)
+static cell pawnTimeGet(AMX *amx, const cell *params)
 {
 	time_t sec1970;
 	struct tm gtm;
@@ -126,7 +126,7 @@ static cell AMX_NATIVE_CALL pawnTimeGet(AMX *amx, const cell *params)
  * The return value is the number of days since the start of the year. January
  * 1 is day 1 of the year.
  */
-static cell AMX_NATIVE_CALL pawnDateGet(AMX *amx, const cell *params)
+static cell pawnDateGet(AMX *amx, const cell *params)
 {
 	time_t sec1970;
 	struct tm gtm;
@@ -151,7 +151,7 @@ static cell AMX_NATIVE_CALL pawnDateGet(AMX *amx, const cell *params)
 
 /* cvttimestamp(seconds1970, &year, &month, &day, &hour, &minute, &second)
  */
-static cell AMX_NATIVE_CALL n_cvttimestamp(AMX *amx, const cell *params)
+static cell n_cvttimestamp(AMX *amx, const cell *params)
 {
 	time_t timestamp;
 	cell year, month, day, hour, minute, second;
@@ -175,7 +175,7 @@ static cell AMX_NATIVE_CALL n_cvttimestamp(AMX *amx, const cell *params)
 * native TimestampCurrent();
 *
 */
-static cell AMX_NATIVE_CALL pawnTimestampCurrent(AMX *amx, const cell *params)
+static cell pawnTimestampCurrent(AMX *amx, const cell *params)
 {
 	time_t timestamp;
 

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -15,6 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "player.h"
 #include "elix_file.hpp"
 #include "platform_media.h"
+#include "gui.h"
 #include <vector>
 #include <string>
 
@@ -34,6 +35,9 @@ class LuxEngine
 
 		bool ShowDialog(std::string text, LuxWidget dialog = DIALOGYESNO, std::string * answer = NULL);
 		void FatalError(std::string reason);
+		bool CreateQuickDisplay();
+		UserInterface *  CreateQuickGUI();
+
 		void SettingDialog( );
 
 		bool Start( std::string project_file );
@@ -45,7 +49,7 @@ class LuxEngine
 
 		/* Engine State */
 		LuxState state;
-		int32_t game_state;
+
 		void SetState(LuxState new_state);
 		int32_t GameState(int32_t new_state);
 
@@ -74,6 +78,10 @@ class LuxEngine
 		std::string GetString(uint32_t line);
 
 	private:
+		/* Engine State */
+		int32_t game_state;
+
+
 		/* Players */
 		uint32_t default_player;
 		std::vector<Player*> _players;

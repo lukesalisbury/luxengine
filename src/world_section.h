@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2012 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -12,45 +12,61 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define _SECTION_H_
 	#include "map.h"
 	#include "map_object.h"
+	#include "options.h"
 
-	class WorldSection
+	class WorldSection: public Options
 	{
 		public:
-			WorldSection( std::string file, uint32_t id, uint8_t width, uint8_t height );
-			WorldSection( uint8_t width, uint8_t height );
+			WorldSection( LuxMapIdent ident, std::string name, uint8_t width, uint8_t height  );
+			WorldSection( elix::File * current_save_file );
+
 			~WorldSection();
 
-			void InitialSetup(uint8_t width, uint8_t height );
+		private:
+			void InitialSetup( uint8_t width, uint8_t height );
 			void LoadFile( );
+			void SaveFile( );
+
+		private:
+			uint32_t Ident() { return id; }
+			std::string Name() { return name; }
+
+			bool IsBasic() { return ( this->allocated_size == 1 ? true : false ); }
+
+			/* Save */
+			bool Save( elix::File * current_save_file );
+			bool Restore( elix::File * current_save_file );
+
+
+			/* Grid System */
+			uint32_t GetMapID( const uint16_t grid_id );
+			uint32_t GetMapID( const uint8_t grid_x, const uint8_t grid_y );
+			uint16_t GetGridID( const uint8_t grid_x, const uint8_t grid_y );
+
+			MokoiMap * GetMap( const uint8_t grid_x, const uint8_t grid_y  );
+			MokoiMap * GetMap( const uint16_t grid_id  );
+
+			/* Child Maps */
+			bool AddMap( std::string file_name, const uint8_t grid_x, const uint8_t grid_y );
+			bool AddMap( MokoiMap * map_object, const uint8_t grid_x, const uint8_t grid_y );
+
+		private:
+			/* Details */
+			std::string name;
+			uint32_t id;
 
 			/* Save */
 			uint8_t flag;
-			bool Save( elix::File *current_save_file );
-			bool Restore( elix::File *current_save_file );
+
+			/* Setting */
 
 			/* Grid System */
-			std::string file;
-			uint8_t _width;
-			uint8_t _height;
-			uint32_t _id;
-			uint16_t _grid[64][64];
+			uint16_t allocated_size;
 
-			uint16_t getGrid( uint8_t grid_x, uint8_t grid_y )
-			{
-				if ( grid_x >= 64 )
-					return 0xFFFF;
-				if ( grid_y >= 64 )
-					return 0xFFFF;
-				return this->_grid[grid_x][grid_y];
-			}
-			uint32_t getMapID( uint16_t grid )
-			{
-				LuxMapIdent map;
-				map.value = 0;
-				map.grid.id = this->_id;
-				map.grid.localmap = grid;
-				return map.value;
-			}
+			uint8_t width;
+			uint8_t height;
+
+			uint16_t * grid;
 	};
 
 #endif

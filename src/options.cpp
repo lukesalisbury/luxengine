@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2012 Luke Salisbury
+Copyright © 2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -9,13 +9,30 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
+#include "options.h"
 
-#ifndef FFI_HPP
-#define FFI_HPP
+void Options::SetOption( uint8_t key, int16_t value )
+{
+
+	std::map<uint8_t, int16_t>::iterator iter = this->options_values.find(key);
+	if ( iter != this->options_values.end() )
+	{
+		iter->second = value;
+	}
+	else
+	{
+		this->options_values.insert( std::make_pair( key, value ) );
+	}
+}
+
+int16_t Options::GetOption( uint8_t key )
+{
+	std::map<uint8_t, int16_t>::iterator iter = this->options_values.find(key);
+	if ( iter != this->options_values.end() )
+	{
+		return iter->second;
+	}
+	return 0;
+}
 
 
-#include <stdint.h>
-
-
-
-#endif // FFI_HPP

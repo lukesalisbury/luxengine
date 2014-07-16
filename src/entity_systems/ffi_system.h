@@ -14,8 +14,16 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include <stdint.h>
 
+int8_t Lux_FFI_System_Audio_Volume( const uint8_t device, const int8_t level );
+int32_t Lux_FFI_System_Command( const uint8_t command, const int32_t value );
+uint32_t Lux_FFI_System_List_Count( const uint8_t list );
+const char * Lux_FFI_System_List_Item( const uint8_t list, const uint32_t item );
+
+const char * Lux_FFI_Config_String_Get( const char * key );
+int8_t Lux_FFI_Config_String_Set( const char * key, const char * value );
+int32_t Lux_FFI_Config_Number_Get( const char * key );
+int8_t Lux_FFI_Config_Number_Set( const char * key, const int32_t value );
+int8_t Lux_FFI_Config_Save();
 
 
-
-
-#endif // FFI_SPRITESHEET_H
+#endif // FFI_SYSTEM_H

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013 Luke Salisbury
+Copyright © 2013-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -23,6 +23,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 PlatformMedia::PlatformMedia()
 {
+	this->joystick_generic_sheet = NULL;
+	this->joystick_xbox360_sheet = NULL;
+	this->keyboard_sheet = NULL;
+	this->mouse_sheet = NULL;
+
+	for ( uint32_t c = 0; c < 8; c++)
+	{
+		this->controller[c] = NULL;
+	}
 
 }
 
@@ -102,10 +111,10 @@ void PlatformMedia::Init(GraphicSystem graphic)
 
 void PlatformMedia::Free()
 {
-	delete this->joystick_xbox360_sheet;
-	delete this->joystick_generic_sheet;
-	delete this->keyboard_sheet;
-	delete this->mouse_sheet;
+	NULLIFY(this->joystick_xbox360_sheet);
+	NULLIFY(this->joystick_generic_sheet);
+	NULLIFY(this->keyboard_sheet);
+	NULLIFY(this->mouse_sheet);
 }
 
 

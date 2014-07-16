@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2012 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -26,7 +26,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			/* Playing */
 			virtual int32_t PlayEffect( std::string requestSound, int32_t x = -1, int32_t y = -1 ) = 0;
 			virtual int32_t PlayDialog( int32_t requestSound ) = 0;
-			virtual int32_t PlayMusic( std::string requestMusic, int32_t loop, int32_t fadeLength ) = 0;
+			virtual int32_t PlayMusic( std::string requestMusic, int32_t loops, int32_t fadeLength ) = 0;
 			virtual void Pause() = 0;
 			virtual void StopDialog() = 0;
 

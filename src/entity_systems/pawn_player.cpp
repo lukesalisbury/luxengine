@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -20,7 +20,7 @@ extern const AMX_NATIVE_INFO Player_Natives[];
 * native PlayerUpdateControl(player, controlset);
 *
 */
-static cell AMX_NATIVE_CALL pawnPlayerUpdateControl(AMX *amx, const cell *params)
+static cell pawnPlayerUpdateControl(AMX *amx, const cell *params)
 {
 	Player * player = NULL;
 	uint32_t p = (uint32_t)params[1];
@@ -41,7 +41,7 @@ static cell AMX_NATIVE_CALL pawnPlayerUpdateControl(AMX *amx, const cell *params
 * native PlayerSetColour(player, colour);
 *
 */
-static cell AMX_NATIVE_CALL pawnPlayerSetColour(AMX *amx, const cell *params)
+static cell pawnPlayerSetColour(AMX *amx, const cell *params)
 {
 	Player * player = NULL;
 	uint32_t p = (uint32_t)params[1];
@@ -61,7 +61,7 @@ static cell AMX_NATIVE_CALL pawnPlayerSetColour(AMX *amx, const cell *params)
 * native PlayerSetEntity(player, entity);
 *
 */
-static cell AMX_NATIVE_CALL pawnPlayerSetEntity(AMX *amx, const cell *params)
+static cell pawnPlayerSetEntity(AMX *amx, const cell *params)
 {
 	Player * player = NULL;
 	Entity * wanted = NULL;
@@ -83,7 +83,7 @@ static cell AMX_NATIVE_CALL pawnPlayerSetEntity(AMX *amx, const cell *params)
 * native PlayerSetName( player, name[] );
 *
 */
-static cell AMX_NATIVE_CALL pawnPlayerSetName(AMX *amx, const cell *params)
+static cell pawnPlayerSetName(AMX *amx, const cell *params)
 {
 	std::string player_new_name;
 	Player * player = NULL;
@@ -103,7 +103,7 @@ static cell AMX_NATIVE_CALL pawnPlayerSetName(AMX *amx, const cell *params)
 * native PlayerGetName(player, entity[], s = sizeof(entity) );
 *
 */
-static cell AMX_NATIVE_CALL pawnPlayerGetName(AMX *amx, const cell *params)
+static cell pawnPlayerGetName(AMX *amx, const cell *params)
 {
 	Player * player = NULL;
 	uint32_t p = (uint32_t)params[1];

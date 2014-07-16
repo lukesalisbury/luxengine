@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -36,7 +36,7 @@ bool Lux_Mask_Load(std::string filename, Lux_Mask * mask)
 	std::stringstream mask_file;
 	uint32_t count = 0;
 
-	if ( lux::game->GetStream("./masks/" + filename, &mask_file) )
+	if ( lux::game_data->GetStream("./masks/" + filename, &mask_file) )
 	{
 		mask_file.read((char*)&mask->width, sizeof(uint16_t));
 		mask_file.read((char*)&mask->height, sizeof(uint16_t));

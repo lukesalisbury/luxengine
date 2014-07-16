@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -40,8 +40,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_SAVE_READ_COOKIE_TYPE 3
 #define LUX_SAVE_COOKIE_TYPE 4
 
-
-
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -56,6 +54,7 @@ typedef int32_t fixed;
 #include "elix_file.hpp"
 
 #define NULLIFY(x) if (x != NULL) { delete(x); x = NULL; }
+#define NULLIFY_ARRAY(x) if (x != NULL) { delete [] x; x = NULL; }
 
 #define FRACT_BITS 1000
 

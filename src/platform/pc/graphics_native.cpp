@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -542,9 +542,9 @@ SDL_Surface * SDL_Surface_LoadImage( std::string file )
 	uint8_t * data = NULL;
 	uint32_t size;
 	SDL_Surface * temp_surface = NULL;
-	if ( lux::game )
+	if ( lux::game_data )
 	{
-		size = lux::game->GetFile(file, &data, false);
+		size = lux::game_data->GetFile(file, &data, false);
 		if ( size )
 		{
 			SDL_RWops * src = SDL_RWFromMem(data, size);
@@ -572,7 +572,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 }
 
 /* Creation,destruction and loop Functions */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( std::string title,  uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
 {
 	/* Set Init Flags */
 	if ( lux::config->GetString("display.surface") == "hardware" )
@@ -753,7 +753,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_SetFullscreen( bool able )
 
 	SDL_FreeSurface( sdlgraphics_screen );
 	uint8_t bpp = lux::config->GetNumber("display.bpp") * 8;
-	Lux_NATIVE_Init(sdlgraphics_dimension.w, sdlgraphics_dimension.h, bpp, able );
+	Lux_NATIVE_Init( std::string title, sdlgraphics_dimension.w, sdlgraphics_dimension.h, bpp, able );
 	return true;
 }
 

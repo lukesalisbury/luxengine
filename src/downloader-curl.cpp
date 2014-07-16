@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -80,10 +80,8 @@ static size_t Lux_Util_CurlWriteMemory(void *contents, size_t size, size_t nmemb
 
 size_t Lux_Util_CurlWrite(void *ptr, size_t size, size_t nmemb, elix::File * stream)
 {
-
 	return stream->Write( ptr, size, nmemb ) * (size * nmemb);
 }
-
 
 int Lux_Util_CurlProgress(DownloadRequest * request, double t, double d, double ultotal, double ulnow)
 {
@@ -93,26 +91,18 @@ int Lux_Util_CurlProgress(DownloadRequest * request, double t, double d, double 
 	message.precision(0);
 	message << "Downloading\n" << request->url << "\nDownloaded " << d << " of " << t << " bytes" << std::endl;
 
-
 	request->dialog->SetText(message.str(), message.str().length());
-
-
 
 	return 0;
 }
 
-int32_t Lux_Util_FileDownloaderThread( void * data )
+CURLcode Lux_Util_FileDownloaderHandler( DownloadRequest * request )
 {
-
-	int32_t ret = 0;
-
-
-	WorkerThread * thread = (WorkerThread *)data;
-	DownloadRequest * request = (DownloadRequest *)thread->data;
-
 	CURL * curl;
-	CURLcode res;
+	CURLcode res = CURLE_UNSUPPORTED_PROTOCOL;
 	elix::File * output_file = NULL;
+
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Downloading " << request->url << " to " << request->file  << std::endl;
 
 
 	curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -132,8 +122,6 @@ int32_t Lux_Util_FileDownloaderThread( void * data )
 		curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1 );
 		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYPEER, 0 );
 
-
-
 		res = curl_easy_perform(curl);
 
 		/* Check for errors */
@@ -150,16 +138,28 @@ int32_t Lux_Util_FileDownloaderThread( void * data )
 
 	curl_global_cleanup();
 
+	return res;
+}
+
+int32_t Lux_Util_FileDownloaderThread( void * data )
+{
+
+	WorkerThread * thread = (WorkerThread *)data;
+	DownloadRequest * request = (DownloadRequest *)thread->data;
+
+	CURLcode res;
+
+	res = Lux_Util_FileDownloaderHandler( request );
+
 	thread->_active = false;
 	thread->results = ( res == CURLE_OK );
 
 	return ( res == CURLE_OK );
 }
 
-
 int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserInterface * ui )
 {
-	int32_t ret = 0;
+	CURLcode res;
 	DownloadRequest request;
 
 	request.dialog = NULL;
@@ -168,27 +168,29 @@ int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserI
 
 	if ( ui )
 	{
-		LuxRect region = {ui->_region.w, ui->_region.h, ui->_region.w, 140, 0 };
+		LuxRect region = {ui->ui_region.w, ui->ui_region.h, ui->ui_region.w, 140, 0 };
 		region.x /= 4;
 		region.y = (region.y / 2) - 25;
 		region.w /= 2;
 		request.dialog = ui->AddChild(region, THROBBER, (LuxColour){150, 150, 200, 200}, "Downloading\n" + urlArg + "\n");
 		request.dialog->SetText("Downloading\n" + urlArg + "\n", urlArg.length() );
+
+
+		ui->Loop();
 	}
 
-
-	ret = Lux_Util_FileDownloaderThread( &request );
+	res = Lux_Util_FileDownloaderHandler( &request );
 
 	if ( ui )
 	{
+		ui->Loop();
 		ui->RemoveChild( request.dialog );
 	}
 
 	delete request.dialog;
-	return ret;
+
+	return ( res == CURLE_OK );
 }
-
-
 
 int32_t Lux_Util_FileDownloaderEntityCallback( void * data )
 {
@@ -255,8 +257,8 @@ int32_t Lux_Util_FileDownloaderEntityCallback( void * data )
 int32_t Lux_Util_FileDownloaderBackground( std::string urlArg, std::string origFile, UserInterface * ui )
 {
 	int32_t res = 0;
-	LuxRect region = {10, ui->_region.h, ui->_region.w, 50, 0 };
-	region.y = (ui->_region.h/2)-25;
+	LuxRect region = {10, ui->ui_region.h, ui->ui_region.w, 50, 0 };
+	region.y = (ui->ui_region.h/2)-25;
 	region.w -= 20;
 
 

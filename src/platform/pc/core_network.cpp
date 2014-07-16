@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -215,7 +215,7 @@ int pc_network_thread( void *data )
 							uint32_t map_id = 0;
 							ReadPacket<uint32_t>( event.packet, 2, map_id );
 
-							MokoiMap * map = lux::world->GetMap(map_id);
+							MokoiMap * map = lux::gameworld->GetMap(map_id);
 							if ( map )
 							{
 								lux::core->NetLock();
@@ -245,7 +245,7 @@ int pc_network_thread( void *data )
 									}
 								}
 								lux::engine->SetState(RUNNING);
-								map->_server = true;
+								map->server = true;
 								lux::core->NetUnlock();
 							}
 						}

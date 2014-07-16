@@ -16,9 +16,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #define FIXEDPI  3.1415926535897932384626433832795
 
-/** Lux_FFI_Path_Move_Object
-* native ObjectFollowPath(object:id, speed, &x, &y, loop);
-*/
+/**
+ * @brief Lux_FFI_Path_Move_Object
+ * @param object_id
+ * @param fixed_speed
+ * @param x
+ * @param y
+ * @param loop
+ * @return
+ */
 int32_t Lux_FFI_Path_Move_Object( uint32_t object_id, int32_t fixed_speed, int16_t * x, int16_t * y, uint8_t loop )
 {
 	float movex, movey, speed, angle = 0;
@@ -110,10 +116,11 @@ int32_t Lux_FFI_Path_Move_Object( uint32_t object_id, int32_t fixed_speed, int16
 	return -1;
 }
 
-/** Lux_FFI_Path_Count
-* native PathCount( object:id );
-* uint32_t object_id
-*/
+/**
+ * @brief Lux_FFI_Path_Count
+ * @param object_id
+ * @return
+ */
 int32_t Lux_FFI_Path_Count( uint32_t object_id )
 {
 	MapObject * map_object = Lux_FFI_Object_Get( object_id );
@@ -124,10 +131,15 @@ int32_t Lux_FFI_Path_Count( uint32_t object_id )
 	return -1;
 }
 
-/** Lux_FFI_Path_Point
-*
-* uint32_t object_id, uint8_t point, int16_t * x, int16_t * y, uint32_t *ms_length
-*/
+/**
+ * @brief Lux_FFI_Path_Point
+ * @param object_id
+ * @param point
+ * @param x
+ * @param y
+ * @param ms_length
+ * @return
+ */
 uint8_t Lux_FFI_Path_Point( uint32_t object_id, uint8_t point, int16_t * x, int16_t * y, uint32_t *ms_length )
 {
 	if ( point < 0 )

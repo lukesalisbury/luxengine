@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -117,7 +117,7 @@ bool Entity::Loop()
 
 			#ifdef NETWORKENABLED
 			lux::core->NetLock();
-			this->onscreen = (lux::world->active_map->Ident() == this->displaymap ? true : false);
+			this->onscreen = (lux::gameworld->active_map->Ident() == this->displaymap ? true : false);
 			this->active = this->callbacks->Run( this->_data, this->sleeping );
 			lux::core->NetUnlock();
 			#else
@@ -256,15 +256,15 @@ void Entity::Restore( elix::File * current_save_file )
 	/* Read Entity Details */
 	current_save_file->ReadWithLabel( "id", &this->id );
 	current_save_file->ReadWithLabel( "base", &this->_base );
-	this->x = current_save_file->Read_uint32WithLabel( "x", true );
-	this->y = current_save_file->Read_uint32WithLabel( "y", true );
-	this->z = current_save_file->Read_uint32WithLabel( "z", true );
-	this->active_state_flags = current_save_file->Read_uint8WithLabel( "active state flags" );
+	this->x = current_save_file->ReadUint32WithLabel( "x", true );
+	this->y = current_save_file->ReadUint32WithLabel( "y", true );
+	this->z = current_save_file->ReadUint32WithLabel( "z", true );
+	this->active_state_flags = current_save_file->ReadUint8WithLabel( "active state flags" );
 
 
 	/* Read Entity Data */
-	entity_system_id = current_save_file->Read_uint8WithLabel("EntitySystem" );
-	this->callbacks = lux::entitysystems->GetSystem( entity_system_id );
+	entity_system_id = current_save_file->ReadUint8WithLabel("EntitySystem" );
+	this->callbacks = lux::entity_system->GetSystem( entity_system_id );
 
 
 
@@ -343,13 +343,13 @@ void Entity::SetCollisionCount(int32_t count)
 int32_t Entity::GetHits( int32_t type )
 {
 	this->_hits.clear();
-	if (lux::world != NULL)
+	if (lux::gameworld != NULL)
 	{
 		for(int32_t n = 0; n < this->_used_collisions; n++)
 		{
 			if (this->_collisions[n].rect.w != 0 && this->_collisions[n].rect.h != 0)
 			{
-				lux::world->ReturnCollisions(&this->_hits, this->hashid, n, this->_collisions[n].rect);
+				lux::gameworld->ReturnCollisions(&this->_hits, this->hashid, n, this->_collisions[n].rect);
 			}
 		}
 	}
@@ -358,7 +358,7 @@ int32_t Entity::GetHits( int32_t type )
 
 void Entity::SetMapCollsion()
 {
-	if (lux::world != NULL )
+	if (lux::gameworld != NULL )
 	{
 		if ( this->_used_collisions > -1 )
 		{
@@ -368,7 +368,7 @@ void Entity::SetMapCollsion()
 				{
 					if (this->_collisions[n].rect.w != 0 && this->_collisions[n].rect.h != 0)
 					{
-						lux::world->AddCollision(this->hashid, &this->_collisions[n]);
+						lux::gameworld->AddCollision(this->hashid, &this->_collisions[n]);
 					}
 				}
 			}
@@ -378,14 +378,14 @@ void Entity::SetMapCollsion()
 
 void Entity::ClearMapCollsion()
 {
-	if ( lux::world != NULL )
+	if ( lux::gameworld != NULL )
 	{
 		for( int32_t n = 0; n < this->_used_collisions; n++)
 		{
 			this->_collisions[n].rect.w = this->_collisions[n].rect.h = 0;
 			this->_collisions[n].added = false;
 		}
-		lux::world->RemoveCollisions(this->hashid);
+		lux::gameworld->RemoveCollisions(this->hashid);
 	}
 }
 

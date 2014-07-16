@@ -25,7 +25,9 @@ char * Lux_FFI_Player_Get_Name( uint32_t player_number );
 char * Lux_FFI_Controller_Config( const char * controller_name );
 
 
-
+#if FFI_ALLOW_ENTITY_OBJECT
+uint8_t Lux_FFI_Entity_Object_Player_Set_Entity( uint32_t player_number, Entity * wanted );
+#endif // FFI_ALLOW_ENTITY_OBJECT
 
 
 

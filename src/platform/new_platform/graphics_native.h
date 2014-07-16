@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef _DISPLAYNATIVE_H_
 	#define _DISPLAYNATIVE_H_
 
-	bool Lux_NATIVE_Init(uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+	bool Lux_NATIVE_Init( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
 	void Lux_NATIVE_Destory();
 	void Lux_NATIVE_BackgroundObject( MapObject background );
 	void Lux_NATIVE_UpdateRect(LuxRect rect);

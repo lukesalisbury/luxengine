@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -24,7 +24,8 @@ void LuxEngine::SettingDialog( )
 
 	LuxRect region = { (lux::display->screen_dimension.w / 2) - 100, (lux::display->screen_dimension.h / 2) - 100, 200, 200, 0 };
 
-	lux::gui = new UserInterface(region, lux::display);
+	lux::gui = new UserInterface(lux::display);
+	lux::gui->SetRegion( region );
 
 	Widget * parent = lux::gui->AddChild(region, DIALOGOK, (LuxColour){150, 150, 200, 200}, "Engine Settings");
 	Widget * fs = lux::gui->AddWidgetChild(parent, 10, 16, 180, 18, CHECKBOX, "Full Screen Mode");
@@ -57,9 +58,8 @@ void LuxEngine::SettingDialog( )
 		lux::display->graphics.SetFullscreen( fullscreen_new );
 		lux::global_config->SetBoolean("display.fullscreen", fullscreen_new);
 	}
-	delete lux::gui; lux::gui = NULL;
 
-
+	NULLIFY( lux::gui );
 
 }
 

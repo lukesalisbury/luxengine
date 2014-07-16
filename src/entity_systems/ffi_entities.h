@@ -26,6 +26,16 @@ uint8_t Lux_FFI_Entity_Delete( uint32_t hash_entity );
 uint32_t Lux_FFI_Entities_List( uint32_t map_id );
 char * Lux_FFI_Entities_Next( uint32_t map_id );
 
+
+#if FFI_ALLOW_ENTITY_OBJECT
+uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, int32_t fixed_z);
+uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z);
+char * Lux_FFI_Entity_Object_Get_Setting( Entity * wanted, const char * key );
+int32_t Lux_FFI_Entity_Object_Get_Setting_Number( Entity * wanted, const char * key );
+uint8_t Lux_FFI_Entity_Object_Delete( Entity * wanted );
+#endif // FFI_ALLOW_ENTITY_OBJECT
+
+
 #endif // FFI_ENTITIES_H
 
 

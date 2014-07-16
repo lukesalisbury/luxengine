@@ -20,10 +20,14 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 /** Entity Position Functions  */
 
-/** Lux_FFI_Entity_Object_Set_Position
-*
-* Updates Entity X/Y Positions
-*/
+/**
+ * @brief Updates Entity X/Y Positions
+ * @param wanted
+ * @param fixed_x
+ * @param fixed_y
+ * @param fixed_z
+ * @return
+ */
 uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, int32_t fixed_z)
 {
 	#ifdef NETWORKENABLED
@@ -45,10 +49,14 @@ uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, in
 	return ( wanted != NULL );
 }
 
-/** Lux_FFI_Entity_Object_Get_Position
-*
-* return Entity X/Y Positions
-*/
+/**
+ * @brief Lux_FFI_Entity_Object_Get_Position
+ * @param wanted
+ * @param fixed_x
+ * @param fixed_y
+ * @param fixed_z
+ * @return
+ */
 uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z)
 {
 	#ifdef NETWORKENABLED
@@ -70,10 +78,12 @@ uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, 
 	return ( wanted != NULL );
 }
 
-/** Lux_FFI_Entity_Object_Get_Setting
-*
-* Entity * wanted, const char * key
-*/
+/**
+ * @brief Lux_FFI_Entity_Object_Get_Setting
+ * @param wanted
+ * @param key
+ * @return
+ */
 char * Lux_FFI_Entity_Object_Get_Setting( Entity * wanted, const char * key )
 {
 	char * string = NULL;
@@ -91,10 +101,12 @@ char * Lux_FFI_Entity_Object_Get_Setting( Entity * wanted, const char * key )
 	return string;
 }
 
-/** Lux_FFI_Entity_Object_Get_Setting_Number
-*
-* Entity * wanted, const char * key
-*/
+/**
+ * @brief Lux_FFI_Entity_Object_Get_Setting_Number
+ * @param wanted
+ * @param key
+ * @return
+ */
 int32_t Lux_FFI_Entity_Object_Get_Setting_Number(Entity * wanted, const char * key)
 {
 	int32_t response = 0;
@@ -221,13 +233,13 @@ uint32_t Lux_FFI_Entities_List( uint32_t map_id )
 
 	if ( map_id == 0 ) /* GLOBAL */
 	{
-		section = lux::world->GetEntities();
+		section = lux::gameworld->GetEntities();
 	}
 	else if ( map_id )/* Map */
 	{
-		if ( lux::world->GetMap( map_id ) )
+		if ( lux::gameworld->GetMap( map_id ) )
 		{
-			section = lux::world->GetMap( map_id )->GetEntities();
+			section = lux::gameworld->GetMap( map_id )->GetEntities();
 		}
 	}
 
@@ -255,13 +267,13 @@ char * Lux_FFI_Entities_Next( uint32_t map_id )
 
 	if ( map_id == 0 ) /* GLOBAL */
 	{
-		section = lux::world->GetEntities();
+		section = lux::gameworld->GetEntities();
 	}
 	else if ( map_id )/* Map */
 	{
-		if ( lux::world->GetMap( map_id ) )
+		if ( lux::gameworld->GetMap( map_id ) )
 		{
-			section = lux::world->GetMap( map_id )->GetEntities();
+			section = lux::gameworld->GetMap( map_id )->GetEntities();
 		}
 	}
 

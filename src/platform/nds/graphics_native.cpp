@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -438,7 +438,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_LoadTexture( LuxSprite * sprite, std::
 
 	if ( texure->pot )
 	{
-		size = lux::game->GetFile(sprite_filename, &data, false);
+		size = lux::game_data->GetFile(sprite_filename, &data, false);
 
 		if ( size )
 		{

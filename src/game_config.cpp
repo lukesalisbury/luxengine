@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013 Luke Salisbury
+Copyright © 2013-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -18,15 +18,15 @@ GameConfig::GameConfig()
 	this->has_config_file = false;
 	this->allow_all = false;
 
-	if ( lux::game && lux::game->valid )
+	if ( lux::game_data && lux::game_data->valid )
 	{
 		std::stringstream config_file;
 
-		if ( lux::game->GetStream("./"DIRECTORY_FILE, &config_file) )
+		if ( lux::game_data->GetStream("./"DIRECTORY_FILE, &config_file) )
 		{
 			has_config_file = true;
 		}
-		else if ( lux::game->GetStream("./game.mokoi", &config_file) )
+		else if ( lux::game_data->GetStream("./game.mokoi", &config_file) )
 		{
 			has_config_file = true;
 		}
@@ -40,9 +40,9 @@ GameConfig::GameConfig()
 
 		this->LoadFromStream(config_file);
 
-		if ( lux::game->ident )
+		if ( lux::game_data->ident )
 		{
-			this->path = lux::game->public_directory;
+			this->path = lux::game_data->GetPublicDirectory();
 
 			elix::File * file = new elix::File( this->path + "game.config" );
 			//this->LoadFromFile(file);
@@ -67,7 +67,7 @@ GameConfig::GameConfig()
 GameConfig::~GameConfig()
 {
 	/* Save if valid game */
-	if ( lux::game && lux::game->ident && has_config_file )
+	if ( lux::game_data && lux::game_data->ident && has_config_file )
 	{
 		if ( this->modified_values.size() )
 		{
@@ -93,6 +93,37 @@ GameConfig::~GameConfig()
 		}
 	}
 
+}
+
+bool GameConfig::Save()
+{
+	if ( lux::game_data && lux::game_data->ident && has_config_file )
+	{
+		if ( this->modified_values.size() )
+		{
+			this->modified_values.sort();
+			this->modified_values.unique();
+
+			elix::File * file = new elix::File( this->path + "game.config", true );
+
+			if ( file->Exist() )
+			{
+				file->WriteString("[Mokoi]\n");
+				std::list<std::string>::iterator iter = this->modified_values.begin();
+				while ( iter != this->modified_values.end() )
+				{
+					file->WriteString(*iter);
+					file->WriteString("=");
+					file->WriteString(this->values[*iter]);
+					file->WriteString("\n");
+					iter++;
+				}
+			}
+			delete file;
+			return true;
+		}
+	}
+	return false;
 }
 
 bool GameConfig::Has(std::string key)

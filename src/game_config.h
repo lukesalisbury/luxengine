@@ -15,6 +15,7 @@ class GameConfig : public ConfigResource
 		bool has_config_file;
 		bool allow_all;
 	public:
+		bool Save();
 		bool Has(std::string key);
 		bool AllowChanges( std::string key );
 

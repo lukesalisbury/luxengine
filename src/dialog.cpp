@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -31,7 +31,10 @@ void Lux_SetState( LuxState new_state )
 
 LuxState Lux_GetState( )
 {
-	return lux::engine->state;
+	if ( lux::engine )
+		return lux::engine->state;
+	else
+		return GAMEERROR;
 }
 
 bool LuxEngine::LoopDialog()
@@ -41,13 +44,18 @@ bool LuxEngine::LoopDialog()
 	return ( this->msgdialog == 1 ? true : false);
 }
 
-bool LuxEngine::EndDialog(LuxWidget dialog )
+bool LuxEngine::EndDialog( LuxWidget dialog )
 {
 	if ( dialog == DIALOGTEXT && this->msgdialog_return )
-		this->msgdialog_return->assign( lux::gui->_mainwidget->GetText() );
-	delete lux::gui; lux::gui = NULL;
+	{
+		this->msgdialog_return->assign( lux::gui->main_widget->GetText() );
+	}
+
+	NULLIFY( lux::gui );
 
 	lux::core->Idle();
+
+
 	return ( this->msgdialog == 1 ? true : false);
 }
 
@@ -115,6 +123,7 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "No Display. Message: " << text << std::endl;
 		return false;
 	}
+
 	uint16_t text_length = text.length() * 8;
 	uint16_t text_area_width;
 	LuxRect region = { 20, 29, 64, 50, 0 };
@@ -139,11 +148,12 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 		region.h += 20;
 	}
 
-	lux::gui = new UserInterface(region, lux::display);
+	lux::gui = new UserInterface(lux::display);
+	lux::gui->SetRegion( region );
 	lux::gui->AddChild(region, dialog, (LuxColour){150, 150, 200, 200}, text);
 	if ( dialog == DIALOGTEXT && answer)
 	{
-		lux::gui->_mainwidget->SetText( *answer );
+		lux::gui->main_widget->SetText( *answer );
 		this->msgdialog_return = answer;
 	}
 	else
@@ -171,13 +181,23 @@ bool LuxEngine::ShowDialog(std::string text, LuxWidget dialog, std::string * ans
 
 void LuxEngine::FatalError(std::string reason)
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, reason);
-	if ( lux::display == NULL )
-	{
-		lux::display = new DisplaySystem( 640, 480, 16, false );
-	}
-	this->ShowDialog(reason, DIALOGOK);
 	this->state = GAMEERROR;
+	if ( lux::core == NULL )
+	{
+		std::cout << reason << std::endl;
+		std::cerr << reason << std::endl;
+	}
+	else
+	{
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, reason);
+
+		if ( lux::display == NULL )
+		{
+			lux::display = new DisplaySystem( "System Error", 640, 480, 16, false );
+		}
+		this->ShowDialog(reason, DIALOGOK);
+	}
+
 }
 
 

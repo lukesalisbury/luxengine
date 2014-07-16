@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -94,12 +94,15 @@ void Player::SetControls( std::string controller_name )
 
 void Player::SetControls(uint8_t preset)
 {
-	std::string control_value;
-	std::string control_name = "player.controller";
-	control_name.append( 1, (char)(preset + '0'));
+	std::string control_value = "default";
+	if ( lux::config )
+	{
 
-	control_value = lux::config->GetString(control_name);
+		std::string control_name = "player.controller";
 
+		control_name.append( 1, (char)(preset + '0'));
+		control_value = lux::config->GetString(control_name);
+	}
 	this->SetControls( control_value );
 
 }
@@ -198,7 +201,7 @@ void Player::Loop()
 			this->timer = lux::core->GetTime();
 			if ( this->_entity )
 			{
-				this->_entity->displaymap = lux::world->active_map->Ident();
+				this->_entity->displaymap = lux::gameworld->active_map->Ident();
 				if ( lux::core->CreateMessage((uint8_t)4, true) )
 				{
 					lux::core->MessageAppend(this->_entity->x);
@@ -220,7 +223,7 @@ void Player::Loop()
 LuxSprite * Player::GetInputSprite( int8_t axis, int8_t key, int8_t pointer )
 {
 	LuxSprite * sprite = NULL;
-	if ( lux::media )
+	if ( lux::media != NULL )
 	{
 		if ( axis >= 0 && axis < 12 )
 		{

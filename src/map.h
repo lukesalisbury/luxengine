@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -32,28 +32,30 @@ class MokoiMap
 		friend class MapXMLReader;
 	public:
 		MokoiMap( std::string name );
+		MokoiMap( std::string name, uint32_t width, uint32_t height );
 		MokoiMap( elix::File *current_save_file );
 		~MokoiMap();
 
 	private:
 		/* Settings */
-		std::string _name;
+		std::string map_name;
 
-		bool _centerview; //Center View on middle of map or top-left
-		bool _loaded;
+		bool centered_view; //Center View on middle of map or top-left
+		bool loaded;
 		bool active;
-		bool _keep; //Keeps map in memory
-		bool _server;
-		bool resetmap;
-		uint8_t _wrap;
+		bool keep_memory;
+		bool keep_savedata;
+		bool server;
+		bool reset_map;
+		uint8_t wrap_mode;
 
-		LuxMapIdent _ident;
-		MapObject _background;
-		LuxColour _colour;
+		LuxMapIdent ident;
+		MapObject background_object;
+		LuxColour base_background_colour;
 
 		/* Entities */
-		std::string _entity;
-		EntitySection * _entities;
+		std::string entity_file_name;
+		EntitySection * entities;
 
 		/* Object Handling */
 		uint32_t object_cache_count;
@@ -62,10 +64,21 @@ class MokoiMap
 		void AddObjectToScreens(MapObject * object);
 		void RemoveObjectFromScreens(MapObject * object);
 
-		/* Positions */
-		std::map<uint32_t, MokoiMapScreen *> _screen;
-		std::map<uint32_t, MokoiMapScreen *> activescreens;
-		fixed _position[3];
+		/* Position */
+		fixed offset_position[3];
+
+		/**/
+		uint8_t grid[2];
+		uint8_t GetGrid( uint8_t axis );
+		void SetGrid( uint8_t axis_x, uint8_t axis_y ) { this->grid[0] = axis_x; this->grid[1] = axis_y; }
+
+		/* Snapshot */
+
+
+		/* Screens */
+		std::map<uint32_t, MokoiMapScreen *> screens;
+		std::map<uint32_t, MokoiMapScreen *> active_screens;
+
 
 		/* Dimensions */
 		uint32_t dimension_width;
@@ -85,8 +98,6 @@ class MokoiMap
 		bool Loop();
 		bool Close();
 
-
-
 		/* Settings */
 		void SetIdent( uint32_t ident );
 		void SetGridIdent( uint32_t local, uint32_t section );
@@ -95,13 +106,11 @@ class MokoiMap
 		uint32_t GridIdent();
 		uint32_t FileIdent();
 
+		bool IsDeletable() { return false; }
 		bool InSection(uint32_t section);
-		bool PartOfSection();
 
 		std::string Name();
 		void SetBackgroundModifier( LuxColour mod );
-
-
 
 		/* Data  */
 		bool Valid();
@@ -135,8 +144,12 @@ class MokoiMap
 
 
 		/* Save */
-		bool Save( elix::File *current_save_file );
-		bool Restore(elix::File *current_save_file);
+		bool HasSnapshot();
+		bool SaveSnapshot();
+		bool LoadSnapshot();
+
+		bool Save( elix::File * current_save_file );
+		bool Restore( elix::File * current_save_file );
 
 	private:
 		void InitialSetup( std::string name );

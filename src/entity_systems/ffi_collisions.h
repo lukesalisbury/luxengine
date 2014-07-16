@@ -23,4 +23,14 @@ int32_t Lux_FFI_Collision_Set_From_Object( uint32_t hash_entity, uint32_t object
 
 
 
+#if FFI_ALLOW_ENTITY_OBJECT
+int32_t Lux_FFI_Entity_Object_Collision_Set( Entity * wanted, int32_t rect, int32_t type, int32_t x, int32_t y, int32_t w, int32_t h );
+uint8_t Lux_FFI_Entity_Object_Collision_Get( Entity * wanted, int32_t rect, int32_t * x, int32_t * y, int32_t * w, int32_t * h );
+int32_t Lux_FFI_Entity_Object_Collision_Calculate( Entity * wanted );
+int32_t Lux_FFI_Entity_Object_Collision_Calculate_Current(Entity * wanted, uint32_t * entity_hit, int32_t * angle, int32_t * dist, int32_t * rect, int32_t * type );
+int32_t Lux_FFI_Entity_Object_Collision_Set_From_Object( Entity * wanted, uint32_t object_id, int32_t type );
+#endif // FFI_ALLOW_ENTITY_OBJECT
+
+
+
 #endif // FFI_COLLISIONS_H

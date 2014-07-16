@@ -17,4 +17,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 MapObject * Lux_FFI_Object_Get( uint32_t object_id );
 
 
+int32_t Lux_FFI_Audio_Play_Music( const char * file, int32_t loops, int32_t fadeLength );
+int32_t Lux_FFI_Audio_Play_Sound( const char * file, int32_t x, int32_t y  );
+int32_t Lux_FFI_Audio_Play_Dialog( uint32_t line );
+
+uint32_t Lux_FFI_String_Hash( const char * string );
+
 #endif // FFI_FUNCTIONS_H

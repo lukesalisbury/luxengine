@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -44,7 +44,7 @@ EntityManager::~EntityManager()
 
 void EntityManager::SetSaveMode(uint8_t mode)
 {
-	lux::entitysystems->SetSaveMode( mode );
+	lux::entity_system->SetSaveMode( mode );
 }
 
 uint32_t EntityManager::GetRandomID( std::string * id )
@@ -65,23 +65,23 @@ Entity * EntityManager::NewEntity(std::string id, std::string base, uint32_t map
 	{
 		return NULL;
 	}
-	Entity * new_entity = new Entity( base, id, map_id, lux::entitysystems->GetSystem(base) );
+	Entity * new_entity = new Entity( base, id, map_id, lux::entity_system->GetSystem(base) );
 	if ( new_entity->loaded )
 	{
 		if ( this->AddEntity( new_entity ) )
 		{
 			if ( map_id )
 			{
-				MokoiMap * map = lux::world->GetMap(map_id);
-				if ( map && map->_entities )
+				MokoiMap * map = lux::gameworld->GetMap(map_id);
+				if ( map && map->entities )
 				{
-					map->_entities->Append(new_entity);
+					map->entities->Append(new_entity);
 					return new_entity;
 				}
 			}
-			else if ( lux::world->_entities )
+			else if ( lux::gameworld->global_entities )
 			{
-				lux::world->_entities->Append(new_entity);
+				lux::gameworld->global_entities->Append(new_entity);
 				return new_entity;
 			}
 
@@ -95,9 +95,9 @@ Entity * EntityManager::GetEntity(uint32_t entity_id )
 {
 	if ( entity_id == entity_maphash )
 	{
-		if ( lux::world->active_map != NULL )
-			if ( lux::world->active_map->_entities != NULL)
-				return lux::world->active_map->_entities->parent;
+		if ( lux::gameworld->active_map != NULL )
+			if ( lux::gameworld->active_map->entities != NULL)
+				return lux::gameworld->active_map->entities->parent;
 			else
 				return NULL;
 		else
@@ -105,8 +105,8 @@ Entity * EntityManager::GetEntity(uint32_t entity_id )
 	}
 	else if ( entity_id == entity_mainhash )
 	{
-		if ( lux::world != NULL )
-			return lux::world->GetEntities()->parent;
+		if ( lux::gameworld != NULL )
+			return lux::gameworld->GetEntities()->parent;
 		else
 			return NULL;
 	}

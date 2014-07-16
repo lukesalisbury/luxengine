@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -132,7 +132,7 @@ void Lux_Native_LoadFont()
  @ fullscreen:
  - Returns true if successfull
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( std::string title,  uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
 {
 	int window_width = width;
 	int window_height = height;
@@ -422,9 +422,9 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map
 	uint8_t * data = NULL;
 	uint32_t size;
 	elix::Image * png = new elix::Image;
-	if ( lux::game )
+	if ( lux::game_data )
 	{
-		size = lux::game->GetFile("./sprites/" + name, &data, false);
+		size = lux::game_data->GetFile("./sprites/" + name, &data, false);
 		if ( size )
 		{
 			png->LoadFile(data, size);

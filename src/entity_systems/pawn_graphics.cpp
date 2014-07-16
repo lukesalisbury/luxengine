@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -28,7 +28,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 extern const AMX_NATIVE_INFO Graphics_Natives[];
 
-
+/**
+ * @brief Lux_PawnEntity_GetObject
+ * @param amx
+ * @param object_id
+ * @return
+ */
 MapObject * Lux_PawnEntity_GetObject(AMX * amx, uint32_t object_id )
 {
 	MapObject * object = NULL;
@@ -36,26 +41,25 @@ MapObject * Lux_PawnEntity_GetObject(AMX * amx, uint32_t object_id )
 	if ( wanted == NULL )
 		return object;
 
-	if ( lux::world->active_map )
+	if ( lux::gameworld->active_map )
 	{
 		if ( wanted->_mapid == 0 )
-			object = lux::world->GetObject(object_id);
+			object = lux::gameworld->GetObject(object_id);
 		else
-			object = lux::world->active_map->GetObject(object_id);
+			object = lux::gameworld->active_map->GetObject(object_id);
 	}
 	return object;
 }
 
+/** Sheet Functions */
 
-
-
-
-/** Misc Functions */
-
-/** pawnSheetReference
-* native SheetReference(sheet[], rev);
-*/
-static cell AMX_NATIVE_CALL pawnSheetReference(AMX *amx, const cell *params)
+/**
+ * @brief pawnSheetReference
+ * @param amx
+ * @param params (sheet{}, rev)
+ * @return
+ */
+static cell pawnSheetReference(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -66,10 +70,14 @@ static cell AMX_NATIVE_CALL pawnSheetReference(AMX *amx, const cell *params)
 	return 0;
 }
 
-/** pawnSheetReplace
-* native SheetReplace(old[], new[]);
-*/
-static cell AMX_NATIVE_CALL pawnSheetReplace(AMX *amx, const cell *params)
+
+/**
+ * @brief pawnSheetReplace
+ * @param amx
+ * @param params (old[], new[])
+ * @return
+ */
+static cell pawnSheetReplace(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -83,11 +91,13 @@ static cell AMX_NATIVE_CALL pawnSheetReplace(AMX *amx, const cell *params)
 	return 0;
 }
 
-/** pawnSheetSpriteDimension
-* native SheetSpriteDimension(sprite[], &w, &h);
-*
-*/
-static cell AMX_NATIVE_CALL pawnSheetSpriteDimension(AMX *amx, const cell *params)
+/**
+ * @brief pawnSheetSpriteDimension
+ * @param amx
+ * @param params (sprite[], &w, &h)
+ * @return
+ */
+static cell pawnSheetSpriteDimension(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -109,10 +119,14 @@ static cell AMX_NATIVE_CALL pawnSheetSpriteDimension(AMX *amx, const cell *param
 
 /** Graphics Functions */
 
-/** pawnGraphicsDraw
-* native GraphicsDraw(string[], type, x, y, z, w, h, c = 0xFFFFFFFF, string_size = sizeof string );
-*/
-static cell AMX_NATIVE_CALL pawnGraphicsDraw(AMX *amx, const cell *params)
+
+/**
+ * @brief pawnGraphicsDraw
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnGraphicsDraw(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 8 );
 
@@ -143,7 +157,7 @@ static cell AMX_NATIVE_CALL pawnGraphicsDraw(AMX *amx, const cell *params)
 /** pawnAnimationGetLength
 * native AnimationGetLength(sheet[], anim[]);
 */
-static cell AMX_NATIVE_CALL pawnAnimationGetLength(AMX *amx, const cell *params)
+static cell pawnAnimationGetLength(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -156,7 +170,7 @@ static cell AMX_NATIVE_CALL pawnAnimationGetLength(AMX *amx, const cell *params)
 /** pawnAnimationCreate
 * native AnimationCreate(string[], length);
 */
-static cell AMX_NATIVE_CALL pawnAnimationCreate(AMX *amx, const cell *params)
+static cell pawnAnimationCreate(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
 
@@ -168,7 +182,7 @@ static cell AMX_NATIVE_CALL pawnAnimationCreate(AMX *amx, const cell *params)
 /** pawnAnimationAddFrame
 * native AnimationAddFrame(string[], sprite[], string_size = sizeof string, sprite_size = sizeof sprite);
 */
-static cell AMX_NATIVE_CALL pawnAnimationAddFrame(AMX *amx, const cell *params)
+static cell pawnAnimationAddFrame(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -184,7 +198,7 @@ static cell AMX_NATIVE_CALL pawnAnimationAddFrame(AMX *amx, const cell *params)
 * native TextSprites(able);
 
 */
-static cell AMX_NATIVE_CALL pawnTextSprites(AMX *amx, const cell *params)
+static cell pawnTextSprites(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -201,7 +215,7 @@ static cell AMX_NATIVE_CALL pawnTextSprites(AMX *amx, const cell *params)
 /** pawnPolygonCreate
 * native PolygonCreate(string[]);
 */
-static cell AMX_NATIVE_CALL pawnPolygonCreate(AMX *amx, const cell *params)
+static cell pawnPolygonCreate(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
 	std::string name = Lux_PawnEntity_GetString(amx, params[1]);
@@ -213,7 +227,7 @@ static cell AMX_NATIVE_CALL pawnPolygonCreate(AMX *amx, const cell *params)
 * native PolygonAddpoint(string[], x, y, string_size = sizeof string);
 
 */
-static cell AMX_NATIVE_CALL pawnPolygonAddpoint(AMX *amx, const cell *params)
+static cell pawnPolygonAddpoint(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -228,7 +242,7 @@ static cell AMX_NATIVE_CALL pawnPolygonAddpoint(AMX *amx, const cell *params)
 * native ObjectCreate(string[], type, x, y, z, w, h, c = 0xFFFFFFFF, global = false, string_size = sizeof string);
 *
 */
-static cell AMX_NATIVE_CALL pawnObjectCreate(AMX *amx, const cell *p )
+static cell pawnObjectCreate(AMX *amx, const cell *p )
 {
 	ASSERT_PAWN_PARAM( amx, p, 9 );
 
@@ -246,7 +260,7 @@ static cell AMX_NATIVE_CALL pawnObjectCreate(AMX *amx, const cell *p )
 /** pawnObjectPosition
 * native ObjectPosition(id, x, y, z, w, h, pos = POSITION_MAP);
 */
-static cell AMX_NATIVE_CALL pawnObjectPosition(AMX *amx, const cell *params)
+static cell pawnObjectPosition(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 7 );
 
@@ -263,7 +277,7 @@ static cell AMX_NATIVE_CALL pawnObjectPosition(AMX *amx, const cell *params)
 /** pawnObjectInfo
 * native ObjectInfo(id, &w, &h);
 */
-static cell AMX_NATIVE_CALL pawnObjectInfo(AMX *amx, const cell *params)
+static cell pawnObjectInfo(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -290,7 +304,7 @@ static cell AMX_NATIVE_CALL pawnObjectInfo(AMX *amx, const cell *params)
 /** pawnObjectEffect
 * native ObjectEffect(id, colour, rotate, scale_w, scale_h, flipmode, _STYLES:style, colour2 = 0xFFFFFFFF);
 */
-static cell AMX_NATIVE_CALL pawnObjectEffect(AMX *amx, const cell *params)
+static cell pawnObjectEffect(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 8 );
 
@@ -311,7 +325,7 @@ static cell AMX_NATIVE_CALL pawnObjectEffect(AMX *amx, const cell *params)
 /** pawnObjectReplace
 * native ObjectReplace(id, string[], type);
 */
-static cell AMX_NATIVE_CALL pawnObjectReplace(AMX *amx, const cell *params)
+static cell pawnObjectReplace(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -327,7 +341,7 @@ static cell AMX_NATIVE_CALL pawnObjectReplace(AMX *amx, const cell *params)
 /** pawnObjectToggle
 * native ObjectToggle(id, show);
 */
-static cell AMX_NATIVE_CALL pawnObjectToggle(AMX *amx, const cell *params)
+static cell pawnObjectToggle(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -341,7 +355,7 @@ static cell AMX_NATIVE_CALL pawnObjectToggle(AMX *amx, const cell *params)
 /** pawnObjectFlag
 * native ObjectFlag(id, key, value);
 */
-static cell AMX_NATIVE_CALL pawnObjectFlag(AMX *amx, const cell *params)
+static cell pawnObjectFlag(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -354,7 +368,7 @@ static cell AMX_NATIVE_CALL pawnObjectFlag(AMX *amx, const cell *params)
 /** pawnObjectDelete
 * native ObjectDelete(id);
 */
-static cell AMX_NATIVE_CALL pawnObjectDelete(AMX *amx, const cell *params)
+static cell pawnObjectDelete(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
 
@@ -364,46 +378,14 @@ static cell AMX_NATIVE_CALL pawnObjectDelete(AMX *amx, const cell *params)
 
 }
 
-/** pawnObjectFollowPath
-* native ObjectFollowPath(object:id, speed, &x, &y, loop);
-*/
-static cell AMX_NATIVE_CALL pawnObjectFollowPath(AMX *amx, const cell *params)
-{
-	ASSERT_PAWN_PARAM( amx, params, 5 );
-
-	uint32_t object_id = (uint32_t)params[1];
-	int32_t fixed_speed = params[2];
-	int16_t x = 0;
-	int16_t y = 0;
-	uint8_t loop = params[5];
-
-	int32_t result = Lux_FFI_Path_Move_Object( object_id, fixed_speed, &x, &y, loop );
-
-	if ( result >= 0 )
-	{
-		cell * xptr = NULL;
-
-		xptr = amx_Address(amx, params[3]);
-		if (xptr)
-			*xptr = x;
-
-		xptr = amx_Address(amx, params[4]);
-		if (xptr)
-			*xptr = y;
-	}
-
-	return result;
-
-}
-
 
 /** Camera Functions */
 /** pawnCameraSetScroll
 * native CameraSetScroll(bool:scroll);
 */
-static cell AMX_NATIVE_CALL pawnCameraSetScroll(AMX *amx, const cell *params)
+static cell pawnCameraSetScroll(AMX *amx, const cell *params)
 {
-	lux::world->active_map->SetScrolling( (bool)params[1] );
+	lux::gameworld->active_map->SetScrolling( (bool)params[1] );
 	return 0;
 }
 
@@ -411,7 +393,7 @@ static cell AMX_NATIVE_CALL pawnCameraSetScroll(AMX *amx, const cell *params)
 /** pawnLayerSetRotation
 * native LayerSetRotation(layer, roll, pitch, yaw);
 */
-static cell AMX_NATIVE_CALL pawnLayerSetRotation(AMX *amx, const cell *params)
+static cell pawnLayerSetRotation(AMX *amx, const cell *params)
 {
 	Lux_FFI_Layer_Rotation( params[1], params[2], params[3], params[4] );
 
@@ -421,7 +403,7 @@ static cell AMX_NATIVE_CALL pawnLayerSetRotation(AMX *amx, const cell *params)
 /** pawnLayerSetOffset
 * native LayerSetOffset(layer, x, y);
 */
-static cell AMX_NATIVE_CALL pawnLayerSetOffset(AMX *amx, const cell *params)
+static cell pawnLayerSetOffset(AMX *amx, const cell *params)
 {
 	Lux_FFI_Layer_Offset( params[1], params[2], params[3] );
 
@@ -429,12 +411,10 @@ static cell AMX_NATIVE_CALL pawnLayerSetOffset(AMX *amx, const cell *params)
 }
 
 /** pawnLayerSetEffect
-* native LayerSetEffect(layer, x, y);
+* native LayerSetEffect(layer, x );
 */
-static cell AMX_NATIVE_CALL pawnLayerSetEffect(AMX *amx, const cell *params)
+static cell pawnLayerSetEffect(AMX *amx, const cell *params)
 {
-
-
 	Lux_FFI_Layer_Apply_Shader( params[1], params[2] );
 
 	return 0;
@@ -443,7 +423,7 @@ static cell AMX_NATIVE_CALL pawnLayerSetEffect(AMX *amx, const cell *params)
 /** pawnLayerColour
 * native LayerColour(layer, colour);
 */
-static cell AMX_NATIVE_CALL pawnLayerColour(AMX *amx, const cell *params)
+static cell pawnLayerColour(AMX *amx, const cell *params)
 {
 	Lux_FFI_Layer_Colour( params[1], params[2] );
 	return 0;
@@ -453,7 +433,6 @@ static cell AMX_NATIVE_CALL pawnLayerColour(AMX *amx, const cell *params)
 const AMX_NATIVE_INFO Graphics_Natives[] = {
 	/** Misc */
 	{ "GraphicsDraw", pawnGraphicsDraw },
-	{ "GraphicsType", pawnDeprecatedFunction },
 	{ "TextSprites", pawnTextSprites }, ///native TextSprites(able);
 
 	/** Sheet */
@@ -481,7 +460,7 @@ const AMX_NATIVE_INFO Graphics_Natives[] = {
 	{ "ObjectFlag", pawnObjectFlag }, ///native ObjectFlag(object:id, key, value);
 	{ "ObjectToggle", pawnObjectToggle }, ///native ObjectToggle(object:id, show);
 	{ "ObjectInfo", pawnObjectInfo }, ///native ObjectInfo(object:id, &w, &h);
-	{ "ObjectFollowPath", pawnObjectFollowPath }, ///native ObjectFollowPath(object:id, speed,&x, &y);
+
 
 	/** Camera Functions */
 	{ "CameraSetScroll", pawnCameraSetScroll }, ///native CameraSetScroll(bool:scroll);
@@ -490,5 +469,10 @@ const AMX_NATIVE_INFO Graphics_Natives[] = {
 	{ "LayerSetOffset", pawnLayerSetOffset }, ///native LayerSetOffset(layer, x, y);
 	{ "LayerSetEffect", pawnLayerSetEffect }, ///native LayerSetEffect(layer, effect);
 	{ "LayerColour", pawnLayerColour }, ///native LayerColour(layer, colour = 0xFFFFFFFF);
+
+	/** Shader Function */
+
+
+
 	{ 0, 0 }
 };

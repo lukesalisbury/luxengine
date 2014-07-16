@@ -34,6 +34,12 @@ typedef struct Player_Pointer {
 } Player_Pointer;
 */
 
+std::string Player::DefaultControllerSetting( )
+{
+	return "arrows|mouse|mouse|k04|k022|k07|k020|k026|k08|k040|k079|k080|k081|k082|m01|m02|m03|m04|k041|k040|k041|m01|k061";
+
+}
+
 void Player::ClearController( )
 {
 
@@ -45,6 +51,7 @@ bool Player::SetupController( std::string name )
 	memset(this->_buttonConfig, 0, sizeof(Player_Button)*20 );
 	memset(this->_controllerConfig, 0, sizeof(Player_Axis)*2 );
 	memset(&this->_pointerConfig, 0, sizeof(Player_Pointer) );
+
 
 	if ( name.compare(0, 7, "gamepad") == 0 )
 	{
@@ -85,7 +92,15 @@ bool Player::SetupController( std::string name )
 		std::vector<std::string> values;
 		std::string settings;
 
-		settings = lux::config->GetString("controller." + name);
+
+		if ( lux::config != NULL )
+		{
+			settings = lux::config->GetString("controller." + name);
+		}
+		else
+		{
+			settings = this->DefaultControllerSetting();
+		}
 		elix::string::Split(settings, "|", &values);
 
 		if ( values.size() == 23 )

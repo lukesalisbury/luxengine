@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -28,7 +28,7 @@ class DisplaySystem
 {
 public:
 	DisplaySystem();
-	DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+	DisplaySystem( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
 	~DisplaySystem();
 
 private:
@@ -36,6 +36,8 @@ private:
 	bool fullscreen;
 	MapObject background_object;
 	bool cache_sprites;
+
+	std::string title;
 
 	/* Layers */
 	std::vector<Layer *> _layers;
@@ -70,6 +72,7 @@ public:
 	void DrawCursor();
 	void SetRectFromText(LuxRect & area, std::string text, uint8_t text_width, uint8_t text_height );
 	void ShowMessages();
+	void UpdateResolution() {};
 
 	void SetTextFont( bool enable, std::string font_sheet );
 

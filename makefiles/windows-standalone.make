@@ -13,7 +13,7 @@ CPPFLAGS += -I"$(SUPPORTPATH)/include" -I"$(SUPPORTPATH)/include/SDL2" -I"$(CURL
 
 #Settings
 INCLUDE_PAWN = TRUE
-NETWORK = TRUE
+NETWORK = FALSE
 DOWNLOADER_MODE = none
 OPENGL = TRUE
 BUILDDEBUG = FALSE
@@ -44,5 +44,7 @@ PLATFORM_DIRECTORY = platform/sdl2
 PLATFORM_LIBS = -mwindows -lmingw32 -static -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2  -Wl,-Bdynamic -lws2_32 -lcurldll -lssl.dll -lcrypto.dll
 PLATFORM_LIBS += -lopengl32 -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lversion -luuid
 PLATFORM_FLAGS = -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DNO_ZLIB -DUSE_SDL2 -DDISPLAYMODE_OPENGL -DSTANDALONE -Dmain=SDL_main
-PLATFORM_OBJECTS = $(OBJDIR)/enet/win32.o 
+ifeq ($(NETWORK), TRUE)
+	PLATFORM_OBJECTS += $(OBJDIR)/enet/win32.o
+endif
 

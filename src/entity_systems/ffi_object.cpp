@@ -19,24 +19,25 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 /** Display Object Functions */
 
-/** Lux_FFI_Object_Create
-*
-* uint8_t global,
-* uint8_t type,
-* int32_t x,
-* int32_t y,
-* int32_t z,
-* uint16_t w,
-* uint16_t h,
-* uint32_t colour,
-* char * sprite
-*/
+/**
+ * @brief Lux_FFI_Object_Create
+ * @param global
+ * @param type
+ * @param x
+ * @param y
+ * @param z
+ * @param w
+ * @param h
+ * @param colour
+ * @param sprite
+ * @return
+ */
 uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const int32_t x, const int32_t y,
 								const int32_t z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite )
 {
 	MapObject * map_object = NULL;
 
-	if ( lux::world->active_map )
+	if ( lux::gameworld->active_map )
 	{
 		map_object = new MapObject( type );
 
@@ -54,24 +55,25 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 			map_object->sprite.assign( sprite );
 
 		if ( global )
-			return lux::world->AddObject(map_object, true);
+			return lux::gameworld->AddObject(map_object, true);
 		else
-			return lux::world->active_map->AddObject(map_object, true);
+			return lux::gameworld->active_map->AddObject(map_object, true);
 	}
 	return 0;
 
 }
 
 
-/** Lux_FFI_Object_Postion
-*
-* uint32_t object
-* int32_t x
-* int32_t y
-* int32_t z
-* uint16_t w
-* uint16_t h
-*/
+/**
+ * @brief Lux_FFI_Object_Postion
+ * @param object_id
+ * @param x
+ * @param y
+ * @param z
+ * @param w
+ * @param h
+ * @return
+ */
 int32_t Lux_FFI_Object_Postion( uint32_t object_id, const int32_t x, const int32_t y, const int32_t z,
 								const uint16_t w, const uint16_t h )
 {
@@ -111,12 +113,13 @@ int32_t Lux_FFI_Object_Postion( uint32_t object_id, const int32_t x, const int32
 }
 
 
-/** Lux_FFI_Object_Info
-*
-* uint32_t object_id,
-* uint16_t * w,
-* uint16_t * h
-*/
+/**
+ * @brief Lux_FFI_Object_Info
+ * @param object_id
+ * @param w
+ * @param h
+ * @return
+ */
 int32_t Lux_FFI_Object_Info( const uint32_t object_id, uint16_t * w, uint16_t * h )
 {
 	MapObject * map_object = NULL;
@@ -140,17 +143,18 @@ int32_t Lux_FFI_Object_Info( const uint32_t object_id, uint16_t * w, uint16_t * 
 }
 
 
-/** Lux_FFI_Object_Effect
-*
-* uint32_t object_id,
-* uint32_t primary_colour,
-* uint32_t secondary_colour,
-* uint16_t rotation,
-* uint16_t scale_xaxis,
-* uint16_t scale_yaxis,
-* uint8_t flip_image,
-* uint8_t style
-*/
+/**
+ * @brief Lux_FFI_Object_Effect
+ * @param object_id
+ * @param primary_colour
+ * @param secondary_colour
+ * @param rotation
+ * @param scale_xaxis
+ * @param scale_yaxis
+ * @param flip_image
+ * @param style
+ * @return
+ */
 int32_t Lux_FFI_Object_Effect( uint32_t object_id, uint32_t primary_colour, uint32_t secondary_colour, uint16_t rotation, uint16_t scale_xaxis, uint16_t scale_yaxis, uint8_t flip_image, uint8_t style )
 {
 	MapObject * map_object = NULL;
@@ -179,12 +183,13 @@ int32_t Lux_FFI_Object_Effect( uint32_t object_id, uint32_t primary_colour, uint
 
 
 
-/** Lux_FFI_Object_Replace
-*
-* uint32_t object_id,
-* uint8_t type,
-* char * sprite
-*/
+/**
+ * @brief Lux_FFI_Object_Replace
+ * @param object_id
+ * @param type
+ * @param sprite
+ * @return
+ */
 int32_t Lux_FFI_Object_Replace(uint32_t object_id, uint8_t type, const char *sprite )
 {
 	MapObject * map_object = NULL;
@@ -218,10 +223,13 @@ int32_t Lux_FFI_Object_Replace(uint32_t object_id, uint8_t type, const char *spr
 	return -2;
 }
 
-/** pawnObjectFlag
-*
-* uint32_t object_id, uint8_t key, int16_t value
-*/
+/**
+ * @brief Lux_FFI_Object_Flag
+ * @param object_id
+ * @param key
+ * @param value
+ * @return
+ */
 int16_t Lux_FFI_Object_Flag( uint32_t object_id, uint8_t key, int16_t value )
 {
    MapObject * map_object = NULL;
@@ -258,81 +266,90 @@ int16_t Lux_FFI_Object_Flag( uint32_t object_id, uint8_t key, int16_t value )
 	return 0;
 }
 
-/** Lux_FFI_Object_Delete
-*
-* uint32_t object_id
-*/
+/**
+ * @brief Lux_FFI_Object_Delete
+ * @param object_id
+ * @return
+ */
 uint8_t Lux_FFI_Object_Delete( uint32_t object_id )
 {
-	if ( lux::world->active_map )
+	if ( lux::gameworld->active_map )
 	{
 		if ( object_id >= OBJECT_GLOBAL_VALUE )
-			return lux::world->RemoveObject( object_id );
+			return lux::gameworld->RemoveObject( object_id );
 		else
-			return lux::world->active_map->RemoveObject( object_id );
+			return lux::gameworld->active_map->RemoveObject( object_id );
 	}
 	return 0;
 }
 
 
-/** Animation */
+/* Animation */
 
-/** Lux_FFI_Animation_Length
-*
-* const char * sheet, const char * sprite
-*/
+/**
+ * @brief Lux_FFI_Animation_Length
+ * @param sheet
+ * @param sprite
+ * @return
+ */
 uint32_t Lux_FFI_Animation_Length( const char * sheet, const char * sprite )
 {
 	return lux::display->isAnimation( sheet, sprite );
 }
 
-/** Lux_FFI_Animation_Create
-*
-* const char * animation_name
-*/
+/**
+ * @brief Lux_FFI_Animation_Create
+ * @param animation_name
+ * @return
+ */
 uint32_t Lux_FFI_Animation_Create( const char * animation_name )
 {
-
 	return 0;
 }
 
-/** Lux_FFI_Animation_Insert
-*
-* const char * animation_name, const char * sprite, const uint32_t time_ms
-*/
+/**
+ * @brief Lux_FFI_Animation_Insert
+ * @param animation_name
+ * @param sprite
+ * @param time_ms
+ * @return
+ */
 uint32_t Lux_FFI_Animation_Insert( const char * animation_name, const char * sprite, const uint32_t time_ms  )
 {
 	return 0;
 }
 
-/** Text */
+/* Text */
 
-/** pawnTextSprites
-* native TextSprites(able);
-
-*/
+/**
+ * @brief Lux_FFI_Text_Sprites
+ * @param able
+ * @param sheet
+ */
 void Lux_FFI_Text_Sprites( const uint8_t able, const char * sheet )
 {
-
 	lux::display->SetTextFont( (able ? true : false), sheet );
-
 }
 
-/** Polygon */
+/* Polygon */
 
-/** Lux_FFI_Polygon_Create
-*
-* const char * name
-*/
+/**
+ * @brief Lux_FFI_Polygon_Create
+ * @param name
+ * @return
+ */
 uint32_t Lux_FFI_Polygon_Create( const char * name )
 {
 	return 0;
 }
 
-/** Lux_FFI_Polygon_Add_Point
-*
-* const char * name, int32_t x, int32_t y
-*/
+/**
+ * @brief Lux_FFI_Polygon_Add_Point
+ * @param name
+ * @param x
+ * @param y
+ * @return
+ */
 uint32_t Lux_FFI_Polygon_Add_Point( const char * name, int32_t x, int32_t y )
 {
 

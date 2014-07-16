@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013 Luke Salisbury
+Copyright © 2013-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -41,12 +41,12 @@ class LuxSaveState
 
 		uint8_t GetSaveType();
 
-		bool SaveHibernateFile( WorldSystem * old_world, EntityManager * old_entity_manager );
-		bool SaveDataFile( WorldSystem * old_world, EntityManager * old_entity_manager, int32_t * info, uint32_t length  );
+		bool SaveHibernateFile( GameWorldSystem * old_world, EntityManager * old_entity_manager );
+		bool SaveDataFile( GameWorldSystem * old_world, EntityManager * old_entity_manager, int32_t * info, uint32_t length  );
 		bool SaveCookieFile( int32_t * info, uint32_t length );
 
-		bool LoadHibernateFile( WorldSystem * new_world, EntityManager * new_entity_manager );
-		bool LoadDataFile( WorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length );
+		bool LoadHibernateFile( GameWorldSystem * new_world, EntityManager * new_entity_manager );
+		bool LoadDataFile( GameWorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length );
 		bool LoadCookieFile( int32_t * info, uint32_t length  );
 
 	public:
@@ -54,8 +54,8 @@ class LuxSaveState
 		void SetInformation(uint32_t id, uint8_t save_file_type, std::string file_title, elix::Image * png_screen_shot );
 		void AllowPublicAccess();
 		void SetSlot( uint8_t slot );
-		bool Restore( WorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length );
-		bool Save( WorldSystem * old_world, EntityManager * old_entity_manager, int32_t * info, uint32_t length );
+		bool Restore( GameWorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length );
+		bool Save( GameWorldSystem * old_world, EntityManager * old_entity_manager, int32_t * info, uint32_t length );
 
 
 		bool ReadCookieFile( uint32_t requested_game_id );

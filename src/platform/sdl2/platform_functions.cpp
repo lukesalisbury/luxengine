@@ -26,9 +26,9 @@ SDL_Surface * Lux_SDL2_Image2Surface( std::string file )
 	uint8_t * data = NULL;
 	uint32_t size;
 	SDL_Surface * temp_surface = NULL;
-	if ( lux::game )
+	if ( lux::game_data )
 	{
-		size = lux::game->GetFile(file, &data, false);
+		size = lux::game_data->GetFile(file, &data, false);
 		if ( size )
 		{
 			elix::Image * png = new elix::Image(data, size);
@@ -52,9 +52,9 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 {
 	SDL_Surface * icon = NULL;
 
-	if ( lux::game )
+	if ( lux::game_data )
 	{
-		if ( lux::game->HasFile("./resources/icon256.png") )
+		if ( lux::game_data->HasFile("./resources/icon256.png") )
 			icon = Lux_SDL2_Image2Surface("./resources/icon256.png");
 		else
 			icon = Lux_SDL2_Image2Surface("./resources/icon32.png");

@@ -15,19 +15,24 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include "elix_endian.hpp"
 
-/** Lux_FFI_Layer_Rotation
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Layer_Rotation
+ * @param layer
+ * @param roll
+ * @param pitch
+ * @param yaw
+ */
 void Lux_FFI_Layer_Rotation( int8_t layer, int16_t roll, int16_t pitch, int16_t yaw )
 {
 	lux::display->ChangeLayerRotation( layer, roll, pitch, yaw );
 }
 
-/** Lux_FFI_Layer_Offset
-*
-* int8_t layer, int32_t x, int32_t y
-*/
+/**
+ * @brief Lux_FFI_Layer_Offset
+ * @param layer
+ * @param x
+ * @param y
+ */
 void Lux_FFI_Layer_Offset( int8_t layer, int32_t x, int32_t y )
 {
 	if ( layer == -1)
@@ -36,10 +41,11 @@ void Lux_FFI_Layer_Offset( int8_t layer, int32_t x, int32_t y )
 		lux::display->SetCameraView( layer, (fixed)x, (fixed)y );
 }
 
-/** Lux_FFI_Layer_Colour
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Layer_Colour
+ * @param layer
+ * @param colour
+ */
 void Lux_FFI_Layer_Colour( int8_t layer, uint32_t colour)
 {
 	cell_colour temp_colour;

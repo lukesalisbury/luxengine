@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -25,13 +25,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 void MokoiMap::NetworkMapSwitch()
 {
-	if ( this->_server && this->_ident.value )
+	if ( this->server && this->ident.value )
 	{
 		lux::screen::display("Syncing with Server. (Connection may have died)" );
 		lux::core->NetLock();
 		if ( lux::core->CreateMessage(7, 1) )
 		{
-			lux::core->MessageAppend(this->_ident.value);
+			lux::core->MessageAppend(this->ident.value);
 			lux::core->MessageSend();
 			lux::engine->SetState(NOUPDATE);
 		}
@@ -41,13 +41,13 @@ void MokoiMap::NetworkMapSwitch()
 
 void MokoiMap::NetworkMapLoop()
 {
-	if ( this->_server )
+	if ( this->server )
 	{
 		lux::core->NetLock();
-		if (this->_entities)
-			this->_entities->Switch(0,0);
+		if (this->entities)
+			this->entities->Switch(0,0);
 		lux::core->NetUnlock();
-		this->_server = false;
+		this->server = false;
 	}
 }
 

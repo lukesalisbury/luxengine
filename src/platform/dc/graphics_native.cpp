@@ -120,7 +120,7 @@ bool dreamcastLoadTexture(Texture * texure)
 	uint8_t * data = NULL;
 	uint32_t size = 0;
 
-	size = lux::game->GetFile(texure->file, &data, false);
+	size = lux::game_data->GetFile(texure->file, &data, false);
 
 	if ( size )
 	{
@@ -325,9 +325,9 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_LoadSpriteSheet(std::string name, std::
 	uint8_t * data = NULL;
 	uint32_t size;
 	elix::Image * png = new elix::Image;
-	if ( lux::game )
+	if ( lux::game_data )
 	{
-		size = lux::game->GetFile("./sprites/" + name, &data, false);
+		size = lux::game_data->GetFile("./sprites/" + name, &data, false);
 		if ( size )
 		{
 			png->LoadFile(data, size);

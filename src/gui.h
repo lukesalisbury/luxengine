@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -30,19 +30,18 @@ namespace colour {
 class UserInterface
 {
 	public:
-		UserInterface(LuxRect region, DisplaySystem * display);
-		UserInterface();
+		UserInterface( DisplaySystem * display );
 		~UserInterface();
 
-		Widget * _activechild, * _mainwidget;
-		LuxRect _region;
+		LuxRect ui_region;
 
 	private:
 		ObjectEffect background;
-		DisplaySystem * _display;
-		std::list<Widget *> _children;
+		DisplaySystem * internal_display;
+		std::list<Widget *> children_widget;
 		std::list<Widget *>::iterator children_iter;
 
+		Widget * active_child, * main_widget;
 		int16_t last_mouse;
 		Player * controller;
 		CSSParser * css;
@@ -52,6 +51,12 @@ class UserInterface
 		std::map<std::string, LuxSheet *> sheets;
 
 	public:
+		void SetRegion( LuxRect region ) { ui_region = region; }
+
+		CSSParser * GetCSSParser();
+		Widget * GetMainWidget() { return main_widget; }
+		DisplaySystem * GetDisplaySystem() { return internal_display; }
+
 		void SetBackground( ObjectEffect effect );
 		int32_t Loop( );
 		int32_t Show( );
@@ -64,7 +69,8 @@ class UserInterface
 		void RemoveAll();
 		int32_t ReturnResult();
 		void DrawWidget(Widget * child , uint16_t z);
-		CSSParser * GetCSSParser();
+
+
 	private:
 		LuxSheet * GetSheet( std::string file, uint16_t width, uint16_t height );
 		LuxSprite * GetSprite(std::string file , uint16_t width, uint16_t height );

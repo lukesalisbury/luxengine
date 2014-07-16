@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -41,7 +41,8 @@ bool LuxEngine::LoadDefaultLanguage()
 			region.w = x_cen;
 			region.h = (list_height*2) + 20;
 
-			lux::gui = new UserInterface( region, lux::display );
+			lux::gui = new UserInterface( lux::display );
+			lux::gui->SetRegion( region );
 			lux::gui->AddChild(region, DIALOG, (LuxColour){150, 150, 200, 200}, "Choose Langauge");
 
 			Widget * widget;
@@ -61,7 +62,8 @@ bool LuxEngine::LoadDefaultLanguage()
 			{
 				defaultlang = langlist[answer];
 			}
-			delete lux::gui; lux::gui = NULL;
+
+			NULLIFY( lux::gui );
 		}
 		langlist.clear();
 	}
@@ -72,10 +74,10 @@ bool LuxEngine::LoadLanguage(std::string lang)
 {
 	std::string buffer;
 
-	if ( lux::game->HasFile("./dialog/" + lang + ".txt") && lux::game->HasFile("./lang/" + lang + ".txt"))
+	if ( lux::game_data->HasFile("./dialog/" + lang + ".txt") && lux::game_data->HasFile("./lang/" + lang + ".txt"))
 	{
 		std::stringstream dialog_file("");
-		if ( lux::game->GetStream("./dialog/" + lang + ".txt", &dialog_file) )
+		if ( lux::game_data->GetStream("./dialog/" + lang + ".txt", &dialog_file) )
 		{
 			this->_dialog.clear();
 			while ( dialog_file.good() )
@@ -90,7 +92,7 @@ bool LuxEngine::LoadLanguage(std::string lang)
 		dialog_file.str("");
 
 		std::stringstream file("");
-		if ( lux::game->GetStream("./lang/" + lang + ".txt", &file) )
+		if ( lux::game_data->GetStream("./lang/" + lang + ".txt", &file) )
 		{
 			this->_strings.clear();
 			while ( file.good() )

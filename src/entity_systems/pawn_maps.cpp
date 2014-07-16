@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -17,366 +17,577 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 #include "pawn_helper.h"
 #include "world.h"
+#include "elix_string.hpp"
+
+#include "ffi_mask.h"
+#include "ffi_map.h"
+#include "ffi_world.h"
 
 extern const AMX_NATIVE_INFO Maps_Natives[];
 
 
-/** Mask Functions */
-/** pawnMaskRefresh
-* native MaskRefresh();
-*
-*/
-static cell AMX_NATIVE_CALL pawnMaskRefresh(AMX *amx, const cell *params)
+/* Mask Functions */
+/**
+ * @brief pawnMaskRefresh
+ * @param amx
+ * @param params ()
+ * @return
+ */
+static cell pawnMaskRefresh(AMX *amx, const cell *params )
 {
-	if ( lux::world->active_map != NULL )
-	{
-		lux::world->active_map->BuildMask();
-		return 1;
-	}
+	return Lux_FFI_Mask_Refresh();
+}
+
+/**
+ * @brief pawnMaskGetValue
+ * @param amx
+ * @param params (x, y, layer = 0)
+ * @return
+ */
+static cell pawnMaskGetValue(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 3 );
+	return Lux_FFI_Mask_Value_Get((uint16_t) params[1], (uint16_t) params[2], 0);
+}
+
+/**
+ * @brief pawnMaskFill
+ * @param amx
+ * @param params (x, y, w, h, value = 0)
+ * @return
+ */
+static cell pawnMaskFill(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 5 );
+
+	uint16_t x = (uint16_t) params[1];
+	uint16_t y = (uint16_t) params[2];
+	uint16_t w = (uint16_t) params[3];
+	uint16_t h = (uint16_t) params[4];
+	uint8_t	value = (uint8_t) params[5];
+
+	return Lux_FFI_Mask_Value_Fill( x, y, w, h, value );
+}
+
+/* Map Functions */
+/**
+ * @brief pawnMapSetOffset
+ * @param amx
+ * @param params (Fixed:x, Fixed:y)
+ * @return
+ */
+static cell pawnMapSetOffset(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+	Lux_FFI_Map_Offset_Set( (int32_t)params[1], (int32_t)params[2] );
 	return 0;
 }
 
-/** pawnMaskGetValue
-* native MaskGetValue(x, y, layer = 0);
-*
-*/
-static cell AMX_NATIVE_CALL pawnMaskGetValue(AMX *amx, const cell *params)
+/**
+ * @brief pawnMapGetOffset
+ * @param amx
+ * @param params (axis)
+ * @return
+ */
+static cell pawnMapGetOffset(AMX *amx, const cell *params)
 {
-	if (lux::world->active_map != NULL)
-		return (cell)lux::world->active_map->GetMaskValue((uint16_t) params[1], (uint16_t) params[2]);
-	return -1;
-}
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+	int32_t result = Lux_FFI_Map_Offset_Get( (uint8_t) params[1] );
 
-/** pawnMaskFill
-* native MaskFill(x, y, w,h, value = 0);
-*
-*/
-static cell AMX_NATIVE_CALL pawnMaskFill(AMX *amx, const cell *params)
-{
-	if (lux::world->active_map != NULL)
-	{
-		lux::world->active_map->FillMask((uint16_t) params[1], (uint16_t) params[2], (uint16_t) params[3], (uint16_t) params[4], (uint8_t) params[5]);
-		return 1;
-	}
-	return 0;
-}
-
-/** Map Functions */
-/** pawnMapSetOffset
-* native MapSetOffset(Fixed:x, Fixed:y);
-* Set the Current map offset
-*/
-static cell AMX_NATIVE_CALL pawnMapSetOffset(AMX *amx, const cell *params)
-{
-	lux::world->SetPosition( params[1], params[2] );
-	return 0;
-}
-
-/** pawnMapGetOffset
-* native Fixed:MapGetOffset();
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapGetOffset(AMX *amx, const cell *params)
-{
-	return (cell)lux::world->GetPosition(params[1], 'm');
+	return result;
 }
 
 /* File Code */
-
-
-/** pawnMapCreate
-* native MapCreate(map[], create_new = 0, maxlength=sizeof map);
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapCreate(AMX *amx, const cell *params)
+/**
+ * @brief pawnMapCurrentIdent
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapCurrentIdent(AMX *amx, const cell *params)
 {
-	std::string map_name = Lux_PawnEntity_GetString( amx, params[1] );
-	if ( map_name.length() )
+	cell responed = 0;
+	if ( lux::gameworld->active_map != NULL )
 	{
-		MokoiMap * map = lux::world->LoadMap(map_name, false, !!params[2]);
-		return map->Ident();
+		responed = lux::gameworld->active_map->Ident();
 	}
-	return 0;
+	return responed;
+
 }
 
-/** pawnMapChange
-* native MapChange(mapid, offsetx = -1, offsety = -1);
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapChange(AMX *amx, const cell *params)
-{
-	if (params[1] != 0)
-	{
-		uint32_t id = lux::world->SetMap((uint32_t)params[1], (int32_t)params[2], (int32_t)params[3]);
-		return (cell)id;
-	}
-	return 0;
-}
-
-/** pawnMapReset
-* native MapReset();
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapReset(AMX *amx, const cell *params)
-{
-	if ( lux::world->active_map )
-		return (cell) lux::world->active_map->Reset();
-	return -1;
-}
-
-/** pawnMapValid
-* native MapValid(mapid);
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapValid(AMX *amx, const cell *params)
-{
-	MokoiMap * map = lux::world->GetMap( (uint32_t)params[1] );
-	return (map != NULL);
-}
-
-/** pawnMapCurrent
-* native MapCurrent(map[], maxlength = sizeof map);
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapCurrent(AMX *amx, const cell *params)
-{
-	if (lux::world->active_map)
-	{
-		if ( params[2] > 2 )
-		{
-			cell * cptr = amx_Address(amx, params[1]);
-			Lux_PawnEntity_SetString(cptr, lux::world->active_map->Name().c_str(), params[2]);
-		}
-		return (cell) lux::world->active_map->Ident();
-	}
-	return 0;
-}
-/** pawnMapIdent
-* native MapIdent();
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapIdent(AMX *amx, const cell *params)
-{
-	if (lux::world->active_map)
-	{
-		return (cell) lux::world->active_map->Ident();
-	}
-	return 0;
-}
-
-
-/** pawnMapID
-* native MapID(map[], maxlength = sizeof map);
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapID(AMX *amx, const cell *params)
-{
-	std::string map_file = Lux_PawnEntity_GetString( amx, params[1] );
-	MokoiMap * map = NULL;
-	uint32_t map_id = lux::world->GetMapID(map_file);
-	if ( !map_id )
-	{
-		map = lux::world->LoadMap(map_file, false, false);
-		map_id = map->Ident();
-	}
-
-	return (cell)map_id;
-}
-
-/** pawnMapSave
-* native MapSave();
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapSave(AMX *amx, const cell *params)
-{
-	return 0;
-}
-
-/** pawnMapSaveToFile
-* native MapSaveToFile();
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapSaveToFile(AMX *amx, const cell *params)
-{
-	return 0;
-}
-
-/** pawnMapGetDimension
-* native MapGetDimension( &w, &h);
-* Get Dimension of Map or Screen
-*/
-static cell AMX_NATIVE_CALL pawnMapGetDimension(AMX *amx, const cell *params)
+/**
+ * @brief pawnMapCurrentGrid
+ * @param amx
+ * @param params ( &w, &h )
+ * @return
+ */
+static cell pawnMapCurrentGrid(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
 	cell responed = 0;
-	if ( lux::world->active_map != NULL )
+	if ( lux::gameworld->active_section != NULL )
 	{
-		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::world->active_map->map_width) );
-		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::world->active_map->map_height) );
+		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::gameworld->grid_position[0]) );
+		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::gameworld->grid_position[1]) );
 		responed = 1;
 	}
 	return responed;
 }
 
-
-
-/** Map Collision Functions */
-/** pawnMapCollisionList
-* native MapCollisionList();
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapCollisionList(AMX *amx, const cell *params)
+/**
+ * @brief pawnMapCurrentDimension
+ * @param amx
+ * @param params ( &w, &h )
+ * @return
+ */
+static cell pawnMapCurrentDimension(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	cell responed = 0;
+	if ( lux::gameworld->active_map != NULL )
+	{
+		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::gameworld->active_map->map_width) );
+		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::gameworld->active_map->map_height) );
+		responed = 1;
+	}
+	return responed;
+}
+
+/**
+ * @brief pawnMapSet
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapSet(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 3 );
+
+	uint32_t map_ident = (uint32_t)params[1];
+	int32_t offset_x = (int32_t)params[2];
+	int32_t offset_y = (int32_t)params[3];
+
+	return Lux_FFI_Map_Set( map_ident, offset_x, offset_y );
+
+}
+
+/**
+ * @brief pawnMapGetIdent
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapGetIdent(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	std::string map_file = Lux_PawnEntity_GetString( amx, params[1] );
+	uint8_t create_new = (uint8_t)params[2];
+
+	return Lux_FFI_Map_Get_Ident( map_file.c_str(), create_new );
+
+}
+
+/**
+ * @brief pawnMapReset
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapReset(AMX *amx, const cell *params)
+{
+	int32_t result = Lux_FFI_Map_Reset( );
+
+	return result;
+}
+
+/**
+ * @brief pawnMapSnapshot
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapSnapshot(AMX *amx, const cell *params)
+{
+	int32_t result = Lux_FFI_Map_Snapshot( );
+
+	return result;
+}
+
+/**
+ * @brief pawnMapDelete
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapDelete(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
+	uint32_t map_ident = (uint32_t)params[1];
+
+	return Lux_FFI_Map_Delete( map_ident );
+}
+
+/* Map Editing */
+
+/**
+ * @brief pawnMapEditNew
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapEditNew(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 4 );
+
+	uint32_t results = 0;
+
+	std::string map_file = Lux_PawnEntity_GetString(amx, params[1]);
+	uint32_t section_hash = (uint32_t)params[2];
+	uint32_t width = (int32_t)params[3];
+	uint32_t height = (int32_t)params[4];
+
+	results = Lux_FFI_Map_Edit_New( map_file.c_str(), section_hash, width, height );
+
+	return results;
+}
+
+/**
+ * @brief pawnMapEditSave
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapEditSave(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
+	uint32_t results = 0;
+	uint32_t map_ident = (uint32_t)params[1];
+
+	results = Lux_FFI_Map_Edit_Save( map_ident );
+
+	return results;
+}
+
+/**
+ * @brief pawnMapEditObjectCreate
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapEditObjectCreate(AMX *amx, const cell *params )
+{
+	ASSERT_PAWN_PARAM( amx, params, 9 );
+
+	uint32_t results = 0;
+
+	uint32_t map_ident = (uint32_t)params[1];
+	std::string sprite = Lux_PawnEntity_GetString(amx, params[2]);
+	uint8_t type = (uint8_t)params[3];
+
+	int32_t x = params[4];
+	int32_t y = params[5];
+	int32_t z = params[6];
+	uint16_t w = params[7];
+	uint16_t h = params[8];
+	uint32_t colour = params[9];
+
+	results = Lux_FFI_Map_Edit_Object_Create( map_ident, type, x, y, z, w,  h, colour, sprite.c_str() );
+
+	return results;
+
+}
+
+/**
+ * @brief pawnMapEditObjectPosition
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapEditObjectPosition(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 7 );
+
+	uint32_t map_ident = (uint32_t)params[1];
+	uint32_t object_id = params[2];
+	int32_t x = params[3];
+	int32_t y = params[4];
+	int32_t z = params[5];
+	uint16_t w = params[6];
+	uint16_t h = params[7];
+
+	return Lux_FFI_Map_Edit_Object_Postion( map_ident, object_id, x, y, z, w, h );
+}
+
+
+/**
+ * @brief pawnMapEditObjectEffect
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapEditObjectEffect(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 9 );
+
+	uint32_t map_ident = (uint32_t)params[1];
+	uint32_t object_id = params[2];
+	uint32_t colour1 = params[3];
+	uint32_t colour2 = params[9];
+
+	uint16_t rotate = params[4];
+	uint16_t scale_w = params[5];
+	uint16_t scale_h = params[6];
+	uint8_t flipmode = params[7];
+	uint8_t style = params[8];
+
+	return (cell)Lux_FFI_Map_Edit_Object_Effect( map_ident, object_id, colour1, colour2, rotate, scale_w, scale_h, flipmode, style );
+}
+
+/**
+ * @brief pawnMapEditObjectReplace
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapEditObjectReplace(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 4 );
+
+
+	uint32_t map_ident = (uint32_t)params[1];
+	uint32_t object_id = (uint32_t)params[2];
+	std::string sprite = Lux_PawnEntity_GetString(amx, params[3]);
+	uint8_t type = (uint8_t)params[4];
+
+	return (cell)Lux_FFI_Map_Edit_Object_Replace( map_ident, object_id, type, sprite.c_str() );
+}
+
+/**
+ * @brief pawnMapEditObjectFlag
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapEditObjectFlag(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 4 );
+
+	uint32_t map_ident = (uint32_t)params[1];
+	uint32_t object_id = (uint32_t)params[2];
+
+	uint8_t key = (uint8_t)params[3];
+	int16_t value = (int16_t)params[4];
+
+	return (cell)Lux_FFI_Map_Edit_Object_Flag( map_ident, object_id, key, value );
+}
+
+/**
+ * @brief pawnMapEditObjectDelete
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapEditObjectDelete(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	uint32_t map_ident = (uint32_t)params[1];
+	uint32_t object_id = (uint32_t)params[2];
+
+	return (cell)Lux_FFI_Map_Edit_Object_Delete( map_ident, object_id );
+
+}
+
+/* Map Collision Functions */
+
+/**
+ * @brief pawnMapCollisionList
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapCollisionList(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 	return -1;
 }
 
-/** pawnMapCollisionCurrent
-* native MapCollisionCurrent(objecta[], objectb[], &angle, &dist, &rect, length_a = sizeof objecta, length_b = sizeof objectb);
-*
-*/
-static cell AMX_NATIVE_CALL pawnMapCollisionCurrent(AMX *amx, const cell *params)
+/**
+ * @brief pawnMapCollisionCurrent
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnMapCollisionCurrent(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 	return -1;
 }
 
-/** Section Functions */
-/** pawnSectionSet
-* native SectionSet(section[] = SELF, gridx = -1, gridy = -1, maxlength = sizeof section );
-*
-*/
-static cell AMX_NATIVE_CALL pawnSectionSet(AMX *amx, const cell *params)
+/* World Functions */
+
+/**
+ * @brief WorldSet( section_hash, grid_x, grid_y )
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnWorldSet(AMX *amx, const cell *params)
 {
-	uint8_t gridx = (uint8_t)params[2];
-	uint8_t gridy = (uint8_t)params[3];
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
+	cell result = 0;
+	uint32_t section_hash = (uint32_t)params[1];
+	uint8_t grid_x = (uint8_t)params[2];
+	uint8_t grid_y = (uint8_t)params[3];
 
-	if ( params[2] == -1 )
-		gridx = ( !lux::world->active_section ? 0 : lux::world->_grid[0]);
-	if ( params[3] == -1 )
-		gridy = ( !lux::world->active_section ? 0 : lux::world->_grid[1]);
+	result = Lux_FFI_World_Set( section_hash, grid_x, grid_y );
 
-	if ( Lux_PawnEntity_HasString(amx, params[1]) )
-	{
-		std::string section = Lux_PawnEntity_GetString(amx, params[1]);
-		return lux::world->SwitchSection( section, gridx, gridy );
-	}
-	else
-	{
-		return lux::world->SetMap( gridx, gridy );
-	}
-
-	return 0;
+	return result;
 }
 
-/** pawnSectionGet
-* native SectionGet(name[], &gridx , &gridy, maxlength = sizeof section);
-*
-*/
-static cell AMX_NATIVE_CALL pawnSectionGet(AMX *amx, const cell *params)
+/**
+ * @brief pawnWorldGet
+ * @param amx
+ * @param params
+ * @return Map ID for selected location
+ */
+static cell pawnWorldGetIdent(AMX *amx, const cell *params)
 {
-	cell * cptr = amx_Address(amx, params[1]);
-	cell * xptr = amx_Address(amx, params[2]);
-	cell * yptr = amx_Address(amx, params[3]);
+	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-	if ( lux::world->active_section )
-	{
-		std::string section = lux::world->active_section->file;
+	cell result = 0;
+	uint32_t section_hash = (uint32_t)params[1];
+	uint8_t grid_x = (uint8_t)params[2];
+	uint8_t grid_y = (uint8_t)params[3];
 
-		if ( xptr )
-			*xptr = lux::world->_grid[0];
-		if ( yptr )
-			*yptr = lux::world->_grid[1];
+	result = Lux_FFI_World_Get( section_hash, grid_x, grid_y );
 
-		Lux_PawnEntity_SetString(cptr, section.c_str(), params[4]);
-		return lux::world->active_section->_id;
-	}
-	else
-	{
-		if ( xptr )
-			*xptr = -1;
-		if ( yptr )
-			*yptr = -1;
-		Lux_PawnEntity_SetString(cptr, (char*)"Not in a section", params[4]);
-	}
-	return 0;
+	return result;
 }
 
-/** pawnSectionLoad
-* native SectionLoad(section[], unload = 0, maxlength = sizeof section );
-*
-*/
-static cell AMX_NATIVE_CALL pawnSectionLoad(AMX *amx, const cell *params)
+/**
+ * @brief pawnWorldExist
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnWorldExist(AMX *amx, const cell *params)
 {
-	std::string section_name = "";
-	if ( Lux_PawnEntity_HasString(amx, params[1]) )
-	{
-		section_name = Lux_PawnEntity_GetString(amx, params[1]);
+	ASSERT_PAWN_PARAM( amx, params, 1 );
 
-		lux::world->LoadSection( section_name, false );
-	}
+	cell result = 0;
+	std::string section_name = Lux_PawnEntity_GetString( amx, params[1] );
 
-	return 0;
+	result = Lux_FFI_World_Exist( section_name.c_str() );
+
+	return result;
 }
 
-/** pawnSectionValid
-* native SectionValid(section[] = SELF, gridx, gridy, maxlength = sizeof section );
-*
-*/
-static cell AMX_NATIVE_CALL pawnSectionValid(AMX *amx, const cell *params)
+/**
+ * @brief pawnWorldEditNew
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnWorldEditNew(AMX *amx, const cell *params)
 {
-	uint16_t map_id = 0xFF;
-	std::string section = "";
-	if ( Lux_PawnEntity_HasString(amx, params[1]) )
-	{
-		section = Lux_PawnEntity_GetString(amx, params[1]);
-	}
+	ASSERT_PAWN_PARAM( amx, params, 1 );
 
-	map_id = lux::world->GetMapID( section, params[2], params[3] );
+	cell result = 0;
+	char * section_name = NULL;
+	uint8_t width = (uint8_t)params[2];
+	uint8_t height = (uint8_t)params[3];
 
-	if ( map_id >= 0x00 && map_id < 0x1000 )
-	{
-		return 1;
-	}
-	return 0;
+	result = Lux_FFI_World_Edit_New( section_name, width, height );
+
+	return result;
 }
 
+/**
+ * @brief pawnWorldEditSet
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnWorldEditSet(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 1 );
 
+	cell result = 0;
+	uint32_t section_hash = (uint32_t)params[1];
+	uint32_t map_ident = (uint32_t)params[2];
+	uint8_t grid_x = (uint8_t)params[3];
+	uint8_t grid_y = (uint8_t)params[4];
+
+	result = Lux_FFI_World_Edit_Set( section_hash, map_ident, grid_x, grid_y );
+
+	return result;
+}
+
+/**
+ * @brief pawnWorldEditSave
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnWorldEditSave(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
+	cell result = 0;
+	uint32_t section_hash = (uint32_t)params[1];
+
+	result = Lux_FFI_World_Edit_Save( section_hash );
+
+	return result;
+}
 
 const AMX_NATIVE_INFO Maps_Natives[] = {
-	/** Mask Functions */
+	/* Mask Functions */
 	{ "MaskRefresh", pawnMaskRefresh},
 	{ "MaskGetValue", pawnMaskGetValue},
 	{ "MaskFill", pawnMaskFill},
-	/** Map Functions */
-	{ "MapCreate", pawnMapCreate},
-	{ "MapChange", pawnMapChange},
-	{ "MapValid", pawnMapValid},
-	{ "MapCurrent", pawnMapCurrent},
-	{ "MapIdent", pawnMapIdent},
-	{ "MapID", pawnMapID},
-	{ "MapSave", pawnMapSave},
-	{ "MapSaveToFile", pawnMapSaveToFile},
-	{ "MapReset", pawnMapReset },
-	/** Map Functions */
-	{ "MapSetOffset", pawnMapSetOffset},
-	{ "MapGetOffset", pawnMapGetOffset},
-	{ "MapGridValid", pawnDeprecatedFunction},
-	{ "MapGetGrid", pawnDeprecatedFunction},
-	{ "MapGetFromGrid", pawnDeprecatedFunction},
-	{ "MapSetFromGrid", pawnDeprecatedFunction},
-	{ "MapGetID", pawnDeprecatedFunction},
-	{ "MapSet", pawnDeprecatedFunction},
-	/** Map collision Functions */
+	/* Map Offset Functions */
+	{ "MapOffsetSet", pawnMapSetOffset}, //MapSetOffset(Fixed:x, Fixed:y)
+	{ "MapOffsetGet", pawnMapGetOffset}, //MapGetOffset(axis)
+	/* Map Functions */
+	{ "MapCurrentIdent", pawnMapCurrentIdent }, // MapCurrentIdent( )
+	{ "MapCurrentDimension", pawnMapCurrentDimension }, // MapCurrentDimension(&w, &h )
+	{ "MapCurrentGrid", pawnMapCurrentGrid }, // MapCurrentGrid(&w, &h )
+	{ "MapSet", pawnMapSet}, //MapSet(map_ident, offset_x, offset_y )
+	{ "MapGetIdent", pawnMapGetIdent}, //MapGetIdent( map_file[], create_new )
+	{ "MapReset", pawnMapReset}, //MapReset()
+	{ "MapSnapshot", pawnMapSnapshot}, //MapSnapshot()
+	{ "MapDelete", pawnMapDelete}, //MapDelete( map_ident )
+	/* Map Edit Functions */
+	{ "MapEditNew", pawnMapEditNew}, //MapEditNew( map_file{}, section_hash, width, height)
+	{ "MapEditSave", pawnMapEditSave}, //MapEditSave( map_ident )
+	{ "MapEditObjectCreate", pawnMapEditObjectCreate}, //MapEditObjectCreate( map_ident, type, x, y, z, w, h, colour, sprite[] )
+	{ "MapEditObjectPosition", pawnMapEditObjectPosition}, //MapEditObjectPostion( map_ident, object_id, x, y, z, w, h )
+
+	{ "MapEditObjectEffect", pawnMapEditObjectEffect}, //MapEditObjectEffect( map_ident, object_id, primary_colour, secondary_colour, rotation, scale_xaxis, scale_yaxis, flip_image, style )
+	{ "MapEditObjectReplace", pawnMapEditObjectReplace}, //MapEditObjectReplace( map_ident, object_id, type, sprite[] )
+	{ "MapEditObjectFlag", pawnMapEditObjectFlag}, //MapEditObjectFlag( map_ident, object_id, key, value );
+	{ "MapEditObjectDelete", pawnMapEditObjectDelete}, //MapEditObjectDelete( map_ident, object_id )
+	/* Map collision Functions */
 	{ "MapCollisionCurrent", pawnMapCollisionCurrent },
 	{ "MapCollisionList", pawnMapCollisionList },
-	/** Map Object Functions */
+	/* Map Object Functions */
 	{ "MapObjectCurrent", pawnDeprecatedFunction },
 	{ "MapObjectList", pawnDeprecatedFunction },
-	/** Section Functions */
-	{ "SectionSet", pawnSectionSet },
-	{ "SectionGet", pawnSectionGet },
-	{ "SectionValid", pawnSectionValid },
-	{ "SectionLoad", pawnSectionLoad },
+	/* World Functions */
+	{ "WorldSet", pawnWorldSet }, //WorldSet( section_hash, grid_x, grid_y )
+	{ "WorldGetIdent", pawnWorldGetIdent }, //WorldGetIdent( section_hash, grid_x, grid_y )
+	{ "WorldExist", pawnWorldExist }, //WorldExist( section_name{} )
+	/* World Edit */
+	{ "WorldEditNew", pawnWorldEditNew }, //WorldEditNew( section_name{}, width, height )
+	{ "WorldEditSet", pawnWorldEditSet }, //WorldEditSet( section_hash, map_ident, x, y )
+	{ "WorldEditSave", pawnWorldEditSave }, //WorldEditSave( section_hash )
 	{ 0, 0 }
 };

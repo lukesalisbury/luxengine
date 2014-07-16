@@ -46,7 +46,7 @@
 
 typedef unsigned char   uchar;
 
-static cell AMX_NATIVE_CALL core_numargs(AMX *amx,const cell *params)
+static cell core_numargs(AMX *amx,const cell *params)
 {
   AMX_HEADER *hdr;
   uchar *data;
@@ -62,7 +62,7 @@ static cell AMX_NATIVE_CALL core_numargs(AMX *amx,const cell *params)
   return bytes/sizeof(cell);
 }
 
-static cell AMX_NATIVE_CALL core_getarg(AMX *amx,const cell *params)
+static cell core_getarg(AMX *amx,const cell *params)
 {
   AMX_HEADER *hdr;
   uchar *data;
@@ -79,7 +79,7 @@ static cell AMX_NATIVE_CALL core_getarg(AMX *amx,const cell *params)
   return value;
 }
 
-static cell AMX_NATIVE_CALL core_setarg(AMX *amx,const cell *params)
+static cell core_setarg(AMX *amx,const cell *params)
 {
   AMX_HEADER *hdr;
   uchar *data;
@@ -99,33 +99,12 @@ static cell AMX_NATIVE_CALL core_setarg(AMX *amx,const cell *params)
   return 1;
 }
 
-static cell AMX_NATIVE_CALL core_heapspace(AMX *amx,const cell *params)
+static cell core_heapspace(AMX *amx,const cell *params)
 {
   (void)params;
   return amx->stk - amx->hea;
 }
 
-static cell AMX_NATIVE_CALL core_funcidx(AMX *amx,const cell *params)
-{
-  char name[64];
-  cell *cstr;
-  int index,err,len;
-
-  cstr = amx_Address(amx, params[1]);
-
-  /* verify string length */
-  amx_StrLen(cstr,&len);
-  if (len>=64) {
-	amx_RaiseError(amx,AMX_ERR_NATIVE);
-	return 0;
-  } /* if */
-
-  amx_GetString(name,cstr,0,UNLIMITED);
-  err=amx_FindPublic(amx,name,&index);
-  if (err!=AMX_ERR_NONE)
-	index=-1;   /* this is not considered a fatal error */
-  return index;
-}
 
 void amx_swapcell(cell *pc)
 {
@@ -175,7 +154,7 @@ void amx_swapcell(cell *pc)
   *pc = value.c;
 }
 
-static cell AMX_NATIVE_CALL core_swapchars(AMX *amx,const cell *params)
+static cell core_swapchars(AMX *amx,const cell *params)
 {
   cell c;
 
@@ -187,7 +166,7 @@ static cell AMX_NATIVE_CALL core_swapchars(AMX *amx,const cell *params)
   return c;
 }
 
-static cell AMX_NATIVE_CALL core_tolower(AMX *amx,const cell *params)
+static cell core_tolower(AMX *amx,const cell *params)
 {
   (void)amx;
   #if defined __WIN32__ || defined _WIN32 || defined WIN32
@@ -201,7 +180,7 @@ static cell AMX_NATIVE_CALL core_tolower(AMX *amx,const cell *params)
   #endif
 }
 
-static cell AMX_NATIVE_CALL core_toupper(AMX *amx,const cell *params)
+static cell core_toupper(AMX *amx,const cell *params)
 {
   (void)amx;
   #if defined __WIN32__ || defined _WIN32 || defined WIN32
@@ -215,19 +194,19 @@ static cell AMX_NATIVE_CALL core_toupper(AMX *amx,const cell *params)
   #endif
 }
 
-static cell AMX_NATIVE_CALL core_min(AMX *amx,const cell *params)
+static cell core_min(AMX *amx,const cell *params)
 {
   (void)amx;
   return params[1] <= params[2] ? params[1] : params[2];
 }
 
-static cell AMX_NATIVE_CALL core_max(AMX *amx,const cell *params)
+static cell core_max(AMX *amx,const cell *params)
 {
   (void)amx;
   return params[1] >= params[2] ? params[1] : params[2];
 }
 
-static cell AMX_NATIVE_CALL core_clamp(AMX *amx,const cell *params)
+static cell core_clamp(AMX *amx,const cell *params)
 {
   cell value = params[1];
   if (params[2] > params[3])  /* minimum value > maximum value ! */
@@ -252,7 +231,7 @@ static unsigned long IL_StandardRandom_seed = INITIAL_SEED; /* always use a non-
 #if defined __BORLANDC__ || defined __WATCOMC__
   #pragma argsused
 #endif
-static cell AMX_NATIVE_CALL core_random(AMX *amx,const cell *params)
+static cell core_random(AMX *amx,const cell *params)
 {
 	unsigned long lo, hi, ll, lh, hh, hl;
 	unsigned long result;
@@ -281,7 +260,7 @@ static cell AMX_NATIVE_CALL core_random(AMX *amx,const cell *params)
 #endif
 
 
-static cell AMX_NATIVE_CALL pawnDebugWatch(AMX *amx,const cell *params)
+static cell pawnDebugWatch(AMX *amx,const cell *params)
 {
 	amx->flags |= AMX_FLAG_WATCH;
 	return 0;
@@ -295,7 +274,6 @@ const AMX_NATIVE_INFO core_Natives[] = {
   { "getarg",        core_getarg },
   { "setarg",        core_setarg },
   { "heapspace",     core_heapspace },
-  { "funcidx",       core_funcidx },
   { "swapchars",     core_swapchars },
   { "tolower",       core_tolower },
   { "toupper",       core_toupper },

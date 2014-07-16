@@ -126,7 +126,7 @@ void opengl_graphic_create_fbotexture( Texture & fbo )
  @ fullscreen:
  - Returns true if successfull
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
 {
 	int window_width = width;
 	int window_height = height;
@@ -143,7 +143,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 		native_window_flags |= SDL_WINDOW_FULLSCREEN;
 
 	native_render_flags = SDL_RENDERER_ACCELERATED;
-	native_window_title = lux::config->GetString("project.title")  + " (OpenGL Rendering)";
+	native_window_title = title  + " (OpenGL Rendering)";
 
 	//native_screen_match = lux::config->GetBoolean("screen.matchdisplay");
 
@@ -511,9 +511,9 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<ui
 	uint8_t * data = NULL;
 	uint32_t size;
 	elix::Image * png = new elix::Image;
-	if ( lux::game )
+	if ( lux::game_data )
 	{
-		size = lux::game->GetFile("./sprites/" + name, &data, false);
+		size = lux::game_data->GetFile("./sprites/" + name, &data, false);
 		if ( size )
 		{
 			png->LoadFile(data, size);

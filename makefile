@@ -30,7 +30,8 @@ OBJ += $(OBJDIR)/config.o $(OBJDIR)/css.o $(OBJDIR)/dialog.o $(OBJDIR)/engine.o 
 OBJ += $(OBJDIR)/gui_base.o $(OBJDIR)/gui_theme.o $(OBJDIR)/language.o $(OBJDIR)/map_object.o $(OBJDIR)/misc_functions.o $(OBJDIR)/mokoi_game.o $(OBJDIR)/player.o
 OBJ += $(OBJDIR)/save_system.o $(OBJDIR)/widget.o $(OBJDIR)/world.o $(OBJDIR)/object_effect.o $(OBJDIR)/sprite_sheet.o $(OBJDIR)/graphics_system.o $(OBJDIR)/lux_virtual_sprite.o
 OBJ += $(OBJDIR)/portal.o $(OBJDIR)/game_info.o $(OBJDIR)/display.o $(OBJDIR)/display_functions.o $(OBJDIR)/layers.o $(OBJDIR)/lux_canvas.o $(OBJDIR)/lux_sprite.o $(OBJDIR)/map.o
-OBJ += $(OBJDIR)/world_section.o  $(OBJDIR)/map_screen.o $(OBJDIR)/masks.o $(OBJDIR)/test_code.o $(OBJDIR)/lux_polygon.o $(OBJDIR)/map_xml_reader.o $(OBJDIR)/game_config.o
+OBJ += $(OBJDIR)/world_section.o $(OBJDIR)/map_screen.o $(OBJDIR)/masks.o $(OBJDIR)/test_code.o $(OBJDIR)/lux_polygon.o $(OBJDIR)/map_xml_reader.o $(OBJDIR)/game_config.o
+OBJ += $(OBJDIR)/options.o
 
 #Platform
 OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/audio.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/core.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/graphics_native.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/worker.o
@@ -41,8 +42,9 @@ OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_config.o
 OBJ += $(OBJDIR)/entity_systems/ffi.o $(OBJDIR)/entity_systems/ffi_object.o $(OBJDIR)/entity_systems/ffi_collisions.o
 OBJ += $(OBJDIR)/entity_systems/ffi_path.o $(OBJDIR)/entity_systems/ffi_entities.o $(OBJDIR)/entity_systems/ffi_player.o
 OBJ += $(OBJDIR)/entity_systems/ffi_functions.o $(OBJDIR)/entity_systems/ffi_shaders.o $(OBJDIR)/entity_systems/ffi_layer.o
-OBJ += $(OBJDIR)/entity_systems/ffi_spritesheet.o
-
+OBJ += $(OBJDIR)/entity_systems/ffi_spritesheet.o $(OBJDIR)/entity_systems/ffi_map.o $(OBJDIR)/entity_systems/ffi_world.o
+OBJ += $(OBJDIR)/entity_systems/ffi_game.o $(OBJDIR)/entity_systems/ffi_input.o $(OBJDIR)/entity_systems/ffi_mask.o
+OBJ += $(OBJDIR)/entity_systems/ffi_system.o
 #Tinyxml
 OBJ += $(OBJDIR)/tinyxml/tinyxml2.o $(OBJDIR)/tinyxml/tinyxml2ext.o
 
@@ -67,7 +69,7 @@ ifeq ($(INCLUDE_PAWN), TRUE)
 	OBJ += $(OBJDIR)/entity_systems/pawn_functions.o $(OBJDIR)/entity_systems/pawn_graphics.o $(OBJDIR)/entity_systems/pawn_player.o
 	OBJ += $(OBJDIR)/entity_systems/pawn_entity.o $(OBJDIR)/entity_systems/pawn_maps.o $(OBJDIR)/entity_systems/pawn_game.o
 	OBJ += $(OBJDIR)/entity_systems/pawn_network.o  $(OBJDIR)/entity_systems/pawn_online.o $(OBJDIR)/entity_systems/pawn_console.o
-	OBJ += $(OBJDIR)/entity_systems/pawn_time.o $(OBJDIR)/entity_systems/pawn_system.o
+	OBJ += $(OBJDIR)/entity_systems/pawn_time.o $(OBJDIR)/entity_systems/pawn_system.o $(OBJDIR)/entity_systems/pawn_input.o
 	OBJ += $(OBJDIR)/entity_systems/pawn_fixed.o $(OBJDIR)/entity_systems/pawn.o
 	OBJ += $(OBJDIR)/scripting/amx4/amx.o $(OBJDIR)/scripting/amx4/amxcons.o $(OBJDIR)/scripting/amx4/amxcore.o
 	

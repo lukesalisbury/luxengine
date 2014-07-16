@@ -41,13 +41,13 @@
 #define MULTIPLIER		1000L	/* 10^decimals */
 
 
-static cell AMX_NATIVE_CALL n_fixedixed(AMX *amx,const cell *params)
+static cell n_fixedixed(AMX *amx,const cell *params)
 {
 	(void)amx;
 	return params[1] * MULTIPLIER;
 }
 
-static cell AMX_NATIVE_CALL n_strfixed(AMX *amx,const cell *params)
+static cell n_strfixed(AMX *amx,const cell *params)
 {
 	char str[50],*ptr;
 	cell *cstr,intpart,decimals;
@@ -204,7 +204,7 @@ static cell AMX_NATIVE_CALL n_strfixed(AMX *amx,const cell *params)
 	}
 #endif
 
-static cell AMX_NATIVE_CALL n_fixedmul(AMX *amx,const cell *params)
+static cell n_fixedmul(AMX *amx,const cell *params)
 {
 #if !USE_ANSI_C
 #if defined __WATCOMC__ && defined __386__
@@ -316,7 +316,7 @@ static cell AMX_NATIVE_CALL n_fixedmul(AMX *amx,const cell *params)
 #endif
 }
 
-static cell AMX_NATIVE_CALL n_fixeddiv(AMX *amx,const cell *params)
+static cell n_fixeddiv(AMX *amx,const cell *params)
 {
 #if !USE_ANSI_C
 #if defined __WATCOMC__ && defined __386__
@@ -442,7 +442,7 @@ static cell AMX_NATIVE_CALL n_fixeddiv(AMX *amx,const cell *params)
 #endif
 }
 
-static cell AMX_NATIVE_CALL n_fixedmuldiv(AMX *amx,const cell *params)
+static cell n_fixedmuldiv(AMX *amx,const cell *params)
 {
 #if !USE_ANSI_C
 #if defined __WATCOMC__ && defined __386__
@@ -560,13 +560,13 @@ static cell AMX_NATIVE_CALL n_fixedmuldiv(AMX *amx,const cell *params)
 #endif
 }
 
-static cell AMX_NATIVE_CALL n_fixedfract(AMX *amx,const cell *params)
+static cell n_fixedfract(AMX *amx,const cell *params)
 {
 	(void)amx;
 	return params[1] % MULTIPLIER;
 }
 
-static cell AMX_NATIVE_CALL n_fixedround(AMX *amx,const cell *params)
+static cell n_fixedround(AMX *amx,const cell *params)
 {
 	cell value;
 
@@ -597,7 +597,7 @@ static cell AMX_NATIVE_CALL n_fixedround(AMX *amx,const cell *params)
 }
 
 /* Fixed:fsqroot(Fixed:value) */
-static cell AMX_NATIVE_CALL n_fixedsqroot(AMX *amx,const cell *params)
+static cell n_fixedsqroot(AMX *amx,const cell *params)
 {
 	cell value=params[1];
 	cell low=0;
@@ -636,7 +636,7 @@ static cell AMX_NATIVE_CALL n_fixedsqroot(AMX *amx,const cell *params)
 /* Fixed: fpower(Fixed:value, exponent)
  * note: x^n = exp(n*ln(x)), see http://yacas.sourceforge.net/Algochapter5.html
  */
-static cell AMX_NATIVE_CALL n_fixedpower(AMX *amx,const cell *params)
+static cell n_fixedpower(AMX *amx,const cell *params)
 {
 	#define LIMIT32	 146542L /* top value to calculate with extra digit, when a cell is 32-bit */
 	cell result[3] = {8,0,0};
@@ -709,7 +709,7 @@ static cell AMX_NATIVE_CALL n_fixedpower(AMX *amx,const cell *params)
 
 /* Fixed: fabs(Fixed:value)
  */
-static cell AMX_NATIVE_CALL n_fixedabs(AMX *amx,const cell *params)
+static cell n_fixedabs(AMX *amx,const cell *params)
 {
 	cell result=params[1];
 	(void)amx;
@@ -721,7 +721,7 @@ static cell AMX_NATIVE_CALL n_fixedabs(AMX *amx,const cell *params)
 /** n_fixedlog
 * native fixelog(Fixed:y, Fixed:x);
 */
-static cell AMX_NATIVE_CALL n_fixedlog(AMX *amx,const cell *params)
+static cell n_fixedlog(AMX *amx,const cell *params)
 {
 	/*
 	*   params[0] = number of bytes
@@ -757,7 +757,7 @@ static float n_toRadians(float angle, int radix)
 /** n_fixedsin
 * native fsin(Fixed:angle, mode);
 */
-static cell AMX_NATIVE_CALL n_fixedsin(AMX *amx,const cell *params)
+static cell n_fixedsin(AMX *amx,const cell *params)
 {
 	(void)amx;
 	float fA = n_toRadians( MAKE_FIXED_FLOAT(params[1]), params[2]);
@@ -767,7 +767,7 @@ static cell AMX_NATIVE_CALL n_fixedsin(AMX *amx,const cell *params)
 /** n_fixedcos
 * native fcos(Fixed:angle, mode);
 */
-static cell AMX_NATIVE_CALL n_fixedcos(AMX *amx,const cell *params)
+static cell n_fixedcos(AMX *amx,const cell *params)
 {
 	(void)amx;
 	float fA = n_toRadians( MAKE_FIXED_FLOAT(params[1]), params[2]);
@@ -776,7 +776,7 @@ static cell AMX_NATIVE_CALL n_fixedcos(AMX *amx,const cell *params)
 /** n_fixedtan
 * native ftan(Fixed:angle, mode);
 */
-static cell AMX_NATIVE_CALL n_fixedtan(AMX *amx,const cell *params)
+static cell n_fixedtan(AMX *amx,const cell *params)
 {
 	(void)amx;
 	float fA = n_toRadians( MAKE_FIXED_FLOAT(params[1]), params[2]);
@@ -787,7 +787,7 @@ static cell AMX_NATIVE_CALL n_fixedtan(AMX *amx,const cell *params)
 /** n_fixedatan2
 * native fixedatan2(Fixed:x, Fixed:y);
 */
-static cell AMX_NATIVE_CALL n_fixedatan2(AMX *amx, const cell *params)
+static cell n_fixedatan2(AMX *amx, const cell *params)
 {
 	float x, y, result;
 	x = MAKE_FIXED_FLOAT(params[1]);

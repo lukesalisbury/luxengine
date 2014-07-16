@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -57,36 +57,47 @@ void LuxWidget_MergeRect(LuxRect & a, WidgetObjectPosition& b)
 
 }
 
-UserInterface::UserInterface(LuxRect region, DisplaySystem * display)
+UserInterface::UserInterface(DisplaySystem * display )
 {
+	if ( display == NULL )
+	{
+		this->internal_display = new DisplaySystem( PROGRAM_NAME, 640, 480, 16, false );
+
+	}
+	else
+	{
+		this->internal_display = display;
+	}
+	this->ui_region = this->internal_display->screen_dimension;
+
 	this->controller = NULL;
-	this->_region = region;
-	this->_activechild = this->_mainwidget = NULL;
-	this->_display = display;
+	this->active_child = this->main_widget = NULL;
 
 	this->SetTheme();
 
 	this->controller = new Player(1,LOCAL);
-	this->children_iter = this->_children.begin();
+	this->children_iter = this->children_widget.begin();
 
 	this->last_mouse = 0;
 }
 
-UserInterface::UserInterface()
-{
-	this->_display = NULL;
-	this->controller = NULL;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "UserInterface Error: Region & DisplaySystem must be set" << std::endl;
-}
+
 
 UserInterface::~UserInterface()
 {
 	this->sprites.clear();
-	this->_children.clear();
+	this->children_widget.clear();
 
-	this->_display = NULL;
 	if ( this->controller )
+	{
 		delete this->controller;
+	}
+
+	if ( this->internal_display != lux::display )
+	{
+		NULLIFY( this->internal_display );
+	}
+
 }
 
 
@@ -106,16 +117,16 @@ LuxSheet * UserInterface::GetSheet( std::string file, uint16_t width, uint16_t h
 		uint16_t n = 0;
 		std::stringstream content;
 
-		if ( !lux::game )
+		if ( !lux::game_data )
 		{
 			check_local_filesystem = true;
 		}
 		else
 		{
-			check_local_filesystem = !lux::game->HasFile("./sprites/" + file);
+			check_local_filesystem = !lux::game_data->HasFile("./sprites/" + file);
 		}
 
-		current_sheet = new LuxSheet( file, this->_display->graphics );
+		current_sheet = new LuxSheet( file, this->internal_display->graphics );
 
 
 		for ( n = 0; n < 9; n++ )
@@ -208,7 +219,7 @@ Widget * UserInterface::AddWidgetChild(Widget * parent, LuxRect region, LuxWidge
 		region.y += parent->_region.y;
 
 	child = new Widget(region, ( type >= DIALOGEXT ? DIALOG : type), this->css);
-	this->_children.push_back(child);
+	this->children_widget.push_back(child);
 	return child;
 }
 
@@ -233,7 +244,7 @@ Widget * UserInterface::AddWidgetChild(Widget * parent, int32_t x, int32_t y, ui
 		region.y += parent->_region.y;
 
 	child = new Widget(region, ( type >= DIALOGEXT ? DIALOG : type), this->css);
-	this->_children.push_back(child);
+	this->children_widget.push_back(child);
 	if ( text.length() )
 	{
 		child->SetText(text);
@@ -248,7 +259,7 @@ Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, LuxColour colou
 
 	child = new Widget( region, ( type >= DIALOGEXT ? DIALOG : type), this->css );
 	child->SetText(text);
-	this->_children.push_back(child);
+	this->children_widget.push_back(child);
 	if ( type == DIALOGYESNO )
 	{
 		Widget * new_child1 = this->AddWidgetChild( child, (LuxRect){-100, -24, 40, 20, 6000}, BUTTON );
@@ -259,14 +270,14 @@ Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, LuxColour colou
 		new_child2->SetText("No");
 		new_child2->SetValue(2);
 
-		this->_activechild = child;
+		this->active_child = child;
 	}
 	else if ( type == DIALOGOK )
 	{
 		Widget * new_child1 = this->AddWidgetChild( child, (LuxRect){-50, -24, 40, 20, 6000}, BUTTON );
 		new_child1->SetText("Okay");
 		new_child1->SetValue(1);
-		this->_activechild = child;
+		this->active_child = child;
 
 	}
 	else if ( type == DIALOGTEXT )
@@ -282,8 +293,8 @@ Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, LuxColour colou
 		new_child2->SetValue(1);
 		new_child1->_focus = true;
 		new_child1->SetValue(1);
-		this->_activechild = new_child1;
-		this->_mainwidget = new_child1;
+		this->active_child = new_child1;
+		this->main_widget = new_child1;
 	}
 
 	return child;
@@ -291,7 +302,7 @@ Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, LuxColour colou
 
 void UserInterface::DrawWidget(Widget * child, uint16_t z)
 {
-	if ( child == NULL || !this->_display )
+	if ( child == NULL || !this->internal_display )
 	{
 		return;
 	}
@@ -315,7 +326,7 @@ void UserInterface::DrawWidget(Widget * child, uint16_t z)
 			switch( object->type )
 			{
 				case 'r':
-					this->_display->graphics.DrawRect( area, object->colours[cur_state] );
+					this->internal_display->graphics.DrawRect( area, object->colours[cur_state] );
 					break;
 				case 'q': /* Thobber */
 				{
@@ -326,35 +337,35 @@ void UserInterface::DrawWidget(Widget * child, uint16_t z)
 						child->_value = 0;
 					_WidgetStates q_state = (_WidgetStates)child->_value;
 
-					this->_display->graphics.DrawCircle( area, object->colours[q_state] );
+					this->internal_display->graphics.DrawCircle( area, object->colours[q_state] );
 					break;
 				}
 				case OBJECT_CIRCLE:
-					this->_display->graphics.DrawCircle( area, object->colours[cur_state] );
+					this->internal_display->graphics.DrawCircle( area, object->colours[cur_state] );
 					break;
 				case OBJECT_LINE:
-					this->_display->graphics.DrawLine( area, object->colours[cur_state] );
+					this->internal_display->graphics.DrawLine( area, object->colours[cur_state] );
 					break;
 				case OBJECT_TEXT:
-					this->_display->graphics.DrawText(object->text, area, object->colours[cur_state], false );
+					this->internal_display->graphics.DrawText(object->text, area, object->colours[cur_state], false );
 					break;
 				case OBJECT_IMAGE:
 					spr = this->GetSprite(object->text, object->image_width, object->image_height );
 					if ( spr )
-						this->_display->graphics.DrawSprite( spr, area, default_fx );
+						this->internal_display->graphics.DrawSprite( spr, area, default_fx );
 					else
-						this->_display->graphics.DrawRect( area, default_fx );
+						this->internal_display->graphics.DrawRect( area, default_fx );
 					spr = NULL;
 					break;
 				case OBJECT_SPRITE:
 					if ( child->GetData() )
 					{
 						spr = (LuxSprite*)child->GetData();
-						this->_display->graphics.DrawSprite( spr, area, default_fx );
+						this->internal_display->graphics.DrawSprite( spr, area, default_fx );
 						spr = NULL;
 					}
 					else
-						this->_display->graphics.DrawRect( area, default_fx );
+						this->internal_display->graphics.DrawRect( area, default_fx );
 					break;
 				default:
 					break;
@@ -368,8 +379,8 @@ void UserInterface::AddChild(Widget * child)
 {
 	if ( child )
 	{
-		this->_children.push_back(child);
-		this->_activechild = child;
+		this->children_widget.push_back(child);
+		this->active_child = child;
 	}
 }
 
@@ -377,20 +388,20 @@ void UserInterface::RemoveChild(Widget * child)
 {
 	if (child)
 	{
-		if ( this->_activechild == child )
+		if ( this->active_child == child )
 		{
-			this->_activechild = NULL;
+			this->active_child = NULL;
 		}
-		this->_children.remove(child);
-		this->children_iter = this->_children.begin();
+		this->children_widget.remove(child);
+		this->children_iter = this->children_widget.begin();
 	}
 }
 
 void UserInterface::RemoveAll()
 {
-	this->_activechild = NULL;
-	this->_children.clear();
-	this->children_iter = this->_children.begin();
+	this->active_child = NULL;
+	this->children_widget.clear();
+	this->children_iter = this->children_widget.begin();
 }
 
 int32_t UserInterface::ReturnResult()
@@ -399,7 +410,7 @@ int32_t UserInterface::ReturnResult()
 	while ( !return_value )
 	{
 
-		this->_display->DrawGameStatic();
+		this->internal_display->DrawGameStatic();
 		return_value = this->Loop();
 	}
 	return return_value;
@@ -413,29 +424,29 @@ void UserInterface::SetBackground( ObjectEffect effect )
 
 int32_t UserInterface::Show()
 {
-	if ( !this->_display )
+	if ( !this->internal_display )
 		return 1;
 
 	uint16_t z = 7000;
 	std::list<Widget *>::iterator wid_iter;
 
-	this->_region.z = z;
-	this->_display->graphics.DrawRect(this->_region, this->background);
-	if ( this->_children.size() )
+	this->ui_region.z = z;
+	this->internal_display->graphics.DrawRect(this->ui_region, this->background);
+	if ( this->children_widget.size() )
 	{
-		for ( wid_iter = this->_children.begin(); wid_iter != this->_children.end(); wid_iter++ )
+		for ( wid_iter = this->children_widget.begin(); wid_iter != this->children_widget.end(); wid_iter++ )
 		{
 			this->DrawWidget((*wid_iter), ++z);
 		}
 	}
-	this->_display->graphics.Show();
+	this->internal_display->graphics.Show();
 	return 1;
 }
 
 
 int32_t UserInterface::Loop()
 {
-	if ( !this->_display || !this->controller || !lux::core )
+	if ( !this->internal_display || !this->controller || !lux::core )
 		return 0;
 
 	std::list<Widget *>::iterator wid_iter;
@@ -444,17 +455,17 @@ int32_t UserInterface::Loop()
 	uint16_t key_event = 0;
 
 	// Set a Active Child Widget
-	if ( this->_children.size() )
+	if ( this->children_widget.size() )
 	{
-		if ( !this->_activechild )
+		if ( !this->active_child )
 		{
-			this->_activechild = (*this->_children.begin());
+			this->active_child = (*this->children_widget.begin());
 		}
 	}
 
 
 	/* Update Inputs */
-	lux::core->RefreshInput( this->_display );
+	lux::core->RefreshInput( this->internal_display );
 	this->controller->Loop();
 
 	int16_t confirm = (this->controller->GetButton(PLAYER_CONFIRM) > 0);
@@ -471,8 +482,8 @@ int32_t UserInterface::Loop()
 		move_y /= 160;
 
 	// Pointer Events
-	wid_iter = this->_children.begin();
-	while( wid_iter != this->_children.end())
+	wid_iter = this->children_widget.begin();
+	while( wid_iter != this->children_widget.end())
 	{
 		Widget * w = (*wid_iter);
 		if ( Lux_Util_PointCollide( w->_region, mouse_x, mouse_y ) )
@@ -489,7 +500,7 @@ int32_t UserInterface::Loop()
 					if ( !w->SendEvent(1) )
 						return_value = w->GetValue();
 					else
-						this->_activechild = w;
+						this->active_child = w;
 				}
 			}
 			else
@@ -507,96 +518,96 @@ int32_t UserInterface::Loop()
 	// Axis Events
 	if ( move_y > 0 )
 	{
-		if ( this->_children.begin() == this->_children.end() ) //do nothing
+		if ( this->children_widget.begin() == this->children_widget.end() ) //do nothing
 		{
-			this->_activechild = NULL;
+			this->active_child = NULL;
 		}
-		else if ( this->children_iter == this->_children.end() )
+		else if ( this->children_iter == this->children_widget.end() )
 		{
-			this->children_iter = this->_children.begin();
-			this->_activechild = (*this->children_iter);
+			this->children_iter = this->children_widget.begin();
+			this->active_child = (*this->children_iter);
 		}
 		else
 		{
 			this->children_iter++;
-			if ( this->children_iter != this->_children.end() )
+			if ( this->children_iter != this->children_widget.end() )
 			{
-				this->_activechild = (*this->children_iter);
+				this->active_child = (*this->children_iter);
 			}
 			else
 			{
-				this->_activechild = NULL;
+				this->active_child = NULL;
 			}
 		}
 
 	}
 	else if ( move_y < 0 )
 	{
-		if ( this->_children.begin() == this->_children.end() ) //do nothing
+		if ( this->children_widget.begin() == this->children_widget.end() ) //do nothing
 		{
-			this->_activechild = NULL;
+			this->active_child = NULL;
 		}
-		else if ( this->children_iter == this->_children.begin() )
+		else if ( this->children_iter == this->children_widget.begin() )
 		{
-			this->children_iter = this->_children.end();
+			this->children_iter = this->children_widget.end();
 			this->children_iter--;
-			this->_activechild = (*this->children_iter);
+			this->active_child = (*this->children_iter);
 		}
 		else
 		{
 			this->children_iter--;
-			this->_activechild = (*this->children_iter);
+			this->active_child = (*this->children_iter);
 		}
 	}
 
 
 
 	// Button Events
-	if ( this->_activechild && !return_value )
+	if ( this->active_child && !return_value )
 	{
-		this->_activechild->_focus = true;
+		this->active_child->_focus = true;
 
-		if ( this->_activechild->GetState() == HOVER )
-			this->_activechild->SetState( ACTIVEHOVER );
-		else if ( this->_activechild->GetState() == PRESSED )
-			this->_activechild->SetState( ACTIVEPRESSED );
+		if ( this->active_child->GetState() == HOVER )
+			this->active_child->SetState( ACTIVEHOVER );
+		else if ( this->active_child->GetState() == PRESSED )
+			this->active_child->SetState( ACTIVEPRESSED );
 		else
-			this->_activechild->SetState( ACTIVE );
+			this->active_child->SetState( ACTIVE );
 
 		if ( confirm )
-			if ( !this->_activechild->SendEvent( confirm ) )
-				return_value = this->_activechild->GetValue();
+			if ( !this->active_child->SendEvent( confirm ) )
+				return_value = this->active_child->GetValue();
 
 		if ( cancel )
-			if ( !this->_activechild->SendEvent( cancel ) )
-				return_value = this->_activechild->GetValue();
+			if ( !this->active_child->SendEvent( cancel ) )
+				return_value = this->active_child->GetValue();
 	}
 
 	// Keyboard Events
-	while ( lux::core->InputLoopGet(this->_display, key_event) )
+	while ( lux::core->InputLoopGet(this->internal_display, key_event) )
 	{
 		if ( key_event == 27 )
 		{
 			return_value = GUI_EXIT;
 		}
 
-		if ( this->_activechild != NULL && !return_value )
+		if ( this->active_child != NULL && !return_value )
 		{
-			if ( !this->_activechild->SendEvent( key_event ) )
+			if ( !this->active_child->SendEvent( key_event ) )
 			{
-				return_value = this->_activechild->GetValue();
+				return_value = this->active_child->GetValue();
 			}
 		}
 	}
 
 
 	/* Start Drawing */
-	this->_region.z = z;
-	this->_display->graphics.DrawRect(this->_region, this->background);
+	this->ui_region.z = z;
+	this->internal_display->graphics.DrawRect(this->ui_region, this->background);
 
-	if (this->_children.size())
+	if (this->children_widget.size())
 	{
-		for ( wid_iter = this->_children.begin(); wid_iter != this->_children.end(); wid_iter++ )
+		for ( wid_iter = this->children_widget.begin(); wid_iter != this->children_widget.end(); wid_iter++ )
 		{
 			this->DrawWidget((*wid_iter), ++z);
 		}
@@ -604,10 +615,10 @@ int32_t UserInterface::Loop()
 
 	last_mouse = mouse_button;
 
-	this->_display->DisplayOverlay();
+	this->internal_display->DisplayOverlay();
 
-	this->_display->graphics.DisplayPointer(1, mouse_x, mouse_y, this->controller->PlayerColour );
-	this->_display->graphics.Show();
+	this->internal_display->graphics.DisplayPointer(1, mouse_x, mouse_y, this->controller->PlayerColour );
+	this->internal_display->graphics.Show();
 	lux::core->Idle( );
 
 	return return_value;

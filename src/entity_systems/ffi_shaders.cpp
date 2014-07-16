@@ -9,7 +9,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
-
 #include "ffi_shaders.h"
 #include "stdheader.h"
 #include "map_object.h"
@@ -18,10 +17,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "layers.h"
 
 
-/** Lux_FFI_Layer_Apply_Shader
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Layer_Apply_Shader
+ * @param layer
+ * @param shader
+ * @return
+ */
 int32_t Lux_FFI_Layer_Apply_Shader( uint32_t layer, uint8_t shader )
 {
 	if ( lux::display == NULL )
@@ -43,24 +44,26 @@ int32_t Lux_FFI_Layer_Apply_Shader( uint32_t layer, uint8_t shader )
 
 }
 
-/** Lux_FFI_Object_Apply_Shader
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Object_Apply_Shader
+ * @param object_id
+ * @param shader
+ * @return
+ */
 int32_t Lux_FFI_Object_Apply_Shader(uint32_t object_id, uint8_t shader )
 {
 	return 0;
 }
 
-/** Lux_FFI_Shaders_Create
-*
-*
-*/
+/**
+ * @brief Lux_FFI_Shaders_Create
+ * @param shader
+ * @param vertex_shader
+ * @param fragment_shader
+ * @return
+ */
 int32_t Lux_FFI_Shaders_Create( uint8_t shader, char * vertex_shader, char * fragment_shader )
 {
-
-
-
 	return 0;
 }
 

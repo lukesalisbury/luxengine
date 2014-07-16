@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -74,7 +74,7 @@ bool LuxSaveState::Exists( uint8_t slot )
 {
 	bool save_file_exists = false;
 	/* File Name */
-	this->file_name = lux::game->public_directory;
+	this->file_name = lux::game_data->public_directory;
 	if ( slot == 0x00  )
 	{
 		this->save_type = LUX_SAVE_HIBERNATE_TYPE;
@@ -126,7 +126,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager )
 {
 	uint8_t allow_access = 0;
 
-	if ( lux::game->public_directory.length() == 0 )
+	if ( lux::game_data->public_directory.length() == 0 )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Invalid Save Directory." <<  std::endl;
 		return false;
@@ -138,7 +138,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager )
 
 
 	/* File Name */
-	this->file_name = lux::game->public_directory;
+	this->file_name = lux::game_data->public_directory;
 
 	if ( this->save_game_slot == 0x00  )
 	{
@@ -186,7 +186,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager )
 /* LuxSaveState::Save
  *
  */
-bool LuxSaveState::Save(WorldSystem * old_world, EntityManager * old_entity_manager , int32_t *info, uint32_t length)
+bool LuxSaveState::Save(GameWorldSystem * old_world, EntityManager * old_entity_manager , int32_t *info, uint32_t length)
 {
 	if ( !this->PreSave(old_entity_manager) )
 	{
@@ -220,7 +220,7 @@ bool LuxSaveState::Save(WorldSystem * old_world, EntityManager * old_entity_mana
 /* LuxSaveState::SaveDataFile
  *
  */
-bool LuxSaveState::SaveDataFile(WorldSystem * old_world, EntityManager * old_entity_manager , int32_t *info, uint32_t length)
+bool LuxSaveState::SaveDataFile(GameWorldSystem * old_world, EntityManager * old_entity_manager , int32_t *info, uint32_t length)
 {
 
 	old_entity_manager->SetSaveMode( LUX_SAVE_DATA_TYPE );
@@ -253,7 +253,7 @@ bool LuxSaveState::SaveCookieFile( int32_t * info, uint32_t length   )
 /* LuxSaveState::SaveHibernateFile
  *
  */
-bool LuxSaveState::SaveHibernateFile( WorldSystem * old_world, EntityManager * old_entity_manager )
+bool LuxSaveState::SaveHibernateFile( GameWorldSystem * old_world, EntityManager * old_entity_manager )
 {
 	bool restoring_results = false;
 
@@ -279,7 +279,7 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 
 
 	/* File Name */
-	this->file_name = lux::game->public_directory;
+	this->file_name = lux::game_data->public_directory;
 	if ( this->save_game_slot == 0x00 )
 	{
 		this->save_type = LUX_SAVE_HIBERNATE_TYPE;
@@ -307,10 +307,10 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 	}
 	else
 	{
-		uint8_t allow_access = 0;
+		//uint8_t allow_access = 0;
 		uint8_t file_mime_magic[7];
 
-		if ( !lux::game->ident )
+		if ( !lux::game_data->ident )
 			return false;
 
 		this->save_file->ErrorCallback = Lux_LoadFileFailed;
@@ -328,13 +328,14 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 		}
 
 
-		this->save_type = this->save_file->Read_uint8();
+		this->save_type = this->save_file->ReadUint8();
 
 
 		this->save_file->Seek( this->save_file->Tell() + 1 );
 
 
-		allow_access = this->save_file->Read_uint8();
+		//allow_access = this->save_file->Read_uint8();
+		this->save_file->ReadUint8();
 
 		return true;
 	}
@@ -345,7 +346,7 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 
 
 
-bool LuxSaveState::LoadHibernateFile( WorldSystem * new_world, EntityManager * new_entity_manager )
+bool LuxSaveState::LoadHibernateFile( GameWorldSystem * new_world, EntityManager * new_entity_manager )
 {
 	bool restoring_results = false;
 
@@ -356,12 +357,12 @@ bool LuxSaveState::LoadHibernateFile( WorldSystem * new_world, EntityManager * n
 	return restoring_results;
 }
 
-bool LuxSaveState::LoadDataFile( WorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length  )
+bool LuxSaveState::LoadDataFile( GameWorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length  )
 {
 	bool restoring_results = false;
 	for (uint8_t count = 0; count < length; count++)
 	{
-		info[count] = this->save_file->Read_uint32( true );
+		info[count] = this->save_file->ReadUint32( true );
 	}
 
 	restoring_results = new_world->Restore( this->save_file );
@@ -374,7 +375,7 @@ bool LuxSaveState::LoadCookieFile(int32_t *info, uint32_t length)
 {
 	for (uint8_t count = 0; count < length; count++)
 	{
-		info[count] = this->save_file->Read_uint32( true );
+		info[count] = this->save_file->ReadUint32( true );
 	}
 	delete this->save_file;
 	return true;
@@ -382,7 +383,7 @@ bool LuxSaveState::LoadCookieFile(int32_t *info, uint32_t length)
 
 
 
-bool LuxSaveState::Restore( WorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length  )
+bool LuxSaveState::Restore( GameWorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length  )
 {
 	if ( !this->PreLoad(lux::entities) )
 	{

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013 Luke Salisbury
+Copyright © 2013-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -24,10 +24,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 LuxColour Lux_Hex2Colour(std::string color);
 
-
+/**
+ * @brief MapXMLReader::Load
+ * @param file
+ * @return
+ */
 bool MapXMLReader::Load( std::string file )
 {
-
 	this->xml_file = MokoiGame_GetXML(file);
 	if ( this->xml_file->Error() )
 	{
@@ -46,6 +49,12 @@ bool MapXMLReader::Load( std::string file )
 	return true;
 }
 
+/**
+ * @brief MapXMLReader::GetTextString
+ * @param object_element
+ * @param default_text
+ * @return
+ */
 std::string MapXMLReader::GetTextString( tinyxml2::XMLElement * object_element, std::string default_text )
 {
 	int32_t language_string_id = -1;
@@ -72,6 +81,11 @@ std::string MapXMLReader::GetTextString( tinyxml2::XMLElement * object_element, 
 	return result;
 }
 
+/**
+ * @brief MapXMLReader::ReadPolygon
+ * @param object
+ * @param object_element
+ */
 void MapXMLReader::ReadPolygon( MapObject * object, tinyxml2::XMLElement * object_element )
 {
 	uint16_t points = 0;
@@ -106,7 +120,13 @@ void MapXMLReader::ReadPolygon( MapObject * object, tinyxml2::XMLElement * objec
 
 }
 
-
+/**
+ * @brief MapXMLReader::ReadEntity
+ * @param object
+ * @param object_element
+ * @param map
+ * @return
+ */
 bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object_element, MokoiMap * map )
 {
 	/* <entity value="%s" language="%s" global="%s"/> */
@@ -172,7 +192,11 @@ bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object
 	return !is_global_entity;
 }
 
-
+/**
+ * @brief MapXMLReader::ReadPath
+ * @param object
+ * @param object_element
+ */
 void MapXMLReader::ReadPath( MapObject * object, tinyxml2::XMLElement * object_element )
 {
 	tinyxml2::XMLElement * path_element = object_element->FirstChildElement("path");
@@ -195,6 +219,11 @@ void MapXMLReader::ReadPath( MapObject * object, tinyxml2::XMLElement * object_e
 	}
 }
 
+/**
+ * @brief MapXMLReader::ReadObject
+ * @param object_element
+ * @return
+ */
 MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 {
 	std::string obj_type;
@@ -333,6 +362,12 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 	return object;
 }
 
+/**
+ * @brief MapXMLReader::ReadObjects
+ * @param object_array
+ * @param object_cache_count
+ * @param map
+ */
 void MapXMLReader::ReadObjects( std::vector<MapObject *> & object_array, uint32_t & object_cache_count, MokoiMap * map )
 {
 	tinyxml2::XMLElement * child_element;
@@ -382,6 +417,10 @@ void MapXMLReader::ReadObjects( std::vector<MapObject *> & object_array, uint32_
 	}
 }
 
+/**
+ * @brief MapXMLReader::ReadDimension
+ * @param rect
+ */
 void MapXMLReader::ReadDimension( LuxRect & rect )
 {
 	tinyxml2::XMLElement * settings_element = root->FirstChildElement("settings");
@@ -400,6 +439,11 @@ void MapXMLReader::ReadDimension( LuxRect & rect )
 
 }
 
+/**
+ * @brief MapXMLReader::ReadSettings
+ * @param map
+ * @param settings
+ */
 void MapXMLReader::ReadSettings( MokoiMap * map, std::map<std::string, std::string> & settings )
 {
 	tinyxml2::XMLElement * settings_element = root->FirstChildElement("settings");
@@ -423,17 +467,17 @@ void MapXMLReader::ReadSettings( MokoiMap * map, std::map<std::string, std::stri
 
 	if ( background )
 	{
-		tinyxml2::QueryUint8Attribute( background, "red", map->_colour.r );
-		tinyxml2::QueryUint8Attribute( background, "green", map->_colour.g );
-		tinyxml2::QueryUint8Attribute( background, "blue", map->_colour.b );
-		map->_background.effects.primary_colour = map->_colour;
+		tinyxml2::QueryUint8Attribute( background, "red", map->base_background_colour.r );
+		tinyxml2::QueryUint8Attribute( background, "green", map->base_background_colour.g );
+		tinyxml2::QueryUint8Attribute( background, "blue", map->base_background_colour.b );
+		map->background_object.effects.primary_colour = map->base_background_colour;
 	}
 
-	tinyxml2::QueryStringAttribute( settings_element, "image", map->_background.sprite );
+	tinyxml2::QueryStringAttribute( settings_element, "image", map->background_object.sprite );
 
 	if ( settings_element->Attribute("entity") )
 	{
-		map->_entity.assign( settings_element->Attribute("entity") );
+		map->entity_file_name.assign( settings_element->Attribute("entity") );
 	}
 
 	for ( options = settings_element->FirstChildElement("option"); options; options = options->NextSiblingElement("option") )

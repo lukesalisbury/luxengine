@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -40,7 +40,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 #endif
 
 namespace LuxPortal {
-	DisplaySystem * display = NULL;
 	UserInterface * interface = NULL;
 	std::vector<GameInfo *> listed_games;
 	std::list<std::string> previous;
@@ -92,7 +91,7 @@ void LuxPortal::clear_game_vector( std::vector<GameInfo*> & list  )
 	while ( list.begin() != list.end() )
 	{
 		GameInfo * info = (*list.begin());
-		info->ClearIcon( LuxPortal::display );
+		info->ClearIcon( LuxPortal::interface->GetDisplaySystem() );
 
 		delete info;
 
@@ -109,7 +108,7 @@ void LuxPortal::clear_listed_games()
 		{
 			GameInfo * info = (*LuxPortal::listed_games.begin());
 
-			info->ClearIcon( LuxPortal::display );
+			info->ClearIcon( LuxPortal::interface->GetDisplaySystem() );
 			info->ClearGUI();
 
 			LuxPortal::listed_games.erase( LuxPortal::listed_games.begin() );
@@ -135,7 +134,7 @@ void LuxPortal::page_refresh( LuxRect page_rect, uint32_t start, uint32_t length
 		{
 			page_rect.y += info->SetGUI( i+1, page_rect.x, page_rect.y, page_rect.w, 40  );
 
-			info->SetIcon( LuxPortal::display );
+			info->SetIcon( LuxPortal::interface->GetDisplaySystem() );
 
 			LuxPortal::listed_games.push_back( info );
 		}
@@ -426,8 +425,6 @@ bool LuxPortal::frame()
 	footer_rect.y = LuxPortal::region.h - 24;
 	page_rect.w = header_rect.w = LuxPortal::region.w - 128;
 
-
-
 	page_rect.y = lux_media::portal_title_height + 22;
 	page_rect.h = LuxPortal::region.h - ((lux_media::portal_title_height + 22)*2);
 	header_rect.y = lux_media::portal_title_height;
@@ -450,11 +447,8 @@ bool LuxPortal::frame()
 	}
 
 	footer_area = LuxPortal::interface->AddChild( footer_rect, EMPTYWINDOW, colour::white, "" );
-
 	page_area = LuxPortal::interface->AddChild( page_rect, BOX, colour::white, "" );
-
 	text_header = LuxPortal::interface->AddChild( header_rect, TEXT, colour::white, PROGRAM_NAME );
-
 
 	button_exit = LuxPortal::interface->AddWidgetChild( footer_area, -40, 0, 36, 16, BUTTON );
 	button_exit->SetText("Exit", 4);
@@ -475,7 +469,6 @@ bool LuxPortal::frame()
 	button_demos = LuxPortal::interface->AddWidgetChild( footer_area, 172, 0, 52, 16, BUTTON );
 	button_demos->SetText("Demos", 5);
 	button_demos->SetValue(GUI_PORTAL_DEMOS);
-
 
 	button_next = LuxPortal::interface->AddWidgetChild( text_header, -20, 2, 16, 16, BUTTON );
 	button_next->SetText(">",1);
@@ -503,7 +496,6 @@ bool LuxPortal::frame()
 		case GUI_PORTAL_DEMOS:
 			text_header->SetText( "Demos", 5 );
 			return_value = LuxPortal::demos_page(item_rect);
-
 			break;
 	}
 
@@ -540,21 +532,13 @@ bool LuxPortal::frame()
 
 	LuxPortal::interface->RemoveAll();
 
-	if ( page_area )
-		delete page_area;
-	if ( footer_area )
-		delete footer_area;
-
-	if ( button_exit )
-		delete button_exit;
-	if ( button_browse )
-		delete button_browse;
-	if ( button_online )
-		delete button_online;
-	if ( button_recent )
-		delete button_recent;
-	if ( text_header )
-		delete text_header;
+	NULLIFY( page_area );
+	NULLIFY( footer_area );
+	NULLIFY( button_exit );
+	NULLIFY( button_browse );
+	NULLIFY( button_online );
+	NULLIFY( button_recent );
+	NULLIFY( text_header );
 
 	return results;
 }
@@ -574,23 +558,20 @@ bool LuxPortal::run()
 	delete portalcss;
 
 	lux::config->SetString("gui.style", css);
-	lux::config->SetNumber("display.width", 800);
-	lux::config->SetNumber("display.height", 600);
-	lux::config->SetNumber("screen.width", 800);
-	lux::config->SetNumber("screen.height", 600);
 	lux::config->SetString("project.id", "cache");
 	lux::config->SetString("project.title", PROGRAM_NAME);
 	lux::config->SetString("display.mode", "native" );
 	lux::config->SetBoolean("portal.active", true);
 	lux::config->SetBoolean("debug.enable", false);
-	lux::config->SetBoolean("screen.matchdisplay", true);
 
 	LuxPortal::browse_path_default = elix::directory::Documents(false);
 	LuxPortal::browse_path = LuxPortal::browse_path_default;
 	LuxPortal::mode = GUI_PORTAL_DEMOS;
-	LuxPortal::display = new DisplaySystem();
-	LuxPortal::region = LuxPortal::display->screen_dimension;
-	LuxPortal::interface = new UserInterface(LuxPortal::region, LuxPortal::display);
+
+	LuxPortal::interface = new UserInterface( new DisplaySystem( "Game Portal", 800, 600, 32, 0) );
+
+	LuxPortal::region = LuxPortal::interface->ui_region;
+
 	LuxPortal::interface->Show();
 
 	LuxPortal::previous.sort();
@@ -598,23 +579,16 @@ bool LuxPortal::run()
 
 	LuxPortal::item_count = (LuxPortal::region.h - ((lux_media::portal_title_height + 22)*2))/ (LuxPortal::interface->GetCSSParser()->GetSize(IMAGEBUTTON, ENABLED, "min-height")+5 );
 
-	LuxPortal::logo = LuxPortal::display->graphics.PNGtoSprite(lux_media::portal_title, lux_media::portal_title_size);
+	LuxPortal::logo = LuxPortal::interface->GetDisplaySystem()->graphics.PNGtoSprite(lux_media::portal_title, lux_media::portal_title_size);
 
 	while ( LuxPortal::mode )
 	{
 		results = LuxPortal::frame();
 	}
 
-	if ( LuxPortal::interface )
-		delete LuxPortal::interface;
+	NULLIFY( LuxPortal::interface );
+	NULLIFY( lux::config );
 
-	if ( LuxPortal::display )
-		delete LuxPortal::display;
-
-	if ( lux::config )
-		delete lux::config;
-
-	lux::config = NULL;
 
 	LuxPortal::mode = 1;
 

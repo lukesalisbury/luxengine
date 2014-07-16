@@ -12,17 +12,68 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_functions.h"
 
 #include "world.h"
+#include "audio.h"
+#include "elix_string.hpp"
 
+/**
+ * @brief Lux_FFI_Object_Get
+ * @param object_id
+ * @return
+ */
 MapObject * Lux_FFI_Object_Get( uint32_t object_id )
 {
 	MapObject * object = NULL;
-	if ( lux::world->active_map )
+	if ( lux::gameworld->active_map )
 	{
 		if ( object_id >= OBJECT_GLOBAL_VALUE )
-			object = lux::world->GetObject(object_id);
+			object = lux::gameworld->GetObject(object_id);
 		else
-			object = lux::world->active_map->GetObject(object_id);
+			object = lux::gameworld->active_map->GetObject(object_id);
 	}
 	return object;
+}
 
+/**
+ * @brief Lux_FFI_Audio_Play_Music
+ * @param file
+ * @param loops
+ * @param fadeLength
+ * @return
+ */
+int32_t Lux_FFI_Audio_Play_Music( const char * file, int32_t loops, int32_t fadeLength )
+{
+	return lux::audio->PlayMusic( file, loops, fadeLength );
+}
+
+/**
+ * @brief Lux_FFI_Audio_Play_Sound
+ * @param file
+ * @param x
+ * @param y
+ * @return
+ */
+int32_t Lux_FFI_Audio_Play_Sound( const char * file, int32_t x, int32_t y  )
+{
+	return lux::audio->PlayEffect( file, x, y );
+}
+
+/**
+ * @brief Lux_FFI_Audio_Play_Dialog
+ * @param line
+ * @return
+ */
+int32_t Lux_FFI_Audio_Play_Dialog( uint32_t line )
+{
+	return lux::audio->PlayDialog( line );
+}
+
+/**
+ * @brief Lux_FFI_String_Hash
+ * @param string
+ * @return
+ */
+uint32_t Lux_FFI_String_Hash( const char * string )
+{
+	std::string s = string;
+	return elix::string::Hash( s );
 }

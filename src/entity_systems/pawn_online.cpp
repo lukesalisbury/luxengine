@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -21,7 +21,7 @@ extern const AMX_NATIVE_INFO Online_Natives[];
 * native EntityNetwork();
 *
 */
-static cell AMX_NATIVE_CALL pawnOnline(AMX *amx, const cell *params)
+static cell pawnOnline(AMX *amx, const cell *params)
 {
 	return 0;
 }
@@ -30,7 +30,7 @@ static cell AMX_NATIVE_CALL pawnOnline(AMX *amx, const cell *params)
 * native OnlineData(callback[32], url[128]);
 *
 */
-static cell AMX_NATIVE_CALL pawnOnlineData(AMX *amx, const cell *params)
+static cell pawnOnlineData(AMX *amx, const cell *params)
 {
 	char * url = NULL;
 

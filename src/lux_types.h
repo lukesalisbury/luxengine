@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -107,13 +107,9 @@ union cell_colour {
 union LuxMapIdent {
 	uint32_t value;
 	struct {
-		uint32_t id:12;
-		uint32_t localmap:20;
+		uint32_t section:20;
+		uint32_t map:12;
 	} grid;
-	struct {
-		uint32_t unused:12;
-		uint32_t map:20;
-	} file;
 };
 
 

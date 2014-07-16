@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -33,18 +33,29 @@ MokoiMap::MokoiMap( std::string name )
 	this->InitialSetup(name);
 }
 
+MokoiMap::MokoiMap( std::string name, uint32_t width, uint32_t height)
+{
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Opening map '" << name << "'"  << std::endl;
+
+	this->InitialSetup(name);
+
+	this->map_width = width;
+	this->map_height = height;
+
+}
+
 MokoiMap::MokoiMap( elix::File * current_save_file )
 {
 	if ( this->Restore( current_save_file ) )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Restore map '" << this->_name << "'"  << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Restore map '" << this->map_name << "'"  << std::endl;
 	}
 }
 
 
 MokoiMap::~MokoiMap()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing Map '" << this->_name << "'"<< std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing Map '" << this->map_name << "'"<< std::endl;
 	std::vector< MapObject * >::iterator p;
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
@@ -54,39 +65,42 @@ MokoiMap::~MokoiMap()
 	this->object_cache.clear();
 	this->_objects.clear();
 
-	if ( !this->_screen.empty() )
+	if ( !this->screens.empty() )
 	{
-		for ( std::map<uint32_t, MokoiMapScreen *>::iterator q = this->_screen.begin(); q != this->_screen.end(); q++ )
+		for ( std::map<uint32_t, MokoiMapScreen *>::iterator q = this->screens.begin(); q != this->screens.end(); q++ )
 		{
 			delete q->second;
 		}
 	}
-	this->_screen.clear();
+	this->screens.clear();
 
-	if ( this->_entities )
+	if ( this->entities )
 	{
-		delete this->_entities;
+		delete this->entities;
 	}
 }
 
-/*
-* MokoiMap::InitialSetup()
-*
-*/
+/**
+ * @brief MokoiMap::InitialSetup
+ * @param map_name
+ */
 void MokoiMap::InitialSetup( std::string map_name )
 {
-	this->_name = map_name;
-	this->_loaded = false;
+	this->map_name = map_name;
+	this->loaded = false;
 	this->active = false;
 
-	this->_ident.value = 0;
-	this->_centerview = lux::config->GetBoolean("map.centerview");
+	this->keep_savedata = false;
+	this->keep_memory = false;
+
+	this->ident.value = 0;
+	this->centered_view = lux::config->GetBoolean("map.centerview");
 
 	this->object_cache_count = 0;
-	this->_entities = NULL;
-	this->_wrap = MAP_WRAPNONE;
-	this->_server = false;
-	this->_entity = "maps/" + this->_name;
+	this->entities = NULL;
+	this->wrap_mode = MAP_WRAPNONE;
+	this->server = false;
+	this->entity_file_name = "maps/" + this->map_name;
 
 	this->screen_width = lux::config->GetFixed("screen.width");
 	this->screen_height = lux::config->GetFixed("screen.height");
@@ -101,89 +115,63 @@ void MokoiMap::InitialSetup( std::string map_name )
 	this->map_width = this->default_map_width;
 	this->map_height = this->default_map_height;
 
-	this->_position[0] = 0;
-	this->_position[1] = 0;
-	this->_position[2] = 0;
+	this->offset_position[0] = 0;
+	this->offset_position[1] = 0;
+	this->offset_position[2] = 0;
 }
 
 /* Settings */
 
-/*
-* MokoiMap::SetIdent()
-*
-*/
+/**
+ * @brief MokoiMap::SetIdent
+ * @param ident
+ */
 void MokoiMap::SetIdent( uint32_t ident )
 {
-	this->_ident.value = ident;
+	this->ident.value = ident;
 }
 
-/*
-* MokoiMap::SetGridIdent()
-*
-*/
+
+/**
+ * @brief MokoiMap::SetGridIdent
+ * @param local
+ * @param section
+ */
 void MokoiMap::SetGridIdent( uint32_t local, uint32_t section )
 {
-	this->_ident.value = 0;
-	this->_ident.grid.localmap = local;
-	this->_ident.grid.id = section;
+	this->ident.value = 0;
+	this->ident.grid.map = local;
+	this->ident.grid.section = section;
 }
 
-/*
-* MokoiMap::SetFileIdent()
-*
-*/
-void MokoiMap::SetFileIdent( uint32_t local )
-{
-	this->_ident.value = 0;
-	this->_ident.file.map = local;
-	this->_ident.file.unused = 0;
-
-}
-
-/*
-* MokoiMap::Ident()
-*
-*/
+/**
+ * @brief MokoiMap::Ident
+ * @return
+ */
 uint32_t MokoiMap::Ident()
 {
-	return this->_ident.value;
+	return this->ident.value;
 }
 
-/*
-* MokoiMap::GridIdent()
-*
-*/
+/**
+ * @brief MokoiMap::GridIdent
+ * @return
+ */
 uint32_t MokoiMap::GridIdent()
 {
-	return this->_ident.grid.localmap;
+	return this->ident.grid.section;
 }
 
-/*
-* MokoiMap::FileIdent()
-*
-*/
-uint32_t MokoiMap::FileIdent()
-{
-	return this->_ident.file.map;
-}
-
-/*
-* MokoiMap::InSection()
-*
-*/
+/**
+ * @brief MokoiMap::InSection
+ * @param section
+ * @return
+ */
 bool MokoiMap::InSection(uint32_t section)
 {
-	return (this->_ident.grid.id == section);
+	return (this->ident.grid.section == section);
 }
 
-/*
-* MokoiMap::PartOfSection()
-*
-*/
-bool MokoiMap::PartOfSection()
-{
-	return !!this->_ident.grid.id;
-}
 
 /*
 * MokoiMap::Name()
@@ -191,45 +179,55 @@ bool MokoiMap::PartOfSection()
 */
 std::string MokoiMap::Name()
 {
-	return this->_name;
+	return this->map_name;
 }
 
-/*
-* MokoiMap::SetBackgroundMod()
-* modify background colour
-*/
+/**
+ * @brief modify background colour
+ * @param mod LuxColour
+ */
 void MokoiMap::SetBackgroundModifier( LuxColour mod )
 {
 	float fr, fg, fb;
 	fr = (float)mod.r / 255;
 	fg = (float)mod.g / 255;
 	fb = (float)mod.b / 255;
-	this->_background.effects.primary_colour.r = (uint8_t)((float)this->_colour.r * fr);
-	this->_background.effects.primary_colour.g = (uint8_t)((float)this->_colour.g * fg);
-	this->_background.effects.primary_colour.b = (uint8_t)((float)this->_colour.b * fb);
+
+	this->background_object.effects.primary_colour.r = (uint8_t)((float)this->base_background_colour.r * fr);
+	this->background_object.effects.primary_colour.g = (uint8_t)((float)this->base_background_colour.g * fg);
+	this->background_object.effects.primary_colour.b = (uint8_t)((float)this->base_background_colour.b * fb);
 }
 
 
-/*
-* MokoiMap::Init()
-* Init Map for running
-*/
+uint8_t MokoiMap::GetGrid( uint8_t axis )
+{
+	if ( axis == 'x')
+		return this->grid[0];
+	else
+		return this->grid[1];
+}
+
+/**
+ * @brief MokoiMap::Init
+ * @return
+ */
 bool MokoiMap::Init()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > MokoiMap Init " << this->_name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > MokoiMap Init " << this->map_name << std::endl;
 
-	lux::screen::display("Loading Map: " + this->_name);
+	lux::screen::display("Loading Map: " + this->map_name);
 	if ( this->LoadFile() )
 	{
-		this->active = true;
-		lux::display->SetBackgroundObject( this->_background );
-		this->_entities->Init();
-		this->NetworkMapSwitch();
+		lux::display->SetBackgroundObject( this->background_object );
 
+		this->active = true;
+		this->entities->Init();
+
+		this->NetworkMapSwitch();
 	}
 	else
 	{
-		lux::engine->FatalError("Map " + this->_name + ".xml can't be loaded");
+		lux::engine->FatalError("Map " + this->map_name + ".xml can't be loaded");
 		this->active = false;
 	}
 
@@ -242,24 +240,25 @@ bool MokoiMap::Init()
 */
 bool MokoiMap::Loop()
 {
-	if ( !this->_loaded )
+	if ( !this->loaded )
 	{
-		lux::engine->ShowDialog("MokoiMap not loaded\nFile Name: " + this->_name + "\n", DIALOGOK);
+		lux::engine->ShowDialog("Map not loaded\nFile Name: " + this->map_name + "\n", DIALOGOK);
 		return false;
 	}
 
-	if ( this->resetmap )
+	/* Cheats way of reseting map */
+	if ( this->reset_map )
 	{
 		this->Close();
 		this->LoadFile();
-		this->resetmap = false;
+		this->reset_map = false;
 	}
 
 	this->NetworkMapLoop();
 
-	lux::display->SetBackgroundObject( this->_background );
+	lux::display->SetBackgroundObject( this->background_object );
 
-	this->_entities->Loop();
+	this->entities->Loop();
 
 	/* Screens */
 	uint32_t screen_number = 0;
@@ -272,12 +271,12 @@ bool MokoiMap::Loop()
 			screen->Init();
 		}
 	}
-	else if ( this->_wrap )
+	else if ( this->wrap_mode )
 	{
 		/* Make sure the current screen and the 8 surround screens are loaded
 		todo: unload non-active screens
 		*/
-		screen_number = this->XY2Screen( MAKE_FIXED_INT(this->_position[0]), MAKE_FIXED_INT(this->_position[1]), this->dimension_width );
+		screen_number = this->XY2Screen( MAKE_FIXED_INT(this->offset_position[0]), MAKE_FIXED_INT(this->offset_position[1]), this->dimension_width );
 		int32_t x = -1;
 		int32_t y = -1;
 		int32_t cx = 2;
@@ -311,7 +310,7 @@ bool MokoiMap::Loop()
 		/* Make sure the current screen and the 8 surround screens are loaded
 		todo: unload non-active screens
 		*/
-		screen_number = this->XY2Screen( MAKE_FIXED_INT(this->_position[0]), MAKE_FIXED_INT(this->_position[1]), this->dimension_width );
+		screen_number = this->XY2Screen( MAKE_FIXED_INT(this->offset_position[0]), MAKE_FIXED_INT(this->offset_position[1]), this->dimension_width );
 		int32_t x = -1;
 		int32_t y = -1;
 		int32_t cx = 2;
@@ -349,10 +348,10 @@ bool MokoiMap::Loop()
 */
 bool MokoiMap::Close()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < MokoiMap Init " << this->_name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < MokoiMap Init " << this->map_name << std::endl;
 
 	this->active = false;
-	this->_server = false;
+	this->server = false;
 
 	/* Reset Display */
 	lux::display->ClearLayers(true);
@@ -360,8 +359,8 @@ bool MokoiMap::Close()
 	lux::display->ResetBackgroundObject( );
 
 	/* Clean up Screens */
-	std::map<uint32_t, MokoiMapScreen *>::iterator q = this->_screen.begin();
-	for ( ; q != this->_screen.end(); q++ )
+	std::map<uint32_t, MokoiMapScreen *>::iterator q = this->screens.begin();
+	for ( ; q != this->screens.end(); q++ )
 	{
 		q->second->Close();
 	}
@@ -374,7 +373,7 @@ bool MokoiMap::Close()
 	}
 
 	/* Clean Up Entity */
-	this->_entities->Close();
+	this->entities->Close();
 
 	return true;
 }
@@ -382,7 +381,7 @@ bool MokoiMap::Close()
 
 bool MokoiMap::Reset()
 {
-	this->resetmap = true;
+	this->reset_map = true;
 
 
 	return true;
@@ -505,21 +504,21 @@ bool MokoiMap::RemoveObject( uint32_t ident )
 /* Positions */
 void MokoiMap::SetPosition( fixed position[3] )
 {
-	this->_position[0] = position[0];
-	this->_position[1] = position[1];
-	this->_position[2] = position[2];
+	this->offset_position[0] = position[0];
+	this->offset_position[1] = position[1];
+	this->offset_position[2] = position[2];
 
-	lux::display->debug_msg << "Wrap: " << (int)this->_wrap << " - Centerview:" << (int)this->_centerview <<  std::endl;
+	lux::display->debug_msg << "Wrap: " << (int)this->wrap_mode << " - Centerview:" << (int)this->centered_view <<  std::endl;
 	/*
 		Keeps Offset for moving offscreen
 	*/
 
-	if ( this->_centerview )
+	if ( this->centered_view )
 	{
 		fixed offset, wrap_offset = 0;
 
 		/* X Axis Wrapping handling */
-		if ( this->_wrap == MAP_WRAPXAXIS || this->_wrap == MAP_WRAPBOTH )
+		if ( this->wrap_mode == MAP_WRAPXAXIS || this->wrap_mode == MAP_WRAPBOTH )
 		{
 			if ( position[0] > this->map_width )
 			{
@@ -533,15 +532,15 @@ void MokoiMap::SetPosition( fixed position[3] )
 		{
 			if ( position[0] < (screen_width / 2) )
 			{
-				this->_position[0] = 0;
+				this->offset_position[0] = 0;
 			}
 			else if ( position[0] > (this->map_width - (this->screen_width / 2)) )
 			{
-				this->_position[0] = this->map_width - this->screen_width;
+				this->offset_position[0] = this->map_width - this->screen_width;
 			}
 			else
 			{
-				this->_position[0] = position[0] - (this->screen_width/2);
+				this->offset_position[0] = position[0] - (this->screen_width/2);
 			}
 		}
 		else if ( this->has_width_different ) // If Screen dimension is maps, then try to account for that
@@ -549,27 +548,27 @@ void MokoiMap::SetPosition( fixed position[3] )
 			offset = this->map_width - this->screen_height;
 			if ( position[0] > (this->screen_width - offset) )
 			{
-				this->_position[0] = this->map_width - this->screen_width;
+				this->offset_position[0] = this->map_width - this->screen_width;
 			}
 			else if ( position[0] > offset )
 			{
-				this->_position[0] -= offset;
+				this->offset_position[0] -= offset;
 			}
 			else
 			{
-				this->_position[0] = 0;
+				this->offset_position[0] = 0;
 			}
 		}
 		else// No view position change needed.
 		{
-			this->_position[0] = 0;
+			this->offset_position[0] = 0;
 		}
-		this->_position[0] += wrap_offset;
+		this->offset_position[0] += wrap_offset;
 
 
 
 		wrap_offset = 0;
-		if ( this->_wrap == MAP_WRAPBOTH || this->_wrap == MAP_WRAPYAXIS )
+		if ( this->wrap_mode == MAP_WRAPBOTH || this->wrap_mode == MAP_WRAPYAXIS )
 		{
 			if ( position[1] > this->map_height )
 			{
@@ -583,15 +582,15 @@ void MokoiMap::SetPosition( fixed position[3] )
 		{
 			if ( position[1] < (screen_height / 2) )
 			{
-				this->_position[1] = 0;
+				this->offset_position[1] = 0;
 			}
 			else if ( position[1] > (this->map_height - (this->screen_height / 2)) )
 			{
-				this->_position[1] = this->map_height - this->screen_height;
+				this->offset_position[1] = this->map_height - this->screen_height;
 			}
 			else
 			{
-				this->_position[1] = position[1] - (this->screen_height / 2);
+				this->offset_position[1] = position[1] - (this->screen_height / 2);
 			}
 		}
 		else if ( this->has_height_different ) // If Screen dimension is maps, then try to account for that
@@ -599,68 +598,69 @@ void MokoiMap::SetPosition( fixed position[3] )
 			offset = this->map_height - this->screen_height;
 			if ( position[1] > (this->screen_height - offset) )
 			{
-				this->_position[1] = this->map_height - this->screen_height;
+				this->offset_position[1] = this->map_height - this->screen_height;
 			}
 			else if ( position[1] > offset )
 			{
-				this->_position[1] -= offset;
+				this->offset_position[1] -= offset;
 			}
 			else
 			{
-				this->_position[1] = 0;
+				this->offset_position[1] = 0;
 			}
 		}
 		else // No view position change needed.
 		{
-			this->_position[1] = 0;
+			this->offset_position[1] = 0;
 		}
-		this->_position[1] += wrap_offset;
+		this->offset_position[1] += wrap_offset;
 	}
 	else
 	{
 		/* Using the top left for position */
-		if ( this->_wrap == MAP_WRAPNONE || this->_wrap == MAP_WRAPYAXIS )
+		if ( this->wrap_mode == MAP_WRAPNONE || this->wrap_mode == MAP_WRAPYAXIS )
 		{
-			this->_position[0] = clamp(this->_position[0], 0, this->map_width - this->screen_width);
+			this->offset_position[0] = clamp(this->offset_position[0], 0, this->map_width - this->screen_width);
 		}
-		if ( this->_wrap == MAP_WRAPNONE || this->_wrap == MAP_WRAPXAXIS )
+		if ( this->wrap_mode == MAP_WRAPNONE || this->wrap_mode == MAP_WRAPXAXIS )
 		{
-			this->_position[1] = clamp(this->_position[1], 0, this->map_height - this->screen_height);
+			this->offset_position[1] = clamp(this->offset_position[1], 0, this->map_height - this->screen_height);
 		}
 	}
 }
+
 
 fixed MokoiMap::GetPosition( uint8_t axis )
 {
 	if ( axis < 3 )
 	{
-		return this->_position[axis];
+		return this->offset_position[axis];
 	}
 	return 0;
 }
 
 void MokoiMap::SetScrolling( bool scroll )
 {
-	this->_centerview = scroll;
+	this->centered_view = scroll;
 }
 
 /* Entities */
 EntitySection * MokoiMap::GetEntities()
 {
-	return this->_entities;
+	return this->entities;
 }
 
 /* Save System */
 bool MokoiMap::Save( elix::File * current_save_file )
 {
-	current_save_file->WriteWithLabel("Map Name", this->_name );
-	current_save_file->WriteWithLabel("Map ID", this->_ident.value );
-	current_save_file->WriteWithLabel("Map Loaded Flag", (uint8_t)this->_loaded );
+	current_save_file->WriteWithLabel("Map Name", this->map_name );
+	current_save_file->WriteWithLabel("Map ID", this->ident.value );
+	current_save_file->WriteWithLabel("Map Loaded Flag", (uint8_t)this->loaded );
 
-	if ( this->_entities )
+	if ( this->entities )
 	{
 		current_save_file->WriteWithLabel("Map has Entities", (uint8_t)1 );
-		this->_entities->Save( current_save_file );
+		this->entities->Save( current_save_file );
 	}
 	else
 	{
@@ -693,13 +693,13 @@ bool MokoiMap::Restore( elix::File * current_save_file )
 	uint8_t map_has_entities = 0;
 	std::map<uint32_t, MapObject *>::iterator existing_object_iter;
 
-	this->_loaded = false;
-	current_save_file->ReadWithLabel("Map Name", &this->_name );
-	this->_ident.value= current_save_file->Read_uint32WithLabel("Map ID", true );
-	map_loading_flag = current_save_file->Read_uint8WithLabel("Map Loaded Flag");
+	this->loaded = false;
+	current_save_file->ReadWithLabel("Map Name", &this->map_name );
+	this->ident.value= current_save_file->ReadUint32WithLabel("Map ID", true );
+	map_loading_flag = current_save_file->ReadUint8WithLabel("Map Loaded Flag");
 
 
-	this->InitialSetup(this->_name);
+	this->InitialSetup(this->map_name);
 
 	if ( map_loading_flag )
 	{
@@ -712,17 +712,17 @@ bool MokoiMap::Restore( elix::File * current_save_file )
 			iter->second->hidden = true;
 		}
 
-		this->_loaded = true;
+		this->loaded = true;
 
 	}
 
-	map_has_entities = current_save_file->Read_uint8WithLabel("Map has Entities");
-	if ( map_has_entities && this->_entities )
+	map_has_entities = current_save_file->ReadUint8WithLabel("Map has Entities");
+	if ( map_has_entities && this->entities )
 	{
-		this->_entities->Restore( current_save_file );
+		this->entities->Restore( current_save_file );
 	}
 
-	count = current_save_file->Read_uint32WithLabel("Map Display Objects", true );
+	count = current_save_file->ReadUint32WithLabel("Map Display Objects", true );
 	if ( count )
 	{
 		for( uint32_t i = 0; i < count; i++ )
@@ -731,7 +731,7 @@ bool MokoiMap::Restore( elix::File * current_save_file )
 			//	return false;
 
 			MapObject * existing_object = NULL;
-			uint32_t object_id = current_save_file->Read_uint32WithLabel("Map Object ID", true );
+			uint32_t object_id = current_save_file->ReadUint32WithLabel("Map Object ID", true );
 
 			existing_object_iter = this->object_cache.find(object_id);
 			if ( existing_object_iter != this->object_cache.end() )
@@ -753,7 +753,7 @@ bool MokoiMap::Restore( elix::File * current_save_file )
 
 		/* Reove unneed cached map objects. */
 
-		for ( std::map<uint32_t, MokoiMapScreen *>::iterator q = this->_screen.begin(); q != this->_screen.end(); q++ )
+		for ( std::map<uint32_t, MokoiMapScreen *>::iterator q = this->screens.begin(); q != this->screens.end(); q++ )
 		{
 			q->second->Close();
 			q->second->_objects.erase( std::remove_if(q->second->_objects.begin(), q->second->_objects.end(), RemoveMapObject), q->second->_objects.end() );
@@ -785,14 +785,14 @@ MokoiMapScreen * MokoiMap::GetScreen(uint32_t screen_number, bool init_new)
 		screen_number = 0;
 	if ( screen_number > (this->dimension_width * this->dimension_height)-1 )
 		return NULL;
-	if ( !this->_screen.empty() )
+	if ( !this->screens.empty() )
 	{
-		std::map<uint32_t, MokoiMapScreen *>::iterator iter = this->_screen.find(screen_number);
-		if( iter != this->_screen.end() )
+		std::map<uint32_t, MokoiMapScreen *>::iterator iter = this->screens.find(screen_number);
+		if( iter != this->screens.end() )
 			return iter->second;
 	}
 	MokoiMapScreen * new_screen = new MokoiMapScreen( Screen2X(screen_number, this->dimension_width), Screen2Y(screen_number, this->dimension_width), MAKE_FIXED_INT(this->default_map_width), MAKE_FIXED_INT(this->default_map_height) );
-	this->_screen.insert( std::make_pair( screen_number, new_screen) );
+	this->screens.insert( std::make_pair( screen_number, new_screen) );
 	//if (init_new)
 	//     new_screen->Init();
 	return new_screen;
@@ -830,7 +830,7 @@ MokoiMapScreen * MokoiMap::LoadAllScreen(uint32_t screen_number, bool init_new)
 
 uint32_t MokoiMap::XY2Screen(int32_t x, int32_t y, int32_t w)
 {
-	if ( this->_wrap )
+	if ( this->wrap_mode )
 	{
 		int32_t mw = MAKE_FIXED_INT(this->map_width);
 		int32_t mh = MAKE_FIXED_INT(this->map_height);
@@ -857,9 +857,9 @@ uint32_t MokoiMap::XY2Screen(int32_t x, int32_t y, int32_t w)
 */
 bool MokoiMap::Valid()
 {
-	if ( !this->_loaded )
+	if ( !this->loaded )
 	{
-		tinyxml2::XMLDocument * xml_file = MokoiGame_GetXML("./maps/" + this->_name + ".xml");
+		tinyxml2::XMLDocument * xml_file = MokoiGame_GetXML("./maps/" + this->map_name + ".xml");
 		if ( xml_file->Error() )
 		{
 //			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
@@ -869,7 +869,7 @@ bool MokoiMap::Valid()
 
 		if ( !xml_file->RootElement() || strcmp( xml_file->RootElement()->Value(), "map") )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->map_name + ".xml not a vamap_nameap file." << std::endl;
 			delete xml_file;
 			return false;
 		}
@@ -896,9 +896,9 @@ bool MokoiMap::Valid()
 */
 bool MokoiMap::LoadDimension()
 {
-	if ( !this->_loaded )
+	if ( !this->loaded )
 	{
-		tinyxml2::XMLDocument * xml_file = MokoiGame_GetXML("./maps/" + this->_name + ".xml");
+		tinyxml2::XMLDocument * xml_file = MokoiGame_GetXML("./maps/" + this->map_name + ".xml");
 		if ( xml_file->Error() )
 		{
 			//lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
@@ -907,7 +907,7 @@ bool MokoiMap::LoadDimension()
 		}
 		if ( !xml_file->RootElement() || strcmp( xml_file->RootElement()->Value(), "map") )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->map_name + ".xml not a vamap_nameap file." << std::endl;
 			delete xml_file;
 			return false;
 		}
@@ -930,7 +930,7 @@ bool MokoiMap::LoadDimension()
 
 bool MokoiMap::SaveFile()
 {
-	lux::screen::display("Saving Map: " + this->_name);
+	lux::screen::display("Saving Map: " + this->map_name);
 	return false;
 }
 
@@ -938,48 +938,48 @@ bool MokoiMap::SaveFile()
 
 bool MokoiMap::LoadFile()
 {
-	lux::screen::display("Loading Map: " + this->_name);
+	lux::screen::display("Loading Map: " + this->map_name);
 
-	if ( this->_loaded )
-		return this->_loaded;
+	if ( this->loaded )
+		return this->loaded;
 
 
 	MapXMLReader reader;
 	std::map<std::string, std::string> settings;
 
-	if ( !reader.Load("./maps/" + this->_name + ".xml"))
+	if ( !reader.Load("./maps/" + this->map_name + ".xml"))
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->_name + ".xml not a valid map file." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->map_name + ".xml not a valid file." << std::endl;
 		return false;
 	}
 
 	reader.ReadSettings( this, settings );
 
-	this->_wrap = MAP_WRAPNONE;
+	this->wrap_mode = MAP_WRAPNONE;
 
 
-	this->_entities = new EntitySection( this->_entity, this->_ident.value );
+	this->entities = new EntitySection( this->entity_file_name, this->ident.value );
 
 	for ( std::map<std::string, std::string>::iterator cs = settings.begin(); cs != settings.end(); cs++ )
 	{
 		if ( !cs->first.compare("wrap") )
 		{
-			this->_wrap = elix::string::ToIntU8(cs->second);
+			this->wrap_mode = elix::string::ToIntU8(cs->second);
 		}
 		else if ( !cs->first.compare("centerview") )
 		{
 			//this->_centerview = !!elix::string::ToIntU16(cs->second);
 		}
 
-		if ( this->_entities->parent )
+		if ( this->entities->parent )
 		{
-			this->_entities->parent->AddSetting( cs->first, cs->second );
+			this->entities->parent->AddSetting( cs->first, cs->second );
 		}
 	}
 
 	reader.ReadObjects( this->_objects, this->object_cache_count, this );
 
-	this->_loaded = true;
+	this->loaded = true;
 
 	/* Set up Map Screen */
 	std::vector<MapObject *>::iterator p;
@@ -990,6 +990,22 @@ bool MokoiMap::LoadFile()
 	}
 
 	return true;
+}
+
+bool MokoiMap::HasSnapshot()
+{
+
+	return false;
+}
+
+bool MokoiMap::SaveSnapshot()
+{
+	return false;
+}
+
+bool MokoiMap::LoadSnapshot()
+{
+	return false;
 }
 
 
@@ -1036,8 +1052,8 @@ void MokoiMap::FillMask(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 
 void MokoiMap::BuildMask()
 {
-	std::map<uint32_t, MokoiMapScreen *>::iterator q = this->_screen.begin();
-	for ( ; q != this->_screen.end(); q++ )
+	std::map<uint32_t, MokoiMapScreen *>::iterator q = this->screens.begin();
+	for ( ; q != this->screens.end(); q++ )
 	{
 		q->second->BuildMask();
 	}
@@ -1049,10 +1065,10 @@ void MokoiMap::BuildMask()
 
 void MokoiMap::DrawMask()
 {
-	std::map<uint32_t, MokoiMapScreen *>::iterator q = this->_screen.begin();
-	for ( ; q != this->_screen.end(); q++ )
+	std::map<uint32_t, MokoiMapScreen *>::iterator q = this->screens.begin();
+	for ( ; q != this->screens.end(); q++ )
 	{
-		q->second->DrawMask(this->_position);
+		q->second->DrawMask(this->offset_position);
 	}
 }
 

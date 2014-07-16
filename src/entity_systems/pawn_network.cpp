@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -23,7 +23,7 @@ extern const AMX_NATIVE_INFO Network_Natives[];
 * native pawnEntityActive(id[] = SELF);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityActive(AMX *amx, const cell *params)
+static cell pawnEntityActive(AMX *amx, const cell *params)
 {
 	#ifdef NETWORKENABLED
 	lux::core->NetLock();
@@ -44,7 +44,7 @@ static cell AMX_NATIVE_CALL pawnEntityActive(AMX *amx, const cell *params)
 * native EntityNetworkSync(bool:reliable);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityNetworkSync(AMX *amx, const cell *params)
+static cell pawnEntityNetworkSync(AMX *amx, const cell *params)
 {
 	cell result = -1;
 	#ifdef NETWORKENABLED
@@ -72,7 +72,7 @@ static cell AMX_NATIVE_CALL pawnEntityNetworkSync(AMX *amx, const cell *params)
 *
 */
 extern uint8_t net_id;
-static cell AMX_NATIVE_CALL pawnNetworkConnect( AMX *amx, const cell *params )
+static cell pawnNetworkConnect( AMX *amx, const cell *params )
 {
 	#ifdef NETWORKENABLED
 	char * name = NULL;
@@ -111,7 +111,7 @@ static cell AMX_NATIVE_CALL pawnNetworkConnect( AMX *amx, const cell *params )
 * native EntityNetwork();
 *
 */
-static cell AMX_NATIVE_CALL pawnNetworkDisconnect(AMX *amx, const cell *params)
+static cell pawnNetworkDisconnect(AMX *amx, const cell *params)
 {
 	lux::core->QuitSubSystem( LUX_INIT_NETWORK );
 	return 0;
@@ -121,7 +121,7 @@ static cell AMX_NATIVE_CALL pawnNetworkDisconnect(AMX *amx, const cell *params)
 * native NetworkMessage(reliable, server, message[], length, reallength = sizeof(message));
 *
 */
-static cell AMX_NATIVE_CALL pawnNetworkMessage(AMX *amx, const cell *params)
+static cell pawnNetworkMessage(AMX *amx, const cell *params)
 {
 	cell result = -1;
 	#ifdef NETWORKENABLED
@@ -169,7 +169,7 @@ static cell AMX_NATIVE_CALL pawnNetworkMessage(AMX *amx, const cell *params)
 * native NetworkPlayerName(player, name[], l = sizeof(name) );
 *
 */
-static cell AMX_NATIVE_CALL pawnNetworkPlayerName(AMX *amx, const cell *params)
+static cell pawnNetworkPlayerName(AMX *amx, const cell *params)
 {
 	cell * cptr;
 	cptr = amx_Address(amx, params[2]);

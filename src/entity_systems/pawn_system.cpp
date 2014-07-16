@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -8,6 +8,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
+
 #include "audio.h"
 #include "game_config.h"
 #include "core.h"
@@ -19,78 +20,140 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "world.h"
 #include "elix_string.hpp"
 #include "save_system.h"
-
+#include "ffi_system.h"
 
 extern const AMX_NATIVE_INFO System_Natives[];
 
 /** System Functions */
 
-
-/** pawnSystemAudioVolume
-* native SystemAudioVolume(_AUDIO:device, level = -1);
-*
-*/
-static cell AMX_NATIVE_CALL pawnSystemAudioVolume(AMX *amx, const cell *params)
+/**
+ * @brief pawnSystemAudioVolume
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnSystemAudioVolume(AMX *amx, const cell *params)
 {
-	if (params[1] == 2)
-		return (cell) lux::audio->SetMusicVolume(params[2]);
-	else if (params[1] == 0)
-		return (cell) lux::audio->SetEffectsVolume(params[2]);
-	else
-		return -1;
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	uint8_t device = (uint8_t)params[1];
+	int8_t level = (int8_t)params[2];
+
+	return Lux_FFI_System_Audio_Volume(device, level);
 }
+
+/**
+ * @brief pawnSystemCommand
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnSystemCommand(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	uint8_t command = (uint8_t)params[1];
+	int32_t value = (int8_t)params[2];
+
+	return Lux_FFI_System_Command( command, value );
+}
+
+/**
+ * @brief pawnSystemListCount
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnSystemListCount(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
+	uint8_t list = (uint8_t)params[1];
+
+	return Lux_FFI_System_List_Count( list );
+}
+
+/**
+ * @brief pawnSystemListItem
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnSystemListItem(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 4 );
+
+	uint8_t list = (uint8_t)params[1];
+
+	return Lux_FFI_System_List_Count( list );
+}
+
 
 /** Config Functions */
 
-/** pawnConfigGetString
-* native ConfigGetString(config[], value[], maxlength=sizeof  value);
-*
-*/
-static cell AMX_NATIVE_CALL pawnConfigGetString(AMX *amx, const cell *params)
+/**
+ * @brief pawnConfigGetString
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnConfigGetString(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 3 );
+
 	std::string value_string;
-	char * config_string;
+	std::string config_string;
 	cell * cptr;
 
-	amx_StrParam_Type( amx, params[1], config_string, char*);
+	config_string = Lux_PawnEntity_GetString( amx, params[1] );
 	value_string = lux::config->GetString(config_string, false);
+
 	cptr = amx_Address(amx, params[2]);
-	amx_SetString(cptr, value_string.c_str(), 1, 0, 5);
-	return (cell) 1;
+
+	return Lux_PawnEntity_SetString(cptr, value_string.c_str(), params[3] );
+
 }
 
-/** pawnConfigGetNumber
-* native ConfigGetNumber(config[]);
-*
-*/
-static cell AMX_NATIVE_CALL pawnConfigGetNumber(AMX *amx, const cell *params)
+/**
+ * @brief pawnConfigGetNumber
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnConfigGetNumber(AMX *amx, const cell *params)
 {
-	char * config_string;
-	amx_StrParam_Type( amx, params[1], config_string, char*);
-	return (cell) lux::config->GetNumber(config_string);
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
+	std::string config_string = Lux_PawnEntity_GetString( amx, params[1] );
+	return (cell) lux::config->GetNumber( config_string );
 }
 
-/** pawnConfigSetString
-* native ConfigSetString(config[], value[]);
-*
-*/
-static cell AMX_NATIVE_CALL pawnConfigSetString(AMX *amx, const cell *params)
+/**
+ * @brief pawnConfigSetString
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnConfigSetString(AMX *amx, const cell *params)
 {
-	char * value_string, * config_string;
-	amx_StrParam_Type( amx, params[2], value_string, char*);
-	amx_StrParam_Type( amx, params[1], config_string, char*);
+	ASSERT_PAWN_PARAM( amx, params, 2 );
+
+	std::string config_string = Lux_PawnEntity_GetString( amx, params[1] );
+	std::string value_string = Lux_PawnEntity_GetString( amx, params[2] );
+
 	lux::config->SetString(config_string, value_string);
 	return 0;
 }
 
-/** pawnConfigSave
-* native ConfigSave();
-*
-*/
-static cell AMX_NATIVE_CALL pawnConfigSave(AMX *amx, const cell *params)
+/**
+ * @brief pawnConfigSave
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnConfigSave(AMX *amx, const cell *params)
 {
-	//return lux::config->SaveGame();
-	return 0;
+	return Lux_FFI_Config_Save();
 }
 
 
@@ -100,17 +163,20 @@ static cell AMX_NATIVE_CALL pawnConfigSave(AMX *amx, const cell *params)
 * native FileGetList(strings[][], directory[] = "map", size=sizeof strings);
 *
 */
-static cell AMX_NATIVE_CALL pawnFileGetList(AMX *amx, const cell *params)
+static cell pawnFileGetList(AMX *amx, const cell *params)
 {
+	ASSERT_PAWN_PARAM( amx, params, 3 );
+
 	cell * cptr;
 	std::vector<std::string> results;
 	std::string folder = Lux_PawnEntity_GetString(amx, params[2]);
+
 	if ( !folder.length() )
 	{
 		return 0;
 	}
 
-	if ( lux::game->FolderList(folder, &results) )
+	if ( lux::game_data->FolderList(folder, &results) )
 	{
 		if ( results.size() )
 		{
@@ -134,11 +200,14 @@ static cell AMX_NATIVE_CALL pawnFileGetList(AMX *amx, const cell *params)
 const AMX_NATIVE_INFO System_Natives[] = {
 	/** Misc Functions */
 	{ "SystemAudioVolume", pawnSystemAudioVolume}, /// native SystemAudioVolume(_AUDIO:device, level = -1);
+	{ "SystemCommand", pawnSystemCommand}, /// native SystemCommand( command, value = 0 );
+	{ "SystemListCount", pawnSystemListCount}, /// native SystemListCount( list );
+	{ "SystemListItem", pawnSystemListItem}, /// native SystemListItem( list, item, content{},  maxlength=sizeof content );
 
 	/** Config Functions */
-	{ "ConfigSetString", pawnConfigSetString}, ///native ConfigSetString(config[], value[], maxlength=sizeof value);
-	{ "ConfigGetNumber", pawnConfigGetNumber}, ///native ConfigGetNumber(config[]);
-	{ "ConfigGetString", pawnConfigGetString}, ///native ConfigGetString(config[], value[]);
+	{ "ConfigSetString", pawnConfigSetString}, ///native ConfigSetString(key{}, value{}, maxlength=sizeof value);
+	{ "ConfigGetNumber", pawnConfigGetNumber}, ///native ConfigGetNumber(key{});
+	{ "ConfigGetString", pawnConfigGetString}, ///native ConfigGetString(key{}, value{});
 	{ "ConfigSave", pawnConfigSave}, ///native ConfigSave();
 
 	/** File Listing Functions */

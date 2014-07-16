@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include "world.h"
 
-/** pawnSheetRef
+/** Lux_FFI_Sheet_Reference
 *
 *
 */
@@ -41,9 +41,9 @@ void Lux_FFI_Sheet_Replace( const char * old_sheet, const char * new_sheet )
 
 	if ( old_sheet && new_sheet )
 	{
-		if ( lux::world->active_map )
+		if ( lux::gameworld->active_map )
 		{
-			lux::world->active_map->ReplaceObjectsSheets( old_sheet, new_sheet );
+			lux::gameworld->active_map->ReplaceObjectsSheets( old_sheet, new_sheet );
 		}
 	}
 

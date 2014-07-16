@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -45,6 +45,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			SDL_GameController * controller[8];
 			SDL_Window * native_window;
+			SDL_Window * message_window;
+
 
 			TouchEvent touch_events[10];
 			std::map<uint32_t, VirtualGamepadButton*> virtual_input;
@@ -56,6 +58,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 		public:
 			SDL_Window * GetWindow() { return native_window; }
+			SDL_Window * GetMessageWindow() { return message_window; }
+
 			bool GamepadAdded( int32_t joystick_index );
 			const char * GamepadName( uint32_t device_number );
 

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -8,6 +8,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
+#define FFI_ALLOW_ENTITY_OBJECT 1
+
 #include "audio.h"
 #include "config.h"
 #include "core.h"
@@ -26,26 +28,43 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 extern const AMX_NATIVE_INFO Entity_Natives[];
 
-/* Extra Entity Object FFI interface */
-uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, int32_t fixed_z);
-uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z);
-char * Lux_FFI_Entity_Object_Get_Setting( Entity * wanted, const char * key );
-int32_t Lux_FFI_Entity_Object_Get_Setting_Number( Entity * wanted, const char * key );
-uint8_t Lux_FFI_Entity_Object_Delete( Entity * wanted );
 
-int32_t Lux_FFI_Entity_Object_Collision_Set( Entity * wanted, int32_t rect, int32_t type, int32_t x, int32_t y, int32_t w, int32_t h );
-uint8_t Lux_FFI_Entity_Object_Collision_Get( Entity * wanted, int32_t rect, int32_t * x, int32_t * y, int32_t * w, int32_t * h );
-int32_t Lux_FFI_Entity_Object_Collision_Calculate( Entity * wanted );
-int32_t Lux_FFI_Entity_Object_Collision_Calculate_Current(Entity * wanted, uint32_t * entity_hit, int32_t * angle, int32_t * dist, int32_t * rect, int32_t * type );
-int32_t Lux_FFI_Entity_Object_Collision_Set_From_Object( Entity * wanted, uint32_t object_id, int32_t type );
+/**
+ * @brief pawnFunctionIdent
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnFunctionIdent(AMX *amx,const cell *params)
+{
+	char name[64];
+	cell *cstr;
+	int32_t index, err, len;
 
-uint8_t Lux_FFI_Entity_Object_Player_Set_Entity( uint32_t player_number, Entity * wanted );
+	cstr = amx_Address(amx, params[1]);
+
+	/* verify string length */
+	amx_StrLen(cstr, &len);
+	if ( len >= 64 )
+	{
+		amx_RaiseError(amx, AMX_ERR_NATIVE);
+		return 0;
+	}
+
+	amx_GetString( name, cstr, 0, UNLIMITED );
+	err = amx_FindPublic(amx,name,&index);
+	if ( err != AMX_ERR_NONE )
+		index=-1;   /* this is not considered a fatal error */
+	return index;
+}
+
+
 
 /** pawnFunctionCall
 * native FunctionCall(function);
 *
 */
-static cell AMX_NATIVE_CALL pawnFunctionCall(AMX *amx, const cell *params)
+static cell pawnFunctionCall(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
 
@@ -62,7 +81,7 @@ static cell AMX_NATIVE_CALL pawnFunctionCall(AMX *amx, const cell *params)
 * native EntitySetPosition(Fixed:x = Fixed:cellmin, Fixed:y = Fixed:cellmin, Fixed:z = Fixed:cellmin, id = SELF);
 * Updates Entity X/Y Positions
 */
-static cell AMX_NATIVE_CALL pawnEntitySetPosition(AMX *amx, const cell *p)
+static cell pawnEntitySetPosition(AMX *amx, const cell *p)
 {
 	ASSERT_PAWN_PARAM( amx, p, 4 );
 
@@ -80,7 +99,7 @@ static cell AMX_NATIVE_CALL pawnEntitySetPosition(AMX *amx, const cell *p)
 * native EntityGetPosition(&Fixed:x, &Fixed:y, &Fixed:z, id = SELF );
 * Updates Entity X/Y Positions
 */
-static cell AMX_NATIVE_CALL pawnEntityGetPosition(AMX *amx, const cell *params)
+static cell pawnEntityGetPosition(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 4 );
 
@@ -115,7 +134,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetPosition(AMX *amx, const cell *params)
 * native EntityGetSetting(key[], string[], id = SELF, length = sizeof string);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityGetSetting(AMX *amx, const cell *params)
+static cell pawnEntityGetSetting(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 4 );
 
@@ -150,7 +169,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetSetting(AMX *amx, const cell *params)
 * native EntityGetSettingHash(key[], id = SELF);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityGetSettingHash(AMX *amx, const cell *params)
+static cell pawnEntityGetSettingHash(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -178,7 +197,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetSettingHash(AMX *amx, const cell *param
 * native EntityGetNumber(key[], id = SELF );
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityGetNumber(AMX *amx, const cell *params)
+static cell pawnEntityGetNumber(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -199,7 +218,7 @@ static cell AMX_NATIVE_CALL pawnEntityGetNumber(AMX *amx, const cell *params)
 * native EntityCreate(parententity{}, id_string{}, Fixed:x, Fixed:y, Fixed:z, map_id, args[]='''', {Fixed,_}:...);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityCreate(AMX *amx, const cell *params)
+static cell pawnEntityCreate(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 7 );
 
@@ -321,7 +340,7 @@ static cell AMX_NATIVE_CALL pawnEntityCreate(AMX *amx, const cell *params)
 * native EntityDelete(id = SELF);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityDelete(AMX *amx, const cell *params)
+static cell pawnEntityDelete(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
 	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
@@ -339,7 +358,7 @@ static cell AMX_NATIVE_CALL pawnEntityDelete(AMX *amx, const cell *params)
 * native EntityPublicVariable(id, variable[]);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityPublicVariable(AMX *amx, const cell *params)
+static cell pawnEntityPublicVariable(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
@@ -357,7 +376,7 @@ static cell AMX_NATIVE_CALL pawnEntityPublicVariable(AMX *amx, const cell *param
 * native EntityPublicVariableSet(id, variable[], value);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityPublicVariableSet(AMX *amx, const cell *params)
+static cell pawnEntityPublicVariableSet(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -376,7 +395,7 @@ static cell AMX_NATIVE_CALL pawnEntityPublicVariableSet(AMX *amx, const cell *pa
 * native EntityPublicFunction(id, function[], args[]='''', ...);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntityPublicFunction(AMX *amx, const cell *params)
+static cell pawnEntityPublicFunction(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -481,7 +500,7 @@ static cell AMX_NATIVE_CALL pawnEntityPublicFunction(AMX *amx, const cell *param
 * native EntitiesList(map_id = CURRENT_MAP);
 *
 */
-static cell AMX_NATIVE_CALL pawnEntitiesList(AMX *amx, const cell *params)
+static cell pawnEntitiesList(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
 
@@ -497,7 +516,7 @@ static cell AMX_NATIVE_CALL pawnEntitiesList(AMX *amx, const cell *params)
 * native EntitiesNext(&id, map_id = 0, string{}="", maxlength = sizeof(string));
 *
 */
-static cell AMX_NATIVE_CALL pawnEntitiesNext(AMX *amx, const cell *params)
+static cell pawnEntitiesNext(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 4 );
 
@@ -531,7 +550,7 @@ static cell AMX_NATIVE_CALL pawnEntitiesNext(AMX *amx, const cell *params)
 * native CollisionSet(id, rect = 0, type = 0, x = 0, y = 0, w = 0, h = 0);
 *
 */
-static cell AMX_NATIVE_CALL pawnCollisionSet(AMX *amx, const cell *p)
+static cell pawnCollisionSet(AMX *amx, const cell *p)
 {
 	ASSERT_PAWN_PARAM( amx, p, 7 );
 
@@ -544,7 +563,7 @@ static cell AMX_NATIVE_CALL pawnCollisionSet(AMX *amx, const cell *p)
 * native CollisionGet(id, rect, &x, &y, &w, &h);
 *
 */
-static cell AMX_NATIVE_CALL pawnCollisionGet(AMX *amx, const cell *params)
+static cell pawnCollisionGet(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 5 );
 
@@ -580,7 +599,7 @@ static cell AMX_NATIVE_CALL pawnCollisionGet(AMX *amx, const cell *params)
 * native CollisionCheck(id1, id2, rect1 = -1, rect2 = -1);
 *
 */
-static cell AMX_NATIVE_CALL pawnCollisionCheck(AMX *amx, const cell *params)
+static cell pawnCollisionCheck(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 4 );
 
@@ -597,7 +616,7 @@ static cell AMX_NATIVE_CALL pawnCollisionCheck(AMX *amx, const cell *params)
 * native CollisionCalculate(id = SELF, rect = -1, type = -1);
 *
 */
-static cell AMX_NATIVE_CALL pawnCollisionCalculate(AMX *amx, const cell *params)
+static cell pawnCollisionCalculate(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -610,7 +629,7 @@ static cell AMX_NATIVE_CALL pawnCollisionCalculate(AMX *amx, const cell *params)
 * native CollisionGetCurrent(id = SELF, &current, &angle, &dist, &rect, &type);
 *
 */
-static cell AMX_NATIVE_CALL pawnCollisionGetCurrent(AMX *amx, const cell *params)
+static cell pawnCollisionGetCurrent(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 6 );
 
@@ -660,7 +679,7 @@ static cell AMX_NATIVE_CALL pawnCollisionGetCurrent(AMX *amx, const cell *params
 * native CollisionFromObject( obj, type = 0, id = SELF);
 *
 */
-static cell AMX_NATIVE_CALL pawnCollisionFromObject(AMX *amx, const cell *params)
+static cell pawnCollisionFromObject(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
@@ -675,18 +694,18 @@ static cell AMX_NATIVE_CALL pawnCollisionFromObject(AMX *amx, const cell *params
 * native PathCount( object:id );
 *
 */
-static cell AMX_NATIVE_CALL pawnPathCount(AMX *amx, const cell *params)
+static cell pawnPathCount(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
 
 	return Lux_FFI_Path_Count( params[1] );
 }
 
-/** pawnPathPoints
-* native PathPoints( object:id, point, &x, &y, &t);
+/** pawnPathGetPoint
+* native PathGetPoint( object:id, point, &x, &y, &t);
 *
 */
-static cell AMX_NATIVE_CALL pawnPathPoints(AMX *amx, const cell *params)
+static cell pawnPathGetPoint(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 5 );
 
@@ -720,12 +739,43 @@ static cell AMX_NATIVE_CALL pawnPathPoints(AMX *amx, const cell *params)
 	return 0;
 }
 
+/** pawnPathMoveObject
+* native PathMoveObject(object:id, speed, &x, &y, loop);
+*/
+static cell pawnPathMoveObject(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 5 );
 
+	uint32_t object_id = (uint32_t)params[1];
+	int32_t fixed_speed = params[2];
+	int16_t x = 0;
+	int16_t y = 0;
+	uint8_t loop = params[5];
+
+	int32_t result = Lux_FFI_Path_Move_Object( object_id, fixed_speed, &x, &y, loop );
+
+	if ( result >= 0 )
+	{
+		cell * xptr = NULL;
+
+		xptr = amx_Address(amx, params[3]);
+		if (xptr)
+			*xptr = x;
+
+		xptr = amx_Address(amx, params[4]);
+		if (xptr)
+			*xptr = y;
+	}
+
+	return result;
+
+}
 
 
 
 const AMX_NATIVE_INFO Entity_Natives[] = {
 	{ "FunctionCall", pawnFunctionCall},
+	{ "FunctionIdent", pawnFunctionIdent },
 	/** Collision Functions */
 	{ "CollisionCheck", pawnCollisionCheck},
 	{ "CollisionSet", pawnCollisionSet},
@@ -749,9 +799,11 @@ const AMX_NATIVE_INFO Entity_Natives[] = {
 	{ "EntityDelete", pawnEntityDelete},
 	/** Path Functions  */
 	{ "PathCount", pawnPathCount},
-	{ "PathPoints", pawnPathPoints},
+	{ "PathGetPoint", pawnPathGetPoint},
 	{ "PathCreate", pawnDeprecatedFunction},
 	{ "PathAddPoint", pawnDeprecatedFunction},
 	{ "PathRemovePoint", pawnDeprecatedFunction},
+	{ "PathMoveObject", pawnPathMoveObject }, ///native PathMoveObject(object:id, speed,&x, &y);
+
 	{ 0, 0 }
 };

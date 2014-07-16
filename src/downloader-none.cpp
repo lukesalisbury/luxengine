@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2011 Luke Salisbury
+Copyright © 2006-2014 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -74,7 +74,7 @@ int32_t Lux_Util_FileDownloaderEntityCallback( void * data )
 
 int32_t Lux_Util_FileDownloaderBackground( std::string urlArg, std::string origFile, UserInterface * ui )
 {
-	LuxRect region = {10, (ui->_region.h/2)-25, (ui->_region.w-20), 50, 0 };
+	LuxRect region = {10, (ui->ui_region.h/2)-25, (ui->ui_region.w-20), 50, 0 };
 	Widget * dialog = ui->AddChild(region, DIALOGOK, colour::white, "Downloading code has been disabled");
 
 	while ( !ui->Loop() )
