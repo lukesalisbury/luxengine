@@ -118,6 +118,10 @@ void MokoiMap::InitialSetup( std::string map_name )
 	this->offset_position[0] = 0;
 	this->offset_position[1] = 0;
 	this->offset_position[2] = 0;
+
+
+	this->grid[0] = 0;
+	this->grid[1] = 0;
 }
 
 /* Settings */
@@ -433,7 +437,7 @@ uint32_t MokoiMap::AddObject(MapObject * object, bool is_static )
 {
 	uint32_t object_id = 0;
 
-	object->SetData(NULL, object->type);
+	object->SetData( object->type);
 
 	if ( object->has_data )
 	{
@@ -478,7 +482,7 @@ void MokoiMap::ReplaceObjectsSheets( std::string old_sheet, std::string new_shee
 				object->FreeData();
 				std::string sprite = object->sprite.substr(object->sprite.find_first_of(':'));
 				object->sprite = new_sheet + sprite;
-				object->SetData(NULL, OBJECT_SPRITE);
+				object->SetData( OBJECT_SPRITE);
 			}
 		}
 	}
@@ -851,43 +855,13 @@ uint32_t MokoiMap::XY2Screen(int32_t x, int32_t y, int32_t w)
 }
 
 /* Data */
-/*
-* MokoiMap::Valid()
-* Todo: Optimise code.
-*/
+/**
+ * @brief MokoiMap::Valid
+ * @return
+ */
 bool MokoiMap::Valid()
 {
-	if ( !this->loaded )
-	{
-		tinyxml2::XMLDocument * xml_file = MokoiGame_GetXML("./maps/" + this->map_name + ".xml");
-		if ( xml_file->Error() )
-		{
-//			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
-			delete xml_file;
-			return false;
-		}
-
-		if ( !xml_file->RootElement() || strcmp( xml_file->RootElement()->Value(), "map") )
-		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->map_name + ".xml not a vamap_nameap file." << std::endl;
-			delete xml_file;
-			return false;
-		}
-
-		tinyxml2::XMLElement * dimensions_elem = xml_file->RootElement()->FirstChildElement("settings")->FirstChildElement("dimensions");
-
-		if ( dimensions_elem )
-		{
-			tinyxml2::QueryUnsignedAttribute( dimensions_elem, "width", this->dimension_width );
-			tinyxml2::QueryUnsignedAttribute( dimensions_elem, "height", this->dimension_height );
-		}
-
-		this->map_width = MAKE_INT_FIXED( this->dimension_width * this->default_map_width );
-		this->map_height = MAKE_INT_FIXED( this->dimension_height * this->default_map_height );
-		delete xml_file;
-		return true;
-	}
-	return false;
+	return this->loaded;
 }
 
 /*
@@ -943,7 +917,6 @@ bool MokoiMap::LoadFile()
 	if ( this->loaded )
 		return this->loaded;
 
-
 	MapXMLReader reader;
 	std::map<std::string, std::string> settings;
 
@@ -985,7 +958,7 @@ bool MokoiMap::LoadFile()
 	std::vector<MapObject *>::iterator p;
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
-		(*p)->SetData(NULL, (*p)->type);
+		(*p)->SetData( (*p)->type );
 		this->AddObjectToScreens((*p));
 	}
 

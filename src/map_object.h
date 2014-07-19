@@ -71,10 +71,12 @@ class MapObject
 		uint8_t data_type;
 
 		mem_pointer GetData();
-		void SetData(mem_pointer, uint8_t type);
+		void SetData( uint8_t type );
+		void SetData(mem_pointer data, uint8_t type);
 		void FreeData();
 
 		/* Sprite type */
+		void SetSprite(LuxSprite * data);
 		mem_pointer GetImage( ObjectEffect fx );
 		LuxSprite * GetCurrentSprite( );
 		LuxSprite * GetAnimationFrame( LuxSprite * orig, bool no_increment = false);

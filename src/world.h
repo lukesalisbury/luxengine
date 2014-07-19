@@ -105,7 +105,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			MokoiMap * GetMap( uint32_t ident );
 			MokoiMap * FindMap( std::string map_file );
 			bool DeleteMap( uint32_t ident );
-
+			bool InsertMap( uint32_t ident, MokoiMap * map );
 			uint32_t GetMapID( std::string map_name );
 
 			/* Map Editing */

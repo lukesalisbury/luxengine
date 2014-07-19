@@ -28,7 +28,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void SaveFile( );
 
 		private:
-			uint32_t Ident() { return id; }
+			uint32_t Ident() { return id.grid.section; }
 			std::string Name() { return name; }
 
 			bool IsBasic() { return ( this->allocated_size == 1 ? true : false ); }
@@ -39,7 +39,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 
 			/* Grid System */
-			uint32_t GetMapID( const uint16_t grid_id );
+			uint32_t BuildMapID( const uint16_t grid_id );
 			uint32_t GetMapID( const uint8_t grid_x, const uint8_t grid_y );
 			uint16_t GetGridID( const uint8_t grid_x, const uint8_t grid_y );
 
@@ -53,7 +53,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 		private:
 			/* Details */
 			std::string name;
-			uint32_t id;
+			LuxMapIdent id;
 
 			/* Save */
 			uint8_t flag;

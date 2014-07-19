@@ -48,6 +48,7 @@ public:
 	LuxRect sheet_area;
 
 	std::string name;
+	std::string parent;
 	uint32_t hash;
 	uint8_t flag;
 

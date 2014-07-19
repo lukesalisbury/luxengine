@@ -138,7 +138,7 @@ void MapObject::Restore( elix::File * current_save_file )
 
 	if ( this->type == OBJECT_SPRITE )
 	{
-		this->SetData(NULL, this->type);
+		this->SetData( this->type);
 	}
 }
 
@@ -152,79 +152,46 @@ mem_pointer MapObject::GetData()
 	return this->data;
 }
 
-void MapObject::SetData(void * data, uint8_t type)
+void MapObject::SetData( uint8_t type )
 {
-	if ( !data )
+	this->has_data = false;
+	if ( type == OBJECT_SPRITE )
 	{
-		if ( type == OBJECT_SPRITE )
+		LuxSprite * sdata = lux::display->GetSprite( this->sprite );
+		if ( sdata )
 		{
-			this->has_data = false;
-			std::vector<std::string> name_split;
-			elix::string::Split(this->sprite, ":", &name_split);
-			if ( name_split.size() == 2 )
-			{
-				LuxSprite * sdata = lux::display->GetSprite( name_split[0], name_split[1]);
-				if ( sdata )
-				{
-					this->data = (void*)sdata;
-					this->type = type;
-					this->data_type = OBJECT_SPRITE;
-					this->has_data = true;
-					this->sprite_width = sdata->sheet_area.w;
-					this->sprite_height = sdata->sheet_area.h;
-					if ( (this->position.w == sdata->sheet_area.w) && (this->position.h == sdata->sheet_area.h) )
-					{
-						//this->position.w = this->position.h = 0;
-						this->effects.tile_object = 0;
-					}
-					if ( !this->position.w )
-						this->position.w = sdata->sheet_area.w;
-					if ( !this->position.h )
-						this->position.h = sdata->sheet_area.h;
-
-					if ( sdata->has_sprite_border )
-					{
-						for ( uint8_t p = 0; p < 8; p++ )
-						{
-							if ( sdata->border[p].name )
-								sdata->border[p].sprite = lux::display->GetSprite( name_split[0], sdata->border[p].name );
-
-						}
-					}
-
-				}
-				else
-				{
-					MessagePush( (char*)"Sprite missing: %s", this->sprite.c_str() );
-				}
-			}
-			else
-			{
-				this->data_type = 0;
-			}
-			name_split.clear();
-		}
-		else if ( type == 'M' )
-		{
-			this->SetCanvas( new LuxCanvas(this->sprite) );
-		}
-		else if ( type == 'p' )
-		{
-			//this->SetPolygon( new LuxPolygon(this->image) );
-		}
-		else if ( type == 't' )
-		{
-			this->has_data = true;
-			this->data = data;
-			this->data_type = 't';
+			this->SetSprite( sdata );
 		}
 		else
 		{
-			this->data_type = type;
-			this->has_data = true;
+			this->data_type = 0;
 		}
 	}
+	else if ( type == OBJECT_CANVAS )
+	{
+		this->SetCanvas( new LuxCanvas(this->sprite) );
+	}
+	else if ( type == OBJECT_POLYGON )
+	{
+		//this->SetPolygon( new LuxPolygon(this->image) );
+	}
+	else if ( type == OBJECT_TEXT )
+	{
+		this->has_data = true;
+		this->data = data;
+		this->data_type = 't';
+	}
 	else
+	{
+		this->data_type = type;
+		this->has_data = true;
+	}
+
+}
+
+void MapObject::SetData( mem_pointer data, uint8_t type)
+{
+	if ( data )
 	{
 		this->data = data;
 		this->data_type = type;
@@ -403,6 +370,40 @@ LuxSprite * MapObject::PeekSprite(  )
 	return NULL;
 }
 
+void MapObject::SetSprite(LuxSprite * data)
+{
+	if ( data )
+	{
+		this->data = (void*)data;
+		this->type = type;
+		this->data_type = OBJECT_SPRITE;
+		this->has_data = true;
+		this->sprite_width = data->sheet_area.w;
+		this->sprite_height = data->sheet_area.h;
+		if ( (this->position.w == data->sheet_area.w) && (this->position.h == data->sheet_area.h) )
+		{
+			//this->position.w = this->position.h = 0;
+			this->effects.tile_object = 0;
+		}
+		if ( !this->position.w )
+			this->position.w = data->sheet_area.w;
+		if ( !this->position.h )
+			this->position.h = data->sheet_area.h;
+
+		if ( data->has_sprite_border )
+		{
+			for ( uint8_t p = 0; p < 8; p++ )
+			{
+				if ( data->border[p].name )
+					data->border[p].sprite = lux::display->GetSprite( data->parent, data->border[p].name );
+			}
+		}
+	}
+	else
+	{
+		MessagePush( (char*)"Sprite missing: %s", this->sprite.c_str() );
+	}
+}
 
 LuxSprite * MapObject::GetSprite( bool no_increment )
 {
@@ -436,7 +437,7 @@ LuxSprite * MapObject::GetCurrentSprite( )
 	this->offset_y = 0;
 	if ( !this->data )
 	{
-		this->SetData(NULL, this->type);
+		this->SetData( this->type);
 	}
 
 	if ( this->data )
@@ -476,7 +477,7 @@ mem_pointer MapObject::GetImage( ObjectEffect fx )
 	this->offset_y = 0;
 	if ( !this->data )
 	{
-		this->SetData(NULL, this->type);
+		this->SetData( this->type);
 	}
 
 	if ( this->data )

@@ -146,6 +146,7 @@ bool LuxSheet::ParseXML()
 		{
 			t_sprite->name = obj_name;
 			t_sprite->hash = elix::string::Hash( obj_name );
+			t_sprite->parent = this->name;
 
 			position_element = sprite_element->FirstChildElement("position");
 			border_element = sprite_element->FirstChildElement("child");
@@ -189,6 +190,8 @@ bool LuxSheet::ParseXML()
 			t_sprite->name = obj_name;
 			t_sprite->hash = elix::string::Hash( obj_name );
 			t_sprite->animated = true;
+			t_sprite->parent = this->name;
+
 			frame_element = sprite_element->FirstChildElement("frame");
 			border_element = sprite_element->FirstChildElement("child");
 			collision_element = sprite_element->FirstChildElement("collision");

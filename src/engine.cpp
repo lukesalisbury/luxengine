@@ -382,6 +382,8 @@ void LuxEngine::RunState()
 	#ifdef NETWORKENABLED
 	lux::core->NetUnlock();
 	#endif
+
+
 	lux::gameworld->Loop( this->state );
 	lux::audio->Loop( this->state );
 	lux::display->Loop( this->state );

@@ -55,7 +55,7 @@ uint32_t Lux_FFI_Map_Get_Ident( const char * map_file, uint8_t create_new )
 
 		if ( create_new )
 		{
-			map = lux::gameworld->CreateMap( map_file, true, true, 640, 480 ); // TODO
+			map = lux::gameworld->CreateMap( map_file, true, true, 640, 480 );
 		}
 		else
 		{

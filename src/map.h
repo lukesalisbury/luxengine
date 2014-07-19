@@ -16,6 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "map_screen.h"
 #include "entity_section.h"
+#include "options.h"
 
 #define MAP_WRAPNONE	0
 #define MAP_WRAPXAXIS	1
@@ -24,7 +25,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 
 
-class MokoiMap
+class MokoiMap: public Options
 {
 		friend class EntityManager;
 		friend class WorldSystem;

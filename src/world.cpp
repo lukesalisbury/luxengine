@@ -54,7 +54,7 @@ GameWorldSystem::GameWorldSystem()
 	this->map_movement_direction = 0;
 
 
-	this->map_counter.value = 0; /* Section counter */
+	this->map_counter.grid.section = 1; /* Section counter */
 
 	this->global_entities = new EntitySection("main", 0);
 
@@ -84,8 +84,8 @@ bool GameWorldSystem::Init( )
 		starting = "0";
 	}
 
-
-	this->next_section = new WorldSection( this->map_counter, "map/" + starting, 1, 1 );
+	this->next_grid_position[0] =  this->next_grid_position[1] = 0;
+	this->next_section = this->NewSection( starting, 1, 1 );
 	this->next_section->AddMap( starting, 0, 0 );
 
 	this->SwitchActive();
@@ -424,7 +424,6 @@ uint32_t GameWorldSystem::SetMap( MokoiMap * map, fixed position_x, fixed positi
 		this->next_grid_position[0] = map->GetGrid('x');
 		this->next_grid_position[1] = map->GetGrid('y');
 
-		this->next_map = this->next_section->GetMap( this->next_grid_position[0], this->next_grid_position[1] );
 
 		this->next_offset_position[0] = position_x;
 		this->next_offset_position[1] = position_y;
@@ -500,9 +499,21 @@ bool GameWorldSystem::SetMap(uint32_t id )
 
 
 /* Map Handling */
+bool GameWorldSystem::InsertMap( uint32_t ident, MokoiMap * map )
+{
+	std::map<uint32_t, MokoiMap *>::iterator p = this->map_list.find( ident );
+
+	if ( p == this->map_list.end() )
+	{
+		this->map_list.insert( std::pair<uint32_t, MokoiMap *>( ident, map ) );
+		return true;
+	}
+	return false;
+}
+
 MokoiMap * GameWorldSystem::CreateMap( std::string map_name, bool removeable, bool editable, uint32_t width, uint32_t height )
 {
-	WorldSection * section = new WorldSection(map_counter, "map/"+map_name, 1, 1);
+	WorldSection * section = this->NewSection("map/"+map_name, 1, 1);
 	MokoiMap * new_map = NULL;
 
 	if ( width && height )
@@ -514,10 +525,13 @@ MokoiMap * GameWorldSystem::CreateMap( std::string map_name, bool removeable, bo
 		new_map = new MokoiMap( map_name );
 	}
 
-	if ( section->AddMap( new_map, 0, 0) )
+	if ( new_map )
 	{
-		//new_map->SetOption( 0, editable );
-		//new_map->SetOption( 1, !removeable );
+		if ( section->AddMap( new_map, 0, 0) )
+		{
+			new_map->SetOption( 0, editable );
+			new_map->SetOption( 1, !removeable );
+		}
 	}
 	return new_map;
 }
@@ -644,13 +658,13 @@ WorldSection * GameWorldSystem::GetSection( MokoiMap * map )
 	{
 		if ( this->section_list.size() )
 		{
-
 			std::map<uint32_t, WorldSection *>::iterator p;
 			for ( p = this->section_list.begin(); p != this->section_list.end(); p++ )
 			{
 				if ( p->second->Ident() == map->GridIdent() )
 				{
-					return p->second;
+					requested_section = p->second;
+					break;
 				}
 			}
 		}
@@ -757,7 +771,7 @@ uint32_t GameWorldSystem::GetMapID( std::string section_name, uint8_t grid_x, ui
 /* Object Handling */
 uint32_t GameWorldSystem::AddObject(MapObject * object, bool is_static)
 {
-	object->SetData(NULL, object->type);
+	object->SetData(object->type);
 	if ( !object->has_data )
 	{
 		return 0;

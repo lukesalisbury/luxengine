@@ -21,34 +21,47 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #define GRID_LOCATION(x, y, gw, gh) ( x + (y*gw) )
 
+/**
+ * @brief WorldSection::WorldSection
+ * @param ident
+ * @param file
+ * @param width
+ * @param height
+ */
 WorldSection::WorldSection( LuxMapIdent ident, std::string file, uint8_t width, uint8_t height )
 {
-	this->id = ident.value;
+	this->id = ident;
 	this->name = file;
 
 	this->InitialSetup( width, height );
 
-
 	this->LoadFile();
 }
 
-
+/**
+ * @brief WorldSection::WorldSection
+ * @param current_save_file
+ */
 WorldSection::WorldSection( elix::File * current_save_file )
 {
 	this->Restore( current_save_file );
 }
 
-
+/**
+ * @brief WorldSection::~WorldSection
+ */
 WorldSection::~WorldSection()
 {
-	lux::gameworld->DeleteSection(this->id);
+	lux::gameworld->DeleteSection(this->Ident() );
 
 	delete [] this->grid;
 }
 
-
-
-
+/**
+ * @brief WorldSection::InitialSetup
+ * @param width
+ * @param height
+ */
 void WorldSection::InitialSetup( uint8_t width, uint8_t height )
 {
 	this->allocated_size = width * height;
@@ -58,58 +71,13 @@ void WorldSection::InitialSetup( uint8_t width, uint8_t height )
 
 	this->grid = new uint16_t[this->allocated_size];
 
-	memset(&this->grid, 0xFFFF, this->allocated_size * 2 ); /* Reset Grid */
-}
-/**/
-bool WorldSection::AddMap( std::string file_name, const uint8_t x, const uint8_t y )
-{
-	MokoiMap * map_object = new MokoiMap( file_name );
-
-	if ( this->AddMap( map_object, x, y ) == false )
-	{
-		delete map_object;
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+	memset(this->grid, 0xFFFF, this->allocated_size ); /* Reset Grid */
 
 }
 
-/**/
-
-bool WorldSection::AddMap( MokoiMap * map_object, const uint8_t x, const uint8_t y )
-{
-	uint16_t location = 0xFFFF;
-
-	map_object->LoadDimension();
-	if ( map_object->dimension_width && map_object->dimension_height )
-	{
-		location = GRID_LOCATION( x, y, this->width, this->height );
-
-		map_object->SetGridIdent( location, this->id );
-
-		for ( uint8_t grid_x = 0; grid_x < map_object->dimension_width; grid_x++ )
-		{
-			for ( uint8_t grid_y = 0; grid_y < map_object->dimension_height; grid_y++ )
-			{
-				location = GRID_LOCATION( (grid_x + x), (grid_y + y), this->width, this->height );
-				if ( location < this->allocated_size )
-				{
-					this->grid[location] = map_object->GridIdent();
-				}
-			}
-		}
-		lux::gameworld->map_list.insert( std::make_pair( map_object->Ident(), map_object ) );
-
-		return true;
-	}
-	return false;
-}
-
-
-
+/**
+ * @brief WorldSection::LoadFile
+ */
 void WorldSection::LoadFile( )
 {
 	uint32_t grid[2];
@@ -141,33 +109,111 @@ void WorldSection::LoadFile( )
 
 }
 
+/**
+ * @brief WorldSection::SaveFile
+ */
 void WorldSection::SaveFile( )
 {
 
 }
 
+/* Save */
+
+/**
+ * @brief WorldSection::Save
+ * @param current_save_file
+ * @return
+ */
 bool WorldSection::Save( elix::File * current_save_file )
 {
 	current_save_file->WriteWithLabel( "Section Size", this->allocated_size );
-	current_save_file->WriteWithLabel( "Section ID", this->id );
+	current_save_file->WriteWithLabel( "Section ID", this->Ident() );
 	current_save_file->WriteWithLabel( "Section file", this->name );
 	current_save_file->WriteWithLabel( "Section flag", this->flag );
 	return true;
 }
 
+/**
+ * @brief WorldSection::Restore
+ * @param current_save_file
+ * @return
+ */
 bool WorldSection::Restore( elix::File * current_save_file )
 {
 	this->allocated_size = current_save_file->ReadUint16WithLabel( "Section Size", true );
-	this->id = current_save_file->ReadUint32WithLabel( "Section ID", true );
+	this->id.grid.section = current_save_file->ReadUint32WithLabel( "Section ID", true );
 	this->name = current_save_file->ReadStringWithLabel( "Section file" );
 	this->flag = current_save_file->ReadUint8WithLabel( "Section flag" );
-
 
 	this->LoadFile();
 
 	return true;
 }
 
+/* Child Maps */
+
+/**
+ * @brief WorldSection::AddMap
+ * @param file_name
+ * @param x
+ * @param y
+ * @return
+ */
+bool WorldSection::AddMap( std::string file_name, const uint8_t x, const uint8_t y )
+{
+	MokoiMap * map_object = new MokoiMap( file_name );
+
+	if ( this->AddMap( map_object, x, y ) == false )
+	{
+		delete map_object;
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+
+}
+
+/**
+ * @brief WorldSection::AddMap
+ * @param map_object
+ * @param x
+ * @param y
+ * @return
+ */
+bool WorldSection::AddMap( MokoiMap * map_object, const uint8_t x, const uint8_t y )
+{
+	uint16_t location = 0xFFFF;
+
+	map_object->LoadDimension();
+	if ( map_object->dimension_width && map_object->dimension_height )
+	{
+		location = GRID_LOCATION( x, y, this->width, this->height );
+
+		map_object->SetGridIdent( location, this->Ident() );
+		map_object->SetGrid(x, y);
+		for ( uint8_t grid_x = 0; grid_x < map_object->dimension_width; grid_x++ )
+		{
+			for ( uint8_t grid_y = 0; grid_y < map_object->dimension_height; grid_y++ )
+			{
+				location = GRID_LOCATION( (grid_x + x), (grid_y + y), this->width, this->height );
+				if ( location < this->allocated_size )
+				{
+					this->grid[location] = map_object->GridIdent();
+				}
+			}
+		}
+		if ( lux::gameworld )
+			lux::gameworld->InsertMap( map_object->Ident(), map_object );
+
+		return true;
+	}
+	return false;
+}
+
+
+/* Grid System */
 uint16_t WorldSection::GetGridID( uint8_t grid_x, uint8_t grid_y )
 {
 	if ( grid_x >= this->width )
@@ -189,14 +235,12 @@ uint32_t WorldSection::GetMapID( const uint8_t grid_x, const uint8_t grid_y  )
 
 	uint16_t location = GRID_LOCATION( grid_x, grid_y, this->width, this->height );
 
-	return this->GetMapID(location);
+	return this->BuildMapID(location);
 }
 
-uint32_t WorldSection::GetMapID( const uint16_t grid_id )
+uint32_t WorldSection::BuildMapID( const uint16_t grid_id )
 {
-	LuxMapIdent map;
-	map.value = 0;
-	map.grid.section = this->id;
+	LuxMapIdent map = this->id;
 	map.grid.map = grid_id;
 	return map.value;
 }
@@ -205,7 +249,7 @@ uint32_t WorldSection::GetMapID( const uint16_t grid_id )
 MokoiMap * WorldSection::GetMap( const uint16_t grid_id  )
 {
 	MokoiMap * map = NULL;
-	uint32_t ident = this->GetMapID( grid_id );
+	uint32_t ident = this->BuildMapID( grid_id );
 
 	if ( ident )
 	{

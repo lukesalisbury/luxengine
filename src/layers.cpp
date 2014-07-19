@@ -86,7 +86,7 @@ bool Layer::AddObject(MapObject * new_object, bool static_object)
 {
 	if ( !new_object->has_data )
 	{
-		new_object->SetData(NULL, new_object->type);
+		new_object->SetData( new_object->type);
 	}
 	if ( static_object )
 	{

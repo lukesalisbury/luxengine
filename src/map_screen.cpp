@@ -48,6 +48,8 @@ bool MokoiMapScreen::Init()
 	this->initialised = true;
 	if ( !this->_mask )
 		this->_mask = Lux_Mask_New( (this->_width), (this->_height) );
+
+	MapObject * object = NULL;
 	LuxSprite * current = NULL;
 	std::vector<MapObject *>::iterator p;
 
@@ -55,22 +57,23 @@ bool MokoiMapScreen::Init()
 	{
 		for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 		{
-			(*p)->SetData(NULL, (*p)->type);
-			if ( ((*p)->type == OBJECT_SPRITE) && (*p)->has_data )
+			object = (*p);
+			object->SetData( object->type);
+			if ( (object->type == OBJECT_SPRITE) && object->has_data )
 			{
-				current = (LuxSprite *)(*p)->GetData();
+				current = (LuxSprite *)object->GetData();
 				if ( current->mask_value )
 				{
-					if ( (*p)->effects.flip_image == 1 || (*p)->effects.flip_image == 3 )
-						this->FillMask( (*p)->position.x, (*p)->position.y, ( (*p)->position.h ? (*p)->position.h : current->sheet_area.h), ( (*p)->position.w ? (*p)->position.w : current->sheet_area.w), current->mask_value);
+					if ( object->effects.flip_image == 1 || object->effects.flip_image == 3 )
+						this->FillMask( object->position.x, object->position.y, ( object->position.h ? object->position.h : current->sheet_area.h), ( (*p)->position.w ? object->position.w : current->sheet_area.w), current->mask_value);
 					else
-						this->FillMask( (*p)->position.x, (*p)->position.y, ( (*p)->position.w ? (*p)->position.w : current->sheet_area.w), ( (*p)->position.h ? (*p)->position.h : current->sheet_area.h), current->mask_value);
+						this->FillMask( object->position.x, object->position.y, ( object->position.w ? object->position.w : current->sheet_area.w), ( object->position.h ? object->position.h : current->sheet_area.h), current->mask_value);
 				}
 			}
-			if ( !lux::display->AddObjectToLayer((*p)->layer, (*p), true) )
+			if ( !lux::display->AddObjectToLayer(object->layer, object, true) )
 			{
-				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << (*p)->TypeName() << " (" << (*p)->sprite << ") add failed" << std::endl;
-				(*p)->type = 0;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << object->TypeName() << " (" << object->sprite << ") add failed" << std::endl;
+				object->type = 0;
 			}
 		}
 	}
@@ -138,7 +141,7 @@ void MokoiMapScreen::BuildMask()
 	std::vector<MapObject *>::iterator p;
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
-		(*p)->SetData(NULL, (*p)->type);
+		(*p)->SetData((*p)->type);
 		if ( ((*p)->type == OBJECT_SPRITE) && (*p)->has_data )
 		{
 			current = (LuxSprite *)(*p)->GetData();
