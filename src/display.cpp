@@ -415,6 +415,7 @@ void DisplaySystem::ShowMessages()
 
 	text_rect.x = 2;
 	text_rect.y = this->screen_dimension.h;
+	text_rect.z = 9;
 	for ( uint8_t m = 0; m < 13; m++ )
 	{
 		if ( server_messages_text[m].length() )

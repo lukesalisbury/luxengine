@@ -64,7 +64,7 @@ uint32_t Lux_FFI_World_Exist( const char * section_name )
 	uint32_t section_hash = 0;
 	if ( lux::gameworld )
 	{
-		WorldSection * section = lux::gameworld->GetSection( section_name, false );
+		WorldSection * section = lux::gameworld->GetSection( section_name, true );
 		if ( section )
 		{
 			section_hash = section->Ident();

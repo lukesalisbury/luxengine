@@ -15,6 +15,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "mokoi_game.h"
 #include "core.h"
 
+#ifndef NOAUDIO
+
 void Lux_Audio_DialogEnded()
 {
 	lux::audio->StopDialog();
@@ -22,6 +24,7 @@ void Lux_Audio_DialogEnded()
 
 AudioSystem::AudioSystem()
 {
+
 	enabled = lux::config->GetBoolean("audio.able");
 
 	this->master_volume = 128;
@@ -63,13 +66,16 @@ AudioSystem::AudioSystem()
 			audiolist_file.clear();
 		}
 	}
+
 }
 
 
 AudioSystem::~AudioSystem ( )
 {
+
 	this->soundfx.clear();
 	Mix_CloseAudio();
+
 }
 
 bool AudioSystem::Loop(LuxState engine_state)
@@ -340,3 +346,83 @@ uint32_t AudioSystem::EffectLength( Mix_Chunk * chunk )
 	/* (sample frames * 1000) / frequency == play length in ms */
 	return (frames * 1000) / freq;
 }
+#else
+AudioSystem::AudioSystem()
+{
+
+	enabled = false;
+
+}
+
+
+AudioSystem::~AudioSystem ( )
+{
+
+
+}
+
+bool AudioSystem::Loop(LuxState engine_state)
+{
+	return true;
+}
+
+
+bool AudioSystem::LoadAudio(std::string filename)
+{
+	return false;
+}
+
+
+int32_t AudioSystem::PlayEffect ( std::string requestSound, int32_t x, int32_t y )
+{
+	return 0;
+}
+
+void AudioSystem::StopDialog()
+{
+
+}
+
+int32_t AudioSystem::PlayDialog( int32_t requestSound )
+{
+	return 0;
+}
+
+int32_t AudioSystem::PlayMusic ( std::string requestMusic, int32_t loop, int32_t fadeLength )
+{
+	return 0;
+}
+
+
+
+int32_t AudioSystem::SetMasterVolume(int32_t volume)
+{
+	return 0;
+}
+
+int32_t AudioSystem::SetMusicVolume(int32_t volume)
+{
+	return 0;
+}
+
+int32_t AudioSystem::SetEffectsVolume(int32_t volume)
+{
+	return 0;
+}
+
+
+int32_t AudioSystem::SetDialogVolume(int32_t volume)
+{
+	return 0;
+}
+
+
+void AudioSystem::Pause()
+{
+
+}
+
+
+
+
+#endif

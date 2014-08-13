@@ -12,8 +12,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define _AUDIO_H_
 
 #define USE_RWOPS
+#ifndef NOAUDIO
 #include <SDL_thread.h>
 #include <SDL_mixer.h>
+#endif
 #include <map>
 #include "base_audio.h"
 
@@ -27,6 +29,7 @@ class AudioSystem: public BaseAudioSystem
 		bool paused;
 		bool enabled;
 
+#ifndef NOAUDIO
 		int32_t bits, buffers, frequency, channels, mixchannels;
 		uint16_t outformat;
 
@@ -43,6 +46,7 @@ class AudioSystem: public BaseAudioSystem
 		Mix_Chunk * ReturnAudio( std::string filename );
 		Mix_Chunk * FindEffect( std::string name );
 		uint32_t EffectLength( Mix_Chunk * chunk );
+#endif
 
 	public:
 		bool Loop(LuxState engine_state);

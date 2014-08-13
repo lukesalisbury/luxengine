@@ -325,7 +325,6 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t window_width, uint16_t window
 	native_screen_position.w = window_width;
 	native_screen_position.h = window_height;
 
-
 	SDL_RenderSetLogicalSize(native_renderer, window_width, window_height);
 
 	if ( native_screen_match )

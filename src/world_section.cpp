@@ -186,13 +186,14 @@ bool WorldSection::AddMap( MokoiMap * map_object, const uint8_t x, const uint8_t
 {
 	uint16_t location = 0xFFFF;
 
+	map_object->SetGrid(x, y);
 	map_object->LoadDimension();
 	if ( map_object->dimension_width && map_object->dimension_height )
 	{
 		location = GRID_LOCATION( x, y, this->width, this->height );
 
 		map_object->SetGridIdent( location, this->Ident() );
-		map_object->SetGrid(x, y);
+
 		for ( uint8_t grid_x = 0; grid_x < map_object->dimension_width; grid_x++ )
 		{
 			for ( uint8_t grid_y = 0; grid_y < map_object->dimension_height; grid_y++ )
