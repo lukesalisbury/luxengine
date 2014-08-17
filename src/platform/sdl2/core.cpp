@@ -239,187 +239,193 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	while( SDL_PollEvent(&event) )
 	{
-		switch( event.type )
+		if ( event.window.windowID == SDL_GetWindowID( this->native_window) )
 		{
-			case SDL_TEXTINPUT:
+			switch( event.type )
 			{
-				if ( lux::entities )
+				case SDL_TEXTINPUT:
 				{
-					if ( lux::entities->_keyboard )
+					if ( lux::entities )
 					{
-						int32_t key = event.text.text[0];
-						lux::entities->_keyboard->Call((char*)"KeyboardInput", (char*)"d", key);
+						if ( lux::entities->_keyboard )
+						{
+							int32_t key = event.text.text[0];
+							lux::entities->_keyboard->Call((char*)"KeyboardInput", (char*)"d", key);
+						}
 					}
+					break;
 				}
-				break;
-			}
-			case SDL_KEYDOWN:
-			{
-				switch ( event.key.keysym.sym )
+				case SDL_KEYDOWN:
 				{
-					case SDLK_ESCAPE:
-					case SDLK_AC_BACK:
-						this->state = EXITING;
-						break;
-					case SDLK_PAUSE:
-						this->state = (this->state == PAUSED ? RUNNING : PAUSED);
-						break;
-					case SDLK_F5: // Quick Save
+					switch ( event.key.keysym.sym )
 					{
-						if (this->state ==  RUNNING )
+						case SDLK_ESCAPE:
+						case SDLK_AC_BACK:
+							this->state = EXITING;
+							break;
+						case SDLK_PAUSE:
+							this->state = (this->state == PAUSED ? RUNNING : PAUSED);
+							break;
+						case SDLK_F5: // Quick Save
 						{
-							lux::engine->save_system_slot = 0x00;
-							this->state = SAVING;
-						}
-						break;
-					}
-					case SDLK_F6: // Quick Load
-					{
-						if (this->state ==  RUNNING )
-						{
-							lux::engine->save_system_slot = 0x00;
-							this->state = LOADING;
-						}
-						break;
-					}
-					case SDLK_F12:
-					{
-						lux::engine->SettingDialog();
-						break;
-					}
-					case SDLK_F10:
-					{
-						lux::display->show_debug = !lux::display->show_debug;
-						break;
-					}
-					case SDLK_F11:
-					{
-						lux::display->show_mask = !lux::display->show_mask;
-						break;
-					}
-					case SDLK_BACKSPACE:
-					{
-						event.key.keysym.sym = 8;//OS X had issue
-						break;
-					}
-					case SDLK_DELETE:
-					{
-						event.key.keysym.sym = 127;
-						break;
-					}
-					case SDLK_RETURN:
-					{
-						if ( (event.key.keysym.mod & KMOD_ALT) )
-						{
-							SDL_Window *window = SDL_GetWindowFromID(event.key.windowID);
-							if (window) {
-								Uint32 flags = SDL_GetWindowFlags(window);
-								lux::display->graphics.SetFullscreen( !(flags & SDL_WINDOW_FULLSCREEN_DESKTOP) );
-							}
-						}
-						break;
-					}
-					case SDLK_v:
-					{
-						if ( (event.key.keysym.mod & KMOD_CTRL) && SDL_HasClipboardText() )
-						{
-							int32_t key;
-							uint32_t c = 0;
-							char * clipboard = SDL_GetClipboardText();
-							while ( clipboard[c] != 0 )
+							if (this->state ==  RUNNING )
 							{
-								if ( lux::entities->_keyboard )
-								{
-									key = clipboard[c];
-									lux::entities->_keyboard->Call((char*)"KeyboardInput", (char*)"d", key);
-								}
-								c++;
+								lux::engine->save_system_slot = 0x00;
+								this->state = SAVING;
 							}
+							break;
 						}
-						break;
+						case SDLK_F6: // Quick Load
+						{
+							if (this->state ==  RUNNING )
+							{
+								lux::engine->save_system_slot = 0x00;
+								this->state = LOADING;
+							}
+							break;
+						}
+						case SDLK_F12:
+						{
+							lux::engine->SettingDialog();
+							break;
+						}
+						case SDLK_F10:
+						{
+							lux::display->show_debug = !lux::display->show_debug;
+							break;
+						}
+						case SDLK_F11:
+						{
+							lux::display->show_mask = !lux::display->show_mask;
+							break;
+						}
+						case SDLK_BACKSPACE:
+						{
+							event.key.keysym.sym = 8;//OS X had issue
+							break;
+						}
+						case SDLK_DELETE:
+						{
+							event.key.keysym.sym = 127;
+							break;
+						}
+						case SDLK_RETURN:
+						{
+							if ( (event.key.keysym.mod & KMOD_ALT) )
+							{
+								SDL_Window *window = SDL_GetWindowFromID(event.key.windowID);
+								if (window) {
+									Uint32 flags = SDL_GetWindowFlags(window);
+									lux::display->graphics.SetFullscreen( !(flags & SDL_WINDOW_FULLSCREEN_DESKTOP) );
+								}
+							}
+							break;
+						}
+						case SDLK_v:
+						{
+							if ( (event.key.keysym.mod & KMOD_CTRL) && SDL_HasClipboardText() )
+							{
+								int32_t key;
+								uint32_t c = 0;
+								char * clipboard = SDL_GetClipboardText();
+								while ( clipboard[c] != 0 )
+								{
+									if ( lux::entities->_keyboard )
+									{
+										key = clipboard[c];
+										lux::entities->_keyboard->Call((char*)"KeyboardInput", (char*)"d", key);
+									}
+									c++;
+								}
+							}
+							break;
+						}
 					}
+					break;
 				}
-				break;
-			}
-			case SDL_FINGERDOWN:
-			case SDL_FINGERUP:
-			{
-
-				if ( touch_events_count < 10 )
+				case SDL_FINGERDOWN:
+				case SDL_FINGERUP:
 				{
-					this->touch_events[touch_events_count].type = event.tfinger.type;
-					this->touch_events[touch_events_count].x = event.tfinger.x;
-					this->touch_events[touch_events_count].y = event.tfinger.y;
-					this->touch_events[touch_events_count].dx = event.tfinger.dx;
-					this->touch_events[touch_events_count].dy = event.tfinger.dy;
-					this->touch_events[touch_events_count].pressure = event.tfinger.pressure;
-					touch_events_count++;
-				}
-				break;
-			}
-#ifdef EMULATE_TOUCH
-			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP:
-			{
 
-				if ( touch_events_count < 10 )
+					if ( touch_events_count < 10 )
+					{
+						this->touch_events[touch_events_count].type = event.tfinger.type;
+						this->touch_events[touch_events_count].x = event.tfinger.x;
+						this->touch_events[touch_events_count].y = event.tfinger.y;
+						this->touch_events[touch_events_count].dx = event.tfinger.dx;
+						this->touch_events[touch_events_count].dy = event.tfinger.dy;
+						this->touch_events[touch_events_count].pressure = event.tfinger.pressure;
+						touch_events_count++;
+					}
+					break;
+				}
+	#ifdef EMULATE_TOUCH
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP:
 				{
-					float x = (float)event.button.x;
-					float y = (float)event.button.y;
-					float w = (float)lux::display->screen_dimension.w;
-					float h = (float)lux::display->screen_dimension.h;
 
-					this->touch_events[touch_events_count].type = event.button.type == SDL_MOUSEBUTTONDOWN ? SDL_FINGERDOWN : SDL_FINGERUP;
-					this->touch_events[touch_events_count].x = (x / w);
-					this->touch_events[touch_events_count].y = (y / h);
-					this->touch_events[touch_events_count].dx = this->touch_events[touch_events_count].x + 0.2;
-					this->touch_events[touch_events_count].dy = this->touch_events[touch_events_count].y + 0.2;
-					this->touch_events[touch_events_count].pressure = 1.0;
-					touch_events_count++;
+					if ( touch_events_count < 10 )
+					{
+						float x = (float)event.button.x;
+						float y = (float)event.button.y;
+						float w = (float)lux::display->screen_dimension.w;
+						float h = (float)lux::display->screen_dimension.h;
+
+						this->touch_events[touch_events_count].type = event.button.type == SDL_MOUSEBUTTONDOWN ? SDL_FINGERDOWN : SDL_FINGERUP;
+						this->touch_events[touch_events_count].x = (x / w);
+						this->touch_events[touch_events_count].y = (y / h);
+						this->touch_events[touch_events_count].dx = this->touch_events[touch_events_count].x + 0.2;
+						this->touch_events[touch_events_count].dy = this->touch_events[touch_events_count].y + 0.2;
+						this->touch_events[touch_events_count].pressure = 1.0;
+						touch_events_count++;
+					}
+					break;
 				}
-				break;
-			}
-#endif
-			case SDL_QUIT:
-			{
-				this->state = EXITING;
-				break;
-			}
-			case SDL_WINDOWEVENT:
-			{
-				if ( this->state == RUNNING || this->state == PAUSED)
+	#endif
+				case SDL_QUIT:
 				{
-					if ( event.window.event == SDL_WINDOWEVENT_MINIMIZED )
-					{
-						this->state = PAUSED;
-					}
-					else if ( event.window.event == SDL_WINDOWEVENT_RESTORED )
-					{
-						this->state = RUNNING;
-					}
-					else if ( event.window.event == SDL_WINDOWEVENT_MAXIMIZED )
-					{
-						lux::display->graphics.SetFullscreen(true);
-					}
-					else if ( event.window.event == SDL_WINDOWEVENT_ENTER && mouse_focus )
-					{
-						this->state = RUNNING;
-					}
-					else if ( event.window.event == SDL_WINDOWEVENT_LEAVE && mouse_focus )
-					{
-						this->state = PAUSED;
-					}
-					else if ( event.window.event == SDL_WINDOWEVENT_RESIZED )
-					{
-						lux::display->graphics.Resize( (uint16_t)event.window.data1, (uint16_t)event.window.data2 );
-					}
+					this->state = EXITING;
+					break;
 				}
-				break;
+				case SDL_WINDOWEVENT:
+				{
+					if ( this->state == RUNNING || this->state == PAUSED)
+					{
+						if ( event.window.event == SDL_WINDOWEVENT_MINIMIZED )
+						{
+							this->state = PAUSED;
+						}
+						else if ( event.window.event == SDL_WINDOWEVENT_RESTORED )
+						{
+							this->state = RUNNING;
+						}
+						else if ( event.window.event == SDL_WINDOWEVENT_MAXIMIZED )
+						{
+							lux::display->graphics.SetFullscreen(true);
+						}
+						else if ( event.window.event == SDL_WINDOWEVENT_ENTER && mouse_focus )
+						{
+							this->state = RUNNING;
+						}
+						else if ( event.window.event == SDL_WINDOWEVENT_LEAVE && mouse_focus )
+						{
+							this->state = PAUSED;
+						}
+						else if ( event.window.event == SDL_WINDOWEVENT_RESIZED )
+						{
+							lux::display->graphics.Resize( (uint16_t)event.window.data1, (uint16_t)event.window.data2 );
+						}
+						else if ( event.window.event == SDL_WINDOWEVENT_CLOSE )
+						{
+							this->state = EXITING;
+						}
+					}
+					break;
+				}
+				default:
+					break;
 			}
-			default:
-				break;
 		}
-
 	}
 
 	this->CheckTouch( lux::display, touch_events_count );

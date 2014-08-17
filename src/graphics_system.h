@@ -39,6 +39,7 @@ void Lux_GRAPHICS_DrawCircle( LuxRect dest_rect, ObjectEffect effects );
 void Lux_GRAPHICS_DrawPolygon( int16_t * x_point, int16_t * y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture );
 void Lux_GRAPHICS_DrawLine( LuxRect points, ObjectEffect effects );
 void Lux_GRAPHICS_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom);
+void Lux_GRAPHICS_DrawMessage( std::string message, uint8_t alignment );
 
 bool Lux_GRAPHICS_RefreshSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> * children);
 bool Lux_GRAPHICS_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children);

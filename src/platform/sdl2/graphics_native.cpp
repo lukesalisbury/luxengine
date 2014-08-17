@@ -63,7 +63,11 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_DrawCircle,
 	&Lux_NATIVE_DrawPolygon,
 	&Lux_NATIVE_DrawLine,
-	&Lux_NATIVE_DrawText
+	&Lux_NATIVE_DrawText,
+	&Lux_GRAPHICS_DrawMessage,
+
+	NULL,
+	NULL
 
 };
 

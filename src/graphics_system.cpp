@@ -48,6 +48,7 @@ GraphicSystem GraphicsNone = {
 	&Lux_GRAPHICS_DrawPolygon,
 	&Lux_GRAPHICS_DrawLine,
 	&Lux_GRAPHICS_DrawText,
+	&Lux_GRAPHICS_DrawMessage,
 
 	&Lux_GRAPHICS_CacheDisplay,
 	&Lux_GRAPHICS_DrawCacheDisplay
@@ -133,6 +134,13 @@ LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawLine( LuxRect points, ObjectEffect ef
 LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
 {
 }
+
+LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawMessage( std::string message, uint8_t alignment )
+{
+
+}
+
+
 
 LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children)
 {

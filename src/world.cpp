@@ -21,8 +21,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 /*
 void PrintLuxMapIdent( LuxMapIdent id, std::ostream & stream  )
 {
-	stream << "Value:" << id.value;
-	stream << "[Grid] Section:" << id.grid.id << " Map id: " << id.grid.localmap;
+	stream << "[Grid] Section:" << id.grid.section << " Map id: " << id.grid.map;
 }
 
 void WorldSystem::Print()
@@ -126,6 +125,31 @@ void GameWorldSystem::Loop( LuxState engine_state )
 
 	this->global_entities->Loop();
 	this->active_map->Loop();
+
+
+
+
+/*
+
+*/
+	std::stringstream buffer;
+
+	for( std::map<uint32_t, WorldSection *>::iterator iter = section_list.begin(); iter != section_list.end(); ++iter )
+	{
+		WorldSection * section = iter->second;
+		buffer << section->Name() << std::endl;
+		for( std::map<uint32_t, MokoiMap *>::iterator iter2 = this->map_list.begin(); iter2 != map_list.end(); ++iter2 )
+		{
+			MokoiMap * map = iter2->second;
+
+			if ( map->InSection( section->Ident() ) )
+			{
+				buffer << " - " <<  map->Name() << " [Grid] Section:" << map->GridIdent() << " id: " << map->Ident() << std::endl;
+			}
+		}
+	}
+
+	lux::display->graphics.DrawMessage( buffer.str(), 3 );
 
 }
 
@@ -433,7 +457,8 @@ uint32_t GameWorldSystem::SetMap( MokoiMap * map, fixed position_x, fixed positi
 		this->next_offset_position[1] = position_y;
 		this->next_offset_position[2] = position_z;
 
-		std::cout << "[nEXT Active] " << this->next_section->Name() << "  " << this->next_map->Name() << std::endl;
+		if ( this->next_map && this->next_section )
+			std::cout << "[Next Active] " << this->next_section->Name() << "  " << this->next_map->Name() << std::endl;
 	}
 
 	return ( this->next_map == NULL ? 0 : this->next_map->Ident() );
@@ -712,10 +737,10 @@ WorldSection * GameWorldSystem::GetSection( MokoiMap * map )
 		if ( this->section_list.size() )
 		{
 			std::map<uint32_t, WorldSection *>::iterator p;
+			std::cout << "MokoiMap" << " - " << map->Name() << ":" << std::hex << map->GridIdent() << "|" << map->Ident() << std::endl;
 			for ( p = this->section_list.begin(); p != this->section_list.end(); p++ )
 			{
-				std::cout << p->second->Name() << " - " << p->second->Ident() << std::endl;
-				if ( p->second->Ident() == map->GridIdent() )
+				if ( map->InSection( p->second->Ident() ) )
 				{
 					requested_section = p->second;
 					break;

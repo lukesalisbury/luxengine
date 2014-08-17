@@ -384,6 +384,8 @@ void DisplaySystem::SetRectFromText( LuxRect & area, std::string text, uint8_t t
 
 }
 
+void Lux_OGL_DebugText( std::string message );
+
 void DisplaySystem::ShowMessages()
 {
 	ObjectEffect text_effects;
@@ -398,19 +400,26 @@ void DisplaySystem::ShowMessages()
 	{
 		lux::gameworld->DrawCollisions();
 	}
-	if ( this->show_debug )
-	{
-		this->SetRectFromText( text_rect, this->debug_msg.str(), 8, 10 );
 
-		this->graphics.DrawRect( text_rect, rect_effects );
-		this->graphics.DrawText( this->debug_msg.str(), text_rect, text_effects, false );
-	}
-	this->debug_msg.str("");
 
 	if ( this->show_mask )
 	{
 		lux::gameworld->active_map->DrawMask();
 	}
+
+
+	if ( this->show_debug )
+	{
+		/*
+		this->SetRectFromText( text_rect, this->debug_msg.str(), 8, 10 );
+
+		this->graphics.DrawRect( text_rect, rect_effects );
+		this->graphics.DrawText( this->debug_msg.str(), text_rect, text_effects, false );
+		*/
+		this->graphics.DrawMessage( this->debug_msg.str(), 0 );
+	}
+	this->debug_msg.str("");
+
 
 
 	text_rect.x = 2;

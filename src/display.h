@@ -56,6 +56,8 @@ public:
 
 	GraphicSystem graphics;
 
+
+
 	/* Settings and Misc Variable */
 	std::stringstream debug_msg;
 	std::string sprite_font;

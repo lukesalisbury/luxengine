@@ -56,6 +56,7 @@ GraphicSystem GraphicsOpenGL = {
 	&Lux_GLES_DrawPolygon,
 	&Lux_GLES_DrawLine,
 	&Lux_GLES_DrawText,
+	&Lux_OGL_DrawMessage,
 
 	&Lux_OGL_CacheDisplay,
 	&Lux_OGL_DrawCacheDisplay
@@ -69,6 +70,9 @@ extern SDL_Renderer * native_renderer;
 extern std::string native_window_title;
 extern SDL_Rect native_graphics_dimension;
 
+
+SDL_Window * debug_window = NULL;
+SDL_Renderer * debug_renderer = NULL;
 
 extern uint32_t sdlgraphics_fps, sdlgraphics_fpstime;
 /* Global Variables */
@@ -245,8 +249,13 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	{
 		lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << "No Framebuffer Support" << std::endl;
 	}
+
+	SDL_CreateWindowAndRenderer(400, 300, SDL_WINDOW_SHOWN, &debug_window, &debug_renderer );
+
 	return true;
 }
+
+
 
 /* Lux_OGL_Destory
  * Closes down the video mode.
@@ -288,6 +297,10 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Show()
 		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 	}
 */
+	SDL_RenderPresent(debug_renderer);
+	SDL_RenderClear(debug_renderer);
+
+
 	SDL_GL_SwapWindow(native_window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -747,3 +760,220 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer, uint8_t shade
 }
 
 
+
+
+#include "bitfont.h"
+static SDL_Texture *gfxPrimitivesFont[128];
+
+SDL_Texture * Lux_OGL_GetCharTexture( uint8_t c )
+{
+	SDL_Texture * texture;
+	uint8_t i = 0, q;
+	uint8_t * font_point = &gfxPrimitivesFontdata[0];
+
+	if ( c > 32 && c < 128)
+	{
+		if ( gfxPrimitivesFont[c] == NULL )
+		{
+			font_point += (c*8);
+
+			uint16_t * charflip = new uint16_t[64];
+			for (i = 0; i < 8; i++)
+			{
+				for (q = 0; q < 8; q++)
+				{
+					charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFFFF : 0x000F) ;
+				}
+			}
+			texture = SDL_CreateTexture(debug_renderer, SDL_PIXELFORMAT_ARGB1555, SDL_TEXTUREACCESS_STATIC, 8, 8);
+
+			SDL_SetTextureBlendMode(texture,SDL_BLENDMODE_BLEND);
+			SDL_UpdateTexture(texture, NULL, charflip, 16);
+
+			delete [] charflip;
+
+			gfxPrimitivesFont[c] = texture;
+		}
+		else
+		{
+			texture =  gfxPrimitivesFont[c];
+		}
+	}
+	return texture;
+}
+
+
+
+
+
+void Lux_OGL_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_width, uint8_t text_height )
+{
+	uint16_t max_length = 1;
+	uint16_t length_count = 0;
+	uint16_t lines = 1;
+	std::string::iterator object;
+
+	for ( object = text.begin(); object != text.end(); object++ )
+	{
+		uint8_t utfchar = *object;
+		uint32_t cchar = utfchar;
+		if ( cchar == '\n' || cchar == '\r' )
+		{
+			lines++;
+			max_length = std::max(length_count, max_length);
+			length_count = 0;
+
+		}
+		else if ( cchar <= 128 )
+		{
+			length_count++;
+		}
+		else if ( cchar < 224 )
+		{
+			object++;
+
+			length_count++;
+		}
+		else if ( cchar < 240 )
+		{
+			object++;
+			object++;
+
+			length_count++;
+		}
+		else if ( cchar < 245 )
+		{
+			object++;
+			object++;
+			object++;
+
+			length_count++;
+		}
+	}
+	max_length = std::max(length_count, max_length);
+
+	area.w = text_width * max_length;
+	area.h = text_height * lines;
+
+}
+
+LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alignment )
+{
+	std::string::iterator object;
+	SDL_Rect draw;
+	SDL_Rect rect;
+	SDL_Rect area;
+	int w,h;
+
+	SDL_GetWindowSize( debug_window, &w, &h );
+	rect.x = rect.y = 0;
+	Lux_OGL_SetRectFromText( rect, message, 8, 10 );
+
+	area = rect;
+
+	if ( alignment == 3 )
+	{
+		area.y = h - area.h;
+	}
+	else if ( alignment == 2 )
+	{
+		area.y = h - area.h;
+		area.x = w - area.w;
+	}
+	else if ( alignment == 1 )
+	{
+		area.x = w - area.w;
+	}
+
+
+	SDL_SetRenderDrawColor( debug_renderer, 0, 0, 0,255 );
+	SDL_RenderFillRect( debug_renderer, &area );
+
+
+	draw = area;
+	draw.w = draw.h = 8;
+
+	for ( object = message.begin(); object != message.end(); object++ )
+	{
+		uint8_t utfchar = *object;
+		uint32_t cchar = utfchar;
+		if (cchar == '\n' || cchar == '\r')
+		{
+			draw.y += 10;
+			draw.x = area.x;
+			cchar = 0;
+		}
+		else if ( cchar <= 32 )
+		{
+			draw.x += 7;
+			cchar = 0;
+		}
+		else if ( cchar <= 128 )
+		{
+
+		}
+		else if ( cchar < 224 )
+		{
+			object++;
+			uint32_t next = *object;
+
+			cchar = ((cchar << 6) & 0x7ff) + (next & 0x3f);
+		}
+		else if ( cchar < 240 )
+		{
+			uint32_t next;
+
+			object++;
+			next = (*object) & 0xff;
+			cchar = ((cchar << 12) & 0xffff) + ((next << 6) & 0xfff);
+
+			object++;
+			next = (*object) & 0x3f;
+			cchar += next;
+
+		}
+		else if ( cchar < 245 )
+		{
+			uint32_t next;
+
+			object++;
+			next = (*object) & 0xff;
+			cchar = ((cchar << 18) & 0xffff) + ((next << 12) & 0x3ffff);
+
+
+			object++;
+			next = (*object) & 0xff;
+			cchar += (next << 6) & 0xfff;
+
+			object++;
+			next = (*object) & 0x3f;
+			cchar += next;
+		}
+
+		if ( cchar != 0 )
+		{
+
+			SDL_Texture * texture = NULL;
+
+
+			if ( cchar >= 32 && cchar <= 128 )
+			{
+				texture = Lux_OGL_GetCharTexture(cchar);
+			}
+			else
+			{
+				texture = Lux_OGL_GetCharTexture('?');
+			}
+
+			if ( texture )
+			{
+				SDL_SetTextureColorMod(texture, 255, 255, 255);
+				SDL_SetTextureAlphaMod(texture, 255 );
+				SDL_RenderCopy(debug_renderer, texture, NULL, &draw);
+			}
+			draw.x += 7;
+
+		}
+	}
+
+}

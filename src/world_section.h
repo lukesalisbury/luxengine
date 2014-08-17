@@ -28,8 +28,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void SaveFile( );
 
 		private:
-			uint32_t Ident() { return id.grid.section; }
-			std::string Name() { return name; }
+			uint32_t Ident() { return this->id.grid.section; }
+			std::string Name() { return this->name; }
 
 			bool IsBasic() { return ( this->allocated_size == 1 ? true : false ); }
 
