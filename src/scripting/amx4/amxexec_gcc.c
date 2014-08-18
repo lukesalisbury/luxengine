@@ -1341,7 +1341,7 @@ static const void * const amx_opcodelist[] = {
 #endif
 }
 
-int amx_exec_list(const AMX *amx,const cell **opcodelist,int *numopcodes)
+void amx_exec_list(const AMX *amx,const cell **opcodelist,int *numopcodes)
 {
   /* since the opcode list of the GNU GCC version of the abstract machine core
    * must be a local variable (as it references code labels, which are local
@@ -1358,6 +1358,4 @@ int amx_exec_list(const AMX *amx,const cell **opcodelist,int *numopcodes)
    amxptr->flags=~0;
    *numopcodes=amx_exec_run(amxptr, (cell*)opcodelist, NULL);
    amxptr->flags=orgflags;
-
-   return 0;
 }

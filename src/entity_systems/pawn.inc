@@ -12,7 +12,7 @@
 	bool Lux_PawnEntity_Push( mem_pointer entity_data, int32_t value);
 	int32_t Lux_PawnEntity_Call(mem_pointer entity_data, char * function, mem_pointer memstack);
 
-	#ifdef __x86_64__
+	#if PLATFORMBITS == 64
 	bool Lux_PawnEntity_PushArrayNative( mem_pointer entity_data, native_type array[], uint32_t size, mem_pointer memstack);
 	#endif
 
@@ -27,7 +27,7 @@
 	&Lux_PawnEntity_PushArray,
 	&Lux_PawnEntity_PushString,
 	&Lux_PawnEntity_Push,
-	#ifdef __x86_64__
+	#if PLATFORMBITS == 64
 	&Lux_PawnEntity_PushArrayNative
 	#else
 	&Lux_PawnEntity_PushArray

@@ -111,13 +111,13 @@ void GameWorldSystem::Loop( LuxState engine_state )
 
 	this->active_map->SetPosition( this->current_offset_position );
 
-
+	/*
 	lux::display->debug_msg << "Map '" << this->active_map->Name() << "' '"<< this->active_map->Ident() << "'" << std::endl;
 	if ( this->active_section != NULL )
 	{
-		lux::display->debug_msg << "Section '" << this->active_section->Name() << "' '"<< (int)this->grid_position[0] << "'x'"<< (int)this->grid_position[1] << "'" << std::endl;
+		lux::display->debug_msg << "Section '" << this->active_section->file << "' '"<< (int)this->grid_position[0] << "'x'"<< (int)this->grid_position[1] << "'" << this->active_section->GetGrid(this->grid_position[0]+1, this->grid_position[1]) << std::endl;
 	}
-
+	*/
 	if ( this->active_section->IsBasic() && this->active_map->wrap_mode != 3 )
 	{
 		this->CheckPosition();
@@ -286,11 +286,7 @@ void GameWorldSystem::SwitchActive()
 		if ( this->next_map == NULL )
 		{
 			this->next_map = this->next_section->GetMap( this->next_grid_position[0], this->next_grid_position[1] );
-			this->grid_position[0] = this->next_grid_position[0];
-			this->grid_position[1] = this->next_grid_position[1];
 		}
-
-		std::cout << "[Switch Active] " << this->next_section->Name() << "  " << this->next_map->Name() << std::endl;
 
 		if ( this->SwitchMap( this->next_map ) )
 		{
@@ -541,18 +537,9 @@ bool GameWorldSystem::InsertMap( uint32_t ident, MokoiMap * map )
 	return false;
 }
 
-/**
- * @brief GameWorldSystem::CreateMap
- * @param map_name
- * @param removeable
- * @param editable
- * @param width
- * @param height
- * @return
- */
 MokoiMap * GameWorldSystem::CreateMap( std::string map_name, bool removeable, bool editable, uint32_t width, uint32_t height )
 {
-	WorldSection * section = this->NewSection( "map/"+map_name, 1, 1);
+	WorldSection * section = this->NewSection("map/"+map_name, 1, 1);
 	MokoiMap * new_map = NULL;
 
 	if ( width && height )
@@ -578,11 +565,7 @@ MokoiMap * GameWorldSystem::CreateMap( std::string map_name, bool removeable, bo
 
 
 
-/**
- * @brief GameWorldSystem::GetMap
- * @param id
- * @return
- */
+
 MokoiMap * GameWorldSystem::GetMap( uint32_t id )
 {
 	if ( !id )
@@ -598,11 +581,6 @@ MokoiMap * GameWorldSystem::GetMap( uint32_t id )
 	return NULL;
 }
 
-/**
- * @brief GameWorldSystem::DeleteMap
- * @param ident
- * @return
- */
 bool GameWorldSystem::DeleteMap( uint32_t ident )
 {
 	std::map<uint32_t, MokoiMap *>::iterator p = this->map_list.find( ident );
@@ -619,11 +597,6 @@ bool GameWorldSystem::DeleteMap( uint32_t ident )
 	return false;
 }
 
-/**
- * @brief GameWorldSystem::FindMap
- * @param map_file
- * @return
- */
 MokoiMap * GameWorldSystem::FindMap( std::string map_file )
 {
 	MokoiMap * map = NULL;
@@ -642,11 +615,8 @@ MokoiMap * GameWorldSystem::FindMap( std::string map_file )
 
 }
 
-/**
- * @brief GameWorldSystem::GetMapID
- * @param name
- * @return
- */
+
+
 uint32_t GameWorldSystem::GetMapID( std::string name )
 {
 	MokoiMap * map = NULL;
@@ -659,14 +629,9 @@ uint32_t GameWorldSystem::GetMapID( std::string name )
 		return 0;
 }
 
+
+
 /* Section System */
-/**
- * @brief GameWorldSystem::NewSection
- * @param section_name
- * @param width
- * @param height
- * @return
- */
 WorldSection * GameWorldSystem::NewSection( std::string section_name, const uint8_t width, const uint8_t height )
 {
 	WorldSection * new_section = new WorldSection( this->map_counter, section_name, width, height );
@@ -678,12 +643,6 @@ WorldSection * GameWorldSystem::NewSection( std::string section_name, const uint
 	return new_section;
 }
 
-/**
- * @brief GameWorldSystem::LoadSection
- * @param name
- * @param set_current
- * @return
- */
 WorldSection * GameWorldSystem::LoadSection( std::string name, bool set_current )
 {
 	WorldSection * new_section = NULL;
@@ -698,12 +657,6 @@ WorldSection * GameWorldSystem::LoadSection( std::string name, bool set_current 
 	return new_section;
 }
 
-/**
- * @brief GameWorldSystem::GetSection
- * @param section_name
- * @param load
- * @return
- */
 WorldSection * GameWorldSystem::GetSection( std::string section_name, bool load )
 {
 	WorldSection * requested_section = NULL;
@@ -723,11 +676,6 @@ WorldSection * GameWorldSystem::GetSection( std::string section_name, bool load 
 	return requested_section;
 }
 
-/**
- * @brief GameWorldSystem::GetSection
- * @param map
- * @return
- */
 WorldSection * GameWorldSystem::GetSection( MokoiMap * map )
 {
 	WorldSection * requested_section = NULL;
@@ -751,12 +699,6 @@ WorldSection * GameWorldSystem::GetSection( MokoiMap * map )
 	return requested_section;
 }
 
-/**
- * @brief GameWorldSystem::GetSection
- * @param section_hash
- * @return
- */
-
 WorldSection * GameWorldSystem::GetSection( uint32_t section_hash )
 {
 	// if section_hash
@@ -775,10 +717,8 @@ WorldSection * GameWorldSystem::GetSection( uint32_t section_hash )
 	return requested_section;
 }
 
-/**
- * @brief GameWorldSystem::DeleteSection
- * @param ident
- */
+
+
 void GameWorldSystem::DeleteSection(uint32_t ident )
 {
 
@@ -800,12 +740,6 @@ void GameWorldSystem::DeleteSection(uint32_t ident )
 
 }
 
-/**
- * @brief GameWorldSystem::SetSectionGrid
- * @param grid_x
- * @param grid_y
- * @return
- */
 bool GameWorldSystem::SetSectionGrid( uint8_t grid_x, uint8_t grid_y )
 {
 	if ( !this->active_section )
@@ -823,12 +757,7 @@ bool GameWorldSystem::SetSectionGrid( uint8_t grid_x, uint8_t grid_y )
 	return false;
 }
 
-/**
- * @brief GameWorldSystem::GetSectionGrid
- * @param gridx
- * @param gridy
- * @return
- */
+
 bool GameWorldSystem::GetSectionGrid( uint8_t & gridx, uint8_t & gridy )
 {
 	if ( !this->active_section )
@@ -839,13 +768,6 @@ bool GameWorldSystem::GetSectionGrid( uint8_t & gridx, uint8_t & gridy )
 	return true;
 }
 
-/**
- * @brief GameWorldSystem::GetMapID
- * @param section_name
- * @param grid_x
- * @param grid_y
- * @return
- */
 uint32_t GameWorldSystem::GetMapID( std::string section_name, uint8_t grid_x, uint8_t grid_y )
 {
 	if ( section_name.length() )
@@ -859,6 +781,7 @@ uint32_t GameWorldSystem::GetMapID( std::string section_name, uint8_t grid_x, ui
 				section = iter->second;
 		}
 
+
 		if ( section )
 			return section->GetGridID(grid_x, grid_y);
 	}
@@ -868,13 +791,11 @@ uint32_t GameWorldSystem::GetMapID( std::string section_name, uint8_t grid_x, ui
 	return 0xFFFF;
 }
 
+
+
+
+
 /* Object Handling */
-/**
- * @brief GameWorldSystem::AddObject
- * @param object
- * @param is_static
- * @return
- */
 uint32_t GameWorldSystem::AddObject(MapObject * object, bool is_static)
 {
 	object->SetData(object->type);
@@ -900,11 +821,6 @@ uint32_t GameWorldSystem::AddObject(MapObject * object, bool is_static)
 	return 0;
 }
 
-/**
- * @brief GameWorldSystem::GetObject
- * @param ident
- * @return
- */
 MapObject * GameWorldSystem::GetObject( uint32_t ident )
 {
 	if ( this->object_cache.size() )
@@ -916,9 +832,6 @@ MapObject * GameWorldSystem::GetObject( uint32_t ident )
 	return NULL;
 }
 
-/**
- * @brief GameWorldSystem::ClearObjects
- */
 void GameWorldSystem::ClearObjects()
 {
 	std::map<uint32_t, MapObject*>::iterator l_object;
@@ -933,11 +846,6 @@ void GameWorldSystem::ClearObjects()
 	}
 }
 
-/**
- * @brief GameWorldSystem::RemoveObject
- * @param ident
- * @return
- */
 bool GameWorldSystem::RemoveObject(uint32_t ident)
 {
 	MapObject * object = this->GetObject(ident);

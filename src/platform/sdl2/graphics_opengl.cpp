@@ -252,6 +252,10 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 
 	SDL_CreateWindowAndRenderer(400, 300, SDL_WINDOW_SHOWN, &debug_window, &debug_renderer );
 
+	debug_window = SDL_CreateWindow("Mesages", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 400, 300, SDL_WINDOW_SHOWN);
+
+	debug_renderer = SDL_CreateRenderer(debug_window, -1, SDL_RENDERER_SOFTWARE );
+
 	return true;
 }
 
@@ -289,32 +293,16 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Show()
 {
 	glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
 
-/*
-	if ( fbo_supported )
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER, fbo_frame);
-		glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
-	}
-*/
-	SDL_RenderPresent(debug_renderer);
-	SDL_RenderClear(debug_renderer);
 
-
+	SDL_GL_MakeCurrent(native_window, native_context);
 	SDL_GL_SwapWindow(native_window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-/*
-	if ( lux::core )
-	{
-		if ( lux::core->GetTime() > (sdlgraphics_fpstime + 1000) )
-		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "FPS" << sdlgraphics_fps << std::endl;
-			sdlgraphics_fpstime = lux::core->GetTime();
-			sdlgraphics_fps = 0;
-		}
-	}
-	*/
+
+
+	SDL_RenderPresent(debug_renderer);
+	SDL_RenderClear(debug_renderer);
+
 }
 
 /* Lux_OGL_Display2Screen
@@ -952,9 +940,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 
 		if ( cchar != 0 )
 		{
-
 			SDL_Texture * texture = NULL;
-
 
 			if ( cchar >= 32 && cchar <= 128 )
 			{

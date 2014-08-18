@@ -16,7 +16,7 @@ BIN = luxengine
 DOWNLOADER_MODE = none
 
 COMPILER_LIBS += $(OPTIMIZER) $(DEBUG) -L'lib' $(PLATFORM_LIBS)
-COMPILER_FLAGS += $(OPTIMIZER) $(DEBUG) -I'../elix/src/' -I'src' -I'src/$(PLATFORM_DIRECTORY)' -I'include'  -DTIXML_USE_STL -D$(PLATFORM) $(PLATFORM_FLAGS)
+COMPILER_FLAGS += $(OPTIMIZER) $(DEBUG) -I'../elix/src/' -I'src' -I'src/$(PLATFORM_DIRECTORY)' -I'include'  -DTIXML_USE_STL -D$(PLATFORM) -DPLATFORMBITS=$(PLATFORMBITS) $(PLATFORM_FLAGS)
 COMPILER_FLAGSPP += -Wno-write-strings -fno-access-control -fno-exceptions -fno-rtti $(COMPILER_FLAGS)
 
 #Read platform and custom settings
@@ -137,7 +137,7 @@ all-before:
 	@echo --------------------------------
 	@echo Building $(BIN) $(PROGRAM_VERSION)
 #	@echo Build Platform: $(BUILDPLATFORM)
-#	@echo Target Platform: $(BUILDOS)/$(PLATFORMBITS)
+	@echo Target Platform: $(BUILDOS)/$(PLATFORMBITS)
 #	@echo Debug Build? $(BUILDDEBUG)
 #	@echo Build Flags: $(COMPILER_FLAGS)
 #	@echo Build Libs: $(COMPILER_LIBS)

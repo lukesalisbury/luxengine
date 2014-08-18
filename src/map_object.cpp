@@ -178,6 +178,7 @@ void MapObject::SetData( uint8_t type )
 	else if ( type == OBJECT_TEXT )
 	{
 		this->has_data = true;
+		this->data = data;
 		this->data_type = 't';
 	}
 	else

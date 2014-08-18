@@ -19,7 +19,7 @@ WorkerThread::WorkerThread(int32_t (*fn)(void*), void * data)
 	#ifndef EMSCRIPTEN
 	this->thread = SDL_CreateThread( fn, "LuxWorker", this );
 	#else
-	this->thread = NULL;
+	this->thread = SDL_CreateThread( fn, this );
 	#endif
 	this->mutex = SDL_CreateMutex();
 

@@ -34,7 +34,7 @@ bool Lux_PawnEntity_PushString( mem_pointer entity_data, std::string str, native
 bool Lux_PawnEntity_Push(mem_pointer entity_data, int32_t value);
 int32_t Lux_PawnEntity_Call(mem_pointer entity_data, char * function, native_pointer memstack);
 
-#ifdef __x86_64__
+#if PLATFORMBITS == 64
 bool Lux_PawnEntity_PushArrayNative( mem_pointer entity_data, native_type array[], uint32_t size, mem_pointer memstack);
 #endif
 

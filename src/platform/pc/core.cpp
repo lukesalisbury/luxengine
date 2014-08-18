@@ -376,6 +376,7 @@ bool CoreSystem::InputLoopGet(DisplaySystem * display, uint16_t & key)
 	return 0;
 }
 
+
 int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t symbol)
 {
 	if (device == NOINPUT)

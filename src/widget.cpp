@@ -321,7 +321,7 @@ bool Widget::SendEvent( int32_t event_code )
 			return false;
 		}
 	}
-	else if ( this->_type == BUTTON )
+	else if ( this->_type == BUTTON || this->_type == IMAGEBUTTON )
 	{
 		/* Return true to continue */
 		if ( event_code == 1 || event_code == 13 )
@@ -372,6 +372,7 @@ bool Widget::SendEvent( int32_t event_code )
 			return false;
 		}
 	}
+
 	return true;
 }
 

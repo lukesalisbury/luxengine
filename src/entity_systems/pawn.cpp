@@ -103,7 +103,7 @@ int AMXAPI Lux_PawnEntity_Monitor(AMX * amx)
 */
 bool Lux_PawnEntity_LoadFile(std::string entity_name)
 {
-	#ifdef __x86_64__
+	#if PLATFORMBITS == 64
 	std::string file = "./c/scripts/" + entity_name + ".amx64";
 	#else
 	std::string file = "./c/scripts/" + entity_name + ".amx";
@@ -515,7 +515,7 @@ bool Lux_PawnEntity_Run(mem_pointer entity_data, bool & scriptcontinue )
 	scriptcontinue = false;
 	return true;
 }
-#ifdef __x86_64__
+#if PLATFORMBITS == 64
 /** Lux_PawnEntity_PushArrayNative
 *
 */
@@ -550,7 +550,7 @@ bool Lux_PawnEntity_PushArray( mem_pointer entity_data, int32_t array[], uint32_
 		return false;
 	native_type * native_array = NULL;
 
-	#ifdef __x86_64__
+	#if PLATFORMBITS == 64
 	native_array = new native_type[size];
 	uint32_t count = 0;
 	while (count < size)
@@ -573,7 +573,7 @@ bool Lux_PawnEntity_PushArray( mem_pointer entity_data, int32_t array[], uint32_
 	}
 	else
 	{
-#ifdef __x86_64__
+#if PLATFORMBITS == 64
 		count = 0;
 		while (count < size)
 		{

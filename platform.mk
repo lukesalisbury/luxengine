@@ -75,7 +75,7 @@ ifeq ($(BUILDDEBUG), TRUE)
 	MESSAGE = with debugging support
 else
 	ifneq ($(OPTIMIZE), NONE)
-		OPTIMIZER += -DNDEBUG -Wformat
+		OPTIMIZER +=  -DNDEBUG -Wformat 
 	endif
 endif
 

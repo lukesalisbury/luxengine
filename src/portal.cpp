@@ -322,6 +322,11 @@ int32_t LuxPortal::browse_page( LuxRect page_rect )
 	return return_value;
 }
 
+/**
+ * @brief LuxPortal::online_page
+ * @param page_rect
+ * @return
+ */
 int32_t LuxPortal::online_page( LuxRect page_rect )
 {
 	tinyxml2::XMLDocument xml;
