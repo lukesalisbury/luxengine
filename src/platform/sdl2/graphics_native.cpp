@@ -92,7 +92,7 @@ int sdlgraphics_dirtycount = 0;
 SDL_Surface * sdlgraphics_screen = NULL;
 SDL_Surface * sdlgraphics_realscreen = NULL;
 
-uint32_t sdlgraphics_fps = 0, sdlgraphics_fpstime = 0;
+uint32_t native_graphics_fps = 0, native_graphics_fpstime = 0;
 bool sdlgraphics_customtext = false;
 int32_t sdlgraphics_customtext_height = 32;
 

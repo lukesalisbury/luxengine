@@ -144,12 +144,14 @@ void GameWorldSystem::Loop( LuxState engine_state )
 
 			if ( map->InSection( section->Ident() ) )
 			{
-				buffer << " - " <<  map->Name() << " [Grid] Section:" << map->GridIdent() << " id: " << map->Ident() << std::endl;
+				buffer << " - " <<  map->Name() << " §c[Grid] §4Section:" << map->GridIdent() << " id: " << map->Ident() << std::endl;
 			}
 		}
 	}
 
-	lux::display->graphics.DrawMessage( buffer.str(), 3 );
+	lux::display->graphics.DrawMessage( buffer.str(), 2 );
+
+
 
 }
 

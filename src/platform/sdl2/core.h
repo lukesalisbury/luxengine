@@ -63,8 +63,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 			bool GamepadAdded( int32_t joystick_index );
 			const char * GamepadName( uint32_t device_number );
 
-
-
 			void VirtualGamepadAddItem( uint32_t ident, InputDevice device, std::string value );
 			void VirtualGamepadRemoveItem( uint32_t ident );
 
@@ -79,11 +77,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 			uint32_t GetFrameDelta();
 			bool DelayIf(uint32_t diff = 5);
 			void Idle();
+
 			LuxState HandleFrame(LuxState old_state);
 			void RefreshInput( DisplaySystem * display );
 			int16_t GetInput(InputDevice device, uint32_t device_number, int32_t symbol);
 			bool InputLoopGet(DisplaySystem * display, uint16_t & key);
 			bool TextListen( bool able );
+
 			bool RunExternalProgram( std::string program, std::string argument );
 
 			#ifdef NETWORKENABLED

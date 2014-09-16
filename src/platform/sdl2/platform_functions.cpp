@@ -94,6 +94,64 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 
 }
 
+/* Lux_SDL2_SetRectFromText
+ * Update Width and Height of a SDL_Rect base on a string of text
+ @ area:
+ @ text:
+ @ text_width:
+ @ text_height:
+ */
+void Lux_SDL2_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_width, uint8_t text_height )
+{
+	uint16_t max_length = 1;
+	uint16_t length_count = 0;
+	uint16_t lines = 1;
+	std::string::iterator object;
+
+	for ( object = text.begin(); object != text.end(); object++ )
+	{
+		uint8_t utfchar = *object;
+		uint32_t cchar = utfchar;
+		if ( cchar == '\n' || cchar == '\r' )
+		{
+			lines++;
+			max_length = std::max(length_count, max_length);
+			length_count = 0;
+		}
+		else if ( cchar <= 128 )
+		{
+			length_count++;
+		}
+		else if ( cchar < 224 )
+		{
+			object++;
+
+			length_count++;
+		}
+		else if ( cchar < 240 )
+		{
+			object++;
+			object++;
+
+			length_count++;
+		}
+		else if ( cchar < 245 )
+		{
+			object++;
+			object++;
+			object++;
+
+			length_count++;
+		}
+	}
+	max_length = std::max(length_count, max_length);
+
+	area.w = text_width * max_length;
+	area.h = text_height * lines;
+
+}
+
+
 
 #ifdef OPENGLENABLED
 #include "gles/gles.hpp"

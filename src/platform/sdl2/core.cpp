@@ -431,6 +431,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	this->CheckTouch( lux::display, touch_events_count );
 
 	this->RefreshInput( lux::display );
+
 	this->time = this->GetTime();
 
 	return this->state;

@@ -61,6 +61,10 @@ LuxEngine::LuxEngine( std::string executable )
 
 	this->game_state = 0;
 	this->default_player = 1;
+	this->game_fps = 0;
+	this->game_fps_time = 0;
+	this->game_fps_last = 0;
+
 
 	lux::core = new CoreSystem();
 	lux::global_config = new Config();
@@ -370,6 +374,10 @@ void LuxEngine::RunState()
 		Entities
 		Display ()
 	*/
+
+
+
+
 	#ifdef NETWORKENABLED
 	lux::core->NetLock();
 	#endif
@@ -387,6 +395,18 @@ void LuxEngine::RunState()
 	lux::gameworld->Loop( this->state );
 	lux::audio->Loop( this->state );
 	lux::display->Loop( this->state );
+
+
+	if ( lux::core->GetTime() > (this->game_fps_time + 1000) )
+	{
+		this->game_fps_last = this->game_fps;
+		this->game_fps_time = lux::core->GetTime();
+		this->game_fps = 0;
+	}
+	this->game_fps++;
+	lux::display->debug_msg << "FPS: " << (this->game_fps_last < 30 ? "§c" : "§a") << this->game_fps_last << std::endl;
+
+
 }
 
 /* Players */
@@ -430,6 +450,7 @@ int16_t LuxEngine::GetPlayerAxis(uint32_t player_id, uint8_t axis)
 	}
 	return 0;
 }
+
 int16_t LuxEngine::GetPlayerButton(uint32_t player_id, uint8_t key)
 {
 	Player * player = this->GetPlayer( player_id );
@@ -439,6 +460,7 @@ int16_t LuxEngine::GetPlayerButton(uint32_t player_id, uint8_t key)
 	}
 	return 0;
 }
+
 int16_t LuxEngine::GetPlayerPointer(uint32_t player_id, uint8_t axis)
 {
 	Player * player = this->GetPlayer( player_id );
@@ -490,7 +512,6 @@ int32_t LuxEngine::GameState(int32_t new_state)
 /* Save System */
 bool LuxEngine::HandleSave()
 {
-
 	LuxSaveState saved_game;
 
 	saved_game.SetSlot( this->save_system_slot );
@@ -507,7 +528,6 @@ bool LuxEngine::HandleSave()
 	return false;
 
 }
-
 
 bool LuxEngine::HandleReload()
 {
@@ -578,7 +598,6 @@ bool LuxEngine::HandleLoad()
 
 }
 
-
 bool LuxEngine::RestoreSaveGame( uint8_t slot )
 {
 	this->save_system_slot = slot;
@@ -595,7 +614,6 @@ bool LuxEngine::WriteSaveGame( uint8_t slot, int32_t * info, uint32_t length )
 
 	return true;
 }
-
 
 bool LuxEngine::ReadSaveInfo(uint8_t slot, int32_t * info, uint32_t length, uint32_t project_id )
 {

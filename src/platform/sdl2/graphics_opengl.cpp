@@ -62,6 +62,7 @@ GraphicSystem GraphicsOpenGL = {
 	&Lux_OGL_DrawCacheDisplay
 };
 
+
 /* Shared */
 extern Uint32 native_render_flags;
 extern Uint32 native_window_flags;
@@ -69,12 +70,12 @@ extern SDL_Window * native_window;
 extern SDL_Renderer * native_renderer;
 extern std::string native_window_title;
 extern SDL_Rect native_graphics_dimension;
+extern uint32_t native_graphics_fps, native_graphics_fpstime;
 
-
+/* Debug Message */
 SDL_Window * debug_window = NULL;
 SDL_Renderer * debug_renderer = NULL;
 
-extern uint32_t sdlgraphics_fps, sdlgraphics_fpstime;
 /* Global Variables */
 LuxColour gles_graphics_colour = { 0, 0, 0, 255 };
 
@@ -88,6 +89,7 @@ SDL_Rect native_screen_position;
 bool native_screen_stretching = false;
 bool native_screen_match = false;
 
+/* Frame buffer */
 Texture fbo_textures[8] = {0};
 GLuint fbo_frame, fbo_depthBuffer;
 bool fbo_supported = false;
@@ -98,6 +100,7 @@ PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT;
 PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2DEXT;
 PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebufferEXT;
 PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatusEXT;
+
 
 
 void opengl_graphic_create_fbotexture( Texture & fbo )
@@ -147,7 +150,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 		native_window_flags |= SDL_WINDOW_FULLSCREEN;
 
 	native_render_flags = SDL_RENDERER_ACCELERATED;
-	native_window_title = title  + " (OpenGL Rendering)";
+	native_window_title = title;
 
 	//native_screen_match = lux::config->GetBoolean("screen.matchdisplay");
 
@@ -250,10 +253,15 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 		lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << "No Framebuffer Support" << std::endl;
 	}
 
-	SDL_CreateWindowAndRenderer(400, 300, SDL_WINDOW_SHOWN, &debug_window, &debug_renderer );
 
-	debug_window = SDL_CreateWindow("Mesages", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 400, 300, SDL_WINDOW_SHOWN);
+	/* Debug Messages */
+	int32_t x;
+	int32_t y;
 
+	x = lux::global_config->GetNumber("debug.x");
+	y = lux::global_config->GetNumber("debug.y");
+
+	debug_window = SDL_CreateWindow("Messages", static_cast<int>(x), static_cast<int>(y), 400, 300, SDL_WINDOW_SHOWN);
 	debug_renderer = SDL_CreateRenderer(debug_window, -1, SDL_RENDERER_SOFTWARE );
 
 	return true;
@@ -275,6 +283,23 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
 		glDeleteTextures(1, &fbo_textures[0].pointer);
 		glDeleteFramebuffersEXT(1, &fbo_frame);
 	}
+
+
+
+	if ( debug_window )
+	{
+		int x;
+		int y;
+
+
+		SDL_GetWindowPosition( debug_window, &x, &y );
+
+		lux::global_config->SetNumber("debug.x", static_cast<int32_t>(x));
+		lux::global_config->SetNumber("debug.y", static_cast<int32_t>(y));
+
+	}
+
+	SDL_DestroyWindow( debug_window );
 }
 
 /* Lux_OGL_Update
@@ -660,9 +685,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
 		if ( layer < 8 )
 		{
 
-
 			glBindFramebufferEXT(GL_FRAMEBUFFER, fbo_frame);
-
 			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_textures[layer].pointer, 0);
 
 			GLenum fbo_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
@@ -679,32 +702,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
 
 	return false;
 }
-/*
-void Lux_OGL_ScreenSuface( Texture * texture, const char * filename )
-{
 
-	int32_t size = texture->tw* texture->th*4;
-	uint8_t * data = new uint8_t[size];
-	elix::Image * png = new elix::Image();
-
-
-
-	glReadPixels(0, 0, texture->tw, texture->th, GL_RGBA, GL_UNSIGNED_BYTE, data );
-
-
-	png->SetPixels( texture->tw, texture->th, data );
-
-	png->SaveFile( filename );
-
-	delete png;
-
-//	delete [] data;
-
-
-}
-*/
-
-#include <sstream>
 /* Lux_OGL_DrawCacheDisplay
  *
  @ layer:
@@ -751,7 +749,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer, uint8_t shade
 
 
 #include "bitfont.h"
-static SDL_Texture *gfxPrimitivesFont[128];
+static SDL_Texture * gfxPrimitivesFont[128];
 
 SDL_Texture * Lux_OGL_GetCharTexture( uint8_t c )
 {
@@ -790,61 +788,6 @@ SDL_Texture * Lux_OGL_GetCharTexture( uint8_t c )
 	return texture;
 }
 
-
-
-
-
-void Lux_OGL_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_width, uint8_t text_height )
-{
-	uint16_t max_length = 1;
-	uint16_t length_count = 0;
-	uint16_t lines = 1;
-	std::string::iterator object;
-
-	for ( object = text.begin(); object != text.end(); object++ )
-	{
-		uint8_t utfchar = *object;
-		uint32_t cchar = utfchar;
-		if ( cchar == '\n' || cchar == '\r' )
-		{
-			lines++;
-			max_length = std::max(length_count, max_length);
-			length_count = 0;
-
-		}
-		else if ( cchar <= 128 )
-		{
-			length_count++;
-		}
-		else if ( cchar < 224 )
-		{
-			object++;
-
-			length_count++;
-		}
-		else if ( cchar < 240 )
-		{
-			object++;
-			object++;
-
-			length_count++;
-		}
-		else if ( cchar < 245 )
-		{
-			object++;
-			object++;
-			object++;
-
-			length_count++;
-		}
-	}
-	max_length = std::max(length_count, max_length);
-
-	area.w = text_width * max_length;
-	area.h = text_height * lines;
-
-}
-
 LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alignment )
 {
 	std::string::iterator object;
@@ -853,9 +796,13 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 	SDL_Rect area;
 	int w,h;
 
+	bool watch_for_color = false;
+	bool is_whitspace = false;
+	LuxColour font_color = { 255, 255,255, 255 };
+
 	SDL_GetWindowSize( debug_window, &w, &h );
 	rect.x = rect.y = 0;
-	Lux_OGL_SetRectFromText( rect, message, 8, 10 );
+	Lux_SDL2_SetRectFromText( rect, message, 8, 10 );
 
 	area = rect;
 
@@ -873,10 +820,8 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 		area.x = w - area.w;
 	}
 
-
 	SDL_SetRenderDrawColor( debug_renderer, 0, 0, 0,255 );
 	SDL_RenderFillRect( debug_renderer, &area );
-
 
 	draw = area;
 	draw.w = draw.h = 8;
@@ -885,16 +830,21 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 	{
 		uint8_t utfchar = *object;
 		uint32_t cchar = utfchar;
+
+		is_whitspace = false;
+
 		if (cchar == '\n' || cchar == '\r')
 		{
 			draw.y += 10;
 			draw.x = area.x;
 			cchar = 0;
+			is_whitspace = true;
 		}
 		else if ( cchar <= 32 )
 		{
 			draw.x += 7;
 			cchar = 0;
+			is_whitspace = true;
 		}
 		else if ( cchar <= 128 )
 		{
@@ -942,23 +892,141 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 		{
 			SDL_Texture * texture = NULL;
 
-			if ( cchar >= 32 && cchar <= 128 )
+			if ( cchar == 0xA7 )
 			{
-				texture = Lux_OGL_GetCharTexture(cchar);
+				watch_for_color = true;
+			}
+			else if ( watch_for_color == true )
+			{
+				watch_for_color = false;
+				font_color.r = font_color.g = font_color.b = 255;
+				switch (cchar) {
+					case '0': // Black
+					{
+						font_color.r = font_color.g = font_color.b = 0;
+						break;
+					}
+					case '1': // Dark Blue
+					{
+						font_color.r = font_color.g = 0;
+						font_color.b = 170;
+						break;
+					}
+					case '2': // Dark Green
+					{
+						font_color.r = font_color.b = 0;
+						font_color.g = 170;
+						break;
+					}
+					case '3': // Dark Aqua
+					{
+						font_color.r = 0;
+						font_color.g = font_color.b = 170;
+						break;
+					}
+					case '4': // Dark Red
+					{
+						font_color.g = font_color.b = 0;
+						font_color.r = 170;
+						break;
+					}
+					case '5': // Dark Purple
+					{
+						font_color.g = 0;
+						font_color.r = font_color.b = 170;
+						break;
+					}
+					case '6': // Gold
+					{
+						font_color.b = 0;
+						font_color.r = 255;
+						font_color.g = 170;
+						break;
+					}
+					case '7': // Gray
+					{
+						font_color.r = font_color.g = font_color.b = 170;
+						break;
+					}
+					case '8': // Dark Gray
+					{
+						font_color.r = font_color.g = font_color.b = 85;
+						break;
+					}
+					case '9': // Blue
+					{
+						font_color.r = font_color.g = 85;
+						font_color.b = 255;
+						break;
+					}
+					case 'a': // Green
+					{
+						font_color.r = font_color.b = 85;
+						font_color.g = 255;
+						break;
+					}
+					case 'b': // Aqua
+					{
+						font_color.r = 85;
+						font_color.g = font_color.b = 255;
+						break;
+					}
+					case 'c': // Red
+					{
+						font_color.b = font_color.g = 85;
+						font_color.r = 255;
+						break;
+					}
+					case 'd': // Light Purple
+					{
+						font_color.g = 85;
+						font_color.r = font_color.b = 255;
+						break;
+					}
+					case 'e': // Yellow
+					{
+						font_color.b = 85;
+						font_color.r = font_color.g = 255;
+						break;
+					}
+					default:
+						font_color.r = font_color.g = font_color.b = 255;
+						break;
+				}
+				std::cout << "Change Colour:" << +font_color.r << "," << +font_color.g<< "," <<+font_color.b << std::endl;
+
 			}
 			else
 			{
-				texture = Lux_OGL_GetCharTexture('?');
-			}
+				watch_for_color = false;
+				if ( cchar >= 32 && cchar <= 128 )
+				{
+					texture = Lux_OGL_GetCharTexture(cchar);
+				}
+				else
+				{
+					texture = Lux_OGL_GetCharTexture('?');
+				}
 
-			if ( texture )
-			{
-				SDL_SetTextureColorMod(texture, 255, 255, 255);
-				SDL_SetTextureAlphaMod(texture, 255 );
-				SDL_RenderCopy(debug_renderer, texture, NULL, &draw);
-			}
-			draw.x += 7;
+				if ( texture )
+				{
+					//SDL_SetTextureColorMod(texture, 255,255,255);
+					SDL_SetTextureColorMod(texture, font_color.r, font_color.g, font_color.b);
+					SDL_SetTextureAlphaMod( texture, 255 );
+					SDL_RenderCopy(debug_renderer, texture, NULL, &draw);
 
+					//std::cout << (char)cchar << ":" << +font_color.r << "," << +font_color.g<< "," <<+font_color.b << std::endl;
+
+				}
+				draw.x += 7;
+
+			}
+		}
+
+		if ( is_whitspace )
+		{
+			/* Reset Colour if a whitespace occurs */
+			font_color.r = font_color.g = font_color.b = 255;
 		}
 	}
 

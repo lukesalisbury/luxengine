@@ -25,6 +25,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 SDL_Surface * Lux_SDL2_Image2Surface( std::string file );
 void Lux_SDL2_SetWindowIcon( SDL_Window * native_window );
+void Lux_SDL2_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_width, uint8_t text_height );
+
 
 #ifdef OPENGLENABLED
 bool Lux_OGL_QueryExtension(char *extName);

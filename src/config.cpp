@@ -224,6 +224,8 @@ bool Config::GetBoolean( std::string key )
 void Config::SetString(std::string key, std::string value)
 {
 	this->values[key] = value;
+
+	this->MarkModified(key);
 }
 
 void Config::SetArray(std::string key, std::vector<std::string> value)
@@ -241,7 +243,7 @@ void Config::SetArray(std::string key, std::vector<std::string> value)
 		}
 	}
 	this->values[key] = str;
-
+	this->MarkModified(key);
 }
 
 void Config::SetNumber(std::string key, int32_t value)
@@ -249,10 +251,11 @@ void Config::SetNumber(std::string key, int32_t value)
 	std::ostringstream stream("");
 	stream << value;
 	this->values[key] = stream.str();
-
+	this->MarkModified(key);
 }
 
 void Config::SetBoolean(std::string key, bool value)
 {
 	this->values[key] = ( value ? "true" : "false");
+	this->MarkModified(key);
 }

@@ -81,6 +81,8 @@ class LuxEngine
 		/* Engine State */
 		int32_t game_state;
 
+		uint32_t game_fps, game_fps_time, game_fps_last;
+
 
 		/* Players */
 		uint32_t default_player;
