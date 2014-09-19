@@ -133,10 +133,9 @@ bool MokoiGame::SetProjectDirectory()
 
 		project_id << this->project_ident << " [" << std::hex << this->ident << "]";
 
-
 		this->public_directory =  elix::directory::User( project_id.str() );
 
-		elix::File * title_file = new elix::File( this->public_directory + "title.txt", true );
+		elix::File * title_file = new elix::File( elix::directory::User( project_id.str(), false, "title.txt"), true );
 		title_file->Write( this->title );
 		delete title_file;
 

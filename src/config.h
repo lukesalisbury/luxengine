@@ -29,6 +29,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			std::list<std::string> modified_values;
 			std::string platform;
 			char spliter;
+			bool watch_modified;
 
 		public:
 			void Set( std::string key, std::string value );

@@ -71,10 +71,10 @@ LuxEngine::LuxEngine( std::string executable )
 	lux::media = new PlatformMedia();
 
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, PROGRAM_NAME" - Version "PROGRAM_VERSION" Log" );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO ) << "-------------------------------------" << std::endl;
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
 
 	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, PROGRAM_NAME" - Version "PROGRAM_VERSION" Error Log" );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR ) << "-------------------------------------" << std::endl;
+	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, "-------------------------------------" );
 
 	if ( executable[0] != 0 )
 	{
@@ -84,14 +84,14 @@ LuxEngine::LuxEngine( std::string executable )
 	}
 
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Base Directory: " + base_directory );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO ) << "-------------------------------------" << std::endl;
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User: " + elix::directory::User("") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User Documents: " + elix::directory::Documents(false) );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Global Documents: " + elix::directory::Documents(true) );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Cache: " + elix::directory::Cache()  );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Resources: " + elix::directory::Resources("examples") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User: " + elix::directory::User("test", false, "test") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User Documents: " + elix::directory::Documents( false ) );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Global Documents: " + elix::directory::Documents( true, "test.txt") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Cache: " + elix::directory::Cache("")  );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Resources: " + elix::directory::Resources("") );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "examples: " + elix::directory::Resources("examples") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO ) << "-------------------------------------" << std::endl;
+	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
 
 	if ( lux::core->Good() )
 	{
@@ -154,8 +154,8 @@ bool LuxEngine::Start( std::string project_file )
 	this->state = RUNNING;
 
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << ">----------------LuxEngine::Start-------------------|" << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << ">----------------LuxEngine::Start-------------------|" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, ">----------------LuxEngine::Start-------------------|");
+	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, ">----------------LuxEngine::Start-------------------|");
 
 	/* Strip quotes from name if they have it. */
 	if ( project_file.at(0) == '\'' )

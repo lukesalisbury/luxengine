@@ -110,6 +110,7 @@ void Lux_SDL2_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_w
 
 	for ( object = text.begin(); object != text.end(); object++ )
 	{
+		bool watch_for_color = false;
 		uint8_t utfchar = *object;
 		uint32_t cchar = utfchar;
 		if ( cchar == '\n' || cchar == '\r' )
@@ -117,6 +118,18 @@ void Lux_SDL2_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_w
 			lines++;
 			max_length = std::max(length_count, max_length);
 			length_count = 0;
+		}
+		else if ( watch_for_color )
+		{
+			object++;
+
+			watch_for_color = false;
+		}
+		else if ( cchar == 0xA7 )
+		{
+			object++;
+
+			watch_for_color = true;
 		}
 		else if ( cchar <= 128 )
 		{
@@ -144,14 +157,12 @@ void Lux_SDL2_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_w
 			length_count++;
 		}
 	}
-	max_length = std::max(length_count, max_length);
+	max_length = std::max( length_count, max_length );
 
 	area.w = text_width * max_length;
 	area.h = text_height * lines;
 
 }
-
-
 
 #ifdef OPENGLENABLED
 #include "gles/gles.hpp"

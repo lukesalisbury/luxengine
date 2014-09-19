@@ -34,14 +34,14 @@ bool MapXMLReader::Load( std::string file )
 	this->xml_file = MokoiGame_GetXML(file);
 	if ( this->xml_file->Error() )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG, __FILE__ , __LINE__) << this->xml_file->GetErrorStr1() <<  std::endl;
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_LOG) << this->xml_file->GetErrorStr1() <<  std::endl;
 		return false;
 	}
 
 	this->root = this->xml_file->RootElement();
 	if ( !this->root || strcmp( this->root->Value(), "map") )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG, __FILE__ , __LINE__) << file << " not a valid map file." << std::endl;
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_LOG) << file << " not a valid map file." << std::endl;
 		return false;
 	}
 
@@ -232,7 +232,6 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 
 	MapObject * object = new MapObject();
 
-
 	tinyxml2::QueryStringAttribute(object_element, "type", obj_type );
 	tinyxml2::QueryStringAttribute(object_element, "value", object->sprite );
 	tinyxml2::QueryStringAttribute(object_element, "id", object->ident );
@@ -341,7 +340,7 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 	else if (obj_type == "text")
 	{
 		object->type = OBJECT_TEXT;
-		object->sprite = this->GetTextString(object_element, object->sprite);
+		object->sprite = this->GetTextString( object_element, object->sprite );
 	}
 	else if (obj_type == "polygon")
 	{

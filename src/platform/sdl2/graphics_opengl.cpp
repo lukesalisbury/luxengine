@@ -165,27 +165,28 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 
 	native_window = lux::core->GetWindow();
 
-	SDL_SetWindowSize(native_window, width, height );
-	SDL_GetWindowSize(native_window, &window_width, &window_height);
+	SDL_SetWindowSize( native_window, width, height );
+	SDL_GetWindowSize( native_window, &window_width, &window_height );
 
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
 	SDL_SetHintWithPriority( SDL_HINT_RENDER_OPENGL_SHADERS, "1", SDL_HINT_OVERRIDE );
+	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "0", SDL_HINT_OVERRIDE );
 
 
 	native_context = SDL_GL_CreateContext(native_window);
 	if ( !native_context )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
 
 	SDL_GL_MakeCurrent(native_window, native_context);
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Vendor: " << glGetString(GL_VENDOR) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Renderer: " << glGetString(GL_RENDERER) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Version: " << glGetString(GL_VERSION) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | GL_ARB_texture_non_power_of_two: " << SDL_GL_ExtensionSupported((char *)"GL_ARB_texture_non_power_of_two") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Vendor: " << glGetString(GL_VENDOR) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Renderer: " << glGetString(GL_RENDERER) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Non Power of Two Texture Support: " << SDL_GL_ExtensionSupported((char *)"GL_ARB_texture_non_power_of_two") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Framebuffer Object Support: " << SDL_GL_ExtensionSupported((char *)"GL_EXT_framebuffer_object") << std::endl;
 
 	native_graphics_dimension.w = width;
 	native_graphics_dimension.h = height;
@@ -196,8 +197,8 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	gles::setOrtho( 0.0f, (float)native_graphics_dimension.w, (float)native_graphics_dimension.h, 0.0f, -10.0f, 10.0f );
 
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST );
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glEnable( GL_BLEND );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
 	OpenGLShader::Check();
 	Lux_GLES_LoadFont();
@@ -218,8 +219,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	SDL_DisableScreenSaver();
 
 	/* Create FBO */
-
-	if ( SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object") )
+	if ( SDL_GL_ExtensionSupported( "GL_EXT_framebuffer_object" ) )
 	{
 		glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC) SDL_GL_GetProcAddress("glGenFramebuffersEXT");
 		glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC) SDL_GL_GetProcAddress("glDeleteFramebuffersEXT");
@@ -768,12 +768,12 @@ SDL_Texture * Lux_OGL_GetCharTexture( uint8_t c )
 			{
 				for (q = 0; q < 8; q++)
 				{
-					charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFFFF : 0x000F) ;
+					charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFFFF : 0x0000) ;
 				}
 			}
 			texture = SDL_CreateTexture(debug_renderer, SDL_PIXELFORMAT_ARGB1555, SDL_TEXTUREACCESS_STATIC, 8, 8);
 
-			SDL_SetTextureBlendMode(texture,SDL_BLENDMODE_BLEND);
+			SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
 			SDL_UpdateTexture(texture, NULL, charflip, 16);
 
 			delete [] charflip;
@@ -820,7 +820,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 		area.x = w - area.w;
 	}
 
-	SDL_SetRenderDrawColor( debug_renderer, 0, 0, 0,255 );
+	SDL_SetRenderDrawColor( debug_renderer, 0, 0, 0, 255 );
 	SDL_RenderFillRect( debug_renderer, &area );
 
 	draw = area;
@@ -877,7 +877,6 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 			object++;
 			next = (*object) & 0xff;
 			cchar = ((cchar << 18) & 0xffff) + ((next << 12) & 0x3ffff);
-
 
 			object++;
 			next = (*object) & 0xff;
@@ -993,7 +992,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 						font_color.r = font_color.g = font_color.b = 255;
 						break;
 				}
-				std::cout << "Change Colour:" << +font_color.r << "," << +font_color.g<< "," <<+font_color.b << std::endl;
+
 
 			}
 			else
@@ -1010,13 +1009,9 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alig
 
 				if ( texture )
 				{
-					//SDL_SetTextureColorMod(texture, 255,255,255);
 					SDL_SetTextureColorMod(texture, font_color.r, font_color.g, font_color.b);
 					SDL_SetTextureAlphaMod( texture, 255 );
 					SDL_RenderCopy(debug_renderer, texture, NULL, &draw);
-
-					//std::cout << (char)cchar << ":" << +font_color.r << "," << +font_color.g<< "," <<+font_color.b << std::endl;
-
 				}
 				draw.x += 7;
 

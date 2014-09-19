@@ -500,7 +500,7 @@ bool GameWorldSystem::SetMap(std::string map_file, int32_t position_x, int32_t p
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | '" << name << "' map not found." << std::endl;
+			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | '" << name << "' map not found." << std::endl;
 		}
 	}
 	return false;

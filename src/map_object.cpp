@@ -425,7 +425,7 @@ LuxSprite * MapObject::GetSprite( bool no_increment )
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "data type error" << std::endl;
+			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR) << "data type error" << std::endl;
 		}
 	}
 	return NULL;
@@ -465,7 +465,7 @@ LuxSprite * MapObject::GetCurrentSprite( )
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "data type error" << std::endl;
+			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR) << "data type error" << std::endl;
 		}
 	}
 	return NULL;

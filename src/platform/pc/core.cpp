@@ -131,8 +131,8 @@ void CoreSystem::AbleOutput(bool able)
 	{
 
 		/* Redirect Console output to text files */
-		std::string log_filename = elix::directory::User("") + "luxengine.log";
-		std::string error_filename = elix::directory::User("") + "error.log";
+		std::string log_filename = elix::directory::User("", false, "luxengine.log") ;
+		std::string error_filename = elix::directory::User("", false, "error.log");
 		freopen( error_filename.c_str(), "w", stderr );
 		//freopen( log_filename.c_str(), "w", stdout );
 
@@ -181,7 +181,7 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	{
 		if ( SDL_InitSubSystem(flag) < 0 )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
+			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
 			return false;
 		}
 		return true;

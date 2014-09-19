@@ -93,7 +93,7 @@ namespace OpenGLShader
 {
 	bool Check()
 	{
-		std::cout << __FILE__ << ": | Checking Shader Support" << std::endl;
+
 		if ( OpenGLShaderImpl::Init() )
 		{
 			for ( uint8_t i = 0; i < NUM_SHADERS; ++i)

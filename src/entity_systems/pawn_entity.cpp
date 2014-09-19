@@ -329,7 +329,7 @@ static cell pawnEntityCreate(AMX *amx, const cell *params)
 	}
 	else
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | EntityCreate ('" << entity_parent;
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | EntityCreate ('" << entity_parent;
 		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "' '" << entity_id << "') Failed." << std::endl;
 		response = 0;
 	}

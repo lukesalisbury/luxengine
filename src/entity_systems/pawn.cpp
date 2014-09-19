@@ -124,7 +124,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Lux_PawnEntity_LoadFile Error: " << file << " " << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Lux_PawnEntity_LoadFile Error: " << file << " " << std::endl;
 			return false;
 		}
 
@@ -134,7 +134,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 
 		if ( hdr.magic != AMX_MAGIC )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
 			delete[] tempblock;
 			return false;
 		}
@@ -149,7 +149,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 
 		if ( result )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
 			delete[] memblock;
 			return false;
 		}
@@ -202,7 +202,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 			return true;
 		}
 	}
-	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Lux_PawnEntity_LoadFile Error " << entity_name << ": File not found" << std::endl;
+	lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | Lux_PawnEntity_LoadFile Error " << entity_name << ": File not found" << std::endl;
 	return false;
 }
 
@@ -264,7 +264,7 @@ bool Lux_PawnEntity_Init(std::string entity_id, std::string entity_base, mem_poi
 	{
 		if( !Lux_PawnEntity_LoadFile(entity_base) )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | No AMX found for "  << entity_base << std::endl;
+			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | No AMX found for "  << entity_base << std::endl;
 			MessagePush( (char*)"Entity not found '%s'", entity_base.c_str());
 			return false;
 		}
@@ -283,7 +283,7 @@ bool Lux_PawnEntity_Init(std::string entity_id, std::string entity_base, mem_poi
 		int32_t result = amx_Clone((AMX *)entity_data, base_amx, memblock);
 		if ( result )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | AMX Clone Failed: "  << Lux_PawnEntity_StrError(result) << "." << std::endl;
+			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | AMX Clone Failed: "  << Lux_PawnEntity_StrError(result) << "." << std::endl;
 			MessagePush( (char*)"%s: [Error] %s", entity->_base.c_str(), Lux_PawnEntity_StrError(result) );
 			entity_data = NULL;
 			return false;
@@ -292,7 +292,7 @@ bool Lux_PawnEntity_Init(std::string entity_id, std::string entity_base, mem_poi
 
 		return true;
 	}
-	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Lux_PawnEntity_Init FAILED" << std::endl;
+	lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | Lux_PawnEntity_Init FAILED" << std::endl;
 	return false;
 }
 
@@ -532,7 +532,7 @@ bool Lux_PawnEntity_PushArrayNative( mem_pointer entity_data, native_type array[
 	#endif
 	if ( err )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << __FUNCTION__ << ":" << __LINE__ << " | " << Lux_PawnEntity_StrError(err) << std::endl;
+		lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR ) <<  "| " << Lux_PawnEntity_StrError(err) << std::endl;
 		return false;
 	}
 	return true;
@@ -568,7 +568,7 @@ bool Lux_PawnEntity_PushArray( mem_pointer entity_data, int32_t array[], uint32_
 	#endif
 	if ( err )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << __FUNCTION__ << ":" << __LINE__ << " | " << Lux_PawnEntity_StrError(err) << std::endl;
+		lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR ) <<  "| " << Lux_PawnEntity_StrError(err) << std::endl;
 		return false;
 	}
 	else
@@ -601,7 +601,7 @@ bool Lux_PawnEntity_PushString(mem_pointer entity_data, std::string str, native_
 	#endif
 	if ( err )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << __FUNCTION__ << ":" << __LINE__ << " | " << Lux_PawnEntity_StrError(err) << std::endl;
+		lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR ) <<  "| " << Lux_PawnEntity_StrError(err) << std::endl;
 		return false;
 	}
 	return true;
@@ -619,7 +619,7 @@ bool Lux_PawnEntity_Push( mem_pointer entity_data, int32_t number)
 
 	if ( err )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << __FUNCTION__ << ":" << __LINE__ << " | " << Lux_PawnEntity_StrError(err) << std::endl;
+		lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR ) <<  "| " << Lux_PawnEntity_StrError(err) << std::endl;
 		return false;
 	}
 	return true;

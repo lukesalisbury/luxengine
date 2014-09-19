@@ -284,13 +284,13 @@ bool pc_network_init()
 
 	if ( client == NULL )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " An error occurred while trying to create an ENet client host." << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " An error occurred while trying to create an ENet client host." << std::endl;
 		enet_deinitialize();
 		return net_active;
 	}
 
 	/* Connect to some.server.net:8714. */
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Connecting to " << server_ip << std::endl;
+	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Connecting to " << server_ip << std::endl;
 	enet_address_set_host( &address, server_ip.c_str() );
 	address.port = 10514;
 
@@ -299,7 +299,7 @@ bool pc_network_init()
 
 	if ( peer == NULL )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " An error occurred while trying to create an ENet client host." << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " An error occurred while trying to create an ENet client host." << std::endl;
 		return net_active;
 	}
 
@@ -315,7 +315,7 @@ bool pc_network_init()
 				}
 			}
 			MessagePush( "Message %d for %d.", event.packet->data[0], net_id);
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Connection to " << server_ip << " succeeded." << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Connection to " << server_ip << " succeeded." << std::endl;
 			net_active = true;
 			sdlcore_thread = SDL_CreateThread( pc_network_thread, NULL );
 		}
@@ -323,7 +323,7 @@ bool pc_network_init()
 	else
 	{
 		enet_peer_reset( peer );
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, __FILE__, __LINE__) << " Connection to " << server_ip << " failed." << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Connection to " << server_ip << " failed." << std::endl;
 	}
 	return net_active;
 }

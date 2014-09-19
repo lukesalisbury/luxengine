@@ -76,9 +76,7 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 {
 	return true;
 }
-void CoreSystem::SystemMessage(uint8_t type, std::string message)
-{
-}
+
 
 bool CoreSystem::Good()
 {

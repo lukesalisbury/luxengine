@@ -50,10 +50,11 @@ namespace OpenGLShaderImpl
 		std::cout << __FILE__ << ": | Shaders disabled on OS X" << std::endl;
 		return false;
 	#else
-		std::cout << __FILE__ << ": | GL_ARB_shader_objects :" << Lux_OGL_QueryExtension("GL_ARB_shader_objects") << std::endl;
-		std::cout << __FILE__ << ": | GL_ARB_shading_language_100 :" << Lux_OGL_QueryExtension("GL_ARB_shading_language_100") << std::endl;
-		std::cout << __FILE__ << ": | GL_ARB_vertex_shader :" << Lux_OGL_QueryExtension("GL_ARB_vertex_shader") << std::endl;
-		std::cout << __FILE__ << ": | GL_ARB_fragment_shader :" << Lux_OGL_QueryExtension("GL_ARB_fragment_shader") << std::endl;
+		std::cout << "Checking Shader Support:" << std::endl;
+		std::cout << " Objects:" << Lux_OGL_QueryExtension("GL_ARB_shader_objects");
+		std::cout << " Language:" << Lux_OGL_QueryExtension("GL_ARB_shading_language_100");
+		std::cout << " Vertex:" << Lux_OGL_QueryExtension("GL_ARB_vertex_shader");
+		std::cout << " Fragment:" << Lux_OGL_QueryExtension("GL_ARB_fragment_shader") << std::endl;
 
 		if ( Lux_OGL_QueryExtension("GL_ARB_shader_objects") && Lux_OGL_QueryExtension("GL_ARB_shading_language_100") && Lux_OGL_QueryExtension("GL_ARB_vertex_shader") && Lux_OGL_QueryExtension("GL_ARB_fragment_shader") )
 		{

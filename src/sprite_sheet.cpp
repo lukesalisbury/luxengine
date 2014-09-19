@@ -120,14 +120,14 @@ bool LuxSheet::ParseXML()
 	xml_file = MokoiGame_GetXML("./sprites/" + this->name + ".xml");
 	if ( xml_file->Error() )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | " << xml_file->GetErrorStr1() << " : " << xml_file->GetErrorStr2 () << std::endl;
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | " << xml_file->GetErrorStr1() << " : " << xml_file->GetErrorStr2 () << std::endl;
 		return false;
 	}
 
 	root = xml_file->RootElement();
 	if ( !root || strcmp(root->Value(), "sheet") )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | sprites/" + this->name + ".xml not a valid sheet file." << std::endl;
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | sprites/" + this->name + ".xml not a valid sheet file." << std::endl;
 		return false;
 	}
 

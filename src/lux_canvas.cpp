@@ -49,7 +49,7 @@ bool LuxCanvas::Load( std::string file )
 
 	if ( !reader.Load("./maps/" + file + ".xml"))
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + file + ".xml not a valid canvas file." << std::endl;
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | maps/" + file + ".xml not a valid canvas file." << std::endl;
 		return false;
 	}
 	uint32_t object_cache_count = 0;

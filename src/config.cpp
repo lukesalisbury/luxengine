@@ -21,7 +21,7 @@ void ConfigResource::Print()
 	std::map<std::string, std::string>::iterator iter;
 	for ( iter = this->values.begin(); iter != this->values.end(); iter++ )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << iter->first << "=" << iter->second << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << iter->first << "=" << iter->second << std::endl;
 	}
 
 }
@@ -29,6 +29,10 @@ void ConfigResource::Print()
 void ConfigResource::Set( std::string key, std::string value )
 {
 	this->values[key] = value;
+
+	if ( this->watch_modified )
+		this->MarkModified(key);
+
 }
 
 void ConfigResource::ParseLine( std::string & buffer )
@@ -106,6 +110,7 @@ void ConfigResource::MarkModified(std::string key)
 
 Config::Config( )
 {
+	this->watch_modified = false;
 	this->path = elix::program::RootDirectory();
 	this->platform = "posix";
 
@@ -123,7 +128,7 @@ Config::Config( )
 	this->PlatformSettings();
 
 	/* Load Global Settings */
-	elix::File * file = new elix::File( elix::directory::User("", "mokoi.config") );
+	elix::File * file = new elix::File( elix::directory::User("", false, "mokoi.config") );
 	this->LoadFromFile(file);
 	delete file;
 
@@ -132,6 +137,7 @@ Config::Config( )
 	this->LoadFromFile(file);
 	delete file;
 
+	this->watch_modified = true;
 }
 
 Config::~Config()
@@ -142,7 +148,7 @@ Config::~Config()
 		this->modified_values.sort();
 		this->modified_values.unique();
 
-		elix::File * file = new elix::File( this->path + "mokoi.config", true );
+		elix::File * file = new elix::File( elix::directory::User("", false, "mokoi.config") , true );
 
 		if ( file->Exist() )
 		{
@@ -156,6 +162,10 @@ Config::~Config()
 				file->WriteString("\n");
 				iter++;
 			}
+		}
+		else
+		{
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_ERROR ) << file->GetError();
 		}
 		delete file;
 	}
@@ -223,9 +233,7 @@ bool Config::GetBoolean( std::string key )
 
 void Config::SetString(std::string key, std::string value)
 {
-	this->values[key] = value;
-
-	this->MarkModified(key);
+	this->Set(key, value);
 }
 
 void Config::SetArray(std::string key, std::vector<std::string> value)
@@ -242,20 +250,19 @@ void Config::SetArray(std::string key, std::vector<std::string> value)
 				str.append(1, this->spliter);
 		}
 	}
-	this->values[key] = str;
-	this->MarkModified(key);
+	this->Set(key, str);
+
 }
 
 void Config::SetNumber(std::string key, int32_t value)
 {
 	std::ostringstream stream("");
 	stream << value;
-	this->values[key] = stream.str();
-	this->MarkModified(key);
+
+	this->Set(key, stream.str());
 }
 
 void Config::SetBoolean(std::string key, bool value)
 {
-	this->values[key] = ( value ? "true" : "false");
-	this->MarkModified(key);
+	this->Set(key, ( value ? "true" : "false") );
 }

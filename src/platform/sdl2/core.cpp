@@ -95,22 +95,21 @@ CoreSystem::~CoreSystem()
 
 }
 
-std::ostream& CoreSystem::SystemMessage(uint8_t type, const char * file, int line )
+std::ostream& CoreSystem::SystemMessage(const char *file, int line, uint8_t type  )
 {
 	if ( type == SYSTEM_MESSAGE_LOG )
 	{
 		if ( file )
 		{
-			std::cout << "(" << file << ":" << line << ") ";
+			std::cout << std::dec << "(" << file << ":" << line << ") ";
 		}
-
 		return std::cout;
 	}
 	else if ( type == SYSTEM_MESSAGE_ERROR || type == SYSTEM_MESSAGE_WARNING )
 	{
 		if ( file )
 		{
-			std::cerr << "[" << file << ":" << line << "] ";
+			std::cerr << std::dec <<  "[" << file << ":" << line << "] ";
 		}
 		return std::cerr;
 	}
@@ -118,36 +117,27 @@ std::ostream& CoreSystem::SystemMessage(uint8_t type, const char * file, int lin
 	{
 		if ( file )
 		{
-			std::cout << "[" << file << ":" << line << "] ";
+			std::cout << std::dec <<  "[" << file << ":" << line << "] ";
 		}
 		return std::cout;
 	}
 }
 
-void CoreSystem::SystemMessage(uint8_t type, std::string message)
+std::ostream& CoreSystem::SystemMessage( uint8_t type )
 {
-	if ( type == SYSTEM_MESSAGE_LOG )
-	{
-		//SDL_Log("%s", message.c_str() );
-		std::cout << "LOG:" <<  message << std::endl;
-	}
-	else if ( type == SYSTEM_MESSAGE_ERROR || SYSTEM_MESSAGE_WARNING )
-	{
-		//SDL_Log("%s", message.c_str() );
-		std::cerr << message << std::endl;
-	}
-	else
-	{
-		//SDL_Log("%d: %s", type, message.c_str() );
-		std::cout << type << ":" << message << std::endl;
-	}
+	return this->SystemMessage( NULL, 0, type );
+}
+
+void CoreSystem::SystemMessage( uint8_t type, std::string message )
+{
+	this->SystemMessage( NULL, 0, type ) << message << std::endl;
 }
 
 void CoreSystem::AbleOutput(bool able)
 {
 	if ( able )
 	{
-		std::string error_filename = elix::directory::User("") + "error.log";
+		std::string error_filename = elix::directory::User("", false, "error.log");
 		freopen( error_filename.c_str(), "w", stderr );
 	}
 }
@@ -188,7 +178,7 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	{
 		if ( SDL_InitSubSystem(flag) < 0 )
 		{
-			this->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
+			this->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | Couldn't init subsystems. " << SDL_GetError() << std::endl;
 			return false;
 		}
 		return true;

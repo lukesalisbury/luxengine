@@ -132,7 +132,7 @@ int32_t AudioSystem::PlayEffect ( std::string requestSound, int32_t x, int32_t y
 
 		if ( chan == -1 )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayEffect: " << Mix_GetError() << std::endl;
+			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayEffect: " << Mix_GetError() << std::endl;
 			return 0;
 		}
 		else
@@ -178,7 +178,7 @@ int32_t AudioSystem::PlayDialog( int32_t requestSound )
 			this->dialog = Mix_LoadMUS_RW(src, 0);
 			if ( Mix_PlayMusic(this->dialog, 1) == -1 )
 			{
-				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayDialog: " << Mix_GetError() << std::endl;
+				lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayDialog: " << Mix_GetError() << std::endl;
 				return 0;
 			}
 			Mix_HookMusicFinished( &Lux_Audio_DialogEnded );
@@ -210,18 +210,18 @@ int32_t AudioSystem::PlayMusic ( std::string requestMusic, int32_t loop, int32_t
 
 			if ( !this->music )
 			{
-				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
+				lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
 			}
 
 			if ( Mix_FadeInMusic( this->music, loop, fadeLength ) == -1 )
 			{
-				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
+				lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
 				return 0;
 			}
 			return 1;
 		}
 	}
-	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | PlayMusic Error: '" << requestMusic << "' "  << std::endl;
+	lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayMusic Error: '" << requestMusic << "' "  << std::endl;
 	return 0;
 }
 

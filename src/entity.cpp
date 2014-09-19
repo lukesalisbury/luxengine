@@ -80,7 +80,7 @@ void Entity::InitialSetup( std::string id )
 		this->loaded = this->callbacks->Init( this->id, this->_base, this->_data, this );
 		if ( !this->loaded )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ":" << __LINE__ << " | No data for " << this->id << "|" << this->_base << std::endl;
+			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_INFO) << "No data for " << this->id << "|" << this->_base << std::endl;
 		}
 	}
 
@@ -212,10 +212,10 @@ int32_t Entity::Call(std::string function, char * format, ...)
 		return_value = this->callbacks->Call(this->_data, (char*)function.c_str(), stack_mem);
 
 		if ( return_value == -1 )
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << __FUNCTION__ << ":" << __LINE__ << " | Call from " << this->id << " Failed" << std::endl;
+			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR ) <<  "| Call from " << this->id << " Failed" << std::endl;
 		return return_value;
 	}
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ":" << __LINE__ << " | '" << this->id << "' Call Function Failed '" << function << "'" << std::endl;
+	lux::core->SystemMessage( __FUNCTION__, __LINE__, SYSTEM_MESSAGE_INFO ) << "'" << this->id << "' Call Function Failed '" << function << "'" << std::endl;
 	return -1;
 }
 

@@ -875,13 +875,13 @@ bool MokoiMap::LoadDimension()
 		tinyxml2::XMLDocument * xml_file = MokoiGame_GetXML("./maps/" + this->map_name + ".xml");
 		if ( xml_file->Error() )
 		{
-			//lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
+			//lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | " << xml_file->ErrorDesc() << " Row: " << xml_file->ErrorRow() << std::endl;
 			delete xml_file;
 			return false;
 		}
 		if ( !xml_file->RootElement() || strcmp( xml_file->RootElement()->Value(), "map") )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->map_name + ".xml not a vamap_nameap file." << std::endl;
+			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | maps/" + this->map_name + ".xml not a vamap_nameap file." << std::endl;
 			delete xml_file;
 			return false;
 		}
@@ -922,7 +922,7 @@ bool MokoiMap::LoadFile()
 
 	if ( !reader.Load("./maps/" + this->map_name + ".xml"))
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, __FILE__ , __LINE__) << " | maps/" + this->map_name + ".xml not a valid file." << std::endl;
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | maps/" + this->map_name + ".xml not a valid file." << std::endl;
 		return false;
 	}
 

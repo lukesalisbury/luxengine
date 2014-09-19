@@ -54,10 +54,10 @@ void Lux_GLES_UpdateColor( LuxColour * colors, ObjectEffect effect )
 	}
 	else if ( effect.style == STYLE_REPCOLOUR )
 	{
-		colors[0] = (LuxColour){255,255,255,255};
-		colors[1] = (LuxColour){255,255,255,255};
-		colors[2] = (LuxColour){255,255,255,255};
-		colors[3] = (LuxColour){255,255,255,255};
+		colors[0] = colour::white;
+		colors[1] = colour::white;
+		colors[2] = colour::white;
+		colors[3] = colour::white;
 	}
 	else
 	{
@@ -120,14 +120,14 @@ void Lux_GLES_LoadFont()
 				charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFF : 0x00) ;
 			}
 		}
-		glGenTextures(1, &gles::font[c].pointer );
-		glBindTexture(GL_TEXTURE_2D, gles::font[c].pointer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, 8, 8, 0, GL_ALPHA, GL_UNSIGNED_BYTE, charflip);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+		glGenTextures( 1, &gles::font[c].pointer );
+		glBindTexture( GL_TEXTURE_2D, gles::font[c].pointer );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA, 8, 8, 0, GL_ALPHA, GL_UNSIGNED_BYTE, charflip );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
 		gles::font[c].w = gles::font[c].h = gles::font[c].tw = gles::font[c].th = 8;
 		gles::font[c].pot = true;
@@ -194,7 +194,6 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawPolygon( int16_t * x_point, int16_t *y_po
 	LuxColour * colors = new LuxColour[point_count];
 	uint8_t using_shader = NUM_SHADERS;
 
-
 	dest.set( position.x, position.y, position.z/1000 );
 
 	for ( uint8_t i = 0; i < point_count; i++ )
@@ -212,14 +211,12 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawPolygon( int16_t * x_point, int16_t *y_po
 
 LUX_DISPLAY_FUNCTION void Lux_GLES_DrawRect( LuxRect dest_rect, ObjectEffect effect)
 {
-
 	LuxVertex dest;
 	LuxVertex scale = { 1, 1, 1 };
 	LuxVertex rotation = { 0,0, 0 };
 	LuxVertex coords[4];
 	LuxColour colors[4];
 	uint8_t using_shader = Lux_GLES_GetShader(effect);
-
 
 	NATIVEFLOATTYPE half_wit = (NATIVEFLOATTYPE)(dest_rect.w/2);
 	NATIVEFLOATTYPE half_hei = (NATIVEFLOATTYPE)(dest_rect.h/2);
@@ -525,14 +522,14 @@ LUX_DISPLAY_FUNCTION int32_t Lux_GLES_DrawChar( int32_t cchar, int32_t x, int32_
 
 LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
 {
-
+	bool watch_for_color = false;
+	ObjectEffect current_effects = effects;
 	uint16_t x = dest_rect.x;
 	uint16_t y = dest_rect.y;
 	std::string::iterator object;
 
 	if ( text.empty() )
 		return;
-
 
 	for ( object = text.begin(); object != text.end(); object++ )
 	{
@@ -543,18 +540,118 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect
 			224-239 3 bytes
 			240-244 4 bytes
 		*/
-		if (cchar == '\n' || cchar == '\r')
+		if ( cchar == '\n' || cchar == '\r' )
 		{
 			y += ( gles::customtext && allow_custom ? gles::customtext_height + 2 : 10);
 			x = dest_rect.x;
+
+			current_effects.primary_colour = effects.primary_colour; // reset effects
 		}
 		else if ( cchar < 32 )
 		{
+			current_effects.primary_colour = effects.primary_colour; // reset effects
+		}
+		else if ( watch_for_color == true )
+		{
+			watch_for_color = false;
+			switch (cchar) {
+				case '0': // Black
+				{
+					current_effects.primary_colour.r = current_effects.primary_colour.g = current_effects.primary_colour.b = 0;
+					break;
+				}
+				case '1': // Dark Blue
+				{
+					current_effects.primary_colour.r = current_effects.primary_colour.g = 0;
+					current_effects.primary_colour.b = 170;
+					break;
+				}
+				case '2': // Dark Green
+				{
+					current_effects.primary_colour.r = current_effects.primary_colour.b = 0;
+					current_effects.primary_colour.g = 170;
+					break;
+				}
+				case '3': // Dark Aqua
+				{
+					current_effects.primary_colour.r = 0;
+					current_effects.primary_colour.g = current_effects.primary_colour.b = 170;
+					break;
+				}
+				case '4': // Dark Red
+				{
+					current_effects.primary_colour.g = current_effects.primary_colour.b = 0;
+					current_effects.primary_colour.r = 170;
+					break;
+				}
+				case '5': // Dark Purple
+				{
+					current_effects.primary_colour.g = 0;
+					current_effects.primary_colour.r = current_effects.primary_colour.b = 170;
+					break;
+				}
+				case '6': // Gold
+				{
+					current_effects.primary_colour.b = 0;
+					current_effects.primary_colour.r = 255;
+					current_effects.primary_colour.g = 170;
+					break;
+				}
+				case '7': // Gray
+				{
+					current_effects.primary_colour.r = current_effects.primary_colour.g = current_effects.primary_colour.b = 170;
+					break;
+				}
+				case '8': // Dark Gray
+				{
+					current_effects.primary_colour.r = current_effects.primary_colour.g = current_effects.primary_colour.b = 85;
+					break;
+				}
+				case '9': // Blue
+				{
+					current_effects.primary_colour.r = current_effects.primary_colour.g = 85;
+					current_effects.primary_colour.b = 255;
+					break;
+				}
+				case 'a': // Green
+				{
+					current_effects.primary_colour.r = current_effects.primary_colour.b = 85;
+					current_effects.primary_colour.g = 255;
+					break;
+				}
+				case 'b': // Aqua
+				{
+					current_effects.primary_colour.r = 85;
+					current_effects.primary_colour.g = current_effects.primary_colour.b = 255;
+					break;
+				}
+				case 'c': // Red
+				{
+					current_effects.primary_colour.b = current_effects.primary_colour.g = 85;
+					current_effects.primary_colour.r = 255;
+					break;
+				}
+				case 'd': // Light Purple
+				{
+					current_effects.primary_colour.g = 85;
+					current_effects.primary_colour.r = current_effects.primary_colour.b = 255;
+					break;
+				}
+				case 'e': // Yellow
+				{
+					current_effects.primary_colour.b = 85;
+					current_effects.primary_colour.r = current_effects.primary_colour.g = 255;
+					break;
+				}
+				default:
+					current_effects.primary_colour.r = current_effects.primary_colour.g = current_effects.primary_colour.b = 255;
+					break;
+			}
 
 		}
 		else if ( cchar <= 128 )
 		{
-			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, effects, allow_custom);
+			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, current_effects, allow_custom);
 		}
 		else if ( cchar < 224 )
 		{
@@ -563,7 +660,16 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect
 
 			cchar = ((cchar << 6) & 0x7ff) + (next & 0x3f);
 
-			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, effects, allow_custom);
+
+			if ( cchar == 0xA7 )
+			{
+				watch_for_color = true;
+			}
+			else
+			{
+				x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, current_effects, allow_custom);
+			}
+
 		}
 		else if ( cchar < 240 )
 		{
@@ -577,7 +683,7 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect
 			next = (*object) & 0x3f;
 			cchar += next;
 
-			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, effects, allow_custom);
+			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, current_effects, allow_custom);
 		}
 		else if ( cchar < 245 )
 		{
@@ -587,21 +693,15 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect
 			next = (*object) & 0xff;
 			cchar = ((cchar << 18) & 0xffff) + ((next << 12) & 0x3ffff);
 
-
 			object++;
 			next = (*object) & 0xff;
 			cchar += (next << 6) & 0xfff;
-
-
 
 			object++;
 			next = (*object) & 0x3f;
 			cchar += next;
 
-
-			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, effects, allow_custom);
-
-
+			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, current_effects, allow_custom);
 		}
 	}
 }
