@@ -201,4 +201,5 @@ input_header:
 	$(OBJDIR)/update_input_header.exe joystick_dreamcast dc
 	$(OBJDIR)/update_input_header.exe mouse_generic
 
-
+compiler:
+	@$(MAKE) -C ../meg/meg_pawn BUILDDIR=$(CURDIR)/$(BUILDDIR) INSTALLDIR=$(CURDIR)/$(INSTALLDIR)

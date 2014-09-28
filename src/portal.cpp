@@ -431,7 +431,7 @@ bool LuxPortal::frame()
 	page_rect.w = header_rect.w = LuxPortal::region.w - 128;
 
 	page_rect.y = lux_media::portal_title_height + 22;
-	page_rect.h = LuxPortal::region.h - ((lux_media::portal_title_height + 22)*2);
+	page_rect.h = LuxPortal::region.h - (lux_media::portal_title_height + 48);
 	header_rect.y = lux_media::portal_title_height;
 
 	image_rect.x = (LuxPortal::region.w/2) - (lux_media::portal_title_width/2);
@@ -439,6 +439,9 @@ bool LuxPortal::frame()
 	image_rect.h = lux_media::portal_title_height;
 
 	item_rect = page_rect;
+	item_rect.x += 8;
+	item_rect.w -= 16;
+	item_rect.y += 8;
 	item_rect.h = 40;
 	if ( logo )
 	{
