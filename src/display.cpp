@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "game_config.h"
 #include "engine.h"
-#include "world.h"
+#include "game_system.h"
 #include "lux_canvas.h"
 #include "elix_string.hpp"
 #include "mokoi_game.h"
@@ -26,36 +26,28 @@ extern GraphicSystem GraphicsNative;
 extern GraphicSystem GraphicsOpenGL;
 #endif
 
-std::string server_messages_text[13];
-
+std::string static_messages_text;
+uint8_t static_messages_count = 0;
 
 void MessagePush( char * message, ... )
 {
-	int m = 0;
-	while ( m < 13 )
-	{
-		if ( !server_messages_text[m].length() )
-			break;
-		m++;
-	}
-
-	if ( m == 13 )
-	{
-		for ( uint8_t c = 0; c < 12; c++ )
-		{
-			server_messages_text[c] = server_messages_text[c+1];
-		}
-		m = 12;
-	}
-
 	char * text = new char[128];
 	va_list args;
 	va_start( args, message );
 	vsnprintf( text, 127, message, args );
 	va_end(args);
 
-	server_messages_text[m] = std::string(text);
-	delete text;
+	static_messages_text.append(text);
+	static_messages_text.append("\n");
+	static_messages_count++;
+
+	if ( static_messages_count == 13 )
+	{
+		static_messages_text.erase(0, static_messages_text.find("\n") + 1);
+		static_messages_count--;
+	}
+
+	delete [] text;
 }
 
 
@@ -73,6 +65,7 @@ DisplaySystem::DisplaySystem()
 	bool is_display_setup = false;
 
 	this->InitialSetup();
+	this->Init();
 
 	#if DISPLAYMODE_OPENGL
 	if ( GraphicsOpenGL.InitGraphics( this->title, this->screen_dimension.w, this->screen_dimension.h, this->bpp, this->fullscreen ) )
@@ -138,6 +131,8 @@ DisplaySystem::DisplaySystem( std::string title, uint16_t width, uint16_t height
 
 DisplaySystem::~DisplaySystem()
 {
+	delete this->overlay_layer;
+
 	if ( lux::media != NULL )
 		lux::media->Free();
 	this->Close();
@@ -158,6 +153,16 @@ void DisplaySystem::InitialSetup()
 	this->show_cursor = true;
 	this->cache_sprites = false;
 
+	this->graphics = GraphicsNone;
+	this->overlay_layer = new Layer(this, 7, true);
+
+}
+
+/**/
+bool DisplaySystem::Init()
+{
+	this->graphics.TextSprites( false );
+
 	if ( lux::config )
 	{
 		this->title = lux::config->GetString("project.title");
@@ -173,16 +178,7 @@ void DisplaySystem::InitialSetup()
 		this->show_collisions = lux::config->GetBoolean("debug.collision");
 	}
 
-	this->graphics = GraphicsNone;
-	this->overlay_layer = new Layer(this, 7, true);
-
-}
-
-/**/
-bool DisplaySystem::Init()
-{
-	this->graphics.TextSprites( false );
-
+	/* Create Layers */
 	for (uint8_t i = 0; i < 7; i++)
 	{
 		std::string layername = "layer.static";
@@ -301,12 +297,13 @@ bool DisplaySystem::Close()
 	}
 	this->_layers.clear();
 
-
-	for ( LuxSheetIter iter_sheet = this->_sheets.begin(); iter_sheet != this->_sheets.end(); iter_sheet++ )
+	if ( this->_sheets.size() )
 	{
-		iter_sheet->second->Unload();
+		for ( LuxSheetIter iter_sheet = this->_sheets.begin(); iter_sheet != this->_sheets.end(); iter_sheet++ )
+		{
+			iter_sheet->second->Unload();
+		}
 	}
-
 	this->_sheets.clear();
 
 
@@ -333,64 +330,10 @@ void DisplaySystem::DrawCursor()
 
 }
 
-void DisplaySystem::SetRectFromText( LuxRect & area, std::string text, uint8_t text_width, uint8_t text_height )
-{
-	uint16_t max_length = 1;
-	uint16_t length_count = 0;
-	uint16_t lines = 1;
-	std::string::iterator object;
-
-	for ( object = text.begin(); object != text.end(); object++ )
-	{
-		uint8_t utfchar = *object;
-		uint32_t cchar = utfchar;
-		if ( cchar == '\n' || cchar == '\r' )
-		{
-			lines++;
-			max_length = std::max(length_count, max_length);
-			length_count = 0;
-
-		}
-		else if ( cchar <= 128 )
-		{
-			length_count++;
-		}
-		else if ( cchar < 224 )
-		{
-			object++;
-
-			length_count++;
-		}
-		else if ( cchar < 240 )
-		{
-			object++;
-			object++;
-
-			length_count++;
-		}
-		else if ( cchar < 245 )
-		{
-			object++;
-			object++;
-			object++;
-
-			length_count++;
-		}
-	}
-	max_length = std::max(length_count, max_length);
-
-	area.w = text_width * max_length;
-	area.h = text_height * lines;
-
-}
-
-void Lux_OGL_DebugText( std::string message );
-
 void DisplaySystem::ShowMessages()
 {
 	ObjectEffect text_effects;
 	ObjectEffect rect_effects;
-	LuxRect text_rect = { 40, 40, 0, 0, 8 };
 
 	text_effects.SetColour(colour::yellow);
 	rect_effects.SetColour(colour::black);
@@ -398,42 +341,22 @@ void DisplaySystem::ShowMessages()
 
 	if ( this->show_collisions )
 	{
-		lux::gameworld->DrawCollisions();
+		lux::gamesystem->GetObjects()->DrawCollisions();
 	}
 
 
 	if ( this->show_mask )
 	{
-		lux::gameworld->active_map->DrawMask();
+		lux::gamesystem->active_map->DrawMask();
 	}
 
 
 	if ( this->show_debug )
 	{
-		/*
-		this->SetRectFromText( text_rect, this->debug_msg.str(), 8, 10 );
-
-		this->graphics.DrawRect( text_rect, rect_effects );
-		this->graphics.DrawText( this->debug_msg.str(), text_rect, text_effects, false );
-		*/
 		this->graphics.DrawMessage( this->debug_msg.str(), 0 );
+		this->graphics.DrawMessage( static_messages_text, 3 );
 	}
 	this->debug_msg.str("");
-
-
-
-	text_rect.x = 2;
-	text_rect.y = this->screen_dimension.h;
-	text_rect.z = 9;
-	for ( uint8_t m = 0; m < 13; m++ )
-	{
-		if ( server_messages_text[m].length() )
-		{
-			text_rect.y -= 10;
-			this->graphics.DrawText(server_messages_text[m], text_rect, text_effects, false );
-
-		}
-	}
 
 }
 
@@ -830,7 +753,7 @@ bool DisplaySystem::AddObjects(std::list<MapObject*> * objects)
 	}
 	return false;
 }
-
+Layer * last_layer = NULL;
 bool DisplaySystem::AddObjectToLayer(uint32_t layer, MapObject * new_object, bool static_objects)
 {
 	if ( layer == 0xFFFFFFFF )
@@ -839,7 +762,9 @@ bool DisplaySystem::AddObjectToLayer(uint32_t layer, MapObject * new_object, boo
 	}
 	else if ( layer < this->_layers.size() )
 	{
-		return this->_layers[layer]->AddObject(new_object, static_objects);
+		Layer * selected_layer = this->_layers.at(layer);
+		last_layer = selected_layer;
+		return selected_layer->AddObject(new_object, static_objects);
 	}
 	else
 	{
@@ -929,8 +854,8 @@ void DisplaySystem::SetLayerColour( uint32_t layer,  LuxColour colour )
 	if ( layer < this->_layers.size() )
 	{
 		this->_layers[layer]->colour = colour;
-		if ( layer == 0 && lux::gameworld->active_map )
-			lux::gameworld->active_map->SetBackgroundModifier( colour );
+		if ( layer == 0 && lux::gamesystem->active_map )
+			lux::gamesystem->active_map->SetBackgroundModifier( colour );
 	}
 }
 

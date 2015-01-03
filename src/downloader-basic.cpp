@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -539,7 +539,7 @@ int32_t Lux_Util_FileDownloaderBackground( std::string urlArg, std::string origF
 
 
 	DownloadRequest request;
-	request.dialog = ui->AddChild(region, THROBBER, (LuxColour){255, 255, 255, 255}, "Downloading " + urlArg + "\n");
+	request.dialog = ui->AddChild(region, THROBBER, "Downloading " + urlArg + "\n");
 	request.url = urlArg;
 	request.file = origFile;
 

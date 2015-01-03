@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -17,12 +17,14 @@ class MapObject;
 #include "sprite_types.h"
 #include "display_types.h"
 #include "object_effect.h"
-
+//#include "game_system.h"
 #include "lux_canvas.h"
 #include "lux_polygon.h"
 #include "lux_virtual_sprite.h"
 
-#define OBJECT_GLOBAL_VALUE 0x80000000
+#include "Box2D/Box2D.h"
+
+
 
 class MapObject
 {
@@ -41,6 +43,7 @@ class MapObject
 
 		std::string sprite;
 		std::string ident;
+		uint32_t ident_hash;
 
 		int16_t offset_x, offset_y;
 		uint16_t sprite_width, sprite_height;
@@ -53,8 +56,6 @@ class MapObject
 		uint32_t static_map_id;
 		uint32_t GetStaticMapID() const;
 		void SetStaticMapID(const uint32_t &value, const bool global);
-
-		void ToggleHidden();
 		bool CollisionRectangle( LuxRect rect[7] );
 
 		/* Animations */
@@ -65,6 +66,9 @@ class MapObject
 		bool reverse;
 		bool auto_delete;
 
+		/* Physics */
+		b2Body * body;
+
 		/* Data Function */
 		bool has_data;
 		uint8_t type;
@@ -72,14 +76,14 @@ class MapObject
 
 		mem_pointer GetData();
 		void SetData( uint8_t type );
-		void SetData(mem_pointer data, uint8_t type);
+		void SetData( mem_pointer data, uint8_t type );
 		void FreeData();
 
 		/* Sprite type */
 		void SetSprite(LuxSprite * data);
 		mem_pointer GetImage( ObjectEffect fx );
 		LuxSprite * GetCurrentSprite( );
-		LuxSprite * GetAnimationFrame( LuxSprite * orig, bool no_increment = false);
+		LuxSprite * GetAnimationFrame( LuxSprite * orig, bool no_increment = false );
 
 		/* Polygon type */
 		LuxPolygon * GetPolygon();

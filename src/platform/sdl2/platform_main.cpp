@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -9,22 +9,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "engine.h"
-#include "portal.h"
+#include "portal/portal.h"
+#include "test/test_code.h"
 #include "core.h"
 #include "config.h"
 
 #include "elix_file.hpp"
 #include "elix_string.hpp"
 
-
-extern "C" void lux_engine_loop()
-{
-	if ( lux::engine->Start() )
-	{
-		lux::engine->Loop();
-	}
-	lux::engine->Close();
-}
+bool testMode = false;
 
 #if defined(STANDALONE)
 
@@ -35,14 +28,19 @@ extern "C" void lux_engine_loop()
 			std::string base_executable = (argc ? argv[0] : "/lux" );
 			lux::engine = new LuxEngine( base_executable );
 			lux::global_config->SetString("project.file", argv[0]);
-			lux_engine_loop();
+			if ( lux::engine->Start() )
+			{
+				lux::engine->Loop();
+			}
+			lux::engine->Close();
 			delete lux::engine;
 		}
+		std::cout << "Error can not file executable." << std::endl
 		return 0;
 	}
 
 #else
-	void main_args( int argc, char *argv[], bool skipProjectFile )
+	void main_args( int argc, char *argv[] )
 	{
 		int c = argc;
 		while ( c > 1 ) {
@@ -62,29 +60,15 @@ extern "C" void lux_engine_loop()
 			}
 			else if ( strcmp(argv[c], "--test") == 0 )
 			{
-				LuxPortal::testmode = true;
-			}
-			else if ( strcmp(argv[c], "--ogl") == 0 )
-			{
-				LuxPortal::opengl = true;
-				luxtest::opengl = true;
-				lux::global_config->SetString("display.mode", "OpenGL");
-			}
-			else if ( strcmp(argv[c], "--native") == 0 )
-			{
-				LuxPortal::opengl = false;
-				luxtest::opengl = false;
-				lux::global_config->SetString("display.mode", "native");
+				testMode = true;
 			}
 			else if ( argv[c][0] != '-' )
 			{
-				if ( !skipProjectFile )
-				{
-					lux::global_config->SetString("project.file", argv[c]);
-					LuxPortal::add_previous_game( argv[c] );
-					LuxPortal::use = false;
-					LuxPortal::active = false;
-				}
+				lux::global_config->SetString("project.file", argv[c]);
+				LuxPortal::add_previous_game( argv[c] );
+				LuxPortal::use = false;
+				LuxPortal::active = false;
+
 			}
 			else
 			{
@@ -94,68 +78,54 @@ extern "C" void lux_engine_loop()
 	}
 
 
-	namespace Mokoi {
-		int32_t gameSignatureOffset( elix::File * file );
-	}
-
-	bool checkForAttachedGame( char * argv )
-	{
-		bool result = false;
-		elix::File * file = new elix::File( std::string(argv), false );
-
-		result = Mokoi::gameSignatureOffset( file ) > 1 ? true : false;
-
-
-		return result;
-	}
-
-	extern "C" void lux_engine_init()
-	{
-
-	}
-
-
-
 	extern "C" int main( int argc, char *argv[] )
 	{
-		bool gameAttached = false;
 		std::string base_executable = (argc ? argv[0] : "/luxengine" );
 
 		lux::engine = new LuxEngine( base_executable );
 
-		main_args( argc, argv, gameAttached );
-	/*
-		lux::global_config->SetString("project.file", "/sdcard/Android/data/info.mokoi.lux/files/mokoi-games/puttytris.game");
-		LuxPortal::use = false;
-		LuxPortal::active = false;
-	*/
-		if ( LuxPortal::testmode )
+		main_args( argc, argv );
+
+		if ( testMode )
 		{
 			luxtest::run();
 		}
-
-		LuxPortal::open();
-		if ( LuxPortal::use )
-		{
-			while ( LuxPortal::active )
-			{
-				if ( LuxPortal::run() )
-				{
-					lux_engine_loop();
-				}
-			}
-
-		}
 		else
 		{
-			lux_engine_loop();
-		}
-		LuxPortal::close();
+			LuxPortal::open();
+			if ( LuxPortal::use )
+			{
+				while ( LuxPortal::active )
+				{
+					if ( LuxPortal::run() )
+					{
+						GameInfoValues selected_game = LuxPortal::get_selected();
 
+						if ( selected_game.type == GI_FILE  )
+						{
+							lux::global_config->SetString("project.file", selected_game.url );
+
+							if ( lux::engine->Start() )
+							{
+								lux::engine->Loop();
+							}
+							lux::engine->Close();
+						}
+					}
+				}
+			}
+			else
+			{
+				if ( lux::engine->Start() )
+				{
+					lux::engine->Loop();
+				}
+				lux::engine->Close();
+			}
+			LuxPortal::close();
+		}
 
 		delete lux::engine;
-
-
 
 		return 0;
 	}

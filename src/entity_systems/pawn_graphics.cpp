@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -15,7 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "engine.h"
 #include "entity_manager.h"
 #include "pawn_helper.h"
-#include "world.h"
+#include "game_system.h"
 #include "misc_functions.h"
 #include "display_functions.h"
 #include "elix_endian.hpp"
@@ -41,12 +41,9 @@ MapObject * Lux_PawnEntity_GetObject(AMX * amx, uint32_t object_id )
 	if ( wanted == NULL )
 		return object;
 
-	if ( lux::gameworld->active_map )
+	if ( lux::gamesystem )
 	{
-		if ( wanted->_mapid == 0 )
-			object = lux::gameworld->GetObject(object_id);
-		else
-			object = lux::gameworld->active_map->GetObject(object_id);
+		object = lux::gamesystem->GetObject(object_id);
 	}
 	return object;
 }
@@ -284,9 +281,11 @@ static cell pawnObjectInfo(AMX *amx, const cell *params)
 	cell * xptr, * yptr;
 	uint16_t w;
 	uint16_t h;
+	int32_t y;
+	int32_t x;
 	uint32_t object_id = params[1];
 
-	if ( Lux_FFI_Object_Info( object_id, &w, &h ) )
+	if ( Lux_FFI_Object_Info( object_id, &w, &h, &x, &y ) )
 	{
 		xptr = amx_Address(amx, params[2]);
 		yptr = amx_Address(amx, params[3]);
@@ -296,6 +295,17 @@ static cell pawnObjectInfo(AMX *amx, const cell *params)
 
 		if ( yptr )
 			*yptr = h;
+
+
+		xptr = amx_Address(amx, params[4]);
+		yptr = amx_Address(amx, params[5]);
+
+		if ( xptr )
+			*xptr = x;
+
+		if ( yptr )
+			*yptr = y;
+
 		return 1;
 	}
 	return 0;
@@ -338,19 +348,6 @@ static cell pawnObjectReplace(AMX *amx, const cell *params)
 	return Lux_FFI_Object_Replace( object_id, type, sprite.c_str() );
 }
 
-/** pawnObjectToggle
-* native ObjectToggle(id, show);
-*/
-static cell pawnObjectToggle(AMX *amx, const cell *params)
-{
-	ASSERT_PAWN_PARAM( amx, params, 2 );
-
-	uint32_t object_id = (uint32_t)params[1];
-
-	return Lux_FFI_Object_Flag( object_id, 6, (bool)params[2] );
-
-}
-
 
 /** pawnObjectFlag
 * native ObjectFlag(id, key, value);
@@ -385,7 +382,7 @@ static cell pawnObjectDelete(AMX *amx, const cell *params)
 */
 static cell pawnCameraSetScroll(AMX *amx, const cell *params)
 {
-	lux::gameworld->active_map->SetScrolling( (bool)params[1] );
+	lux::gamesystem->active_map->SetScrolling( (bool)params[1] );
 	return 0;
 }
 
@@ -458,7 +455,6 @@ const AMX_NATIVE_INFO Graphics_Natives[] = {
 	{ "ObjectReplace", pawnObjectReplace }, ///native ObjectReplace(id, string[], type, string_size = sizeof string);
 	{ "ObjectDelete", pawnObjectDelete }, ///native ObjectDelete(id);
 	{ "ObjectFlag", pawnObjectFlag }, ///native ObjectFlag(object:id, key, value);
-	{ "ObjectToggle", pawnObjectToggle }, ///native ObjectToggle(object:id, show);
 	{ "ObjectInfo", pawnObjectInfo }, ///native ObjectInfo(object:id, &w, &h);
 
 

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-  <mime-type type="application/x-mokoi-game">
-         <comment xml:lang="en">Game for Mokoi</comment>
-         <magic priority="50">
-                <match type="string" value="\x89Mokoi" offset="0"/>
-         </magic>
-         <glob pattern="*.game"/>
-  </mime-type>
-  <mime-type type="application/x-mokoi-game-source">
-         <comment xml:lang="en">Mokoi Game Source</comment>
-         <magic priority="50">
-                <match type="string" value="[Mokoi]" offset="0"/>
-         </magic>
-         <glob pattern="game.mokoi"/>
-  </mime-type>
+	<mime-type type="application/x-mokoi-game">
+		<comment xml:lang="en">Game for Mokoi</comment>
+		<magic priority="50">
+			<match type="string" value="\x89Mokoi" offset="0"/>
+		</magic>
+		<glob pattern="*.game"/>
+	</mime-type>
+	<mime-type type="application/x-mokoi-game-source">
+		<comment xml:lang="en">Mokoi Game Source</comment>
+		<magic priority="50">
+			<match type="string" value="[Mokoi]" offset="0"/>
+		</magic>
+		<glob pattern="game.mokoi"/>
+	</mime-type>
 </mime-info>

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013-2014 Luke Salisbury
+Copyright © 2013-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -104,6 +104,12 @@ LuxSheet::LuxSheet( std::string file_name, GraphicSystem graphic ) : graphics(gr
 LuxSheet::~LuxSheet()
 {
 	Unload();
+
+	for( std::map<uint32_t, LuxSprite *>::iterator iter = this->children.begin(); iter != this->children.end(); ++iter )
+	{
+		delete (*iter).second;
+	}
+	this->children.clear();
 }
 
 
@@ -114,6 +120,7 @@ void LuxSheet::SetName( std::string name )
 
 bool LuxSheet::ParseXML()
 {
+	bool results = false;
 	tinyxml2::XMLDocument * xml_file = NULL;
 	tinyxml2::XMLElement * root, * sprite_element = NULL, * position_element = NULL, * collision_element = NULL, * border_element = NULL, * frame_element = NULL;
 
@@ -121,14 +128,14 @@ bool LuxSheet::ParseXML()
 	if ( xml_file->Error() )
 	{
 		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | " << xml_file->GetErrorStr1() << " : " << xml_file->GetErrorStr2 () << std::endl;
-		return false;
+		goto function_exit;
 	}
 
 	root = xml_file->RootElement();
 	if ( !root || strcmp(root->Value(), "sheet") )
 	{
 		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | sprites/" + this->name + ".xml not a valid sheet file." << std::endl;
-		return false;
+		goto function_exit;
 	}
 
 	/* Sprites */
@@ -239,7 +246,6 @@ bool LuxSheet::ParseXML()
 			this->children.insert( std::make_pair<uint32_t, LuxSprite*>( t_sprite->hash, t_sprite ) );
 		}
 	}
-	delete xml_file;
 	/*
 	 *	<sheet xmlns="http://mokoi.info/format/sheet">
 		<sprite name="process_0" hidden="hidden" mask="" entity="">
@@ -257,7 +263,13 @@ bool LuxSheet::ParseXML()
 		</animation>
 	</sheet>
 	*/
-	return true;
+
+	results = true;
+
+	function_exit:
+	delete xml_file;
+
+	return results;
 }
 
 void LuxSheet::Print()
@@ -281,6 +293,7 @@ bool LuxSheet::ParseSimpleText(const std::string content )
 	if ( info_array.size() < 5 )
 	{
 		info_array.clear();
+
 		return false;
 	}
 

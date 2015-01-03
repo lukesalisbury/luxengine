@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -14,6 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "lux_canvas.h"
 #include "display.h"
 #include "core.h"
+#include "game_system.h"
 
 extern ObjectEffect default_fx;
 
@@ -47,6 +48,16 @@ MapObject::MapObject( uint8_t type )
 	this->auto_delete = 0;
 	this->path_current_x = this->path_current_y = 0;
 
+
+	if ( lux::gamesystem )
+	{
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set( MAKE_FIXED_FLOAT(this->position.x),  MAKE_FIXED_FLOAT(this->position.x) );
+		bodyDef.gravityScale = 0.1f;
+
+		this->body = lux::gamesystem->GetPhysicWorld()->CreateBody(&bodyDef);
+	}
 }
 
 MapObject::~MapObject()
@@ -60,7 +71,7 @@ uint32_t MapObject::GetStaticMapID() const
 
 void MapObject::SetStaticMapID(const uint32_t &value, const bool global )
 {
-	if ( value >= OBJECT_GLOBAL_VALUE )
+	if ( (value & OBJECT_GLOBAL_VALUE) == OBJECT_GLOBAL_VALUE )
 	{
 		if ( global )
 		{
@@ -72,7 +83,7 @@ void MapObject::SetStaticMapID(const uint32_t &value, const bool global )
 		this->static_map_id = value;
 		if ( global )
 		{
-			this->static_map_id += OBJECT_GLOBAL_VALUE;
+			this->static_map_id |= OBJECT_GLOBAL_VALUE;
 		}
 	}
 
@@ -140,11 +151,6 @@ void MapObject::Restore( elix::File * current_save_file )
 	{
 		this->SetData( this->type);
 	}
-}
-
-void MapObject::ToggleHidden()
-{
-	this->hidden = !this->hidden;
 }
 
 mem_pointer MapObject::GetData()

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "mokoi_game.h"
 #include "entity_manager.h"
 #include "pawn_helper.h"
-#include "world.h"
+#include "game_system.h"
 #include "elix_string.hpp"
 
 #include "ffi_mask.h"
@@ -107,9 +107,9 @@ static cell pawnMapGetOffset(AMX *amx, const cell *params)
 static cell pawnMapCurrentIdent(AMX *amx, const cell *params)
 {
 	cell responed = 0;
-	if ( lux::gameworld->active_map != NULL )
+	if ( lux::gamesystem->active_map != NULL )
 	{
-		responed = lux::gameworld->active_map->Ident();
+		responed = lux::gamesystem->active_map->Ident();
 	}
 	return responed;
 
@@ -126,10 +126,10 @@ static cell pawnMapCurrentGrid(AMX *amx, const cell *params)
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
 	cell responed = 0;
-	if ( lux::gameworld->active_section != NULL )
+	if ( lux::gamesystem->active_section != NULL )
 	{
-		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::gameworld->grid_position[0]) );
-		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::gameworld->grid_position[1]) );
+		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::gamesystem->grid_position[0]) );
+		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::gamesystem->grid_position[1]) );
 		responed = 1;
 	}
 	return responed;
@@ -146,10 +146,10 @@ static cell pawnMapCurrentDimension(AMX *amx, const cell *params)
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
 	cell responed = 0;
-	if ( lux::gameworld->active_map != NULL )
+	if ( lux::gamesystem->active_map != NULL )
 	{
-		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::gameworld->active_map->map_width) );
-		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::gameworld->active_map->map_height) );
+		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::gamesystem->active_map->map_width) );
+		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::gamesystem->active_map->map_height) );
 		responed = 1;
 	}
 	return responed;

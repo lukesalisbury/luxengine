@@ -50,7 +50,7 @@ namespace OpenGLShaderImpl
 		std::cout << __FILE__ << ": | Shaders disabled on OS X" << std::endl;
 		return false;
 	#else
-		std::cout << "Checking Shader Support:" << std::endl;
+		std::cout << "Checking Shader Support:";
 		std::cout << " Objects:" << Lux_OGL_QueryExtension("GL_ARB_shader_objects");
 		std::cout << " Language:" << Lux_OGL_QueryExtension("GL_ARB_shading_language_100");
 		std::cout << " Vertex:" << Lux_OGL_QueryExtension("GL_ARB_vertex_shader");

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -80,7 +80,7 @@ std::string native_window_title;
 SDL_Rect native_graphics_dimension = {0, 0, 320,240};
 
 /* Global Variables */
-SDL_Texture * native_font[96];
+SDL_Texture * sdlgraphics_font[128];
 
 LuxColour sdlgraphics_colour = {0,0,0,255};
 
@@ -98,31 +98,7 @@ int32_t sdlgraphics_customtext_height = 32;
 
 
 /* Local Functions */
-void Lux_Native_LoadFont()
-{
-	uint8_t * font_point = &gfxPrimitivesFontdata[0];
-	font_point += (32*8);
-	uint8_t i = 0, q;
-	for ( uint8_t c = 0; c < 96; c++)
-	{
-		uint16_t * charflip = new uint16_t[64];
-		for (i = 0; i < 8; i++)
-		{
-			for (q = 0; q < 8; q++)
-			{
-				charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFFFF : 0x000F) ;
-			}
-		}
-		native_font[c] = SDL_CreateTexture(native_renderer, SDL_PIXELFORMAT_ARGB1555, SDL_TEXTUREACCESS_STATIC, 8, 8);
-		if ( !native_font[c] )
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Lux_Native_LoadFont: " << SDL_GetError() << std::endl;
-		//SDL_SetTextureAlphaMod(native_font[c],255);
-		SDL_SetTextureBlendMode(native_font[c],SDL_BLENDMODE_BLEND);
-		SDL_UpdateTexture(native_font[c], NULL, charflip, 16);
 
-		font_point += 8;
-	}
-}
 
 
 
@@ -190,10 +166,10 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( std::string title,  uint16_t width, u
 
 	SDL_RenderSetLogicalSize(native_renderer, width, height);
 
-	Lux_Native_LoadFont();
+	Lux_SDL2_LoadFont( native_renderer, sdlgraphics_font );
 
-	Lux_SDL2_SetWindowIcon( native_window );
 	SDL_SetWindowTitle( native_window, native_window_title.c_str() );
+	Lux_SDL2_SetWindowIcon( native_window );
 
 	SDL_DisableScreenSaver();
 
@@ -205,6 +181,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( std::string title,  uint16_t width, u
  */
 LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
 {
+	Lux_SDL2_UnloadFont( sdlgraphics_font );
 	SDL_DestroyRenderer(native_renderer);
 	SDL_EnableScreenSaver();
 
@@ -752,11 +729,11 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 	{
 		if ( cchar >= 32 && cchar <= 128 )
 		{
-			texture = native_font[cchar-32];
+			texture = sdlgraphics_font[cchar];
 		}
 		else
 		{
-			texture = native_font['?'-32];
+			texture = sdlgraphics_font['?'];
 		}
 		offset = 7;
 		area.w = 8;
@@ -847,5 +824,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 		}
 	}
 }
+
 
 

@@ -1,4 +1,5 @@
 CUSTOMOBJECTS = TRUE
+CUSTOMPATH = ../custom/ozengine
 
 BIN = openzelda$(BINEXT)
 

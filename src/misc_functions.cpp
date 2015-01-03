@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -36,6 +36,211 @@ bool Lux_Util_PointCollide(LuxRect a, int32_t x, int32_t y)
 
 	return 1;
 }
+
+/* Lux_Util_SetRectFromText
+ * Update Width and Height of a LuxRect base on a string of text
+ @ area:
+ @ text:
+ @ text_width:
+ @ text_height:
+ */
+void Lux_Util_SetRectFromText( LuxRect & area, std::string & text, uint8_t text_width, uint8_t text_height, uint16_t wrap_length )
+{
+	uint16_t max_length = 1;
+	uint16_t length_count = 0;
+	uint16_t lines = 1;
+	std::string::iterator object;
+
+	for ( object = text.begin(); object != text.end(); object++ )
+	{
+		bool watch_for_color = false;
+		uint8_t utfchar = *object;
+		uint32_t cchar = utfchar;
+		if ( cchar == '\n' || cchar == '\r' )
+		{
+			lines++;
+			max_length = std::max(length_count, max_length);
+			length_count = 0;
+		}
+		else if ( watch_for_color )
+		{
+			object++;
+			watch_for_color = false;
+		}
+		else if ( cchar == 0xA7 )
+		{
+			object++;
+			watch_for_color = true;
+		}
+		else if ( cchar <= 128 )
+		{
+			length_count++;
+		}
+		else if ( cchar < 224 )
+		{
+			object++;
+
+			length_count++;
+		}
+		else if ( cchar < 240 )
+		{
+			object++;
+			object++;
+
+			length_count++;
+		}
+		else if ( cchar < 245 )
+		{
+			object++;
+			object++;
+			object++;
+
+			length_count++;
+		}
+
+		if (wrap_length == length_count + 2)
+		{
+			text.insert(object, '\n');
+		}
+
+	}
+	max_length = std::max(length_count, max_length);
+
+	area.w = text_width * max_length;
+	area.h = text_height * lines;
+
+}
+
+/* Lux_Util_CheckTextColour
+ * Checks to see if character determines the text colour
+ @ cchar:
+ @ font_color:
+ @ watch_for_color:
+ */
+bool Lux_Util_CheckTextColour( uint32_t cchar, LuxColour & font_color, bool & watch_for_color )
+{
+	bool is_colour_char = false; //True = don't draw
+
+	if ( cchar == 0xA7 )
+	{
+		watch_for_color = true;
+		is_colour_char = true;
+	}
+	else if ( watch_for_color == true )
+	{
+		watch_for_color = false;
+		is_colour_char = true;
+
+		switch ( cchar )
+		{
+			case 0xA7: // §
+			{
+				is_colour_char = false;
+				break;
+			}
+
+			case '0': // Black
+			{
+				font_color.r = font_color.g = font_color.b = 0;
+				break;
+			}
+			case '1': // Dark Blue
+			{
+				font_color.r = font_color.g = 0;
+				font_color.b = 170;
+				break;
+			}
+			case '2': // Dark Green
+			{
+				font_color.r = font_color.b = 0;
+				font_color.g = 170;
+				break;
+			}
+			case '3': // Dark Aqua
+			{
+				font_color.r = 0;
+				font_color.g = font_color.b = 170;
+				break;
+			}
+			case '4': // Dark Red
+			{
+				font_color.g = font_color.b = 0;
+				font_color.r = 170;
+				break;
+			}
+			case '5': // Dark Purple
+			{
+				font_color.g = 0;
+				font_color.r = font_color.b = 170;
+				break;
+			}
+			case '6': // Gold
+			{
+				font_color.b = 0;
+				font_color.r = 255;
+				font_color.g = 170;
+				break;
+			}
+			case '7': // Gray
+			{
+				font_color.r = font_color.g = font_color.b = 170;
+				break;
+			}
+			case '8': // Dark Gray
+			{
+				font_color.r = font_color.g = font_color.b = 85;
+				break;
+			}
+			case '9': // Blue
+			{
+				font_color.r = font_color.g = 85;
+				font_color.b = 255;
+				break;
+			}
+			case 'a': // Green
+			{
+				font_color.r = font_color.b = 85;
+				font_color.g = 255;
+				break;
+			}
+			case 'b': // Aqua
+			{
+				font_color.r = 85;
+				font_color.g = font_color.b = 255;
+				break;
+			}
+			case 'c': // Red
+			{
+				font_color.b = font_color.g = 85;
+				font_color.r = 255;
+				break;
+			}
+			case 'd': // Light Purple
+			{
+				font_color.g = 85;
+				font_color.r = font_color.b = 255;
+				break;
+			}
+			case 'e': // Yellow
+			{
+				font_color.b = 85;
+				font_color.r = font_color.g = 255;
+				break;
+			}
+			default: // White
+				font_color.r = font_color.g = font_color.b = 255;
+				break;
+		}
+
+
+	}
+
+	return is_colour_char;
+
+}
+
+
+
 /*
 Special unicode
 Buttons
@@ -80,7 +285,7 @@ U+24CE Ⓨ
 
 void UnicodeToInput( int32_t cchar, int8_t * axis, int8_t * button, int8_t * pointer )
 {
-	if ( cchar >= 0x2776 && cchar <= 0x2785 ) // Button
+	if ( cchar >= 0x2776 && cchar <= 0x27BF ) // Button
 	{
 		*button = cchar - 0x2776;
 	}
@@ -129,6 +334,7 @@ void UnicodeToInput( int32_t cchar, int8_t * axis, int8_t * button, int8_t * poi
 	}
 
 }
+
 tinyxml2::XMLDocument * MokoiGame_GetXML( std::string file )
 {
 	tinyxml2::XMLDocument * xml_doc = new tinyxml2::XMLDocument;
@@ -136,7 +342,8 @@ tinyxml2::XMLDocument * MokoiGame_GetXML( std::string file )
 	if ( lux::game_data->GetFile(file, &data, true) )
 	{
 		xml_doc->Parse( (char *)data );
-		delete[] data;
+
 	}
+	delete[] data;
 	return xml_doc;
 }

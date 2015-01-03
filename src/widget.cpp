@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -12,9 +12,14 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "widget.h"
 #include <cstdlib>
 
+
+
+
+
+
 Widget::Widget( LuxRect region, LuxWidget type, CSSParser * style )
 {
-	this->bgbox = this->borders[0] = this->borders[1] = this->borders[2] = this->borders[3] = this->textbox = NULL;
+	this->background_object = this->border_object[0] = this->border_object[1] = this->border_object[2] = this->border_object[3] = this->text_object = NULL;
 	this->data = NULL;
 	this->_value = 0;
 	this->original_state = this->state = ENABLED;
@@ -23,97 +28,133 @@ Widget::Widget( LuxRect region, LuxWidget type, CSSParser * style )
 	this->parent = NULL;
 	this->state = ENABLED;
 
-	if ( type == EMPTYWINDOW )
-	{
-		return;
-	}
-	else if (  type == THROBBER )
-	{
-		int16_t center_point = (this->_region.w/2);
-		this->_region.h += 40;
-
-		this->bgbox = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, this->_region.w, this->_region.h - 2 );
-		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, 4, 32, this->_region.w, this->_region.h - 4 ); /* Text */
-
-		this->InsertWidgetObject( OBJECT_THOBBER, center_point - 8, 16, 8, 8 );
-		this->InsertWidgetObject( OBJECT_THOBBER, center_point, 8, 8, 8 );
-		this->InsertWidgetObject( OBJECT_THOBBER, center_point + 8, 16, 8, 8 );
-		this->InsertWidgetObject( OBJECT_THOBBER, center_point, 24, 8, 8 );
-
-		this->GenerateBorderColours( style, this->borders[0], 0 );
-		this->GenerateBorderColours( style, this->borders[1], 0 );
-		this->GenerateBorderColours( style, this->borders[2], 0 );
-		this->GenerateBorderColours( style, this->borders[3], 0 );
-		this->GenerateColours( style, this->textbox, false );
-		this->GenerateColours( style, this->bgbox, true );
-		return;
-	}
-
-	if ( type == DIALOG || type >= DIALOGTEXT )
-	{
-		this->GenerateBox( style );
-	}
-	else if ( type == IMAGE )
-	{
-		this->InsertWidgetObject( OBJECT_SPRITE, 0, 0, this->_region.w, this->_region.h );
-		return;
-	}
-	else if ( type != TEXT && type != CHECKBOX )
-	{
-		this->GenerateBox(style);
-	}
-
-	if ( type == TEXT )
-	{
-		if ( style->HasKey(TEXT, ENABLED, "background-color") )
-		{
-			this->GenerateBox(style);
-		}
-	}
-
-	if ( type == INPUTTEXT )
-	{
-		this->bgbox->style = 4;
-		this->borders[0]->style = this->borders[1]->style = 2;
-		this->borders[2]->style = this->borders[3]->style = 1;
-	}
-
-	if ( type == IMAGEBUTTON )
-	{
-		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, 40, 4, this->_region.w, this->_region.h ); /* Text */
-
-		this->InsertWidgetObject( OBJECT_SPRITE, 2, 2, 32, 32 );
-
-		this->GenerateColours(style, this->textbox, false);
-
-	}
-	else if ( type == CHECKBOX )
-	{
-		WidgetObject * toggle;
-
-		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, 16, 4, this->_region.w, this->_region.h ); /* Text */
-
-		toggle = this->InsertWidgetObject( OBJECT_CIRCLE, 2, 2, 6, 6 );
-
-		this->GenerateColours( style, this->textbox, false);
-		this->GenerateColours( style, toggle, true);
-	}
-	else
-	{
-
-		this->textbox = this->InsertWidgetObject( OBJECT_TEXT, 2, 2, 0, 0 ); /* Text */
-		this->GenerateColours(style, this->textbox, false);
-	}
+	this->Generate(style);
 }
 
 Widget::~Widget()
 {
-	while ( this->objects.begin() != this->objects.end())
+	while ( this->objects.begin() != this->objects.end() )
 	{
 		delete (*this->objects.begin());
 		this->objects.erase( this->objects.begin() );
 	}
-	this->objects.clear();
+
+}
+
+
+void Widget::Generate( CSSParser * style )
+{
+	switch ( this->_type )
+	{
+		case GUIBACKGROUND:
+		{
+			this->background_object = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, this->_region.w, this->_region.h );
+			break;
+		}
+		case EMPTYWINDOW:
+			break;
+		case DIALOG:
+		{
+			this->GenerateBox( style );
+			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 2, 2, 0, 0 );
+			this->GenerateColours(style, this->text_object, false);
+			break;
+		}
+		case THROBBER:
+		{
+			int16_t center_point = (this->_region.w/2);
+
+			this->_region.h += 40;
+
+			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 4, 32, this->_region.w, this->_region.h - 4 );
+
+			this->border_object[0] = this->InsertWidgetObject( OBJECT_THOBBER, center_point - 8, 16, 8, 8 );
+			this->border_object[1] = this->InsertWidgetObject( OBJECT_THOBBER, center_point, 8, 8, 8 );
+			this->border_object[2] = this->InsertWidgetObject( OBJECT_THOBBER, center_point + 8, 16, 8, 8 );
+			this->border_object[3] = this->InsertWidgetObject( OBJECT_THOBBER, center_point, 24, 8, 8 );
+
+			this->GenerateBorderColours( style, this->border_object[0], 0 );
+			this->GenerateBorderColours( style, this->border_object[1], 0 );
+			this->GenerateBorderColours( style, this->border_object[2], 0 );
+			this->GenerateBorderColours( style, this->border_object[3], 0 );
+			this->GenerateColours( style, this->text_object, false );
+
+			break;
+		}
+		case CHECKBOX:
+		{
+			WidgetObject * toggle = this->InsertWidgetObject( OBJECT_CIRCLE, 2, 2, 6, 6 );
+
+			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 16, 4, this->_region.w, this->_region.h );
+
+			this->GenerateColours( style, this->text_object, false);
+			this->GenerateColours( style, toggle, true);
+
+			break;
+		}
+		case TEXT:
+		{
+			if ( style && style->HasKey(TEXT, ENABLED, "background-color") )
+			{
+				this->GenerateBox(style);
+			}
+			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 2, 2, 0, 0 );
+
+			this->GenerateColours(style, this->text_object, false);
+
+			break;
+		}
+		case INPUTTEXT:
+		{
+			this->GenerateBox(style);
+			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 2, 2, 0, 0 );
+
+			this->GenerateColours(style, this->text_object, false);
+
+			break;
+		}
+		case BUTTON:
+		{
+			this->GenerateBox(style);
+			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 2, 2, 0, 0 );
+
+			this->GenerateColours(style, this->text_object, false);
+
+			break;
+		}
+		case LIST:
+		{
+			/* TODO */
+
+			break;
+		}
+		case IMAGEBUTTON:
+		{
+			this->GenerateBox(style);
+
+			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 40, 4, this->_region.w, this->_region.h ); /* Text */
+			this->GenerateColours(style, this->text_object, false);
+
+			this->InsertWidgetObject( OBJECT_SPRITE, 2, 2, 32, 32 );
+
+			break;
+		}
+		case IMAGE:
+		{
+			this->InsertWidgetObject( OBJECT_SPRITE, 0, 0, this->_region.w, this->_region.h );
+			break;
+		}
+
+		case BOX:
+		{
+			this->GenerateBox(style);
+			break;
+		}
+
+		default:
+			break;
+	}
+
 }
 
 WidgetObject * Widget::InsertTextObject(uint8_t type, int16_t x, int16_t y, int16_t w, int16_t h, std::string t , uint8_t alignment)
@@ -160,6 +201,7 @@ void Widget::GenerateColours( CSSParser * style, WidgetObject * object, bool bac
 {
 	if ( !object || !style )
 		return;
+
 	LuxColour default_colour = style->GetColour(this->_type, ENABLED, (background ? "background-color" : "color") );
 	for ( _WidgetStates q = ENABLED; q < WIDGET_STATES_SIZE; q++)
 	{
@@ -212,14 +254,14 @@ void Widget::GenerateBorderColours( CSSParser * style, WidgetObject * object, ui
 	}
 }
 
-void Widget::GenerateBox(CSSParser * style)
+void Widget::GenerateBox( CSSParser * style )
 {
 	if ( style == NULL )
 		return;
 
 	LuxRect boxregion = this->_region;
-	uint16_t border_width = style->GetSize(this->_type, this->state, "border-width");
-	uint16_t min_height = style->GetSize(this->_type, this->state, "min-height");
+	uint16_t border_width = style->GetSize( this->_type, this->state, "border-width" );
+	uint16_t min_height = style->GetSize( this->_type, this->state, "min-height" );
 
 	if ( min_height > this->_region.h )
 	{
@@ -237,69 +279,80 @@ void Widget::GenerateBox(CSSParser * style)
 		/* Resize box to be a multiple of the border widths */
 		if ( border_width )
 		{
-			boxregion.w = ((boxregion.w%border_width ? 1 : 0)+(boxregion.w/border_width))*border_width;
-			boxregion.h = ((boxregion.h%border_width ? 1 : 0)+(boxregion.h/border_width))*border_width;
+			boxregion.x += border_width;
+			boxregion.y += border_width;
+			boxregion.w -= border_width*2;
+			boxregion.h -= border_width*2;
+
+			/* To have an even repeat, divide by border width and round up */
+			boxregion.w = ((boxregion.w/border_width) + (boxregion.w%border_width ? 1 : 0)) * border_width;
+			boxregion.h = ((boxregion.h/border_width) + (boxregion.h%border_width ? 1 : 0)) * border_width;
+
+
 		}
 
-		this->bgbox = this->InsertTextObject( OBJECT_IMAGE, 0, 0, 0, 0, image + ":4", 0); /* box background  */
-		this->borders[0] = this->InsertTextObject( OBJECT_IMAGE, 0, -border_width, 0, border_width, image + ":1", LEFTTOP ); /* top border */
-		this->borders[1] = this->InsertTextObject( OBJECT_IMAGE, 0, 0, border_width, 0, image + ":5", RIGHTTOP ); /* right border */
-		this->borders[2] = this->InsertTextObject( OBJECT_IMAGE, 0, 0, 0, border_width, image + ":7", LEFTBOTTOM ); /* bottom border */
-		this->borders[3] = this->InsertTextObject( OBJECT_IMAGE, -border_width, 0, border_width, 0, image + ":3", LEFTTOP ); /* left border */
+		this->background_object = this->InsertTextObject( OBJECT_IMAGE, 0, 0, 0, 0, image + ":4", 0); /* box background  */
+		this->border_object[0] = this->InsertTextObject( OBJECT_IMAGE, 0, -border_width, 0, border_width, image + ":1", LEFTTOP ); /* top border */
+		this->border_object[1] = this->InsertTextObject( OBJECT_IMAGE, 0, 0, border_width, 0, image + ":5", RIGHTTOP ); /* right border */
+		this->border_object[2] = this->InsertTextObject( OBJECT_IMAGE, 0, 0, 0, border_width, image + ":7", LEFTBOTTOM ); /* bottom border */
+		this->border_object[3] = this->InsertTextObject( OBJECT_IMAGE, -border_width, 0, border_width, 0, image + ":3", LEFTTOP ); /* left border */
 
 		this->InsertTextObject( OBJECT_IMAGE, -border_width, -border_width, border_width, border_width, image + ":0", LEFTTOP ); /* TOP LEFT */
 		this->InsertTextObject( OBJECT_IMAGE, 0, -border_width, border_width, border_width, image + ":2", RIGHTTOP );/* TOP RIGHT */
 		this->InsertTextObject( OBJECT_IMAGE, -border_width, 0, border_width, border_width, image + ":6", LEFTBOTTOM );/* bottom right */
 		this->InsertTextObject( OBJECT_IMAGE, 0, 0, border_width, border_width, image + ":8", RIGHTBOTTOM ); /* bottom left */
 
-		this->bgbox->image_width = this->borders[0]->image_width = this->borders[1]->image_width = this->borders[2]->image_width = this->borders[3]->image_width = border_width;
-		this->bgbox->image_height = this->borders[0]->image_height = this->borders[1]->image_height = this->borders[2]->image_height = this->borders[3]->image_height = border_width;
+		this->background_object->image_width = this->border_object[0]->image_width = this->border_object[1]->image_width = this->border_object[2]->image_width = this->border_object[3]->image_width = border_width;
+		this->background_object->image_height = this->border_object[0]->image_height = this->border_object[1]->image_height = this->border_object[2]->image_height = this->border_object[3]->image_height = border_width;
 	}
 	else
 	{
-		this->bgbox = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, 0, 0 ); /* box background */
+		this->background_object = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, 0, 0 ); /* box background */
 
 		if ( border_width > 0 )
 		{
-			this->borders[0] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, 0, border_width, LEFTTOP ); /* top border */
-			this->borders[1] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, border_width, 0, RIGHTTOP  ); /* right border */
-			this->borders[2] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, -border_width, 0, border_width, LEFTBOTTOM ); /* bottom border */
-			this->borders[3] = this->InsertWidgetObject( OBJECT_RECTANGLE, -border_width, 0, border_width, 0, LEFTTOP ); /* left border */
+			this->border_object[0] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, 0, border_width, LEFTTOP ); /* top border */
+			this->border_object[1] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, border_width, 0, RIGHTTOP  ); /* right border */
+			this->border_object[2] = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, -border_width, 0, border_width, LEFTBOTTOM ); /* bottom border */
+			this->border_object[3] = this->InsertWidgetObject( OBJECT_RECTANGLE, -border_width, 0, border_width, 0, LEFTTOP ); /* left border */
 		}
 	}
 
-	this->GenerateColours( style, this->bgbox, true );
-	this->GenerateBorderColours( style, this->borders[0], 0 );
-	this->GenerateBorderColours( style, this->borders[1], 1 );
-	this->GenerateBorderColours( style, this->borders[2], 2 );
-	this->GenerateBorderColours( style, this->borders[3], 3 );
+	this->GenerateColours( style, this->background_object, true );
 
+	if ( this->border_object[0] )
+	{
+		this->GenerateBorderColours( style, this->border_object[0], 0 );
+		this->GenerateBorderColours( style, this->border_object[1], 1 );
+		this->GenerateBorderColours( style, this->border_object[2], 2 );
+		this->GenerateBorderColours( style, this->border_object[3], 3 );
+	}
 
 	this->_region = boxregion;
 }
 
 std::string Widget::GetText()
 {
-	if ( this->textbox )
+	if ( this->text_object )
 	{
-		return this->textbox->text;
+		return this->text_object->text;
 	}
 	return "";
 }
 
 std::string Widget::SetText( std::string text, uint32_t length )
 {
-	if ( this->textbox )
+	if ( this->text_object )
 	{
-		this->textbox->text = text;
+		this->text_object->text = text;
 		if ( length )
 		{
-			this->textbox->offset.w = (length * 8);
+			this->text_object->offset.w = (length * 8);
 
-			if ( this->textbox->alignment )
+			if ( this->text_object->alignment )
 			{
-				this->textbox->offset.alignment = CENTERCENTER;
-				this->textbox->offset.h = 8;
+				this->text_object->offset.alignment = CENTERCENTER;
+				this->text_object->offset.h = 8;
 			}
 		}
 	}
@@ -333,13 +386,13 @@ bool Widget::SendEvent( int32_t event_code )
 	{
 		if ( event_code >= 30 )
 		{
-			this->textbox->text.append(1, event_code);
+			this->text_object->text.append(1, event_code);
 		}
-		if ( event_code == 8 )
+		if ( event_code == '\b' )
 		{
-			if ( this->textbox->text.length() > 0 )
+			if ( this->text_object->text.length() > 0 )
 			{
-				this->textbox->text.erase( this->textbox->text.length()-1 );
+				this->text_object->text.erase( this->text_object->text.length()-1 );
 			}
 		}
 		if ( event_code == 1 )

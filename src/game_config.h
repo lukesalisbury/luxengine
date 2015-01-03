@@ -11,9 +11,10 @@ class GameConfig : public ConfigResource
 		~GameConfig();
 
 	private:
-		std::string path;
+		std::string local_config_path;
 		bool has_config_file;
 		bool allow_all;
+
 	public:
 		bool Save();
 		bool Has(std::string key);

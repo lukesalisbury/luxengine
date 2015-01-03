@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <cstdarg>
 #include <sstream>
 #include "core.h"
-#include "world.h"
+#include "game_system.h"
 #include "elix_string.hpp"
 
 
@@ -100,6 +100,11 @@ void Entity::Init()
 
 bool Entity::Loop()
 {
+	if ( id.compare("player") == 0 )
+	{
+		int q =0;
+	}
+
 	if ( this->deleted )
 	{
 		return false;
@@ -343,13 +348,13 @@ void Entity::SetCollisionCount(int32_t count)
 int32_t Entity::GetHits( int32_t type )
 {
 	this->_hits.clear();
-	if (lux::gameworld != NULL)
+	if (lux::gamesystem != NULL)
 	{
 		for(int32_t n = 0; n < this->_used_collisions; n++)
 		{
 			if (this->_collisions[n].rect.w != 0 && this->_collisions[n].rect.h != 0)
 			{
-				lux::gameworld->ReturnCollisions(&this->_hits, this->hashid, n, this->_collisions[n].rect);
+				lux::gamesystem->GetObjects()->ReturnCollisions(&this->_hits, this->hashid, n, this->_collisions[n].rect);
 			}
 		}
 	}
@@ -358,7 +363,7 @@ int32_t Entity::GetHits( int32_t type )
 
 void Entity::SetMapCollsion()
 {
-	if (lux::gameworld != NULL )
+	if ( lux::gamesystem != NULL )
 	{
 		if ( this->_used_collisions > -1 )
 		{
@@ -368,7 +373,7 @@ void Entity::SetMapCollsion()
 				{
 					if (this->_collisions[n].rect.w != 0 && this->_collisions[n].rect.h != 0)
 					{
-						lux::gameworld->AddCollision(this->hashid, &this->_collisions[n]);
+						lux::gamesystem->GetObjects()->AddCollision(this->hashid, &this->_collisions[n]);
 					}
 				}
 			}
@@ -378,14 +383,14 @@ void Entity::SetMapCollsion()
 
 void Entity::ClearMapCollsion()
 {
-	if ( lux::gameworld != NULL )
+	if ( lux::gamesystem != NULL )
 	{
 		for( int32_t n = 0; n < this->_used_collisions; n++)
 		{
 			this->_collisions[n].rect.w = this->_collisions[n].rect.h = 0;
 			this->_collisions[n].added = false;
 		}
-		lux::gameworld->RemoveCollisions(this->hashid);
+		lux::gamesystem->GetObjects()->RemoveCollisions(this->hashid);
 	}
 }
 

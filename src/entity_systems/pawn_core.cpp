@@ -48,61 +48,61 @@ typedef unsigned char   uchar;
 
 static cell core_numargs(AMX *amx,const cell *params)
 {
-  AMX_HEADER *hdr;
-  uchar *data;
-  cell bytes;
+	AMX_HEADER *hdr;
+	uchar *data;
+	cell bytes;
 
-  (void)params;
-  hdr=(AMX_HEADER *)amx->base;
-  data=amx->data ? amx->data : amx->base+(int)hdr->dat;
-  /* the number of bytes is on the stack, at "frm + 2*cell" */
-  bytes= * (cell *)(data+(int)amx->frm+2*sizeof(cell));
-  /* the number of arguments is the number of bytes divided
-   * by the size of a cell */
-  return bytes/sizeof(cell);
+	(void)params;
+	hdr=(AMX_HEADER *)amx->base;
+	data=amx->data ? amx->data : amx->base+(int)hdr->dat;
+	/* the number of bytes is on the stack, at "frm + 2*cell" */
+	bytes= * (cell *)(data+(int)amx->frm+2*sizeof(cell));
+	/* the number of arguments is the number of bytes divided
+	* by the size of a cell */
+	return bytes/sizeof(cell);
 }
 
 static cell core_getarg(AMX *amx,const cell *params)
 {
-  AMX_HEADER *hdr;
-  uchar *data;
-  cell value;
+	AMX_HEADER *hdr;
+	uchar *data;
+	cell value;
 
-  hdr=(AMX_HEADER *)amx->base;
-  data=amx->data ? amx->data : amx->base+(int)hdr->dat;
-  /* get the base value */
-  value= * (cell *)(data+(int)amx->frm+((int)params[1]+3)*sizeof(cell));
-  /* adjust the address in "value" in case of an array access */
-  value+=params[2]*sizeof(cell);
-  /* get the value indirectly */
-  value= * (cell *)(data+(int)value);
-  return value;
+	hdr=(AMX_HEADER *)amx->base;
+	data=amx->data ? amx->data : amx->base+(int)hdr->dat;
+	/* get the base value */
+	value= * (cell *)(data+(int)amx->frm+((int)params[1]+3)*sizeof(cell));
+	/* adjust the address in "value" in case of an array access */
+	value+=params[2]*sizeof(cell);
+	/* get the value indirectly */
+	value= * (cell *)(data+(int)value);
+	return value;
 }
 
 static cell core_setarg(AMX *amx,const cell *params)
 {
-  AMX_HEADER *hdr;
-  uchar *data;
-  cell value;
+	AMX_HEADER *hdr;
+	uchar *data;
+	cell value;
 
-  hdr=(AMX_HEADER *)amx->base;
-  data=amx->data ? amx->data : amx->base+(int)hdr->dat;
-  /* get the base value */
-  value= * (cell *)(data+(int)amx->frm+((int)params[1]+3)*sizeof(cell));
-  /* adjust the address in "value" in case of an array access */
-  value+=params[2]*sizeof(cell);
-  /* verify the address */
-  if (value<0 || value>=amx->hea && value<amx->stk)
-	return 0;
-  /* set the value indirectly */
-  * (cell *)(data+(int)value) = params[3];
-  return 1;
+	hdr=(AMX_HEADER *)amx->base;
+	data=amx->data ? amx->data : amx->base+(int)hdr->dat;
+	/* get the base value */
+	value= * (cell *)(data+(int)amx->frm+((int)params[1]+3)*sizeof(cell));
+	/* adjust the address in "value" in case of an array access */
+	value+=params[2]*sizeof(cell);
+	/* verify the address */
+	if ( value<0 || (value>=amx->hea && value<amx->stk) )
+		return 0;
+	/* set the value indirectly */
+	* (cell *)(data+(int)value) = params[3];
+	return 1;
 }
 
 static cell core_heapspace(AMX *amx,const cell *params)
 {
-  (void)params;
-  return amx->stk - amx->hea;
+	(void)params;
+	return amx->stk - amx->hea;
 }
 
 

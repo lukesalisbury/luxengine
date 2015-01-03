@@ -31,7 +31,6 @@ ifeq ($(PLATFORMBITS), )
 	PLATFORMBITS = other
 endif
 
-
 #Build platform & target
 ifeq ($(BUILDOS), )
 	BUILDOS	= windows
@@ -79,7 +78,12 @@ else
 	endif
 endif
 
-
-
 buildall: all
 
+info:
+	@echo --------------------------------
+	@echo Build Platform: $(BUILDPLATFORM)
+	@echo Target Platform: $(BUILDOS)/$(PLATFORMBITS)
+	@echo Debug Build? $(BUILDDEBUG)
+	@echo Build Flags: $(COMPILER_FLAGS)
+	@echo Build Libs: $(COMPILER_LIBS)

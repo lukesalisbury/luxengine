@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -9,13 +9,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
-#include "core.h"
-#include "engine.h"
-#include "display.h"
-#include "entity_manager.h"
-#include "elix_path.hpp"
-#include "elix_string.hpp"
-#include "world.h"
 #include <algorithm>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -23,12 +16,23 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include <SDL_joystick.h>
 #include <SDL_hints.h>
+
+
+
+#include "core.h"
+#include "engine.h"
+#include "display.h"
+#include "entity_manager.h"
+#include "elix_path.hpp"
+#include "elix_string.hpp"
+#include "game_system.h"
+#include "platform_functions.h"
+
 #ifdef __GNUWIN32__
 	#define _WIN32_IE 0x0600
 	#include <io.h>
 	#include <shlobj.h>
 #endif
-
 
 /* Network Thread */
 #ifdef NETWORKENABLED
@@ -142,12 +146,10 @@ void CoreSystem::AbleOutput(bool able)
 	}
 }
 
-
 uint32_t CoreSystem::WasInit(uint32_t flag)
 {
 	return SDL_WasInit(flag);
 }
-
 
 void CoreSystem::QuitSubSystem(uint32_t flag)
 {
@@ -203,7 +205,13 @@ uint32_t CoreSystem::GetFrameDelta()
 
 bool CoreSystem::DelayIf(uint32_t diff)
 {
-	return true;
+
+	if ( this->internal_ms < diff )
+	{
+		SDL_Delay( diff-this->internal_ms-1 );
+		return true;
+	}
+	return false;
 }
 
 void CoreSystem::Idle()
@@ -211,6 +219,11 @@ void CoreSystem::Idle()
 	SDL_Delay(30);
 }
 
+/**
+ * @brief Handle Game's Frame
+ * @param old_state
+ * @return
+ */
 LuxState CoreSystem::HandleFrame(LuxState old_state)
 {
 	SDL_Event event;
@@ -218,6 +231,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	this->internal_ms = (this->GetTime() - this->time);
 	this->frame_ms = clamp( this->internal_ms, 0, 33);
+	this->frame_ms = this->internal_ms;
 	this->animation_ms = this->frame_ms;
 
 	if ( this->state > PAUSED || old_state >= SAVING )
@@ -225,11 +239,9 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 		this->state = old_state;
 	}
 
-	SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
-
 	while( SDL_PollEvent(&event) )
 	{
-		if ( event.window.windowID == SDL_GetWindowID( this->native_window) )
+		if ( event.window.windowID == SDL_GetWindowID( this->native_window ) )
 		{
 			switch( event.type )
 			{
@@ -274,6 +286,17 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 							}
 							break;
 						}
+						case SDLK_F8:
+						{
+							lux::display->show_spriteinfo = !lux::display->show_spriteinfo;
+							break;
+						}
+						case SDLK_F9:
+						{
+							lux::display->show_collisions = !lux::display->show_collisions;
+							break;
+						}
+
 						case SDLK_F12:
 						{
 							lux::engine->SettingDialog();
@@ -281,7 +304,16 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 						}
 						case SDLK_F10:
 						{
+							/* Debug Message Window */
 							lux::display->show_debug = !lux::display->show_debug;
+							if ( lux::display->show_debug )
+							{
+								Lux_SDL2_OpenMessageWindow( );
+							}
+							else
+							{
+								Lux_SDL2_CloseMessageWindow( );
+							}
 							break;
 						}
 						case SDLK_F11:
@@ -291,7 +323,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 						}
 						case SDLK_BACKSPACE:
 						{
-							event.key.keysym.sym = 8;//OS X had issue
+							event.key.keysym.sym = 8;//OS X had issue - Don't know if it still does in SDL2
 							break;
 						}
 						case SDLK_DELETE:
@@ -301,10 +333,12 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 						}
 						case SDLK_RETURN:
 						{
+							/* Full Screen Text */
 							if ( (event.key.keysym.mod & KMOD_ALT) )
 							{
-								SDL_Window *window = SDL_GetWindowFromID(event.key.windowID);
-								if (window) {
+								SDL_Window * window = SDL_GetWindowFromID(event.key.windowID);
+								if (window)
+								{
 									Uint32 flags = SDL_GetWindowFlags(window);
 									lux::display->graphics.SetFullscreen( !(flags & SDL_WINDOW_FULLSCREEN_DESKTOP) );
 								}
@@ -313,6 +347,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 						}
 						case SDLK_v:
 						{
+							/* Paste Text */
 							if ( (event.key.keysym.mod & KMOD_CTRL) && SDL_HasClipboardText() )
 							{
 								int32_t key;
@@ -336,7 +371,6 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 				case SDL_FINGERDOWN:
 				case SDL_FINGERUP:
 				{
-
 					if ( touch_events_count < 10 )
 					{
 						this->touch_events[touch_events_count].type = event.tfinger.type;
@@ -371,7 +405,34 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 					}
 					break;
 				}
+	#else
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP:
+				{
+					if ( event.button.which != SDL_TOUCH_MOUSEID )
+					{
+						if ( event.button.button < 5 )
+						{
+							mouse_button[event.button.button] = (event.button.state == SDL_PRESSED);
+						}
+					}
+					break;
+				}
 	#endif
+				case SDL_MOUSEMOTION:
+				{
+					this->mouse_position[0] = event.motion.x;
+					this->mouse_position[1] = event.motion.y;
+					break;
+				}
+				case SDL_MOUSEWHEEL:
+				{
+					if ( event.wheel.which != SDL_TOUCH_MOUSEID )
+					{
+						mouse_scroll = event.wheel.y;
+					}
+					break;
+				}
 				case SDL_QUIT:
 				{
 					this->state = EXITING;
@@ -424,6 +485,8 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	this->time = this->GetTime();
 
+
+
 	return this->state;
 }
 
@@ -431,15 +494,15 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 {
 	SDL_PumpEvents();
 
-	this->mousestate = SDL_GetMouseState(&this->mouseposition[0], &this->mouseposition[1]);
+	//this->mouse_button = SDL_GetMouseState(&this->mouse_position[0], &this->mouse_position[1]);
 	if ( display )
 	{
 		if ( display->graphics.Display2Screen )
 		{
-			display->graphics.Display2Screen(&this->mouseposition[0], &this->mouseposition[1]);
+			display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
 		}
 	}
-	SDL_JoystickUpdate();
+	//SDL_JoystickUpdate();
 }
 
 bool CoreSystem::TextListen( bool able )
@@ -462,15 +525,12 @@ void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count
 		int32_t points[2];
 		int16_t previ_state;
 
-
 		for ( std::map<uint32_t, VirtualGamepadButton*>::iterator item = this->virtual_input.begin(); item != this->virtual_input.end(); item++ )
 		{
 			VirtualGamepadButton * button = (*item).second;
 
 			if ( button->object )
 			{
-
-
 				if ( touch_events_count )
 				{
 					uint8_t c = 0;
@@ -495,8 +555,6 @@ void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count
 							button->state = (this->touch_events[c].type = SDL_FINGERDOWN ? 1 : 0);
 						}
 
-
-
 						c++;
 					}
 				}
@@ -516,8 +574,6 @@ void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count
 				button->object->effects.primary_colour.r = button->object->effects.primary_colour.a = 255;
 				button->object->effects.primary_colour.g = button->object->effects.primary_colour.b = 0;
 
-
-
 				display->AddObjectToLayer( 0xFFFFFFFF, button->object, true );
 			}
 
@@ -525,6 +581,12 @@ void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count
 	}
 }
 
+/**
+ * @brief Input Loop for GUI
+ * @param display
+ * @param key value of input.
+ * @return 1 if has event.
+ */
 bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 {
 	SDL_Event event;
@@ -540,21 +602,30 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 				break;
 			}
 			case SDL_KEYDOWN:
-				key = event.key.keysym.sym;
+				//key = event.key.keysym.sym;
+
+				if ( event.key.keysym.sym == SDLK_BACKSPACE ) { key = 8; }
 				if ( event.key.keysym.sym == SDLK_ESCAPE ) { key = 27; }
-				if ( event.key.keysym.sym == SDLK_RETURN && ( event.key.keysym.mod & KMOD_ALT ) ) {
-					SDL_Window *window = SDL_GetWindowFromID(event.key.windowID);
-					if (window)
+				if ( event.key.keysym.sym == SDLK_RETURN )
+				{
+					if ( SDL_GetModState() & KMOD_ALT )
 					{
-						Uint32 flags = SDL_GetWindowFlags(window);
-						display->graphics.SetFullscreen( !!(flags & SDL_WINDOW_FULLSCREEN) );
+						SDL_Window * window = SDL_GetWindowFromID(event.key.windowID);
+						if (window)
+						{
+							Uint32 flags = SDL_GetWindowFlags(window);
+							display->graphics.SetFullscreen( !(flags & SDL_WINDOW_FULLSCREEN_DESKTOP) );
+						}
+					}
+					else
+					{
+						key = 13;
 					}
 				}
 				break;
 			case SDL_QUIT:
-				key = 27;
+				key = 27; // Escape Key
 				break;
-
 			case SDL_FINGERDOWN:
 			case SDL_FINGERUP:
 			{
@@ -567,6 +638,33 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 					this->touch_events[touch_events_count].dy = event.tfinger.dy;
 					this->touch_events[touch_events_count].pressure = event.tfinger.pressure;
 					touch_events_count++;
+				}
+				break;
+			}
+
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+			{
+				if ( event.button.which != SDL_TOUCH_MOUSEID )
+				{
+					if ( event.button.button < 5 )
+					{
+						this->mouse_button[event.button.button] = (event.button.state == SDL_PRESSED);
+					}
+				}
+				break;
+			}
+			case SDL_MOUSEMOTION:
+			{
+				this->mouse_position[0] = event.motion.x;
+				this->mouse_position[1] = event.motion.y;
+				break;
+			}
+			case SDL_MOUSEWHEEL:
+			{
+				if ( event.wheel.which != SDL_TOUCH_MOUSEID )
+				{
+					mouse_scroll = event.wheel.y;
 				}
 				break;
 			}
@@ -632,27 +730,29 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 		}
 		case MOUSEAXIS:
 		{
-			if ( symbol < 2 )
+			if ( symbol < 2 && symbol >= 0 )
 			{
-				return this->mouseposition[symbol];
+				return this->mouse_position[symbol];
 			}
 			return 0;
 		}
 		case MOUSEBUTTON:
 		{
-			if ( this->mousestate & SDL_BUTTON(symbol) )
+			if ( symbol < 5 && symbol >= 0  )
 			{
-				return 1;
+				return this->mouse_button[symbol];
 			}
 			return 0;
 		}
 		case MOUSEWHEEL:
 		{
-			if ( this->mousestate & SDL_BUTTON(symbol) )
-			{
+			//TODO: Only support Y axis at the moment.
+			if ( this->mouse_scroll > 0 && symbol == 0 )
 				return 1;
-			}
-			return 0;
+			else if ( this->mouse_scroll < 0 && symbol == 1 )
+				return 1;
+			else
+				return 0;
 		}
 		case VIRTUALBUTTON:
 		{
@@ -777,14 +877,12 @@ void CoreSystem::VirtualGamepadRemoveItem( uint32_t ident )
 	this->virtual_input.erase( ident );
 }
 
-
+/** Ugly Hack */
 #include "elix_program.hpp"
 bool CoreSystem::RunExternalProgram( std::string program, std::string argument )
 {
 	std::string cmdline = elix::program::RootDirectory( ) + ELIX_DIR_SSEPARATOR + program + " " + argument;
 	this->SystemMessage( SYSTEM_MESSAGE_LOG ) << "Running " << program << " Status " << system( cmdline.c_str() ) << std::endl;
-
-
 
 	return true;
 }

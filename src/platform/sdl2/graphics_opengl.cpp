@@ -56,7 +56,7 @@ GraphicSystem GraphicsOpenGL = {
 	&Lux_GLES_DrawPolygon,
 	&Lux_GLES_DrawLine,
 	&Lux_GLES_DrawText,
-	&Lux_OGL_DrawMessage,
+	&Lux_SDL2_DrawMessage,
 
 	&Lux_OGL_CacheDisplay,
 	&Lux_OGL_DrawCacheDisplay
@@ -72,9 +72,7 @@ extern std::string native_window_title;
 extern SDL_Rect native_graphics_dimension;
 extern uint32_t native_graphics_fps, native_graphics_fpstime;
 
-/* Debug Message */
-SDL_Window * debug_window = NULL;
-SDL_Renderer * debug_renderer = NULL;
+
 
 /* Global Variables */
 LuxColour gles_graphics_colour = { 0, 0, 0, 255 };
@@ -123,6 +121,8 @@ void opengl_graphic_create_fbotexture( Texture & fbo )
 	fbo.loaded = true;
 }
 
+
+
 /* Global Function */
 
 /* Lux_OGL_Init
@@ -170,7 +170,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
 	SDL_SetHintWithPriority( SDL_HINT_RENDER_OPENGL_SHADERS, "1", SDL_HINT_OVERRIDE );
-	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "0", SDL_HINT_OVERRIDE );
+	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "1", SDL_HINT_OVERRIDE );
 
 
 	native_context = SDL_GL_CreateContext(native_window);
@@ -179,14 +179,16 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
+	SDL_GL_SetSwapInterval(1); // Leave VSync On
 
 	SDL_GL_MakeCurrent(native_window, native_context);
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Vendor: " << glGetString(GL_VENDOR) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Renderer: " << glGetString(GL_RENDERER) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Non Power of Two Texture Support: " << SDL_GL_ExtensionSupported((char *)"GL_ARB_texture_non_power_of_two") << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Framebuffer Object Support: " << SDL_GL_ExtensionSupported((char *)"GL_EXT_framebuffer_object") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Renderer: " << glGetString(GL_RENDERER) << " " << glGetString(GL_VERSION) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Feature: ";
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << ( SDL_GL_ExtensionSupported((char *)"GL_ARB_texture_non_power_of_two") ? "NPOT" : "POT");
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << ( SDL_GL_ExtensionSupported((char *)"GL_EXT_framebuffer_object") ? " FBO" : "") << std::endl;
+
 
 	native_graphics_dimension.w = width;
 	native_graphics_dimension.h = height;
@@ -206,15 +208,15 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	glEnable(GL_TEXTURE_2D);
 	glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
 
-
 	opengl_graphic_cursor = new LuxPolygon(3);
 
 	opengl_graphic_cursor->SetPoint(0, 0, 0);
 	opengl_graphic_cursor->SetPoint(1, 8, 8);
 	opengl_graphic_cursor->SetPoint(2, 0, 12);
 
-	Lux_SDL2_SetWindowIcon( native_window );
+
 	SDL_SetWindowTitle( native_window, native_window_title.c_str() );
+	Lux_SDL2_SetWindowIcon( native_window );
 
 	SDL_DisableScreenSaver();
 
@@ -254,15 +256,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	}
 
 
-	/* Debug Messages */
-	int32_t x;
-	int32_t y;
 
-	x = lux::global_config->GetNumber("debug.x");
-	y = lux::global_config->GetNumber("debug.y");
-
-	debug_window = SDL_CreateWindow("Messages", static_cast<int>(x), static_cast<int>(y), 400, 300, SDL_WINDOW_SHOWN);
-	debug_renderer = SDL_CreateRenderer(debug_window, -1, SDL_RENDERER_SOFTWARE );
 
 	return true;
 }
@@ -284,22 +278,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
 		glDeleteFramebuffersEXT(1, &fbo_frame);
 	}
 
-
-
-	if ( debug_window )
-	{
-		int x;
-		int y;
-
-
-		SDL_GetWindowPosition( debug_window, &x, &y );
-
-		lux::global_config->SetNumber("debug.x", static_cast<int32_t>(x));
-		lux::global_config->SetNumber("debug.y", static_cast<int32_t>(y));
-
-	}
-
-	SDL_DestroyWindow( debug_window );
+	Lux_SDL2_CloseMessageWindow(  );
 }
 
 /* Lux_OGL_Update
@@ -316,6 +295,8 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Update(LuxRect rect)
  */
 LUX_DISPLAY_FUNCTION void Lux_OGL_Show()
 {
+
+
 	glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
 
 
@@ -323,10 +304,10 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Show()
 	SDL_GL_SwapWindow(native_window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-
-	SDL_RenderPresent(debug_renderer);
-	SDL_RenderClear(debug_renderer);
+	/* Debug Messages */
+	if ( lux::display && lux::display->show_debug )
+		Lux_SDL2_OpenMessageWindow();
+	Lux_SDL2_PresentMessageWindow();
 
 }
 
@@ -481,7 +462,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
 		return false;
 	}
 
-	Texture * texture = new Texture;
+	Texture * texture = new Texture();
 	texture->w = sprite->sheet_area.w;
 	texture->h = sprite->sheet_area.h;
 	if ( Lux_OGL_QueryExtension((char *)"GL_ARB_texture_non_power_of_two") )
@@ -517,7 +498,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "PNG is empty" << std::endl;
 	}
-	delete pixels;
+	delete [] pixels;
 	/*  ^ PNG Image */
 
 
@@ -532,6 +513,8 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
  */
 LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
+	bool results = false;
+
 	/* PNG Image */
 	uint8_t * data = NULL;
 	uint32_t size;
@@ -544,7 +527,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<ui
 			png->LoadFile(data, size);
 		}
 	}
-	delete data;
+	delete [] data;
 	/*  ^ PNG Image */
 
 	if ( png->HasContent() )
@@ -557,13 +540,11 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<ui
 				Lux_OGL_CreateSprite( p->second, p->second->sheet_area, png );
 			}
 		}
-		delete png;
-		return true;
+
+		results = true;
 	}
-	else
-	{
-		return false;
-	}
+	delete png;
+	return results;
 }
 
 /* Lux_OGL_LoadSpriteSheet
@@ -747,282 +728,3 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer, uint8_t shade
 
 
 
-
-#include "bitfont.h"
-static SDL_Texture * gfxPrimitivesFont[128];
-
-SDL_Texture * Lux_OGL_GetCharTexture( uint8_t c )
-{
-	SDL_Texture * texture;
-	uint8_t i = 0, q;
-	uint8_t * font_point = &gfxPrimitivesFontdata[0];
-
-	if ( c > 32 && c < 128)
-	{
-		if ( gfxPrimitivesFont[c] == NULL )
-		{
-			font_point += (c*8);
-
-			uint16_t * charflip = new uint16_t[64];
-			for (i = 0; i < 8; i++)
-			{
-				for (q = 0; q < 8; q++)
-				{
-					charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFFFF : 0x0000) ;
-				}
-			}
-			texture = SDL_CreateTexture(debug_renderer, SDL_PIXELFORMAT_ARGB1555, SDL_TEXTUREACCESS_STATIC, 8, 8);
-
-			SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
-			SDL_UpdateTexture(texture, NULL, charflip, 16);
-
-			delete [] charflip;
-
-			gfxPrimitivesFont[c] = texture;
-		}
-		else
-		{
-			texture =  gfxPrimitivesFont[c];
-		}
-	}
-	return texture;
-}
-
-LUX_DISPLAY_FUNCTION void Lux_OGL_DrawMessage( std::string message, uint8_t alignment )
-{
-	std::string::iterator object;
-	SDL_Rect draw;
-	SDL_Rect rect;
-	SDL_Rect area;
-	int w,h;
-
-	bool watch_for_color = false;
-	bool is_whitspace = false;
-	LuxColour font_color = { 255, 255,255, 255 };
-
-	SDL_GetWindowSize( debug_window, &w, &h );
-	rect.x = rect.y = 0;
-	Lux_SDL2_SetRectFromText( rect, message, 8, 10 );
-
-	area = rect;
-
-	if ( alignment == 3 )
-	{
-		area.y = h - area.h;
-	}
-	else if ( alignment == 2 )
-	{
-		area.y = h - area.h;
-		area.x = w - area.w;
-	}
-	else if ( alignment == 1 )
-	{
-		area.x = w - area.w;
-	}
-
-	SDL_SetRenderDrawColor( debug_renderer, 0, 0, 0, 255 );
-	SDL_RenderFillRect( debug_renderer, &area );
-
-	draw = area;
-	draw.w = draw.h = 8;
-
-	for ( object = message.begin(); object != message.end(); object++ )
-	{
-		uint8_t utfchar = *object;
-		uint32_t cchar = utfchar;
-
-		is_whitspace = false;
-
-		if (cchar == '\n' || cchar == '\r')
-		{
-			draw.y += 10;
-			draw.x = area.x;
-			cchar = 0;
-			is_whitspace = true;
-		}
-		else if ( cchar <= 32 )
-		{
-			draw.x += 7;
-			cchar = 0;
-			is_whitspace = true;
-		}
-		else if ( cchar <= 128 )
-		{
-
-		}
-		else if ( cchar < 224 )
-		{
-			object++;
-			uint32_t next = *object;
-
-			cchar = ((cchar << 6) & 0x7ff) + (next & 0x3f);
-		}
-		else if ( cchar < 240 )
-		{
-			uint32_t next;
-
-			object++;
-			next = (*object) & 0xff;
-			cchar = ((cchar << 12) & 0xffff) + ((next << 6) & 0xfff);
-
-			object++;
-			next = (*object) & 0x3f;
-			cchar += next;
-
-		}
-		else if ( cchar < 245 )
-		{
-			uint32_t next;
-
-			object++;
-			next = (*object) & 0xff;
-			cchar = ((cchar << 18) & 0xffff) + ((next << 12) & 0x3ffff);
-
-			object++;
-			next = (*object) & 0xff;
-			cchar += (next << 6) & 0xfff;
-
-			object++;
-			next = (*object) & 0x3f;
-			cchar += next;
-		}
-
-		if ( cchar != 0 )
-		{
-			SDL_Texture * texture = NULL;
-
-			if ( cchar == 0xA7 )
-			{
-				watch_for_color = true;
-			}
-			else if ( watch_for_color == true )
-			{
-				watch_for_color = false;
-				font_color.r = font_color.g = font_color.b = 255;
-				switch (cchar) {
-					case '0': // Black
-					{
-						font_color.r = font_color.g = font_color.b = 0;
-						break;
-					}
-					case '1': // Dark Blue
-					{
-						font_color.r = font_color.g = 0;
-						font_color.b = 170;
-						break;
-					}
-					case '2': // Dark Green
-					{
-						font_color.r = font_color.b = 0;
-						font_color.g = 170;
-						break;
-					}
-					case '3': // Dark Aqua
-					{
-						font_color.r = 0;
-						font_color.g = font_color.b = 170;
-						break;
-					}
-					case '4': // Dark Red
-					{
-						font_color.g = font_color.b = 0;
-						font_color.r = 170;
-						break;
-					}
-					case '5': // Dark Purple
-					{
-						font_color.g = 0;
-						font_color.r = font_color.b = 170;
-						break;
-					}
-					case '6': // Gold
-					{
-						font_color.b = 0;
-						font_color.r = 255;
-						font_color.g = 170;
-						break;
-					}
-					case '7': // Gray
-					{
-						font_color.r = font_color.g = font_color.b = 170;
-						break;
-					}
-					case '8': // Dark Gray
-					{
-						font_color.r = font_color.g = font_color.b = 85;
-						break;
-					}
-					case '9': // Blue
-					{
-						font_color.r = font_color.g = 85;
-						font_color.b = 255;
-						break;
-					}
-					case 'a': // Green
-					{
-						font_color.r = font_color.b = 85;
-						font_color.g = 255;
-						break;
-					}
-					case 'b': // Aqua
-					{
-						font_color.r = 85;
-						font_color.g = font_color.b = 255;
-						break;
-					}
-					case 'c': // Red
-					{
-						font_color.b = font_color.g = 85;
-						font_color.r = 255;
-						break;
-					}
-					case 'd': // Light Purple
-					{
-						font_color.g = 85;
-						font_color.r = font_color.b = 255;
-						break;
-					}
-					case 'e': // Yellow
-					{
-						font_color.b = 85;
-						font_color.r = font_color.g = 255;
-						break;
-					}
-					default:
-						font_color.r = font_color.g = font_color.b = 255;
-						break;
-				}
-
-
-			}
-			else
-			{
-				watch_for_color = false;
-				if ( cchar >= 32 && cchar <= 128 )
-				{
-					texture = Lux_OGL_GetCharTexture(cchar);
-				}
-				else
-				{
-					texture = Lux_OGL_GetCharTexture('?');
-				}
-
-				if ( texture )
-				{
-					SDL_SetTextureColorMod(texture, font_color.r, font_color.g, font_color.b);
-					SDL_SetTextureAlphaMod( texture, 255 );
-					SDL_RenderCopy(debug_renderer, texture, NULL, &draw);
-				}
-				draw.x += 7;
-
-			}
-		}
-
-		if ( is_whitspace )
-		{
-			/* Reset Colour if a whitespace occurs */
-			font_color.r = font_color.g = font_color.b = 255;
-		}
-	}
-
-}

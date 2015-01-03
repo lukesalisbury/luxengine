@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -9,7 +9,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #ifndef PROGRAM_NAME
-#define PROGRAM_NAME "Mokoi Gaming"
+#define PROGRAM_NAME "Mokoi"
 #endif
 
 #ifndef PROGRAM_VERSION
@@ -30,6 +30,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #ifndef _STDHEADER_
 #define _STDHEADER_
+
 #define LUX_INIT_BASE		0x00000001
 #define LUX_INIT_AUDIO		0x00000010
 #define LUX_INIT_VIDEO		0x00000020
@@ -39,6 +40,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_SAVE_HIBERNATE_TYPE 2
 #define LUX_SAVE_READ_COOKIE_TYPE 3
 #define LUX_SAVE_COOKIE_TYPE 4
+
+#define OBJECT_GLOBAL_VALUE 0x80000000
 
 #include <iostream>
 #include <string>

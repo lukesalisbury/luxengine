@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "game_config.h"
 #include "audio.h"
 #include "display.h"
-#include "world.h"
+#include "game_system.h"
 #include "entity_manager.h"
 #include "elix_file.hpp"
 #include "elix_path.hpp"
@@ -74,7 +74,8 @@ bool LuxSaveState::Exists( uint8_t slot )
 {
 	bool save_file_exists = false;
 	/* File Name */
-	this->file_name = lux::game_data->public_directory;
+
+	this->file_name = "";
 	if ( slot == 0x00  )
 	{
 		this->save_type = LUX_SAVE_HIBERNATE_TYPE;
@@ -90,10 +91,10 @@ bool LuxSaveState::Exists( uint8_t slot )
 		return false;
 	}
 
-	this->save_file = new elix::File( this->file_name  );
+	this->save_file = new elix::File( elix::directory::User( lux::game_data->GetPublicDirectory(), false, this->file_name)  );
 	save_file_exists = this->save_file->Exist();
-
 	delete this->save_file;
+
 	return save_file_exists;
 }
 
@@ -126,7 +127,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager )
 {
 	uint8_t allow_access = 0;
 
-	if ( lux::game_data->public_directory.length() == 0 )
+	if ( lux::game_data->GetPublicDirectory().length() == 0 )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Invalid Save Directory." <<  std::endl;
 		return false;
@@ -138,7 +139,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager )
 
 
 	/* File Name */
-	this->file_name = lux::game_data->public_directory;
+	this->file_name = "";
 
 	if ( this->save_game_slot == 0x00  )
 	{
@@ -159,7 +160,7 @@ bool LuxSaveState::PreSave( EntityManager * entity_manager )
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Saving to " << this->file_name << std::endl;
 
 	/* Todo Add overwrite warning */
-	this->save_file = new elix::File( this->file_name, true );
+	this->save_file = new elix::File( elix::directory::User( lux::game_data->GetPublicDirectory(), false, this->file_name), true );
 	if ( !this->save_file->Exist() )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "===========================Saved Failed========================" << std::endl;
@@ -279,7 +280,7 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 
 
 	/* File Name */
-	this->file_name = lux::game_data->public_directory;
+	this->file_name = "";
 	if ( this->save_game_slot == 0x00 )
 	{
 		this->save_type = LUX_SAVE_HIBERNATE_TYPE;
@@ -298,7 +299,7 @@ bool LuxSaveState::PreLoad(EntityManager *entity_manager)
 	/* Open File */
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Restoring " << this->file_name << std::endl;
 
-	this->save_file = new elix::File( this->file_name, false );
+	this->save_file = new elix::File( elix::directory::User( lux::game_data->GetPublicDirectory(), false, this->file_name), false );
 	if ( !this->save_file->Exist() )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "===========================Loading Failed========================" << std::endl;

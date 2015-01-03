@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013-2014 Luke Salisbury
+Copyright © 2013-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -12,10 +12,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "platform_media.h"
 #include "sprite_sheet.h"
 #include "elix_string.hpp"
-#include "pc/keyboard.h"
-#include "pc/joystick_generic.h"
-#include "pc/joystick_xbox360.h"
-#include "pc/mouse_generic.h"
+#include "input/keyboard.h"
+#include "input/joystick_generic.h"
+#include "input/joystick_xbox360.h"
+#include "input/mouse_generic.h"
 
 #include "core.h"
 #include <SDL.h>
@@ -65,7 +65,7 @@ void PlatformMedia::Init(GraphicSystem graphic)
 	this->joystick_generic_sheet->LoadFromImage( image_generic_joystick );
 	delete image_generic_joystick;
 
-	/* Load Generic JoyStick */
+	/* Load Xbox JoyStick */
 	elix::Image * image_xbox_joystick = new elix::Image(joystick_xbox360_image_data, joystick_xbox360_image_size);
 	this->joystick_xbox360_sheet = new LuxSheet(graphic);
 	this->joystick_xbox360_sheet->SetName("Input Icons: Xbox 360 Gamepad");
@@ -131,7 +131,8 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 		{
 			if ( this->keyboard_sheet )
 			{
-				SDL_Keycode kecode = SDL_GetKeyFromScancode((SDL_Scancode)symbol);
+				int32_t kecode = (int32_t)SDL_GetKeyFromScancode((SDL_Scancode)symbol);
+				kecode &= ~0x40000000;
 				std::string key_name = elix::string::FromInt(kecode);
 				return this->keyboard_sheet->GetSprite(key_name);
 			}

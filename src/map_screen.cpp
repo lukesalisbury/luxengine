@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -70,11 +70,13 @@ bool MokoiMapScreen::Init()
 						this->FillMask( object->position.x, object->position.y, ( object->position.w ? object->position.w : current->sheet_area.w), ( object->position.h ? object->position.h : current->sheet_area.h), current->mask_value);
 				}
 			}
+
 			if ( !lux::display->AddObjectToLayer(object->layer, object, true) )
 			{
 				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << object->TypeName() << " (" << object->sprite << ") add failed" << std::endl;
 				object->type = 0;
 			}
+
 		}
 	}
 	return true;
@@ -162,9 +164,12 @@ void MokoiMapScreen::DrawMask( fixed position[3] )
 {
 	LuxRect rect = {0,0,2,2, 7000};
 	ObjectEffect mask_colour;
-	mask_colour.SetColour(colour::red);
+
 	int32_t y = this->_offset_y - MAKE_FIXED_INT(position[1]);
 	int32_t x = this->_offset_x - MAKE_FIXED_INT(position[0]);
+
+	mask_colour.SetColour(colour::red);
+
 	if ( this->_mask )
 	{
 		lux::display->debug_msg << "Mask Memory:" << this->_mask->length  << "bytes. Offset:" << this->_offset_x << "x" << this->_offset_y << std::endl;
@@ -185,37 +190,6 @@ void MokoiMapScreen::DrawMask( fixed position[3] )
 				lux::display->graphics.DrawRect( rect, mask_colour );
 			}
 		}
-
-		/*
-		LuxSprite * current = NULL;
-		std::vector<MapObject *>::iterator p;
-		for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
-		{
-			(*p)->SetData(NULL, (*p)->type);
-			if ( ((*p)->type == 's' || (*p)->type == 'a') && (*p)->has_data )
-			{
-				current = (LuxSprite *)(*p)->GetData();
-				rect.x = (*p)->position.x - MAKE_FIXED_INT(position[0]);
-				rect.y = (*p)->position.y - MAKE_FIXED_INT(position[1]);
-				if ( (*p)->effects.flip_image == 1 || (*p)->effects.flip_image == 3 )
-				{
-					rect.w = ( (*p)->position.h ? (*p)->position.h : current->rect.h);
-					rect.h = ( (*p)->position.w ? (*p)->position.w : current->rect.w);
-				}
-				else
-				{
-					rect.w = ( (*p)->position.w ? (*p)->position.w : current->rect.w);
-					rect.h = ( (*p)->position.h ? (*p)->position.h : current->rect.h);
-				}
-				colour.primary_colour.r = current->mask_value;
-				if ( colour.primary_colour.r )
-				{
-					lux::display->DrawRect( rect, colour );
-				}
-			}
-		}
-		*/
-
 
 
 	}

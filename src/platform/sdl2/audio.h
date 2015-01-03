@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -36,26 +36,35 @@ class AudioSystem: public BaseAudioSystem
 		int32_t dialog_volume;
 
 		/* Resource Management */
-		Mix_Music * dialog;
+		Mix_Chunk * primary_dialog;
+		Mix_Chunk * secondary_dialog;
 		Mix_Music * music;
 
 		std::map<std::string, Mix_Chunk*> soundfx;
-		Mix_Chunk * ReturnAudio( std::string filename );
+		Mix_Chunk * ReturnAudio(std::string filename, bool cache);
 		Mix_Chunk * FindEffect( std::string name );
 		uint32_t EffectLength( Mix_Chunk * chunk );
 
+		bool UnloadAudio(Mix_Chunk *audio);
 	public:
 		bool Loop(LuxState engine_state);
 
 		/* Resource Management */
 		bool LoadAudio( std::string filename );
 
-		/* Playing */
+		/* Play Controls */
+		void PauseAll();
 		int32_t PlayEffect( std::string requestSound, int32_t x = -1, int32_t y = -1 );
-		int32_t PlayDialog( int32_t requestSound );
+		int32_t PlayDialog( int32_t requestSound, int8_t channel );
 		int32_t PlayMusic( std::string requestMusic, int32_t loop, int32_t fadeLength );
-		void Pause();
-		void StopDialog();
+
+		void StopDialog( int8_t channel );
+		void StopEffects();
+		void StopMusic();
+
+		void PauseDialog( int8_t channel );
+		void PauseEffects();
+		void PauseMusic();
 
 		/* Volume */
 		int32_t SetMasterVolume( int32_t volume );

@@ -13,8 +13,11 @@ src/platform/pc
 src/platform/sdl2
 src/platform/sogl
 src/platform/wii
+elix/src
 ../elix/src
-c:/dev/sdl2libs/include/SDL2
-c:/dev/libcurl/include
+
+c:/dev/supportlibs/include/SDL2
 /usr/include
 /usr/include/SDL2
+src/portal
+src/test

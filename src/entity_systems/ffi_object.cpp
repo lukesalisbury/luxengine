@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_functions.h"
 
 #include "display.h"
-#include "world.h"
+#include "game_system.h"
 #include "elix_endian.hpp"
 
 
@@ -36,8 +36,8 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 								const int32_t z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite )
 {
 	MapObject * map_object = NULL;
-
-	if ( lux::gameworld->active_map )
+	uint32_t ident = 0;
+	if ( lux::gamesystem->active_map )
 	{
 		map_object = new MapObject( type );
 
@@ -51,15 +51,15 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 		get_colour.hex = elix::endian::host32(colour);
 		map_object->effects.primary_colour = get_colour.rgba;
 
-		if ( type == 's' && sprite != NULL )
+		if ( (type == OBJECT_SPRITE || type == OBJECT_CANVAS) && sprite != NULL )
 			map_object->sprite.assign( sprite );
 
 		if ( global )
-			return lux::gameworld->AddObject(map_object, true);
+			ident = lux::gamesystem->GetObjects()->AddObject(map_object, true);
 		else
-			return lux::gameworld->active_map->AddObject(map_object, true);
+			ident = lux::gamesystem->active_map->AddObject(map_object, true);
 	}
-	return 0;
+	return ident;
 
 }
 
@@ -120,7 +120,7 @@ int32_t Lux_FFI_Object_Postion( uint32_t object_id, const int32_t x, const int32
  * @param h
  * @return
  */
-int32_t Lux_FFI_Object_Info( const uint32_t object_id, uint16_t * w, uint16_t * h )
+int32_t Lux_FFI_Object_Info(const uint32_t object_id, uint16_t * w, uint16_t * h, int32_t * x, int32_t *y )
 {
 	MapObject * map_object = NULL;
 
@@ -135,6 +135,15 @@ int32_t Lux_FFI_Object_Info( const uint32_t object_id, uint16_t * w, uint16_t * 
 		if ( h )
 		{
 			*h = map_object->position.h;
+		}
+
+		if ( x )
+		{
+			*x = map_object->position.x;
+		}
+		if ( h )
+		{
+			*y = map_object->position.y;
 		}
 		return 1;
 
@@ -273,12 +282,12 @@ int16_t Lux_FFI_Object_Flag( uint32_t object_id, uint8_t key, int16_t value )
  */
 uint8_t Lux_FFI_Object_Delete( uint32_t object_id )
 {
-	if ( lux::gameworld->active_map )
+	if ( lux::gamesystem->active_map )
 	{
-		if ( object_id >= OBJECT_GLOBAL_VALUE )
-			return lux::gameworld->RemoveObject( object_id );
+		if ( (object_id & OBJECT_GLOBAL_VALUE) == OBJECT_GLOBAL_VALUE )
+			return lux::gamesystem->GetObjects()->RemoveObject( object_id );
 		else
-			return lux::gameworld->active_map->RemoveObject( object_id );
+			return lux::gamesystem->active_map->RemoveObject( object_id );
 	}
 	return 0;
 }

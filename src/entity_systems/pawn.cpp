@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -15,6 +15,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "elix_string.hpp"
 #include "display.h"
 //#include "../amx4/osdefs.h"
+
+//TODO: Fix Memory leaks
 
 std::map<std::string, AMX *> pawn_entities; /* Entity Cache */
 uint8_t pawn_save_state_mode = LUX_SAVE_DATA_TYPE;
@@ -81,7 +83,7 @@ cell AMX_NATIVE_CALL pawnDeprecatedFunction(AMX *amx, const cell *params)
 */
 int AMXAPI Lux_PawnEntity_Monitor(AMX * amx)
 {
-	Entity * entity;
+	Entity * entity = NULL;
 	uint32_t time = lux::core->GetTime();
 
 	amx_GetUserData(amx, 1162690895, (void**)&entity);
@@ -150,6 +152,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		if ( result )
 		{
 			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Lux_PawnEntity_LoadFile Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
+			delete temp_amx;
 			delete[] memblock;
 			return false;
 		}
@@ -198,6 +201,7 @@ bool Lux_PawnEntity_LoadFile(std::string entity_name)
 		}
 		else
 		{
+			//check for overwrite
 			pawn_entities[entity_name] = temp_amx;
 			return true;
 		}
@@ -285,7 +289,7 @@ bool Lux_PawnEntity_Init(std::string entity_id, std::string entity_base, mem_poi
 		{
 			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | AMX Clone Failed: "  << Lux_PawnEntity_StrError(result) << "." << std::endl;
 			MessagePush( (char*)"%s: [Error] %s", entity->_base.c_str(), Lux_PawnEntity_StrError(result) );
-			entity_data = NULL;
+			NULLIFY(entity_data)
 			return false;
 		}
 		amx_SetUserData( (AMX *)entity_data, 1162690895, (void*)entity);

@@ -1,6 +1,6 @@
 #Settings
 INCLUDE_PAWN = TRUE
-NETWORK = TRUE
+NETWORK = FALSE
 DOWNLOADER_MODE = curl
 
 BIN  = luxengine

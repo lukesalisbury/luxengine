@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "ffi_functions.h"
 
-#include "world.h"
+#include "game_system.h"
 #include "audio.h"
 #include "elix_string.hpp"
 
@@ -23,12 +23,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 MapObject * Lux_FFI_Object_Get( uint32_t object_id )
 {
 	MapObject * object = NULL;
-	if ( lux::gameworld->active_map )
+	if ( lux::gamesystem )
 	{
-		if ( object_id >= OBJECT_GLOBAL_VALUE )
-			object = lux::gameworld->GetObject(object_id);
-		else
-			object = lux::gameworld->active_map->GetObject(object_id);
+		object = lux::gamesystem->GetObject(object_id);
 	}
 	return object;
 }
@@ -64,7 +61,7 @@ int32_t Lux_FFI_Audio_Play_Sound( const char * file, int32_t x, int32_t y  )
  */
 int32_t Lux_FFI_Audio_Play_Dialog( uint32_t line )
 {
-	return lux::audio->PlayDialog( line );
+	return lux::audio->PlayDialog( line, 0 );
 }
 
 /**

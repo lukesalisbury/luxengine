@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -12,6 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include "gui.h"
 #include "core.h"
+#include "misc_functions.h"
 
 namespace lux {
 	namespace screen {
@@ -59,61 +60,6 @@ bool LuxEngine::EndDialog( LuxWidget dialog )
 	return ( this->msgdialog == 1 ? true : false);
 }
 
-void SetRectFromText( LuxRect & area, std::string & text, uint8_t text_width, uint8_t text_height, uint16_t wrap_length )
-{
-	uint16_t max_length = 1;
-	uint16_t length_count = 0;
-	uint16_t lines = 1;
-	std::string::iterator object;
-
-	for ( object = text.begin(); object != text.end(); object++ )
-	{
-		uint8_t utfchar = *object;
-		uint32_t cchar = utfchar;
-		if ( cchar == '\n' || cchar == '\r' )
-		{
-			lines++;
-			max_length = std::max(length_count, max_length);
-			length_count = 0;
-		}
-		else if ( cchar <= 128 )
-		{
-			length_count++;
-		}
-		else if ( cchar < 224 )
-		{
-			object++;
-
-			length_count++;
-		}
-		else if ( cchar < 240 )
-		{
-			object++;
-			object++;
-
-			length_count++;
-		}
-		else if ( cchar < 245 )
-		{
-			object++;
-			object++;
-			object++;
-
-			length_count++;
-		}
-
-		if (wrap_length == length_count + 2)
-		{
-			text.insert(object, '\n');
-		}
-
-	}
-	max_length = std::max(length_count, max_length);
-
-	area.w = text_width * max_length;
-	area.h = text_height * lines;
-
-}
 
 
 bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * answer )
@@ -124,34 +70,31 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 		return false;
 	}
 
-	uint16_t text_length = text.length() * 8;
-	uint16_t text_area_width;
 	LuxRect region = { 20, 29, 64, 50, 0 };
 
-
-	SetRectFromText( region, text, 8, 8, (lux::display->screen_dimension.w/8) - 8  );
+	Lux_Util_SetRectFromText( region, text, 8, 8, (lux::display->screen_dimension.w/8) - 8  );
 
 	region.h += 16; //padding
 	region.w += 16; //padding
 	region.x = (lux::display->screen_dimension.w - region.w) / 2;
 	region.y = (lux::display->screen_dimension.h / 2) - (region.h/2);
 
-
+/*
 	if ( dialog == DIALOGTEXT )
 	{
 		region.y -= 20;
 		region.w += 20;
-
 	}
 	else
 	{
-		region.h += 20;
+		region.h += 40;
 	}
-
+*/
 	lux::gui = new UserInterface(lux::display);
 	lux::gui->SetRegion( region );
-	lux::gui->AddChild(region, dialog, (LuxColour){150, 150, 200, 200}, text);
-	if ( dialog == DIALOGTEXT && answer)
+	lux::gui->AddChild( region, dialog, text );
+
+	if ( dialog == DIALOGTEXT && answer )
 	{
 		lux::gui->main_widget->SetText( *answer );
 		this->msgdialog_return = answer;
@@ -167,15 +110,15 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 
 bool LuxEngine::ShowDialog(std::string text, LuxWidget dialog, std::string * answer )
 {
-	if ( !this->CreateDialog(text, dialog, answer) )
+	if ( this->CreateDialog(text, dialog, answer) )
 	{
-		return true;
+		while ( !this->msgdialog )
+		{
+			this->LoopDialog();
+		}
+		return this->EndDialog( dialog );
 	}
-	while ( !this->msgdialog )
-	{
-		this->LoopDialog();
-	}
-	return this->EndDialog( dialog );
+	return true;
 }
 
 

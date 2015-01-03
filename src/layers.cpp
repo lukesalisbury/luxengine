@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "layers.h"
 #include "display.h"
-#include "world.h"
+#include "game_system.h"
 #include "core.h"
 #include "misc_functions.h"
 #include "game_config.h"
@@ -114,6 +114,7 @@ bool Layer::RemoveObject(MapObject * new_object)
 {
 	if ( new_object->layer_reference )
 		new_object->layer_reference--;
+
 	if ( !new_object->layer_reference )
 	{
 		this->objects_static.remove(new_object);
@@ -220,18 +221,18 @@ void Layer::Display()
 {
 	MapObject * object;
 	std::list<MapObject*>::iterator l_object;
-	if ( lux::gameworld )
+	if ( lux::gamesystem )
 	{
-		if ( lux::gameworld->active_map )
+		if ( lux::gamesystem->active_map )
 		{
 			/* Map Offsets */
-			this->_mapx = lux::gameworld->active_map->GetPosition(0);
-			this->_mapy = lux::gameworld->active_map->GetPosition(1);
+			this->_mapx = lux::gamesystem->active_map->GetPosition(0);
+			this->_mapy = lux::gamesystem->active_map->GetPosition(1);
 
-			this->_mapw = MAKE_FIXED_INT(lux::gameworld->active_map->map_width);
-			this->_maph = MAKE_FIXED_INT(lux::gameworld->active_map->map_height);
+			this->_mapw = MAKE_FIXED_INT(lux::gamesystem->active_map->map_width);
+			this->_maph = MAKE_FIXED_INT(lux::gamesystem->active_map->map_height);
 
-			this->wrap_layer = lux::gameworld->active_map->wrap_mode;
+			this->wrap_layer = lux::gamesystem->active_map->wrap_mode;
 			if ( this->wrap_layer )
 			{
 				/* Get valid top left poisition */

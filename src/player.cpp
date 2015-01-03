@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "game_config.h"
 
-#include "world.h"
+#include "game_system.h"
 #include "display_functions.h"
 #include "platform_media.h"
 
@@ -92,19 +92,20 @@ void Player::SetControls( std::string controller_name )
 	this->SetupController( controller_name );
 }
 
+
+
 void Player::SetControls(uint8_t preset)
 {
 	std::string control_value = "default";
+
 	if ( lux::config )
 	{
-
 		std::string control_name = "player.controller";
 
-		control_name.append( 1, (char)(preset + '0'));
+		control_name.append( 1, (char)(preset + '0') );
 		control_value = lux::config->GetString(control_name);
 	}
 	this->SetControls( control_value );
-
 }
 
 /* Cache Input */
@@ -170,6 +171,8 @@ void Player::CacheAxisValues( uint8_t n )
 
 void Player::CacheButtonValues(uint8_t n)
 {
+	if ( lux::core == NULL )
+		return;
 	int key = lux::core->GetInput( this->_buttonConfig[n].device, this->_buttonConfig[n].device_number, this->_buttonConfig[n].sym );
 	if ( key )
 		this->_button[n] = (this->_button[n] ? 2 : 1);

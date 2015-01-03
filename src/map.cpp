@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -60,7 +60,6 @@ MokoiMap::~MokoiMap()
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
 		delete (*p);
-		*p = NULL;
 	}
 	this->object_cache.clear();
 	this->_objects.clear();
@@ -89,6 +88,7 @@ void MokoiMap::InitialSetup( std::string map_name )
 	this->map_name = map_name;
 	this->loaded = false;
 	this->active = false;
+	this->reset_map = false;
 
 	this->keep_savedata = false;
 	this->keep_memory = false;
@@ -437,7 +437,7 @@ uint32_t MokoiMap::AddObject(MapObject * object, bool is_static )
 {
 	uint32_t object_id = 0;
 
-	object->SetData( object->type);
+	object->SetData( object->type );
 
 	if ( object->has_data )
 	{
@@ -446,7 +446,7 @@ uint32_t MokoiMap::AddObject(MapObject * object, bool is_static )
 		{
 			object->SetStaticMapID( this->object_cache_count, false );
 			object_id = object->GetStaticMapID();
-			this->object_cache[object->static_map_id] = object;
+			this->object_cache[object_id] = object;
 		}
 
 		if ( this->active )
@@ -461,7 +461,7 @@ MapObject * MokoiMap::GetObject( uint32_t ident )
 {
 	if ( !this->object_cache.empty() )
 	{
-		std::map<uint32_t,MapObject *>::iterator iter = this->object_cache.find(ident);
+		std::map<uint32_t, MapObject *>::iterator iter = this->object_cache.find(ident);
 		if( iter != this->object_cache.end() )
 			return iter->second;
 	}
@@ -930,7 +930,6 @@ bool MokoiMap::LoadFile()
 
 	this->wrap_mode = MAP_WRAPNONE;
 
-
 	this->entities = new EntitySection( this->entity_file_name, this->ident.value );
 
 	for ( std::map<std::string, std::string>::iterator cs = settings.begin(); cs != settings.end(); cs++ )
@@ -938,10 +937,6 @@ bool MokoiMap::LoadFile()
 		if ( !cs->first.compare("wrap") )
 		{
 			this->wrap_mode = elix::string::ToIntU8(cs->second);
-		}
-		else if ( !cs->first.compare("centerview") )
-		{
-			//this->_centerview = !!elix::string::ToIntU16(cs->second);
 		}
 
 		if ( this->entities->parent )

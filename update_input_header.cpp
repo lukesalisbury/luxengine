@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2013-2014 Luke Salisbury
+Copyright © 2013-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -26,17 +26,16 @@ res/input/%1.txt > %1_sheet_data
 std::string source_image_path = "";
 std::string source_sheet_path = "";
 std::string target_header_path = "";
-
-std::string target_platform = "pc/";
-
+std::string file_name = "";
 std::stringstream target_file_content;
 
 
-void read_image( const char * file )
+void read_image( std::string file )
 {
 	size_t file_size = 0;
 	int c;
 	std::ifstream source_file;
+
 	source_file.open( source_image_path.c_str(), std::ios_base::binary );
 
 	target_file_content.flags( std::ios::showbase );
@@ -68,11 +67,12 @@ void read_image( const char * file )
 
 }
 
-void read_sheet( const char * file )
+void read_sheet( std::string file )
 {
 	size_t file_size = 0;
 	std::string c;
 	std::ifstream source_file;
+
 	source_file.open( source_sheet_path.c_str(), std::ios_base::binary );
 
 	target_file_content.flags( std::ios::showbase );
@@ -113,7 +113,7 @@ void write_header()
 	target_file.close();
 }
 
-void set_paths( const char * file )
+void set_paths( std::string file )
 {
 	source_image_path = "res/input/";
 	source_image_path.append(file);
@@ -123,35 +123,50 @@ void set_paths( const char * file )
 	source_sheet_path.append(file);
 	source_sheet_path += ".txt";
 
-	target_header_path = "include/";
-	target_header_path += target_platform;
+	target_header_path = "include/input/";
 	target_header_path.append(file);
 	target_header_path += ".h";
 }
 
+void GetNameNoExtension( std::string & path )
+{
+	std::string new_path = path;
+	int lastslash = path.find_last_of( '/', path.length() );
+	int lastdot = path.find_last_of( '.', path.length() );
+
+
+	if ( lastdot )
+	{
+		path.erase( lastdot, path.length() - lastdot );
+	}
+
+	if ( lastslash )
+	{
+		path.erase( 0, lastslash+1 );
+
+	}
+
+}
 
 int main(int argc, char *argv[])
 {
-	std::cout << "Update Input Header for Lux Engine" << std::endl;
-
 	if ( argc > 1 )
 	{
-		std::cout << "Converting " << argv[1] << std::endl;
-		if ( argc > 2 )
-		{
-			target_platform.assign(argv[2]);
-			target_platform.append("/");
-		}
-		set_paths( argv[1] );
+		file_name.assign(argv[1]);
+		GetNameNoExtension( file_name );
+
+		std::cout << "Converting Input Icon " << argv[1] << " to header file." << std::endl;
+
+		set_paths( file_name );
 
 		std::cout << "Source:" << source_image_path << std::endl;
 		std::cout << "Source:" << source_sheet_path << std::endl;
 		std::cout << "Target:" << target_header_path << std::endl;
 
-		read_image( argv[1] );
-		read_sheet( argv[1] );
+		read_image( file_name );
+		read_sheet( file_name );
 
-		std::cout << "==================================================================" << std::endl;
+
 
 		write_header();
 

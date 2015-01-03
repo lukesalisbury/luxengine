@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -14,16 +14,19 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "game_config.h"
 #include "gui.h"
 
+namespace colour {
+	LuxColour lang_dialog = {150, 150, 200, 200};
+	LuxColour lang_button = {200, 200, 230, 255};
+}
+
 bool LuxEngine::LoadDefaultLanguage()
 {
 	std::string defaultlang = lux::config->GetString("language.default");
 
-	//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "defaultlang:"<< defaultlang << std::endl;
-
 	if ( lux::display )
 	{
-		uint32_t x_cen = 320, y_cen = 240;
-		LuxRect region = {320,240,160,120,0};
+		LuxRect region = {320, 240, 160,120,0};
+		LuxRect button_region = {0, 0, 0,0,0};
 		std::vector<std::string> langlist;
 
 		langlist = lux::config->GetArray("language.available");
@@ -32,33 +35,41 @@ bool LuxEngine::LoadDefaultLanguage()
 		{
 			/* Display Language Chooser */
 			uint16_t answer = 0;
-			uint32_t list_height = langlist.size() * 10;
-			x_cen = lux::display->screen_dimension.w /2;
-			y_cen = lux::display->screen_dimension.h /2;
-
-			region.x = x_cen - (x_cen / 2);
-			region.y = y_cen - list_height - 16;
-			region.w = x_cen;
-			region.h = (list_height*2) + 20;
-
+			uint16_t button_height = 30;
+			uint32_t list_height = 200;
 			lux::gui = new UserInterface( lux::display );
-			lux::gui->SetRegion( region );
-			lux::gui->AddChild(region, DIALOG, (LuxColour){150, 150, 200, 200}, "Choose Langauge");
+			Widget * dialog, * widget;
 
-			Widget * widget;
-			region.x += 10;
-			region.w -= 20;
-			region.h = 18;
+
+
+			button_height = lux::gui->GetCSSParser()->GetSize(BUTTON, ENABLED, "min-height") ? lux::gui->GetCSSParser()->GetSize(BUTTON, ENABLED, "min-height") : 20;
+
+			list_height = ( 1 + langlist.size() ) * (button_height + 6);
+
+			region.w = 200;
+			region.h = list_height;
+
+			region.x = (lux::display->screen_dimension.w - region.w) / 2;
+			region.y = (lux::display->screen_dimension.h / 2) - (region.h/2);
+
+
+			lux::gui->SetRegion( region );
+			dialog = lux::gui->AddChild(region, DIALOG, "Choose Language");
+
+			button_region.y = 12;
+			button_region.h = button_height;
+			button_region.w = region.w - 32;
 
 			for( uint16_t i = 0; i < langlist.size(); i++ )
 			{
-				region.y += 20;
-				widget = lux::gui->AddChild(region, BUTTON, (LuxColour){200, 200, 230, 255}, langlist[i].substr(3));
+				widget = lux::gui->AddWidgetChild(dialog, 4, button_region.y, button_region.w, button_region.h, BUTTON, langlist[i].substr(3));
 				widget->SetValue(i+1);
+
+				button_region.y += button_height+2;
 			}
 
 			answer = lux::gui->ReturnResult()-1;
-			if ( answer < langlist.size())
+			if ( answer < langlist.size() )
 			{
 				defaultlang = langlist[answer];
 			}

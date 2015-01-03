@@ -27,7 +27,7 @@ class AudioSystem: public BaseAudioSystem
 		int32_t PlayEffect( std::string requestSound, int32_t x = -1, int32_t y = -1 );
 		int32_t PlayDialog ( int32_t requestSound );
 		int32_t PlayMusic( std::string requestMusic, int32_t loop, int32_t fadeLength );
-		void Pause();
+		void PauseAll();
 		void StopDialog();
 
 		/* Volume */

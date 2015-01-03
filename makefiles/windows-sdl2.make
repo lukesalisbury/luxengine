@@ -1,14 +1,10 @@
 ifeq ($(SUPPORTPATH), )
-
 $(error Please set SUPPORTPATH variable before running make. )
-
 endif
 
-SUPPORTPATH = c:/dev/sdl2libs
-CURLPATH = c:/dev/libcurl
-
-LDFLAGS += -L"$(SUPPORTPATH)/lib" -L"$(CURLPATH)/lib"
-CPPFLAGS += -I"$(SUPPORTPATH)/include" -I"$(SUPPORTPATH)/include/SDL2" -I"$(CURLPATH)/include"
+LDFLAGS += -L"$(SUPPORTPATH)/lib"
+CPPFLAGS += -I"$(SUPPORTPATH)/include" -I"$(SUPPORTPATH)/include/SDL2"
+PLATFORMBITS=32
 
 #Settings
 INCLUDE_PAWN = TRUE
@@ -57,6 +53,6 @@ else
 	PLATFORM_LIBS += -mwindows
 endif
 
+
 $(OBJDIR)/lux.res: $(RES_SOURCE)
 	@windres -i $(RES_SOURCE) --input-format=rc -o $@ -O coff -F $(RES_OUTPUT)
-

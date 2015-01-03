@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "mokoi_game.h"
 #include "entity_section.h"
 #include "config.h"
-#include "world.h"
+#include "game_system.h"
 #include "display.h"
 #include <cstdlib>
 
@@ -52,7 +52,7 @@ WorldSection::WorldSection( elix::File * current_save_file )
  */
 WorldSection::~WorldSection()
 {
-	lux::gameworld->DeleteSection(this->Ident() );
+	lux::gamesystem->DeleteSection(this->Ident() );
 
 	delete [] this->grid;
 }
@@ -85,7 +85,7 @@ void WorldSection::LoadFile( )
 	std::stringstream world_file;
 	std::vector<std::string> world_array;
 
-	if ( lux::game_data->GetStream("./sections/" + this->name + ".txt", &world_file) )
+	if ( lux::game_data->GetStream("./worlds/" + this->name + ".tsv", &world_file) )
 	{
 		while ( !world_file.eof() )
 		{
@@ -205,8 +205,8 @@ bool WorldSection::AddMap( MokoiMap * map_object, const uint8_t x, const uint8_t
 				}
 			}
 		}
-		if ( lux::gameworld )
-			lux::gameworld->InsertMap( map_object->Ident(), map_object );
+		if ( lux::gamesystem )
+			lux::gamesystem->InsertMap( map_object->Ident(), map_object );
 
 		return true;
 	}
@@ -254,7 +254,7 @@ MokoiMap * WorldSection::GetMap( const uint16_t grid_id  )
 
 	if ( ident )
 	{
-		map = lux::gameworld->GetMap( ident );
+		map = lux::gamesystem->GetMap( ident );
 	}
 
 	return map;
@@ -267,7 +267,7 @@ MokoiMap * WorldSection::GetMap( const uint8_t grid_x, const uint8_t grid_y )
 
 	if ( ident )
 	{
-		map = lux::gameworld->GetMap( ident );
+		map = lux::gamesystem->GetMap( ident );
 	}
 
 	return map;

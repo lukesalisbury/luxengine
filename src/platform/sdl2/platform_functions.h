@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -26,6 +26,19 @@ Permission is granted to anyone to use this software for any purpose, including 
 SDL_Surface * Lux_SDL2_Image2Surface( std::string file );
 void Lux_SDL2_SetWindowIcon( SDL_Window * native_window );
 void Lux_SDL2_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_width, uint8_t text_height );
+
+
+void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[128] );
+void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[128] );
+SDL_Texture * Lux_SDL2_GetCharTexture( uint8_t c );
+bool Lux_SDL2_CheckTextColour( uint32_t cchar, SDL_Color & font_color, bool & watch_for_color );
+
+
+
+void Lux_SDL2_OpenMessageWindow( );
+void Lux_SDL2_PresentMessageWindow( );
+void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment );
+void Lux_SDL2_CloseMessageWindow( );
 
 
 #ifdef OPENGLENABLED

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 void UserInterface::SetTheme()
 {
-	this->css = new CSSParser("dialog { border-style:inset; color:#FFFFFFFF; background-color:#703030FF }\
+	this->css = new CSSParser("dialog { border-style:inset; color:#FFFFFFFF; background-color:#703030FF; min-height: 40px;  }\
 imagebutton, button, dialog { \
 	box-model:border;\
 	border-color:#703030FF;\
@@ -26,10 +26,13 @@ imagebutton, button, dialog { \
 	background-color:#703030FF;\
 	padding: 4px;\
 }\
+imagebutton, button,{ \
+	text-align:center;\
+}\
 button { border-style:outset; }\
 imagebutton:hover, button:hover { \
 	border-color:#804040FF;\
-	border-style:inset;\
+	border-style:outset;\
 	color:#000000FF;\
 	background-color:#804040FF;\
 }\
@@ -50,6 +53,7 @@ checkbox:disabled  { background-color: #AAAAAA99;} \
 checkbox:pressed  { color: #554444FF; background-color: #DDDDDDFF;} \
 checkbox:hover, checkbox:activehover  {background-color: #554444FF;} \
 imagebutton { min-height:36px; } \
+inputtext { border-width:1px; background-color: #223333FF; border-color: #444444FF; border-style:inset; } \
 ");
 
 

@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "ffi_world.h"
 
-#include "world.h"
+#include "game_system.h"
 
 /**
  * @brief Lux_FFI_World_Get
@@ -24,9 +24,9 @@ uint32_t Lux_FFI_World_Get( const uint32_t section_hash, const uint8_t grid_x, c
 {
 	uint32_t map_ident = 0;
 
-	if ( lux::gameworld )
+	if ( lux::gamesystem )
 	{
-		WorldSection * section = lux::gameworld->GetSection( section_hash );
+		WorldSection * section = lux::gamesystem->GetSection( section_hash );
 		MokoiMap * map = section->GetMap( grid_x, grid_y );
 
 		map_ident = map->Ident();
@@ -46,9 +46,9 @@ uint32_t Lux_FFI_World_Set( const uint32_t section_hash, const uint8_t grid_x, c
 {
 	uint32_t map_ident = 0;
 
-	if ( lux::gameworld )
+	if ( lux::gamesystem )
 	{
-		map_ident = lux::gameworld->SetMap( section_hash, grid_x, grid_y, -1, -1, -1 );
+		map_ident = lux::gamesystem->SetMap( section_hash, grid_x, grid_y, -1, -1, -1 );
 	}
 
 	return map_ident;
@@ -57,14 +57,14 @@ uint32_t Lux_FFI_World_Set( const uint32_t section_hash, const uint8_t grid_x, c
 /**
  * @brief Lux_FFI_World_Exist
  * @param section_name
- * @return
+ * @return section_hash
  */
 uint32_t Lux_FFI_World_Exist( const char * section_name )
 {
 	uint32_t section_hash = 0;
-	if ( lux::gameworld )
+	if ( lux::gamesystem )
 	{
-		WorldSection * section = lux::gameworld->GetSection( section_name, false );
+		WorldSection * section = lux::gamesystem->GetSection( section_name, false );
 		if ( section )
 		{
 			section_hash = section->Ident();
@@ -86,9 +86,9 @@ uint32_t Lux_FFI_World_Edit_New( const char * section_name, const uint8_t width,
 
 	if ( (width > 0 && width <= 64) && (height > 0 && height <= 64) )
 	{
-		if ( lux::gameworld )
+		if ( lux::gamesystem )
 		{
-			WorldSection * section = lux::gameworld->NewSection( section_name, width, height );
+			WorldSection * section = lux::gamesystem->NewSection( section_name, width, height );
 			if ( section )
 			{
 				section->SetOption(1, 1);
@@ -111,12 +111,12 @@ uint32_t Lux_FFI_World_Edit_New( const char * section_name, const uint8_t width,
  */
 uint8_t Lux_FFI_World_Edit_Set( uint32_t section_hash, uint32_t map_ident, const uint8_t x, const uint8_t y )
 {
-	if ( lux::gameworld )
+	if ( lux::gamesystem )
 	{
-		WorldSection * section = lux::gameworld->GetSection( section_hash );
+		WorldSection * section = lux::gamesystem->GetSection( section_hash );
 		if ( section && section->GetOption(1) == true )
 		{
-			MokoiMap * map = lux::gameworld->GetMap( map_ident );
+			MokoiMap * map = lux::gamesystem->GetMap( map_ident );
 
 			return section->AddMap(map, x, y);
 		}
@@ -132,9 +132,9 @@ uint8_t Lux_FFI_World_Edit_Set( uint32_t section_hash, uint32_t map_ident, const
  */
 uint8_t Lux_FFI_World_Edit_Save( uint32_t section_hash )
 {
-	if ( lux::gameworld )
+	if ( lux::gamesystem )
 	{
-		WorldSection * section = lux::gameworld->GetSection( section_hash );
+		WorldSection * section = lux::gamesystem->GetSection( section_hash );
 		if ( section && section->GetOption(1) == true )
 		{
 			section->SaveFile();

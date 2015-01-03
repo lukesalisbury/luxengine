@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -115,7 +115,7 @@ CURLcode Lux_Util_FileDownloaderHandler( DownloadRequest * request )
 		curl_easy_setopt( curl, CURLOPT_URL, request->url.c_str() );
 		curl_easy_setopt( curl, CURLOPT_WRITEDATA, output_file );
 		curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, Lux_Util_CurlWrite );
-		curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 0L);
+		curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 0);
 		curl_easy_setopt( curl, CURLOPT_PROGRESSFUNCTION, Lux_Util_CurlProgress);
 		curl_easy_setopt( curl, CURLOPT_PROGRESSDATA, request );
 		curl_easy_setopt( curl, CURLOPT_USERAGENT, PROGRAM_NAME"/"PROGRAM_VERSION );
@@ -172,7 +172,7 @@ int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserI
 		region.x /= 4;
 		region.y = (region.y / 2) - 25;
 		region.w /= 2;
-		request.dialog = ui->AddChild(region, THROBBER, (LuxColour){150, 150, 200, 200}, "Downloading\n" + urlArg + "\n");
+		request.dialog = ui->AddChild(region, THROBBER, "Downloading\n" + urlArg + "\n");
 		request.dialog->SetText("Downloading\n" + urlArg + "\n", urlArg.length() );
 
 
@@ -263,7 +263,7 @@ int32_t Lux_Util_FileDownloaderBackground( std::string urlArg, std::string origF
 
 
 	DownloadRequest request;
-	request.dialog = ui->AddChild(region, THROBBER, (LuxColour){255, 255, 255, 255}, "Downloading " + urlArg + "\n");
+	request.dialog = ui->AddChild( region, THROBBER, "Downloading " + urlArg + "\n");
 	request.url = urlArg;
 	request.file = origFile;
 

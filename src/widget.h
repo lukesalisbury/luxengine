@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -21,6 +21,8 @@ class Widget;
 #include "sprite_sheet.h"
 #include <list>
 
+
+
 typedef enum {
 	LEFTTOP,
 	RIGHTTOP,
@@ -28,7 +30,6 @@ typedef enum {
 	RIGHTBOTTOM,
 	CENTERCENTER
 } WidgetAlignment;
-
 
 typedef struct {
 	int16_t x, y;
@@ -60,9 +61,9 @@ class Widget
 		LuxRect padding;
 		std::list<WidgetObject *> objects;
 
-		WidgetObject * textbox;
-		WidgetObject * bgbox;
-		WidgetObject * borders[4];
+		WidgetObject * text_object;
+		WidgetObject * background_object;
+		WidgetObject * border_object[4];
 
 	private:
 		Widget * parent;
@@ -75,6 +76,7 @@ class Widget
 		LuxSprite * _sprite;
 		LuxWidget _type;
 
+		void Generate( CSSParser * style );
 		void GenerateBox( CSSParser * style );
 		void GenerateColours( CSSParser * style, WidgetObject * object, bool background );
 		void GenerateBorderColours( CSSParser * style, WidgetObject * object, uint8_t position );
@@ -94,7 +96,7 @@ class Widget
 		_WidgetStates SetState(_WidgetStates state);
 
 		std::string GetText();
-		std::string SetText(std::string text, uint32_t length = 0); // don't worry about length, it's just  a hack
+		std::string SetText(std::string text, uint32_t length = 0); // don't worry about length, it's just a hack
 
 		int32_t GetValue() { return this->_value; }
 		int32_t SetValue(int32_t value);

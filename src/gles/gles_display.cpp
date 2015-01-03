@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2012-2014 Luke Salisbury
+Copyright © 2012-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -110,9 +110,10 @@ void Lux_GLES_LoadFont()
 	font_point += (32*8);
 	uint8_t i = 0, q;
 	glEnable( GL_TEXTURE_2D );
+	uint8_t * charflip = new uint8_t[64];
+
 	for ( uint8_t c = 0; c < 96; c++)
 	{
-		uint8_t * charflip = new uint8_t[64];
 		for (i = 0; i < 8; i++)
 		{
 			for (q = 0; q < 8; q++)
@@ -133,9 +134,10 @@ void Lux_GLES_LoadFont()
 		gles::font[c].pot = true;
 		gles::font[c].loaded = true;
 
-		delete charflip;
 		font_point += 8;
 	}
+	delete [] charflip;
+
 	glDisable( GL_TEXTURE_2D );
 }
 
@@ -651,6 +653,10 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect
 		}
 		else if ( cchar <= 128 )
 		{
+			if ( cchar == ' ' )
+			{
+				current_effects.primary_colour = effects.primary_colour; // reset effects
+			}
 			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, current_effects, allow_custom);
 		}
 		else if ( cchar < 224 )

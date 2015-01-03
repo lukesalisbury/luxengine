@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <sstream>
 
 #include "entity_manager.h"
-#include "world.h"
+#include "game_system.h"
 #include "elix_string.hpp"
 #include "display.h"
 #include "entity_system.h"
@@ -72,16 +72,16 @@ Entity * EntityManager::NewEntity(std::string id, std::string base, uint32_t map
 		{
 			if ( map_id )
 			{
-				MokoiMap * map = lux::gameworld->GetMap(map_id);
+				MokoiMap * map = lux::gamesystem->GetMap(map_id);
 				if ( map && map->entities )
 				{
 					map->entities->Append(new_entity);
 					return new_entity;
 				}
 			}
-			else if ( lux::gameworld->global_entities )
+			else if ( lux::gamesystem->GetEntities() )
 			{
-				lux::gameworld->global_entities->Append(new_entity);
+				lux::gamesystem->GetEntities()->Append(new_entity);
 				return new_entity;
 			}
 
@@ -95,9 +95,9 @@ Entity * EntityManager::GetEntity(uint32_t entity_id )
 {
 	if ( entity_id == entity_maphash )
 	{
-		if ( lux::gameworld->active_map != NULL )
-			if ( lux::gameworld->active_map->entities != NULL)
-				return lux::gameworld->active_map->entities->parent;
+		if ( lux::gamesystem->active_map != NULL )
+			if ( lux::gamesystem->active_map->entities != NULL)
+				return lux::gamesystem->active_map->entities->parent;
 			else
 				return NULL;
 		else
@@ -105,8 +105,8 @@ Entity * EntityManager::GetEntity(uint32_t entity_id )
 	}
 	else if ( entity_id == entity_mainhash )
 	{
-		if ( lux::gameworld != NULL )
-			return lux::gameworld->GetEntities()->parent;
+		if ( lux::gamesystem != NULL )
+			return lux::gamesystem->GetEntities()->parent;
 		else
 			return NULL;
 	}

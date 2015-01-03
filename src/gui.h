@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -62,8 +62,8 @@ class UserInterface
 		int32_t Show( );
 
 		void AddChild( Widget * child );
-		Widget * AddChild( LuxRect region, LuxWidget type, LuxColour colour, std::string text );
-		Widget * AddWidgetChild( Widget * parent, LuxRect region, LuxWidget type );
+		Widget * AddChild(LuxRect region, LuxWidget type, std::string text );
+		Widget * AddWidgetChild( Widget * parent, LuxRect region, LuxWidget type, std::string text = "", uint32_t text_length = 0 );
 		Widget * AddWidgetChild( Widget * parent, int32_t x, int32_t y, uint16_t w, uint16_t h, LuxWidget type, std::string text = "");
 		void RemoveChild( Widget * child );
 		void RemoveAll();

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -47,7 +47,7 @@ class MokoiGame
 {
 	public:
 		MokoiGame(  );
-		MokoiGame( std::string path, bool checkonly = false );
+		MokoiGame(std::string path, bool scan_files = true );
 		~MokoiGame();
 
 	private:
@@ -61,8 +61,8 @@ class MokoiGame
 		std::string creation;
 		std::string filename;
 		std::string public_directory;
+		bool has_public_directory;
 		bool valid;
-
 
 		uint8_t file_magic[6];
 		uint8_t patch_magic[7];
@@ -86,21 +86,22 @@ class MokoiGame
 
 		bool FolderList(std::string folder, std::vector<std::string> * results);
 
-		uint8_t GetType( ) { return type; }
+		uint8_t GetType( );
 		std::string GetTitle();
 		std::string GetIdent();
 		std::string GetAuthor();
 		std::string GetCreation();
 		std::string GetFilename();
 		std::string GetPublicDirectory();
-		uint32_t GetProjectIdent() { return ident;}
+		uint32_t GetProjectIdent();
 
 		void Print();
 	private:
 		bool Scan( uint8_t type, std::string path, std::string dest );
 		bool ScanPackage( uint8_t type, std::string path, std::string dest );
-		bool ScanDirectory(uint8_t type, std::string path, std::string dest , bool overwrite = false);
+		bool ScanDirectory(uint8_t type, std::string path, std::string dest, bool overwrite = false);
 
+		bool HasProjectDirectory();
 		bool SetProjectDirectory();
 		uint8_t ReadType( std::string &path, bool read_info );
 };

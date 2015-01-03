@@ -1,4 +1,7 @@
-button1	0	0	14	20
-button3	14	0	14	20
-button2	28	0	14	20
-button5	42	0	14	20
+button1	0	0	14	20	Left
+button3	14	0	14	20	Right
+button2	28	0	14	20	Middle
+button4	42	0	14	20	X1
+button5	56	0	14	20	X2
+scrollY+	70	0	14	20
+scrollY-	84	0	14	20

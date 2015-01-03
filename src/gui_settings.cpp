@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -27,7 +27,7 @@ void LuxEngine::SettingDialog( )
 	lux::gui = new UserInterface(lux::display);
 	lux::gui->SetRegion( region );
 
-	Widget * parent = lux::gui->AddChild(region, DIALOGOK, (LuxColour){150, 150, 200, 200}, "Engine Settings");
+	Widget * parent = lux::gui->AddChild(region, DIALOGOK, "Engine Settings");
 	Widget * fs = lux::gui->AddWidgetChild(parent, 10, 16, 180, 18, CHECKBOX, "Full Screen Mode");
 	Widget * ogl = lux::gui->AddWidgetChild(parent, 10, 36, 180, 18, CHECKBOX, "Use OpenGL");
 

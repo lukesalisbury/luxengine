@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_spritesheet.h"
 
 #include "display.h"
-#include "world.h"
+#include "game_system.h"
 
 /** Lux_FFI_Sheet_Reference
 *
@@ -41,9 +41,9 @@ void Lux_FFI_Sheet_Replace( const char * old_sheet, const char * new_sheet )
 
 	if ( old_sheet && new_sheet )
 	{
-		if ( lux::gameworld->active_map )
+		if ( lux::gamesystem->active_map )
 		{
-			lux::gameworld->active_map->ReplaceObjectsSheets( old_sheet, new_sheet );
+			lux::gamesystem->active_map->ReplaceObjectsSheets( old_sheet, new_sheet );
 		}
 	}
 

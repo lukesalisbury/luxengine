@@ -1,2 +1,0 @@
-axis	0	0	input-display.mps	32	0	96	64
-button	0	0	input-button.mps	0	0	32	32

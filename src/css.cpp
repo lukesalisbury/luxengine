@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -10,6 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include <sstream>
 #include "css.h"
+#include "core.h"
 #include "elix_string.hpp"
 #include "display_functions.h"
 /*
@@ -21,14 +22,14 @@ CSSParser::CSSParser( std::string content )
 {
 	this->AddContent(content);
 
-	/*
-	for ( std::vector<CSSElement*>::iterator it = this->elements.begin(); it != this->elements.end(); it++ )
-	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << (*it)->element << ":" << (*it)->state << "" << std::endl;
-		for ( std::map<std::string, std::string>::iterator key = (*it)->key.begin(); key != (*it)->key.end(); key++ )
-			lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
-	}
-	*/
+
+//	for ( std::vector<CSSElement*>::iterator it = this->elements.begin(); it != this->elements.end(); it++ )
+//	{
+//		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << (*it)->element << ":" << (*it)->state << "" << std::endl;
+//		for ( std::map<std::string, std::string>::iterator key = (*it)->key.begin(); key != (*it)->key.end(); key++ )
+//			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
+//	}
+
 }
 
 CSSParser::~CSSParser() {}

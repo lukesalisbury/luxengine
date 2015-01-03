@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <stdint.h>
 
 #include "core.h"
-#include "world.h"
+#include "game_system.h"
 
 #define FIXED_MIN 0x7FFFFFFF
 
@@ -233,13 +233,13 @@ uint32_t Lux_FFI_Entities_List( uint32_t map_id )
 
 	if ( map_id == 0 ) /* GLOBAL */
 	{
-		section = lux::gameworld->GetEntities();
+		section = lux::gamesystem->GetEntities();
 	}
 	else if ( map_id )/* Map */
 	{
-		if ( lux::gameworld->GetMap( map_id ) )
+		if ( lux::gamesystem->GetMap( map_id ) )
 		{
-			section = lux::gameworld->GetMap( map_id )->GetEntities();
+			section = lux::gamesystem->GetMap( map_id )->GetEntities();
 		}
 	}
 
@@ -267,13 +267,13 @@ char * Lux_FFI_Entities_Next( uint32_t map_id )
 
 	if ( map_id == 0 ) /* GLOBAL */
 	{
-		section = lux::gameworld->GetEntities();
+		section = lux::gamesystem->GetEntities();
 	}
 	else if ( map_id )/* Map */
 	{
-		if ( lux::gameworld->GetMap( map_id ) )
+		if ( lux::gamesystem->GetMap( map_id ) )
 		{
-			section = lux::gameworld->GetMap( map_id )->GetEntities();
+			section = lux::gamesystem->GetMap( map_id )->GetEntities();
 		}
 	}
 

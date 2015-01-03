@@ -56,7 +56,7 @@ int32_t AudioSystem::SetEffectsVolume(int32_t volume)
 	return 0;
 }
 
-void AudioSystem::Pause()
+void AudioSystem::PauseAll()
 {
 
 }

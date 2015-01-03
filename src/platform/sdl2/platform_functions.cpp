@@ -15,6 +15,280 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <string>
 #include <SDL.h>
 #include "core.h"
+#include "config.h"
+#include "bitfont.h"
+#include "misc_functions.h"
+
+/* Characters in SDL_Texture format
+ * Use in Native and MessageWindow
+ */
+
+SDL_Texture * debug_font[128];
+
+/* Debug Message */
+SDL_Window * debug_window = NULL;
+SDL_Renderer * debug_renderer = NULL;
+
+void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[128] )
+{
+	uint8_t * font_point = &gfxPrimitivesFontdata[0];
+	uint8_t i = 0, q;
+	for ( uint8_t c = 0; c < 128; c++)
+	{
+		uint16_t * charflip = new uint16_t[64];
+		for (i = 0; i < 8; i++)
+		{
+			for (q = 0; q < 8; q++)
+			{
+				charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFFFF : 0x000F) ;
+			}
+		}
+		font[c] = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB1555, SDL_TEXTUREACCESS_STATIC, 8, 8);
+		if ( !font[c] )
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Lux_SDL2_LoadFont: " << SDL_GetError() << std::endl;
+		SDL_SetTextureBlendMode( font[c],SDL_BLENDMODE_ADD);
+		SDL_UpdateTexture( font[c], NULL, charflip, 16);
+
+		font_point += 8;
+	}
+}
+
+
+void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[128] )
+{
+	for ( uint8_t c = 0; c < 128; c++)
+	{
+		SDL_DestroyTexture(font[c]);
+	}
+}
+
+SDL_Texture * Lux_SDL2_GetCharTexture( SDL_Texture * font[128], uint8_t c )
+{
+	SDL_Texture * texture = NULL;
+	if ( c > 31 && c < 128)
+	{
+		texture =  font[c];
+	}
+	return texture;
+}
+
+
+
+/* Lux_SDL2_OpenMessageWindow
+ * Creates a new window to display messages.
+ -
+ */
+void Lux_SDL2_OpenMessageWindow(  )
+{
+	if ( !debug_window )
+	{
+		/* Debug Messages */
+		int32_t x;
+		int32_t y;
+
+		x = lux::global_config->GetNumber("debug.x");
+		y = lux::global_config->GetNumber("debug.y");
+
+
+		/* Account for Window Size*/
+		if ( x < 10 )
+			x = 10;
+
+		if ( y < 10 )
+			y = 10;
+
+		debug_window = SDL_CreateWindow("Messages", static_cast<int>(x), static_cast<int>(y), 480, 360, SDL_WINDOW_SHOWN);
+		debug_renderer = SDL_CreateRenderer(debug_window, -1, SDL_RENDERER_SOFTWARE );
+
+		if ( !debug_renderer )
+		{
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
+
+		}
+
+		Lux_SDL2_LoadFont( debug_renderer, debug_font );
+	}
+}
+
+void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
+{
+	if ( !debug_window )
+		return;
+
+	std::string::iterator object;
+	SDL_Rect draw;
+	LuxRect rect;
+	SDL_Rect area;
+	int w,h;
+
+	bool watch_for_color = false;
+	bool is_whitspace = false;
+	LuxColour font_color = { 255, 255,255, 255 };
+
+	rect.x = rect.y = 0;
+
+	SDL_GetWindowSize( debug_window, &w, &h );
+	Lux_Util_SetRectFromText( rect, message, 8, 10, 240 );
+
+	area.x = rect.x;
+	area.y = rect.y;
+	area.w = rect.w;
+	area.h = rect.h;
+
+	if ( alignment == 3 )
+	{
+		area.y = h - area.h;
+	}
+	else if ( alignment == 2 )
+	{
+		area.y = h - area.h;
+		area.x = w - area.w;
+	}
+	else if ( alignment == 1 )
+	{
+		area.x = w - area.w;
+	}
+
+	SDL_SetRenderDrawColor( debug_renderer, 0, 0, 0, 255 );
+	//SDL_RenderFillRect( debug_renderer, &area );
+
+	draw = area;
+	draw.w = draw.h = 8;
+
+	for ( object = message.begin(); object != message.end(); object++ )
+	{
+		uint8_t utfchar = *object;
+		uint32_t cchar = utfchar;
+
+		is_whitspace = false;
+
+		if (cchar == '\n' || cchar == '\r')
+		{
+			draw.y += 10;
+			draw.x = area.x;
+			cchar = 0;
+			is_whitspace = true;
+		}
+		else if ( cchar <= 32 )
+		{
+			draw.x += 7;
+			cchar = 0;
+			is_whitspace = true;
+		}
+		else if ( cchar <= 128 )
+		{
+
+		}
+		else if ( cchar < 224 )
+		{
+			object++;
+			uint32_t next = *object;
+
+			cchar = ((cchar << 6) & 0x7ff) + (next & 0x3f);
+		}
+		else if ( cchar < 240 )
+		{
+			uint32_t next;
+
+			object++;
+			next = (*object) & 0xff;
+			cchar = ((cchar << 12) & 0xffff) + ((next << 6) & 0xfff);
+
+			object++;
+			next = (*object) & 0x3f;
+			cchar += next;
+
+		}
+		else if ( cchar < 245 )
+		{
+			uint32_t next;
+
+			object++;
+			next = (*object) & 0xff;
+			cchar = ((cchar << 18) & 0xffff) + ((next << 12) & 0x3ffff);
+
+			object++;
+			next = (*object) & 0xff;
+			cchar += (next << 6) & 0xfff;
+
+			object++;
+			next = (*object) & 0x3f;
+			cchar += next;
+		}
+
+		if ( cchar != 0 )
+		{
+			if ( cchar == 'S' )
+			{
+				int q = 0;
+			}
+			if ( !Lux_Util_CheckTextColour( cchar, font_color, watch_for_color ) )
+			{
+				SDL_Texture * texture = NULL;
+
+				if ( cchar >= 32 && cchar <= 128 )
+				{
+					texture = Lux_SDL2_GetCharTexture(debug_font, cchar);
+				}
+				else
+				{
+					texture = Lux_SDL2_GetCharTexture(debug_font, '?');
+				}
+
+				if ( texture )
+				{
+					SDL_SetTextureColorMod( texture, font_color.r, font_color.g, font_color.b);
+					SDL_SetTextureAlphaMod( texture, 255 );
+					SDL_RenderCopy(debug_renderer, texture, NULL, &draw);
+				}
+				draw.x += 7;
+			}
+		}
+
+		if ( is_whitspace )
+		{
+			/* Reset Colour if a whitespace occurs */
+			font_color.r = font_color.g = font_color.b = 255;
+		}
+	}
+
+}
+
+void Lux_SDL2_PresentMessageWindow()
+{
+	SDL_RenderPresent(debug_renderer);
+	SDL_RenderClear(debug_renderer);
+}
+
+
+/* Lux_SDL2_CloseMessageWindow
+ * Closes the Message Window
+ -
+ */
+void Lux_SDL2_CloseMessageWindow(  )
+{
+	if ( debug_renderer )
+	{
+		Lux_SDL2_UnloadFont( debug_font );
+		SDL_DestroyRenderer(debug_renderer);
+		debug_renderer = NULL;
+	}
+	if ( debug_window )
+	{
+		int x;
+		int y;
+
+
+		SDL_GetWindowPosition( debug_window, &x, &y );
+
+		lux::global_config->SetNumber("debug.x", static_cast<int32_t>(x));
+		lux::global_config->SetNumber("debug.y", static_cast<int32_t>(y));
+
+		SDL_DestroyWindow(debug_window);
+		debug_window = NULL;
+	}
+
+}
 
 /* Lux_SDL2_Image2Surface
  * Creates a SDL_Surface from a file from the game file.
@@ -35,7 +309,7 @@ SDL_Surface * Lux_SDL2_Image2Surface( std::string file )
 			if ( png->HasContent() )
 			{
 				temp_surface = SDL_CreateRGBSurfaceFrom( png->GetPixels(), png->Width(), png->Height(),32,png->Width()*4,0xff,0xff00,0xff0000, 0xff000000);
-				SDL_SetSurfaceBlendMode(temp_surface, SDL_BLENDMODE_BLEND);
+				SDL_SetSurfaceBlendMode(temp_surface, SDL_BLENDMODE_NONE);
 			}
 			delete png;
 		}
@@ -67,20 +341,17 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 	}
 	else
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Scanning for window icon in resource directory." << std::endl;
-
 		// Load Icon from resource
-		elix::Image * image_file;
-		elix::File * image_source_file;
 		uint32_t size = 0;
+		elix::File * image_source_file = NULL;
 		uint8_t * data = NULL;
 
-		image_source_file = new elix::File( elix::directory::Resources("") + "window_icon.png" );
+		image_source_file = new elix::File( elix::directory::Resources("", "window_icon.png") );
 		size = image_source_file->ReadAll( (data_pointer*) &data);
 
 		if ( size )
 		{
-			image_file = new elix::Image(data, size);
+			elix::Image * image_file = new elix::Image(data, size);
 			if ( image_file->HasContent() )
 			{
 				icon = SDL_CreateRGBSurfaceFrom( image_file->GetPixels(), image_file->Width(), image_file->Height(), 32, image_file->Width()*4,0xff,0xff00,0xff0000, 0xff000000);
@@ -88,81 +359,16 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 				SDL_SetWindowIcon(native_window, icon);
 				SDL_FreeSurface(icon);
 			}
+			delete image_file;
 		}
 
+		NULLIFY_ARRAY( data );
+		NULLIFY( image_source_file );
 	}
 
 }
 
-/* Lux_SDL2_SetRectFromText
- * Update Width and Height of a SDL_Rect base on a string of text
- @ area:
- @ text:
- @ text_width:
- @ text_height:
- */
-void Lux_SDL2_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_width, uint8_t text_height )
-{
-	uint16_t max_length = 1;
-	uint16_t length_count = 0;
-	uint16_t lines = 1;
-	std::string::iterator object;
 
-	for ( object = text.begin(); object != text.end(); object++ )
-	{
-		bool watch_for_color = false;
-		uint8_t utfchar = *object;
-		uint32_t cchar = utfchar;
-		if ( cchar == '\n' || cchar == '\r' )
-		{
-			lines++;
-			max_length = std::max(length_count, max_length);
-			length_count = 0;
-		}
-		else if ( watch_for_color )
-		{
-			object++;
-
-			watch_for_color = false;
-		}
-		else if ( cchar == 0xA7 )
-		{
-			object++;
-
-			watch_for_color = true;
-		}
-		else if ( cchar <= 128 )
-		{
-			length_count++;
-		}
-		else if ( cchar < 224 )
-		{
-			object++;
-
-			length_count++;
-		}
-		else if ( cchar < 240 )
-		{
-			object++;
-			object++;
-
-			length_count++;
-		}
-		else if ( cchar < 245 )
-		{
-			object++;
-			object++;
-			object++;
-
-			length_count++;
-		}
-	}
-	max_length = std::max( length_count, max_length );
-
-	area.w = text_width * max_length;
-	area.h = text_height * lines;
-
-}
 
 #ifdef OPENGLENABLED
 #include "gles/gles.hpp"

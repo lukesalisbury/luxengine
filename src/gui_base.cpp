@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -18,7 +18,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display_functions.h"
 #include "mokoi_game.h"
 
-ObjectEffect default_cursor_fx( (LuxColour){0,0,0,255}, (LuxColour){255,255,255,255} );
+ObjectEffect default_cursor_fx( colour::black, colour::white );
 extern ObjectEffect default_fx;
 
 void LuxWidget_MergeRect(LuxRect & a, WidgetObjectPosition& b)
@@ -93,6 +93,9 @@ UserInterface::~UserInterface()
 		delete this->controller;
 	}
 
+	NULLIFY( this->css );
+
+
 	if ( this->internal_display != lux::display )
 	{
 		NULLIFY( this->internal_display );
@@ -142,8 +145,7 @@ LuxSheet * UserInterface::GetSheet( std::string file, uint16_t width, uint16_t h
 			elix::Image * image_file;
 			elix::File * image_source_file;
 
-			elix::string::StripUnwantedCharacters(file);
-			local_filesystem_path = elix::directory::Resources("") + file;
+			local_filesystem_path = elix::directory::Resources("", file);
 
 			image_source_file = new elix::File( local_filesystem_path );
 			if ( image_source_file->Exist() )
@@ -185,7 +187,6 @@ LuxSheet * UserInterface::GetSheet( std::string file, uint16_t width, uint16_t h
 
 LuxSprite * UserInterface::GetSprite( std::string file, uint16_t width, uint16_t height )
 {
-
 	LuxSheet * sheet = NULL;
 	LuxSprite * return_sprite = NULL;
 	std::vector<std::string> name;
@@ -204,7 +205,7 @@ LuxSprite * UserInterface::GetSprite( std::string file, uint16_t width, uint16_t
 	return return_sprite;
 }
 
-Widget * UserInterface::AddWidgetChild(Widget * parent, LuxRect region, LuxWidget type)
+Widget * UserInterface::AddWidgetChild(Widget * parent, LuxRect region, LuxWidget type, std::string text, uint32_t text_length)
 {
 	Widget * child = NULL;
 
@@ -219,6 +220,7 @@ Widget * UserInterface::AddWidgetChild(Widget * parent, LuxRect region, LuxWidge
 		region.y += parent->_region.y;
 
 	child = new Widget(region, ( type >= DIALOGEXT ? DIALOG : type), this->css);
+	child->SetText(text, text_length);
 	this->children_widget.push_back(child);
 	return child;
 }
@@ -245,6 +247,7 @@ Widget * UserInterface::AddWidgetChild(Widget * parent, int32_t x, int32_t y, ui
 
 	child = new Widget(region, ( type >= DIALOGEXT ? DIALOG : type), this->css);
 	this->children_widget.push_back(child);
+
 	if ( text.length() )
 	{
 		child->SetText(text);
@@ -252,49 +255,81 @@ Widget * UserInterface::AddWidgetChild(Widget * parent, int32_t x, int32_t y, ui
 	return child;
 }
 
+#define DIALOG_YES 1
+#define DIALOG_OKAY 1
+#define DIALOG_NO 2
+#define DIALOG_CANCEL 3
 
-Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, LuxColour colour, std::string text)
+Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, std::string text)
 {
-	Widget * child = NULL;
+	static LuxRect button_positions[3] = {
+		{-50, -24, 40, 20, 6000},
+		{-100, -24, 40, 20, 6000},
+		{-150, -24, 40, 20, 6000}
+	};
 
-	child = new Widget( region, ( type >= DIALOGEXT ? DIALOG : type), this->css );
+	if ( type == DIALOGTEXT )
+	{
+		if ( region.w < 200 )
+		{
+			region.w = 200;
+		}
+	}
+
+	Widget * child = new Widget( region, ( type >= DIALOGEXT ? DIALOG : type), this->css );
 	child->SetText(text);
 	this->children_widget.push_back(child);
+
+
 	if ( type == DIALOGYESNO )
 	{
-		Widget * new_child1 = this->AddWidgetChild( child, (LuxRect){-100, -24, 40, 20, 6000}, BUTTON );
-		new_child1->SetText("Yes");
-		new_child1->SetValue(1);
+		Widget * new_child2 = this->AddWidgetChild( child, button_positions[0], BUTTON, "No" );
+		new_child2->SetValue( DIALOG_NO );
 
-		Widget * new_child2 = this->AddWidgetChild( child, (LuxRect){-50, -24, 40, 20, 6000}, BUTTON );
-		new_child2->SetText("No");
-		new_child2->SetValue(2);
+		Widget * new_child1 = this->AddWidgetChild( child, button_positions[1], BUTTON, "Yes" );
+		new_child1->SetValue( DIALOG_YES );
 
 		this->active_child = child;
 	}
 	else if ( type == DIALOGOK )
 	{
-		Widget * new_child1 = this->AddWidgetChild( child, (LuxRect){-50, -24, 40, 20, 6000}, BUTTON );
-		new_child1->SetText("Okay");
-		new_child1->SetValue(1);
+		Widget * new_child1 = this->AddWidgetChild( child, button_positions[0], BUTTON, "Okay" );
+
+		new_child1->SetValue( DIALOG_OKAY );
+
+		this->active_child = child;
+
+	}
+	else if ( type == DIALOGYESNOCANCEL )
+	{
+		Widget * no_child = this->AddWidgetChild( child, button_positions[0], BUTTON, "No" );
+		no_child->SetValue( DIALOG_NO );
+
+		Widget * yes_child = this->AddWidgetChild( child, button_positions[1], BUTTON, "Yes" );
+		yes_child->SetValue( DIALOG_YES );
+
+		Widget * cancel_child = this->AddWidgetChild( child, button_positions[2], BUTTON, "Cancel" );
+		cancel_child->SetValue( DIALOG_CANCEL );
+
 		this->active_child = child;
 
 	}
 	else if ( type == DIALOGTEXT )
 	{
-		LuxRect child1_rect = {10, 24, 100, 20, 6000};
-		LuxRect child2_rect = {-50, -24, 40, 20, 6000};
+		LuxRect input_rect = {10, -24, 100, 20, 6000};
 
-		child1_rect.w = region.w - 70;
+		input_rect.w = region.w - 70;
 
-		Widget * new_child1 = this->AddWidgetChild( child, child1_rect, INPUTTEXT );
-		Widget * new_child2 = this->AddWidgetChild( child, child2_rect, BUTTON );
-		new_child2->SetText("Okay");
-		new_child2->SetValue(1);
-		new_child1->_focus = true;
-		new_child1->SetValue(1);
-		this->active_child = new_child1;
-		this->main_widget = new_child1;
+		Widget * input_child = this->AddWidgetChild( child, input_rect, INPUTTEXT );
+		Widget * button_child = this->AddWidgetChild( child, button_positions[0], BUTTON, "Enter" );
+
+		button_child->SetValue(DIALOG_OKAY);
+		input_child->SetValue(DIALOG_OKAY);
+		input_child->_focus = true;
+
+
+		this->active_child = input_child;
+		this->main_widget = input_child;
 	}
 
 	return child;
@@ -386,7 +421,7 @@ void UserInterface::AddChild(Widget * child)
 
 void UserInterface::RemoveChild(Widget * child)
 {
-	if (child)
+	if ( child )
 	{
 		if ( this->active_child == child )
 		{

@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -13,6 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include <sstream>
 #include <map>
+
 #include "lux_types.h"
 #include "display_types.h"
 #include "layers.h"

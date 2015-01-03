@@ -1,5 +1,5 @@
 /****************************
-Copyright © 2006-2014 Luke Salisbury
+Copyright © 2006-2015 Luke Salisbury
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
@@ -47,9 +47,9 @@ class AudioSystem: public BaseAudioSystem
 
 		/* Playing */
 		int32_t PlayEffect( std::string requestSound, int32_t x = -1, int32_t y = -1 );
-		int32_t PlayDialog( int32_t requestSound );
+		int32_t PlayDialog( int32_t requestSound, int8_t channel );
 		int32_t PlayMusic( std::string requestMusic, int32_t loop, int32_t fadeLength );
-		void Pause();
+		void PauseAll();
 		void StopDialog();
 
 		/* Volume */
