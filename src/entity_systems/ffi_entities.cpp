@@ -28,10 +28,10 @@ Permission is granted to anyone to use this software for any purpose, including 
  * @param fixed_z
  * @return
  */
-uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, int32_t fixed_z)
+uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, uint8_t z_layer )
 {
 	#ifdef NETWORKENABLED
-	lux::core->NetLock();
+	lux::core->NetworkLock();
 	#endif
 
 	if ( wanted != NULL )
@@ -40,11 +40,11 @@ uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, in
 			wanted->x = (fixed)fixed_x;
 		if ( fixed_y != FIXED_MIN )
 			wanted->y = (fixed)fixed_y;
-		if ( fixed_z != FIXED_MIN )
-			wanted->z = (fixed)fixed_z;
+		if ( z_layer != 0xFF )
+			wanted->z_layer = z_layer;
 	}
 	#ifdef NETWORKENABLED
-	lux::core->NetUnlock();
+	lux::core->NetworkUnlock();
 	#endif
 	return ( wanted != NULL );
 }
@@ -57,10 +57,10 @@ uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, in
  * @param fixed_z
  * @return
  */
-uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z)
+uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, uint8_t * z_layer)
 {
 	#ifdef NETWORKENABLED
-	lux::core->NetLock();
+	lux::core->NetworkLock();
 	#endif
 
 	if ( wanted != NULL )
@@ -69,11 +69,11 @@ uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, 
 			*fixed_x = wanted->x;
 		if ( fixed_y )
 			*fixed_y = wanted->y;
-		if ( fixed_z )
-			*fixed_z = wanted->z;
+		if ( z_layer )
+			*z_layer = wanted->z_layer;
 	}
 	#ifdef NETWORKENABLED
-	lux::core->NetUnlock();
+	lux::core->NetworkUnlock();
 	#endif
 	return ( wanted != NULL );
 }
@@ -141,22 +141,22 @@ uint8_t Lux_FFI_Entity_Object_Delete( Entity * wanted )
 *
 * Updates Entity X/Y Positions
 */
-uint8_t Lux_FFI_Entity_Set_Position(uint32_t hash_entity , int32_t fixed_x, int32_t fixed_y, int32_t fixed_z)
+uint8_t Lux_FFI_Entity_Set_Position(uint32_t hash_entity , int32_t fixed_x, int32_t fixed_y, uint8_t z_layer )
 {
 	Entity * wanted = lux::entities->GetEntity(hash_entity);
 
-	return Lux_FFI_Entity_Object_Set_Position( wanted, fixed_x, fixed_y, fixed_z );
+	return Lux_FFI_Entity_Object_Set_Position( wanted, fixed_x, fixed_y, z_layer );
 }
 
 /** Lux_FFI_Entity_Get_Position
 *
 * return Entity X/Y Positions
 */
-uint8_t Lux_FFI_Entity_Get_Position(uint32_t hash_entity , int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z)
+uint8_t Lux_FFI_Entity_Get_Position(uint32_t hash_entity , int32_t * fixed_x, int32_t * fixed_y, uint8_t * z_layer)
 {
 	Entity * wanted = lux::entities->GetEntity(hash_entity);
 
-	return Lux_FFI_Entity_Object_Get_Position( wanted, fixed_x, fixed_y, fixed_z );
+	return Lux_FFI_Entity_Object_Get_Position( wanted, fixed_x, fixed_y, z_layer );
 }
 
 /** Lux_FFI_Entity_Get_Setting
@@ -185,7 +185,7 @@ int32_t Lux_FFI_Entity_Get_Setting_Number(uint32_t hash_entity, const char * key
 *
 * const char * script_file, const char * ident, int32_t x, int32_t y, int32_t z, uint32_t map_id
 */
-uint32_t Lux_FFI_Entity_Create( const char * script_file, const char * ident, int32_t x, int32_t y, int32_t z, uint32_t map_id )
+uint32_t Lux_FFI_Entity_Create( const char * script_file, const char * ident, int32_t x, int32_t y, uint8_t z_layer, uint32_t map_id )
 {
 	uint32_t response = 0;
 	std::string entity_parent, entity_id;
@@ -200,7 +200,7 @@ uint32_t Lux_FFI_Entity_Create( const char * script_file, const char * ident, in
 	{
 		wanted_entity->x = x;
 		wanted_entity->y = y;
-		wanted_entity->z = z;
+		wanted_entity->z_layer = z_layer;
 
 		response = wanted_entity->hashid;
 	}

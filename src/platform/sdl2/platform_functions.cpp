@@ -28,7 +28,12 @@ SDL_Texture * debug_font[128];
 /* Debug Message */
 SDL_Window * debug_window = NULL;
 SDL_Renderer * debug_renderer = NULL;
+SDL_GLContext debug_context;
 
+/**
+ * @brief Lux_SDL2_LoadFont
+ * @param renderer
+ */
 void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[128] )
 {
 	uint8_t * font_point = &gfxPrimitivesFontdata[0];
@@ -53,7 +58,9 @@ void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[128] )
 	}
 }
 
-
+/**
+ * @brief Lux_SDL2_UnloadFont
+ */
 void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[128] )
 {
 	for ( uint8_t c = 0; c < 128; c++)
@@ -62,6 +69,12 @@ void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[128] )
 	}
 }
 
+/**
+ * @brief Lux_SDL2_GetCharTexture
+ * @param font
+ * @param c
+ * @return
+ */
 SDL_Texture * Lux_SDL2_GetCharTexture( SDL_Texture * font[128], uint8_t c )
 {
 	SDL_Texture * texture = NULL;
@@ -72,11 +85,10 @@ SDL_Texture * Lux_SDL2_GetCharTexture( SDL_Texture * font[128], uint8_t c )
 	return texture;
 }
 
+void SDL2_OuputRenderingInfo( SDL_RendererInfo * info );
 
-
-/* Lux_SDL2_OpenMessageWindow
- * Creates a new window to display messages.
- -
+/**
+ * @brief Creates a new window to display messages.
  */
 void Lux_SDL2_OpenMessageWindow(  )
 {
@@ -95,18 +107,28 @@ void Lux_SDL2_OpenMessageWindow(  )
 			x = 10;
 
 		if ( y < 10 )
-			y = 10;
+			y = 25;
 
+		SDL_SetHintWithPriority( SDL_HINT_RENDER_DRIVER, "software", SDL_HINT_OVERRIDE );
 		debug_window = SDL_CreateWindow("Messages", static_cast<int>(x), static_cast<int>(y), 480, 360, SDL_WINDOW_SHOWN);
 		debug_renderer = SDL_CreateRenderer(debug_window, -1, SDL_RENDERER_SOFTWARE );
+
+
+
 
 		if ( !debug_renderer )
 		{
 			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 
 		}
+		else
+		{
+			SDL_RendererInfo info;
+			SDL_GetRendererInfo(debug_renderer, &info);
+			SDL2_OuputRenderingInfo( &info );
 
-		Lux_SDL2_LoadFont( debug_renderer, debug_font );
+			Lux_SDL2_LoadFont( debug_renderer, debug_font );
+		}
 	}
 }
 
@@ -114,6 +136,7 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 {
 	if ( !debug_window )
 		return;
+
 
 	std::string::iterator object;
 	SDL_Rect draw;
@@ -128,7 +151,7 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 	rect.x = rect.y = 0;
 
 	SDL_GetWindowSize( debug_window, &w, &h );
-	Lux_Util_SetRectFromText( rect, message, 8, 10, 240 );
+	Lux_Util_SetRectFromText( rect, message, 7, 10, 240 );
 
 	area.x = rect.x;
 	area.y = rect.y;
@@ -256,6 +279,8 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 
 void Lux_SDL2_PresentMessageWindow()
 {
+	//SDL_GL_MakeCurrent(native_window, native_context);
+
 	SDL_RenderPresent(debug_renderer);
 	SDL_RenderClear(debug_renderer);
 }

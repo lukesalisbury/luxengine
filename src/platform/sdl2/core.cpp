@@ -41,12 +41,62 @@ Permission is granted to anyone to use this software for any purpose, including 
 	bool pc_network_init();
 #endif
 
+
+void SDL2_OuputRenderingInfo( SDL_RendererInfo * info )
+{
+	std::cout << "Driver:" << info->name << " - ";
+	std::cout << (info->flags & SDL_RENDERER_ACCELERATED ? "SDL_RENDERER_ACCELERATED" :"");
+	std::cout << (info->flags & SDL_RENDERER_SOFTWARE ? " SDL_RENDERER_SOFTWARE" :"");
+	std::cout << " [" << info->max_texture_width << "x" << info->max_texture_width << "]" << std::endl;
+
+
+}
+
+
+void SDL2_SystemInfo()
+{
+	int n = SDL_GetNumRenderDrivers();
+	int c = 0;
+	SDL_RendererInfo info;
+
+	if ( n > 0 )
+	{
+		while (c < n)
+		{
+			if ( !SDL_GetRenderDriverInfo( c, &info) )
+			{
+				SDL2_OuputRenderingInfo( &info );
+			}
+			c++;
+		}
+
+	}
+
+	std::cout << "CPU: " << SDL_GetCPUCount() << std::endl;
+	std::cout << "CPU Features" << (SDL_HasRDTSC()? " RDTSC" : "");
+	std::cout << (SDL_HasAltiVec()? " AltiVec" : "");
+	std::cout << (SDL_HasMMX()? " MMX" : "");
+	std::cout << (SDL_Has3DNow()? " 3DNow" : "");
+	std::cout << (SDL_HasSSE()? " SSE" : "");
+	std::cout << (SDL_HasSSE2()? " SSE2" : "");
+	std::cout << (SDL_HasSSE3()? " SSE3" : "");
+	std::cout << (SDL_HasSSE41()? " SSE4.1" : "");
+	std::cout << (SDL_HasSSE42()? " SSE4.2" : "");
+	std::cout << (SDL_HasAVX()? " AVX" : "") << std::endl;
+	std::cout << "System RAM " << SDL_GetSystemRAM() << "MB" << std::endl;
+
+}
+
 /* Local functions */
 CoreSystem::CoreSystem()
 {
 	//SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 
 	SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_HAPTIC | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER );
+
+	SDL2_SystemInfo();
+
+
 
 	AbleOutput(true);
 	this->mouse_focus = false;
@@ -205,7 +255,6 @@ uint32_t CoreSystem::GetFrameDelta()
 
 bool CoreSystem::DelayIf(uint32_t diff)
 {
-
 	if ( this->internal_ms < diff )
 	{
 		SDL_Delay( diff-this->internal_ms-1 );

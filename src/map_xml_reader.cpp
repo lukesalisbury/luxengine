@@ -20,9 +20,46 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 #include "config.h"
 #include "core.h"
-#include "map_internal.h"
 
 LuxColour Lux_Hex2Colour(std::string color);
+uint32_t Lux_Hex2Int(std::string color);
+
+uint32_t DetermineObjectType( std::string obj_type )
+{
+	uint32_t type = OBJECT_UNKNOWN;
+
+	if ( obj_type == "sprite" )
+	{
+		type = OBJECT_SPRITE;
+	}
+	else if ( obj_type == "rect" )
+	{
+		type = OBJECT_RECTANGLE;
+	}
+	else if ( obj_type == "line" )
+	{
+		type = OBJECT_LINE;
+	}
+	else if (obj_type == "circle")
+	{
+		type = OBJECT_CIRCLE;
+	}
+	else if (obj_type == "text")
+	{
+		type = OBJECT_TEXT;
+	}
+	else if (obj_type == "polygon")
+	{
+		type = OBJECT_POLYGON;
+	}
+	else if (obj_type == "canvas")
+	{
+		type = OBJECT_CANVAS;
+	}
+
+	return type;
+}
+
 
 /**
  * @brief MapXMLReader::Load
@@ -127,10 +164,10 @@ void MapXMLReader::ReadPolygon( MapObject * object, tinyxml2::XMLElement * objec
  * @param map
  * @return
  */
-bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object_element, MokoiMap * map )
+void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapObject * object, MokoiMap * map )
 {
 	/* <entity value="%s" language="%s" global="%s"/> */
-	bool is_global_entity = false;
+
 	tinyxml2::XMLElement * entity_element = object_element->FirstChildElement("entity");
 	if ( entity_element )
 	{
@@ -138,18 +175,16 @@ bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object
 
 		tinyxml2::QueryStringAttribute( entity_element, "value", entity_file_name);
 
-		entity_element->QueryBoolAttribute("global", &is_global_entity);
-
 		if ( entity_file_name.length() )
 		{
-			Entity * new_entity = lux::entities->NewEntity(object->ident, entity_file_name, ( is_global_entity ? 0 : map->Ident() ) );
-			if ( new_entity )
+			Entity * current_entity = lux::entities->NewEntity(object->ident, entity_file_name, ( map ? map->Ident() : 0 ) );
+			if ( current_entity )
 			{
 				cell_colour temporary_colour_value;
 
-				new_entity->x = MAKE_INT_FIXED(object->position.x);
-				new_entity->y = MAKE_INT_FIXED(object->position.y);
-				new_entity->z = MAKE_INT_FIXED(object->layer);
+				current_entity->x = MAKE_INT_FIXED(object->position.x);
+				current_entity->y = MAKE_INT_FIXED(object->position.y);
+				current_entity->z_layer = MAKE_INT_FIXED(object->layer);
 
 				for ( tinyxml2::XMLElement * setting_element = object_element->FirstChildElement("setting"); setting_element; setting_element = setting_element->NextSiblingElement("setting") )
 				{
@@ -158,38 +193,98 @@ bool MapXMLReader::ReadEntity( MapObject * object, tinyxml2::XMLElement * object
 					if ( tinyxml2::QueryStringAttribute(setting_element, "value", attrvalue) == tinyxml2::XML_SUCCESS && tinyxml2::QueryStringAttribute(setting_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
 					{
 						if ( attrvalue.compare("true") == 0 )
-							attrvalue.assign("1");
+							current_entity->AddSetting( attrkey, 1 );
 						else if ( attrvalue.compare("false") == 0 )
-							attrvalue.assign("0");
-						new_entity->AddSetting( attrkey, attrvalue );
+							current_entity->AddSetting( attrkey, 0 );
+						else if ( elix::string::HasPrefix(attrkey, "object-colour-") )
+							current_entity->AddSetting( attrkey, Lux_Hex2Int(attrvalue) );
+						else
+							current_entity->AddSetting( attrkey, attrvalue );
 					}
 				}
 
-				if ( !is_global_entity )
-				{
-					new_entity->AddSetting("object-id", object->static_map_id );
-					map->object_cache[object->static_map_id] = object;
-				}
-
-				new_entity->AddSetting("object-image", object->sprite );
-				new_entity->AddSetting("object-type", (uint32_t)object->type );
-				new_entity->AddSetting("object-width", (uint32_t)object->position.w);
-				new_entity->AddSetting("object-height", (uint32_t)object->position.h);
-				new_entity->AddSetting("object-flip", (uint32_t)object->effects.flip_image);
-				new_entity->AddSetting("object-style", (uint32_t)object->effects.style);
-				new_entity->AddSetting("object-x", object->position.x);
-				new_entity->AddSetting("object-y", object->position.y);
+				current_entity->AddSetting("object-id", object->GetStaticMapID() );
+				current_entity->AddSetting("object-content", object->sprite );
+				current_entity->AddSetting("object-type", (uint32_t)object->type );
+				current_entity->AddSetting("object-width", (uint32_t)object->position.w);
+				current_entity->AddSetting("object-height", (uint32_t)object->position.h);
+				current_entity->AddSetting("object-flip", (uint32_t)object->effects.flip_image);
+				current_entity->AddSetting("object-style", (uint32_t)object->effects.style);
 
 				temporary_colour_value.rgba = object->effects.primary_colour;
-				new_entity->AddSetting("object-colour-primary", temporary_colour_value.hex );
+				current_entity->AddSetting("object-colour-primary", temporary_colour_value.hex );
 
-				temporary_colour_value.rgba = object->effects.secondary_colour;
-				new_entity->AddSetting("object-colour-secondary", temporary_colour_value.hex );
 
 			}
 		}
 	}
-	return !is_global_entity;
+}
+
+
+/**
+ * @brief MapXMLReader::ReadGlobalEntity
+ * @param entity_element
+ * @param object_element
+ */
+void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tinyxml2::XMLElement * object_element )
+{
+	/* <entity value="%s" language="%s" global="%s"/> */
+	std::string entity_file_name;
+	std::string object_type, object_content, object_ident;
+
+	Entity * current_entity = NULL;
+	tinyxml2::XMLElement * position_element;
+
+	if ( tinyxml2::QueryStringAttribute( entity_element, "value", entity_file_name) == tinyxml2::XML_SUCCESS )
+	{
+		tinyxml2::QueryStringAttribute( object_element, "id", object_ident );
+
+		current_entity = lux::entities->NewEntity( object_ident, entity_file_name, 0 );
+		if ( current_entity )
+		{
+			for ( tinyxml2::XMLElement * setting_element = object_element->FirstChildElement("setting"); setting_element; setting_element = setting_element->NextSiblingElement("setting") )
+			{
+				std::string attrvalue;
+				std::string attrkey;
+				if ( tinyxml2::QueryStringAttribute(setting_element, "value", attrvalue) == tinyxml2::XML_SUCCESS && tinyxml2::QueryStringAttribute(setting_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
+				{
+					if ( attrvalue.compare("true") == 0 )
+						current_entity->AddSetting( attrkey, 1 );
+					else if ( attrvalue.compare("false") == 0 )
+						current_entity->AddSetting( attrkey, 0 );
+					else if ( elix::string::HasPrefix(attrkey, "object-colour-") )
+						current_entity->AddSetting( attrkey, Lux_Hex2Int(attrvalue) );
+					else
+						current_entity->AddSetting( attrkey, attrvalue );
+				}
+			}
+
+			if ( object_element )
+			{
+				tinyxml2::QueryStringAttribute(object_element, "type", object_type );
+				tinyxml2::QueryStringAttribute(object_element, "value", object_content );
+
+				current_entity->AddSetting("object-content", object_content );
+				current_entity->AddSetting("object-type", DetermineObjectType(object_type) );
+
+				/* */
+				position_element = object_element->FirstChildElement("position");
+				if ( position_element )
+				{
+					current_entity->x = MAKE_INT_FIXED(position_element->IntAttribute( "x" ));
+					current_entity->y = MAKE_INT_FIXED(position_element->IntAttribute( "y" ));
+					MapXMLReader::ReadZLayer( position_element, current_entity->z_layer );
+
+					current_entity->AddSetting("object-width", position_element->IntAttribute( "w" ) );
+					current_entity->AddSetting("object-height", position_element->IntAttribute( "h" ) );
+
+					current_entity->AddSetting("object-flip", this->ReadObjectFlipmode(position_element) );
+				}
+
+			}
+		}
+
+	}
 }
 
 /**
@@ -220,65 +315,75 @@ void MapXMLReader::ReadPath( MapObject * object, tinyxml2::XMLElement * object_e
 }
 
 /**
- * @brief MapXMLReader::ReadObject
- * @param object_element
- * @return
+ * @brief MapXMLReader::ReadZLayer
+ * @param position_element
+ * @param z
+ * @param layer
  */
-MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
+uint16_t MapXMLReader::ReadZLayer(tinyxml2::XMLElement* position_element, uint8_t & layer )
 {
-	std::string obj_type;
-
-	tinyxml2::XMLElement * effect_element, * position_element, * settings_element;
-
-	MapObject * object = new MapObject();
-
-	tinyxml2::QueryStringAttribute(object_element, "type", obj_type );
-	tinyxml2::QueryStringAttribute(object_element, "value", object->sprite );
-	tinyxml2::QueryStringAttribute(object_element, "id", object->ident );
-
-	if ( object->ident.length() )
+	uint16_t z = 1;
+	uint32_t z_temporary_value = position_element->IntAttribute( "z" );
+	if ( z_temporary_value < 10 && z_temporary_value > 0 )
 	{
-		elix::string::Trim( &object->ident );
-		object->ident_hash = elix::string::Hash( object->ident );
+		z = (uint16_t)(z_temporary_value*1000);
+		layer = (uint8_t)z_temporary_value;
 	}
+	else
+	{
+		z = (uint16_t)z_temporary_value;
+		layer = (uint8_t)(z_temporary_value/1000);
+	}
+	return z;
+}
 
-
-	position_element = object_element->FirstChildElement("position");
-	effect_element = object_element->FirstChildElement("color");
-
+/**
+ * @brief MapXMLReader::ReadObjectFlipmode
+ * @param position_element
+ */
+uint8_t MapXMLReader::ReadObjectFlipmode(tinyxml2::XMLElement* position_element)
+{
 	if ( position_element )
 	{
-		uint32_t z_temporary_value = 1;
 		uint16_t rotation_temporary_value = 0;
 		uint8_t flip_temporary_value = 0;
-
-		object->position.x = position_element->IntAttribute( "x" );
-		object->position.y = position_element->IntAttribute( "y" );
-		object->position.w = position_element->IntAttribute( "w" );
-		object->position.h = position_element->IntAttribute( "h" );
-		z_temporary_value = position_element->IntAttribute( "z" );
 
 		/* note: map rotate refer to flip mode not rotation value */
 		rotation_temporary_value = position_element->IntAttribute("r"); //Stored in degrees
 		tinyxml2::QueryUint8Attribute( position_element, "f", flip_temporary_value);
 
-		if ( z_temporary_value < 10 && z_temporary_value > 0 )
-		{
-			object->position.z = (uint16_t)(z_temporary_value*1000);
-			object->layer = (uint8_t)z_temporary_value;
-		}
-		else
-		{
-			object->position.z = (uint16_t)z_temporary_value;
-			object->layer = (uint8_t)(z_temporary_value/1000);
-		}
-
-
-		/* note: map rotate refer to flip image not rotation value */
-		object->effects.flip_image = (uint8_t)(rotation_temporary_value / 90);
-		object->effects.flip_image += ( flip_temporary_value > 0 ? 16 : 0 );
+		return (uint8_t)(rotation_temporary_value / 90) + ( flip_temporary_value > 0 ? 16 : 0 );
 	}
+	return 0;
+}
 
+/**
+ * @brief MapXMLReader::ReadObjectPosition
+ * @param object_element
+ * @param object
+ */
+void MapXMLReader::ReadObjectPosition(tinyxml2::XMLElement* object_element, MapObject* object)
+{
+	tinyxml2::XMLElement* position_element = object_element->FirstChildElement("position");
+	if ( position_element )
+	{
+		object->position.x = position_element->IntAttribute( "x" );
+		object->position.y = position_element->IntAttribute( "y" );
+		object->position.w = position_element->IntAttribute( "w" );
+		object->position.h = position_element->IntAttribute( "h" );
+		object->position.z = this->ReadZLayer(position_element, object->layer );
+		object->effects.flip_image = this->ReadObjectFlipmode( position_element);
+	}
+}
+
+/**
+ * @brief MapXMLReader::ReadObjectEffect
+ * @param object_element
+ * @param object
+ */
+void MapXMLReader::ReadObjectEffect(tinyxml2::XMLElement* object_element, MapObject* object)
+{
+	tinyxml2::XMLElement* effect_element = object_element->FirstChildElement("color");
 	if ( effect_element )
 	{
 		tinyxml2::QueryUint8Attribute( effect_element, "red", object->effects.primary_colour.r );
@@ -286,32 +391,17 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 		tinyxml2::QueryUint8Attribute( effect_element, "blue", object->effects.primary_colour.b );
 		tinyxml2::QueryUint8Attribute( effect_element, "alpha", object->effects.primary_colour.a );
 	}
+}
 
-	settings_element = object_element->FirstChildElement("setting");
-	if ( settings_element )
-	{
-		for ( ; settings_element; settings_element = settings_element->NextSiblingElement("setting") )
-		{
 
-			std::string attrkey = "";
-
-			if ( tinyxml2::QueryStringAttribute(settings_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
-			{
-				if ( attrkey.compare("object-style") == 0 )
-				{
-					/* return char value instead of a number */
-					tinyxml2::QueryUint8Attribute( settings_element, "value", object->effects.style );
-				}
-				else if ( !attrkey.compare("object-colour-secondary") )
-				{
-					std::string attrvalue = "#FFFFFFFF";
-					tinyxml2::QueryStringAttribute(settings_element, "value", attrvalue);
-					object->effects.secondary_colour = Lux_Hex2Colour(attrvalue);
-				}
-			}
-		}
-	}
-
+/**
+ * @brief MapXMLReader::ReadObjectType
+ * @param object_element
+ * @param obj_type
+ * @param object
+ */
+void MapXMLReader::ReadObjectType(tinyxml2::XMLElement* object_element, std::string obj_type, MapObject* object)
+{
 	object->type = OBJECT_UNKNOWN;
 
 	if ( obj_type == "sprite" )
@@ -324,7 +414,6 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 		{
 			object->type = OBJECT_SPRITE;
 		}
-
 	}
 	else if ( obj_type == "rect" )
 	{
@@ -356,8 +445,69 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
 		object->type = OBJECT_TEXT;
 		object->sprite = "Unknown Type";
 	}
+}
+/**
+ * @brief MapXMLReader::ReadObjectSetting
+ * @param object_element
+ * @param object
+ */
+void MapXMLReader::ReadObjectSetting( tinyxml2::XMLElement* object_element, MapObject* object)
+{
+	tinyxml2::XMLElement* settings_element = object_element->FirstChildElement("setting");
+	if ( settings_element )
+	{
+		for ( ; settings_element; settings_element = settings_element->NextSiblingElement("setting") )
+		{
+			std::string attrkey = "";
+
+			if ( tinyxml2::QueryStringAttribute(settings_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
+			{
+				if ( attrkey.compare("object-style") == 0 )
+				{
+					/* return char value instead of a number */
+					tinyxml2::QueryUint8Attribute( settings_element, "value", object->effects.style );
+				}
+				else if ( !attrkey.compare("object-colour-secondary") )
+				{
+					std::string attrvalue = "#FFFFFFFF";
+					tinyxml2::QueryStringAttribute(settings_element, "value", attrvalue);
+					object->effects.secondary_colour = Lux_Hex2Colour(attrvalue);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * @brief MapXMLReader::ReadObject
+ * @param object_element
+ * @return
+ */
+MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element, const bool global, const uint32_t counter )
+{
+	std::string obj_type;
+
+	MapObject * object = new MapObject();
+
+	tinyxml2::QueryStringAttribute(object_element, "type", obj_type );
+	tinyxml2::QueryStringAttribute(object_element, "value", object->sprite );
+	tinyxml2::QueryStringAttribute(object_element, "id", object->ident );
+
+	if ( object->ident.length() )
+	{
+		elix::string::Trim( &object->ident );
+		object->ident_hash = elix::string::Hash( object->ident );
+	}
+	object->SetStaticMapID( counter, global );
+
+	this->ReadObjectPosition( object_element, object );
+	this->ReadObjectEffect( object_element, object );
+	this->ReadObjectSetting( object_element, object );
+	this->ReadObjectType( object_element, obj_type, object );
 
 	this->ReadPath(object, object_element);
+
+	this->ReadLocalEntity( object_element, object, NULL );
 
 	return object;
 }
@@ -368,51 +518,49 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element )
  * @param object_cache_count
  * @param map
  */
-void MapXMLReader::ReadObjects( std::vector<MapObject *> & object_array, uint32_t & object_cache_count, MokoiMap * map )
+void MapXMLReader::ReadObjects( MapObjectList & object_array, uint32_t & object_cache_count, MokoiMap * map )
 {
-	tinyxml2::XMLElement * child_element;
+	tinyxml2::XMLElement * child_element = NULL;
+	tinyxml2::XMLElement * entity_element = NULL;
+
 	for( child_element = root->FirstChildElement("object"); child_element; child_element = child_element->NextSiblingElement("object") )
 	{
 		if ( strcmp(child_element->Value(), "object") )
 			continue;
 
-		MapObject * object = this->ReadObject(child_element);
+		MapObject * object = NULL;
+		bool is_global_object = ( map ? false : true );
 
-		/* Check for object and map, cause we could be running this from LuxCanvas */
-		if ( object )
+		/* Check to see if object is global
+		 * As Object on a map is a global entity, we don't create a Object
+		 */
+		entity_element = child_element->FirstChildElement("entity");
+		if ( entity_element )
 		{
-			object->static_map_id = ++object_cache_count;
-			if ( map )
-			{
-				if ( this->ReadEntity( object, child_element, map ) )
-				{
-					if ( object->type == OBJECT_VIRTUAL_SPRITE )
-					{
-						LuxVirtualSprite * sprite = object->InitialiseVirtual(  );
-						sprite->InsertToVector( object, object_array, object_cache_count, map  );
-					}
-					/* Local object so we add it to the list */
-					object_array.push_back( object );
-				}
-				else
-				{
-					//we not adding to the list so decrease object_cache_count and delete the object
-					object_cache_count--;
-					delete object;
-				}
-			}
-			else
+			entity_element->QueryBoolAttribute("global", &is_global_object);
+		}
+
+		if ( is_global_object && entity_element )
+		{
+			this->ReadGlobalEntity( entity_element, child_element );
+		}
+		else
+		{
+			object = this->ReadObject(child_element, is_global_object, object_cache_count);
+			if ( object )
 			{
 				if ( object->type == OBJECT_VIRTUAL_SPRITE )
 				{
-					LuxVirtualSprite * sprite = object->InitialiseVirtual(  );
+					LuxVirtualSprite * sprite = object->InitialiseVirtual( );
 					sprite->InsertToVector( object, object_array, object_cache_count, map  );
 				}
-				/* Local object so we add it to the list */
-				object_array.push_back( object );
-			}
 
+				/* Local object so we add it to the list */
+				object_array.insert( MAP_OBJECT_PAIR( object->GetStaticMapID(), object ) );
+				++object_cache_count;
+			}
 		}
+
 	}
 }
 

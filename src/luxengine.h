@@ -20,6 +20,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	namespace lux {
 		namespace screen {
 			void display( std::string message );
+			void push( );
 		}
 	}
 
@@ -27,5 +28,5 @@ Permission is granted to anyone to use this software for any purpose, including 
 	void Lux_DisplayMessage( std::string reason );
 	void Lux_SetState( LuxState new_state );
 	LuxState Lux_GetState( );
-	void MessagePush( char * message, ... );
+	void MessagePush(const char *message, ... );
 #endif

@@ -17,12 +17,13 @@ class MapObject;
 #include "sprite_types.h"
 #include "display_types.h"
 #include "object_effect.h"
-//#include "game_system.h"
 #include "lux_canvas.h"
 #include "lux_polygon.h"
 #include "lux_virtual_sprite.h"
 
 #include "Box2D/Box2D.h"
+
+#define MAP_OBJECT_PAIR(a,b) std::pair<uint32_t, MapObject *>(a,b)
 
 
 
@@ -30,6 +31,7 @@ class MapObject
 {
 	public:
 		MapObject( uint8_t type = 0 );
+		MapObject(elix::File *current_save_file);
 		~MapObject();
 
 		MapObject * clone() const { return new MapObject( *this ); }
@@ -43,7 +45,7 @@ class MapObject
 
 		std::string sprite;
 		std::string ident;
-		uint32_t ident_hash;
+		int_hash ident_hash;
 
 		int16_t offset_x, offset_y;
 		uint16_t sprite_width, sprite_height;
@@ -53,9 +55,9 @@ class MapObject
 		bool hidden;
 		bool can_remove;
 
-		uint32_t static_map_id;
+		int_hash static_map_id;
 		uint32_t GetStaticMapID() const;
-		void SetStaticMapID(const uint32_t &value, const bool global);
+		void SetStaticMapID(const uint32_t counter, const bool global);
 		bool CollisionRectangle( LuxRect rect[7] );
 
 		/* Animations */
@@ -109,11 +111,14 @@ class MapObject
 		/* Information */
 		std::string TypeName();
 		std::string GetInfo();
-		void SetZPos(int32_t z);
+		void SetZPos(fixed z);
 
 
 
 private:
+
+
+		void InitialSetup();
 		/* Data */
 		mem_pointer data;
 		LuxSprite * PeekSprite();

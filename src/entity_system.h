@@ -16,7 +16,7 @@ class Entity;
 
 typedef struct {
 		uint8_t system_identifier;
-		bool (*Init) ( std::string entity_id, std::string entity_base, mem_pointer & entity_data, Entity * entity );
+		mem_pointer (*Init) ( const char * entity_id, const char * entity_base, Entity * entity );
 		void (*Destroy) ( mem_pointer entity_data );
 		void (*Restore) ( elix::File * current_save_file, mem_pointer entity_data );
 		void (*Save) ( elix::File * current_save_file, mem_pointer entity_data );
@@ -37,6 +37,7 @@ typedef struct {
 void Lux_PawnCache_Init();
 void Lux_PawnCache_Cleanup();
 void Lux_PawnCache_SetSaveMode(uint8_t mode);
+
 extern LuxEntityCallback EntitySystemPawn;
 
 class EntitySystem

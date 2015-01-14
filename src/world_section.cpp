@@ -30,12 +30,16 @@ Permission is granted to anyone to use this software for any purpose, including 
  */
 WorldSection::WorldSection( LuxMapIdent ident, std::string file, uint8_t width, uint8_t height )
 {
-	this->id = ident;
+	this->section_id = ident;
 	this->name = file;
+	this->hash = elix::string::Hash( this->name );
 
 	this->InitialSetup( width, height );
 
 	this->LoadFile();
+
+	lux::gamesystem->InsertSection( this, this->hash );
+
 }
 
 /**
@@ -52,7 +56,7 @@ WorldSection::WorldSection( elix::File * current_save_file )
  */
 WorldSection::~WorldSection()
 {
-	lux::gamesystem->DeleteSection(this->Ident() );
+	lux::gamesystem->DeleteSection( this->SectionIdent() );
 
 	delete [] this->grid;
 }
@@ -127,7 +131,7 @@ void WorldSection::SaveFile( )
 bool WorldSection::Save( elix::File * current_save_file )
 {
 	current_save_file->WriteWithLabel( "Section Size", this->allocated_size );
-	current_save_file->WriteWithLabel( "Section ID", this->Ident() );
+	current_save_file->WriteWithLabel( "Section ID", this->SectionIdent() );
 	current_save_file->WriteWithLabel( "Section file", this->name );
 	current_save_file->WriteWithLabel( "Section flag", this->flag );
 	return true;
@@ -141,11 +145,11 @@ bool WorldSection::Save( elix::File * current_save_file )
 bool WorldSection::Restore( elix::File * current_save_file )
 {
 	this->allocated_size = current_save_file->ReadUint16WithLabel( "Section Size", true );
-	this->id.grid.section = current_save_file->ReadUint32WithLabel( "Section ID", true );
+	this->section_id.grid.section = current_save_file->ReadUint32WithLabel( "Section ID", true );
 	this->name = current_save_file->ReadStringWithLabel( "Section file" );
 	this->flag = current_save_file->ReadUint8WithLabel( "Section flag" );
 
-	this->LoadFile();
+	//this->LoadFile();
 
 	return true;
 }
@@ -188,11 +192,12 @@ bool WorldSection::AddMap( MokoiMap * map_object, const uint8_t x, const uint8_t
 
 	map_object->SetGrid(x, y);
 	map_object->LoadDimension();
+
 	if ( map_object->dimension_width && map_object->dimension_height )
 	{
 		location = GRID_LOCATION( x, y, this->width, this->height );
 
-		map_object->SetGridIdent( location, this->Ident() );
+		map_object->SetGridIdent( location, this->SectionIdent() );
 		map_object->SetGrid(x, y);
 		for ( uint8_t grid_x = 0; grid_x < map_object->dimension_width; grid_x++ )
 		{
@@ -206,7 +211,9 @@ bool WorldSection::AddMap( MokoiMap * map_object, const uint8_t x, const uint8_t
 			}
 		}
 		if ( lux::gamesystem )
+		{
 			lux::gamesystem->InsertMap( map_object->Ident(), map_object );
+		}
 
 		return true;
 	}
@@ -241,7 +248,7 @@ uint32_t WorldSection::GetMapID( const uint8_t grid_x, const uint8_t grid_y  )
 
 uint32_t WorldSection::BuildMapID( const uint16_t grid_id )
 {
-	LuxMapIdent map = this->id;
+	LuxMapIdent map = this->section_id;
 	map.grid.map = grid_id;
 	return map.value;
 }

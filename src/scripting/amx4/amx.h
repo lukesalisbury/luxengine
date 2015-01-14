@@ -302,6 +302,8 @@ typedef struct tagAMX {
 	/* support variables for the JIT */
 	int reloc_size;         /* required temporary buffer for relocations */
   #endif
+	void * parent;
+	char * function_name;
 } PACKED AMX;
 
 /* The AMX_HEADER structure is both the memory format as the file format. The

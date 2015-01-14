@@ -44,14 +44,13 @@ bool MokoiMapScreen::Init()
 	if ( this->initialised )
 		return false;
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "MokoiMapScreen::Init:" << this->initialised << std::endl;
 	this->initialised = true;
 	if ( !this->_mask )
 		this->_mask = Lux_Mask_New( (this->_width), (this->_height) );
 
 	MapObject * object = NULL;
 	LuxSprite * current = NULL;
-	std::vector<MapObject *>::iterator p;
+	std::list<MapObject *>::iterator p;
 
 	if ( this->_objects.size() )
 	{
@@ -85,7 +84,7 @@ bool MokoiMapScreen::Init()
 bool MokoiMapScreen::Close()
 {
 	this->initialised = false;
-	std::vector<MapObject *>::iterator p;
+	std::list<MapObject *>::iterator p;
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
 		if ( lux::display->RemoveObject((*p)->layer, (*p)) )
@@ -140,7 +139,7 @@ void MokoiMapScreen::FillMask(uint16_t x, uint16_t y, uint16_t width, uint16_t h
 void MokoiMapScreen::BuildMask()
 {
 	LuxSprite * current = NULL;
-	std::vector<MapObject *>::iterator p;
+	std::list<MapObject *>::iterator p;
 	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
 	{
 		(*p)->SetData((*p)->type);
@@ -193,5 +192,24 @@ void MokoiMapScreen::DrawMask( fixed position[3] )
 
 
 	}
+}
+
+bool MapObjectSort(MapObject * a, MapObject * b )
+{
+	if ( a->position.z < b->position.z )
+		return true;
+	if ( a->position.y < b->position.y )
+		return true;
+	if ( a->position.x < b->position.x )
+		return true;
+
+
+
+	return false;
+}
+
+void MokoiMapScreen::SortObjects()
+{
+	this->_objects.sort( MapObjectSort );
 }
 

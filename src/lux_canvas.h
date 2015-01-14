@@ -27,10 +27,12 @@ class LuxCanvas
 		~LuxCanvas();
 
 	private:
-		std::vector<MapObject *> _objects;
+		MapObjectList objects;
 
 	public:
 		LuxRect rect;
+
+		MapObject * FindChild( uint32_t ident );
 
 		bool Load( std::string file );
 		bool Draw(DisplaySystem * display, int32_t x, int32_t y, int32_t z = 0);

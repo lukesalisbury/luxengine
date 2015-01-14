@@ -1,20 +1,20 @@
 [Mokoi]
-project.title=Map Demo
-project.id=testgame
+project.title=Worlds
+project.id=mokoi-Worlds
 player.number=1
 world.startx=5
 world.starty=5
 map.width=512
 map.height=384
 project.language=en
-debug.able=false
+debug.able=true
 save.allowed=false
 display.mode=OpenGL
 screen.width=512
 screen.height=384
 display.width=512
 display.height=384
-project.author=Me, myself and I
+project.author=Mokoi Gaming
 project.creation=42
 language.default=en
 display.colour=0

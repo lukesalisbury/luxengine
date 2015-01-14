@@ -33,8 +33,6 @@
 
 extern const AMX_NATIVE_INFO Time_Natives[];
 
-#define CELLMIN	 (-1 << (8*sizeof(cell) - 1))
-
 #define SECONDS_PER_MINUTE	60
 #define SECONDS_PER_HOUR	3600
 #define SECONDS_PER_DAY		86400
@@ -56,7 +54,7 @@ void stamp2datetime( time_t sec1970, cell * year, cell * month, cell * day, cell
 	for (*year = 1970; ; *year += 1) {
 		days = 365 + ((*year & 0x03) == 0); /* clumsy "leap-year" routine, fails for 2100 */
 		seconds = days * SECONDS_PER_DAY;
-		if ((unsigned long)seconds > sec1970)
+		if ((time_t)seconds > sec1970)
 			break;
 		sec1970 -= seconds;
 	} /* if */
@@ -66,7 +64,7 @@ void stamp2datetime( time_t sec1970, cell * year, cell * month, cell * day, cell
 	for (*month = 1; ; *month += 1) {
 		days = monthdays[*month - 1];
 		seconds = days * SECONDS_PER_DAY;
-		if ((unsigned long)seconds > sec1970)
+		if ((time_t)seconds > sec1970)
 			break;
 		sec1970 -= seconds;
 	} /* if */

@@ -15,7 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 GlobalObjects::GlobalObjects()
 {
-	this->object_cache_count = 0;
+
 
 }
 
@@ -26,6 +26,7 @@ GlobalObjects::~GlobalObjects()
 
 bool GlobalObjects::Init()
 {
+	this->object_cache_count = 0;
 	return true;
 }
 
@@ -69,7 +70,7 @@ bool GlobalObjects::Save( elix::File *current_save_file )
 	current_save_file->WriteWithLabel( "Global Display Object", count );
 	if ( count )
 	{
-		std::map<uint32_t, MapObject *>::iterator iter = this->object_cache.begin();
+		MapObjectList::iterator iter = this->object_cache.begin();
 		while( iter != this->object_cache.end() )
 		{
 			current_save_file->WriteWithLabel( "Global Object ID", iter->first );
@@ -88,8 +89,6 @@ bool GlobalObjects::Save( elix::File *current_save_file )
  */
 bool GlobalObjects::Restore( elix::File * current_save_file )
 {
-
-
 	this->ClearObjects();
 
 	/* Load Global Display Object */

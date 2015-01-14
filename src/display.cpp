@@ -29,7 +29,7 @@ extern GraphicSystem GraphicsOpenGL;
 std::string static_messages_text;
 uint8_t static_messages_count = 0;
 
-void MessagePush( char * message, ... )
+void MessagePush( const char * message, ... )
 {
 	char * text = new char[128];
 	va_list args;
@@ -283,7 +283,6 @@ void DisplaySystem::DisplayOverlay()
 	{
 		this->overlay_layer->Display();
 	}
-
 }
 
 bool DisplaySystem::Close()
@@ -344,12 +343,10 @@ void DisplaySystem::ShowMessages()
 		lux::gamesystem->GetObjects()->DrawCollisions();
 	}
 
-
 	if ( this->show_mask )
 	{
 		lux::gamesystem->active_map->DrawMask();
 	}
-
 
 	if ( this->show_debug )
 	{
@@ -632,7 +629,7 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 		return;
 	}
 
-	std::stringstream msg;
+
 	switch ( object->type )
 	{
 		case OBJECT_SPRITE:
@@ -655,28 +652,7 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 					}
 				}
 
-				if ( this->show_spriteinfo )
-				{
-					msg << object->GetInfo() << std::endl;
-					this->graphics.DrawText( msg.str(), new_position, default_fx, false );
-				}
-				if ( this->show_collisions )
-				{
 
-					if ( object->_path.size() )
-					{
-						LuxPath points = { 0, 0, 0 };
-						for ( uint16_t p = 0; p < object->_path.size(); p++ )
-						{
-							points = object->_path.at(p);
-							new_position.x = points.x;
-							new_position.y = points.y;
-							new_position.z = 6999;
-							new_position.w = new_position.h = 4;
-							this->graphics.DrawRect(new_position, new_effects);
-						}
-					}
-				}
 			}
 
 			break;
@@ -710,6 +686,29 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 		default:
 			break;
 	}
+
+	if ( this->show_spriteinfo )
+	{
+		this->graphics.DrawText( object->GetInfo(), new_position, default_fx, false );
+	}
+	if ( this->show_collisions )
+	{
+
+		if ( object->_path.size() )
+		{
+			LuxPath points = { 0, 0, 0 };
+			for ( uint16_t p = 0; p < object->_path.size(); p++ )
+			{
+				points = object->_path.at(p);
+				new_position.x = points.x;
+				new_position.y = points.y;
+				new_position.z = 6999;
+				new_position.w = new_position.h = 4;
+				this->graphics.DrawRect(new_position, new_effects);
+			}
+		}
+	}
+
 }
 
 LuxSprite * DisplaySystem::GetInputSprite(uint32_t player_id, int8_t axis, int8_t key, int8_t pointer )

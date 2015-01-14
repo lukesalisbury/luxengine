@@ -59,12 +59,12 @@ uint32_t Lux_FFI_World_Set( const uint32_t section_hash, const uint8_t grid_x, c
  * @param section_name
  * @return section_hash
  */
-uint32_t Lux_FFI_World_Exist( const char * section_name )
+uint32_t Lux_FFI_World_Exist( const char * section_name, const bool load )
 {
 	uint32_t section_hash = 0;
 	if ( lux::gamesystem )
 	{
-		WorldSection * section = lux::gamesystem->GetSection( section_name, false );
+		WorldSection * section = lux::gamesystem->GetSection( section_name, load );
 		if ( section )
 		{
 			section_hash = section->Ident();

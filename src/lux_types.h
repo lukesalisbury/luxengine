@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define _LUXTYPES_H_
 
 #include "stdheader.h"
-
+#include <map>
 class MapObject;
 
 #ifdef __GNUWIN32__
@@ -170,7 +170,8 @@ typedef struct {
 	uint8_t * data;
 } Lux_Mask;
 
-
+typedef std::map<uint32_t, MapObject *> MapObjectList;
+typedef std::map<uint32_t, MapObject *>::iterator MapObjectListIter;
 
 #define OBJECT_SPRITE 's'
 #define OBJECT_RECTANGLE 'r'

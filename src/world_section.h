@@ -28,10 +28,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void SaveFile( );
 
 		private:
-			uint32_t Ident() { return this->id.grid.section; }
+			uint32_t SectionIdent() { return this->section_id.grid.section; }
+			uint32_t Ident() { return this->hash; }
 			std::string Name() { return this->name; }
 
-			bool IsBasic() { return ( this->allocated_size == 1 ? true : false ); }
+			bool IsSingleMap() { return ( this->allocated_size == 1 ? true : false ); }
 
 			/* Save */
 			bool Save( elix::File * current_save_file );
@@ -53,7 +54,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 		private:
 			/* Details */
 			std::string name;
-			LuxMapIdent id;
+			LuxMapIdent section_id;
+			uint32_t hash;
 
 			/* Save */
 			uint8_t flag;

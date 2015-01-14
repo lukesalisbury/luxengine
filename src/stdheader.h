@@ -42,6 +42,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_SAVE_COOKIE_TYPE 4
 
 #define OBJECT_GLOBAL_VALUE 0x80000000
+#define OBJECT_LOCAL_VALUE 0x7FFFFFFF
 
 #include <iostream>
 #include <string>
@@ -53,6 +54,8 @@ typedef intptr_t native_type;
 typedef void * native_pointer;
 typedef void * mem_pointer;
 typedef int32_t fixed;
+typedef uint32_t int_hash;
+
 
 #include "elix_file.hpp"
 

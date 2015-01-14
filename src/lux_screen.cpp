@@ -28,39 +28,55 @@ namespace lux {
 		LuxRect rect2 = { 0, 0, 4, 4, 0};
 		LuxRect rect1 = { 0, 0, 0, 0, 0};
 
-		void show( int8_t & c, std::string message )
+		std::string last_message = "";
+		uint32_t time;
+
+		void show( )
 		{
 			uint16_t width = lux::display->screen_dimension.w / 2;
 			uint16_t height = (lux::display->screen_dimension.h / 2)+70;
 
 			lux::display->graphics.DrawRect( lux::display->screen_dimension, background );
 
-			int8_t i = -3;
-			while( i < 4 )
+			int8_t i = 0;
+			while( i < 6 )
 			{
 				rect2.y = height;
 				rect2.x = width + (i * 12);
 
-				if ( i == c )
+				if ( i == lux::screen::count )
 					lux::display->graphics.DrawCircle( rect2, colour1 );
-				else if ( i == (c-1) || i == (c+1) )
+				else if ( i == (lux::screen::count-1) || i == (lux::screen::count+1) )
 					lux::display->graphics.DrawCircle( rect2, colour2 );
 				else
 					lux::display->graphics.DrawCircle( rect2, colour3 );
 				i++;
 			}
 			rect1.y =  height + 14;
-			rect1.x = width - (message.length() * 4);
-			lux::display->graphics.DrawText( message, rect1, text, false );
+			rect1.x = width - (last_message.length() * 4);
+
+			lux::display->graphics.DrawText( last_message, rect1, text, false );
 			lux::display->graphics.Show();
 
-			if ( c > 3 )
-				c = -3;
+			lux::screen::count %= 5;
 		}
+
 		void display( std::string message )
 		{
-			lux::screen::show( lux::screen::count, message );
+			time = lux::core->GetTime();
+			last_message = message;
+			lux::screen::show( );
 			lux::screen::count++;
+		}
+
+		void push( )
+		{
+			uint32_t current_time = lux::core->GetTime();
+			if ( current_time >  time + 30 )
+			{
+				lux::screen::show( );
+				lux::screen::count++;
+			}
 		}
 	}
 }

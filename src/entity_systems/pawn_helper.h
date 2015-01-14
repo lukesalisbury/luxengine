@@ -20,32 +20,35 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 	#include "../stdheader.h"
 
-	#if PAWN_VERSION == 4
     #include "../scripting/amx4/amx.h"
     #include "../scripting/amx4/amxcons.h"
     #include "../scripting/amx4/osdefs.h"
-	#else
-    #include "../scripting/amx/amx.h"
-    #include "../scripting/amx/amxcons.h"
-    #include "../scripting/amx/osdefs.h"
-	#endif
+
 
 	#include "../entity.h"
 	#include "pawn.h"
 
-	#define CHARBITS (8*sizeof(char))
-	#define CELLMIN (-1 << (8*sizeof(cell) - 1))
+	//#define CELLMIN (-1 << (8*sizeof(cell) - 1))
+	#if PLATFORMBITS == 64
+	//INT64_MIN
+	#define CELLMIN (-9223372036854775807LL - 1)
+	#else
+	//INT32_MIN
+	#define CELLMIN (-2147483647 - 1)
+	#endif
+	#define CHARBITS 8
+
 
 	#define ASSERT_PAWN_PARAM(a,p,m) if ( m > p[0] / sizeof(cell) ) { amx_RaiseError(a,AMX_ERR_PARAMS); return 0x7FFFFFFF; }
 
 	char * Lux_PawnEntity_StrError(unsigned int errnum);
-	cell AMX_NATIVE_CALL pawnDeprecatedFunction(AMX *amx, const cell *params);
+	cell pawnDeprecatedFunction(AMX *amx, const cell *params);
 
 	Entity * Lux_PawnEntity_GetEntity(AMX * amx, cell text_param);
 	uint32_t Lux_PawnEntity_GetEntityHash(AMX *amx);
 
 	uint32_t Lux_PawnEntity_HasString(AMX * amx, cell str_param);
-	uint32_t Lux_PawnEntity_SetString(cell * dest, const char * source, size_t size );
+	size_t Lux_PawnEntity_SetString(cell * dest, const char * source, size_t dest_size );
 	std::string Lux_PawnEntity_GetString( AMX *amx, cell param );
 
 	int32_t Lux_PawnEntity_PublicVariable(AMX * amx, std::string varname, int32_t * new_value );
@@ -69,5 +72,20 @@ Permission is granted to anyone to use this software for any purpose, including 
 		}
 	}
 
+	inline uint8_t amx_get_next_packed( cell * & cstr, ucell &c , uint32_t & i )
+	{
+		uint8_t char8 = 1;
+
+		if ( i == sizeof(ucell)-1)
+			c = *cstr++;
+
+		char8 = (uint8_t)(c >> i*CHARBITS);
+		if ( char8 != '\0')
+		{
+			i = (i+sizeof(ucell)-1) % sizeof(ucell);
+		}
+
+		return char8;
+	}
 
 #endif

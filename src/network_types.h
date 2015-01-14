@@ -8,6 +8,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
+
+
+
 #define LENS_LOGIN 0
 #define LENS_SETID 1
 #define LENS_PLAYERADD 2

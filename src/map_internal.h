@@ -15,7 +15,8 @@ extern fixed lux_map_height_fixed;
 
 bool Lux_Util_PointCollide( LuxRect a, int32_t x, int32_t y );
 
-/*inline uint32_t XY2Screen(int32_t x, int32_t y, int32_t w) { return (uint32_t)(((y/lux_map_height)*w)+(x/lux_map_height)); }*/
-inline fixed Screen2X(uint32_t screen, int32_t w) { return (fixed)(screen%w); }
-inline fixed Screen2Y(uint32_t screen, int32_t w) { return (fixed)(screen/w); }
+inline fixed Screen2X( uint32_t screen, int32_t w) { return (fixed)(screen%w); }
+inline fixed Screen2Y( uint32_t screen, int32_t w) { return (fixed)(screen/w); }
+
+bool RemoveMapObject( MapObject * object) { return object->can_remove; }
 

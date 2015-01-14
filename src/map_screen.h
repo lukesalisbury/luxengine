@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#include "luxengine.h"
 	#include "map_object.h"
 	#include "masks.h"
-
+	#include <list>
 	class MokoiMapScreen
 	{
 		public:
@@ -43,7 +43,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void DrawMask( fixed position[3] );
 
 			/* Object Handling */
-			std::vector<MapObject *> _objects;
+			std::list<MapObject *> _objects;
+			void SortObjects();
 	};
 
 

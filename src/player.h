@@ -96,7 +96,7 @@ class Player
 		/* Entity */
 		Entity * GetEntity();
 		void SetEntity(Entity * entity);
-		void SetEntityPostion(fixed x, fixed y, fixed z, uint32_t mapid);
+		void SetEntityPostion(fixed x, fixed y, uint8_t z_layer, uint32_t mapid);
 		void SetName(std::string name);
 		std::string GetName( );
 

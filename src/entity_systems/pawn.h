@@ -11,17 +11,18 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #ifndef _PAWNENTITY_H_
 #define _PAWNENTITY_H_
+
 #include "../stdheader.h"
 #include "../entity.h"
 
 int32_t Lux_PawnEntity_PublicVariable(AMX * amx, std::string varname, int32_t * new_value );
 
 /* Init */
-bool Lux_PawnEntity_Init(std::string entity_id, std::string entity_base, mem_pointer & entity_data, Entity * entity);
+mem_pointer Lux_PawnEntity_Init(const char *entity_id, const char *entity_base, Entity *entity);
 void Lux_PawnEntity_Destroy(void * entity_data);
 
 /* Parent Entity */
-Entity * Lux_PawnEntity_GetParent(mem_pointer entity_data);
+Entity * Lux_PawnEntity_GetParent(AMX *entity_data);
 
 /* Loading/Saving */
 void Lux_PawnEntity_Restore(elix::File * current_save_file, void * entity_data);

@@ -65,7 +65,7 @@ static cell pawnConsoleLog(AMX *amx,const cell *params)
 }
 
 /**
- * @brief pawnConsoleText
+ * @brief pawnConsoleOutput
  * @param amx
  * @param params (text[], ...)
  * @return

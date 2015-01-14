@@ -23,12 +23,8 @@ bool ObjectSort(MapObject * a, MapObject * b )
 {
 	if ( a->position.z < b->position.z )
 		return true;
-
-
 	return false;
 }
-
-
 
 ObjectEffect Lux_Util_MergeEffects( LuxColour mod, ObjectEffect source )
 {
@@ -62,16 +58,12 @@ Layer::Layer(DisplaySystem * parent, uint8_t layer_value, bool static_layer )
 	this->_cachedynamic = false;
 	this->_parent = parent;
 	this->_roll = this->_pitch = this->_yaw = 0;
-	this->colour = (LuxColour){ 255, 255, 255, 255 };
+	this->colour = colour::white;
 	this->display_dimension = parent->screen_dimension;
 	this->display_dimension.x -= 16;
 	this->display_dimension.y -= 16;
 	this->refreshz = true;
 	this->display_layer = layer_value;
-
-
-
-
 	this->static_layer = static_layer;
 	this->shader = SHADER_DEFAULT;
 }
@@ -82,6 +74,12 @@ Layer::~Layer()
 }
 
 /* Object Management Functions */
+/**
+ * @brief Layer::AddObject
+ * @param new_object
+ * @param static_object
+ * @return
+ */
 bool Layer::AddObject(MapObject * new_object, bool static_object)
 {
 	if ( !new_object->has_data )
@@ -110,6 +108,11 @@ bool Layer::AddObject(MapObject * new_object, bool static_object)
 	return false;
 }
 
+/**
+ * @brief Layer::RemoveObject
+ * @param new_object
+ * @return
+ */
 bool Layer::RemoveObject(MapObject * new_object)
 {
 	if ( new_object->layer_reference )
@@ -122,6 +125,11 @@ bool Layer::RemoveObject(MapObject * new_object)
 	return true;
 }
 
+/**
+ * @brief Layer::ClearObjects
+ * @param static_object
+ * @return
+ */
 bool Layer::ClearObjects(bool static_object)
 {
 	if (static_object)
@@ -131,6 +139,10 @@ bool Layer::ClearObjects(bool static_object)
 	return true;
 }
 
+/**
+ * @brief Layer::ClearAll
+ * @return
+ */
 bool Layer::ClearAll()
 {
 	this->objects_static.clear();

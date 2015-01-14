@@ -2,7 +2,7 @@
 /*  ZLIB (c) A. Schiffler 2012 */
 /* Taking from SDL_GFX */
 /* Modified for Mokoi Gaming */
-#define GFX_FONTDATAMAX (8*128)
+#define GFX_FONTDATAMAX (8*129)
 
 static unsigned char gfxPrimitivesFontdata[GFX_FONTDATAMAX] = {
 
@@ -1541,5 +1541,17 @@ static unsigned char gfxPrimitivesFontdata[GFX_FONTDATAMAX] = {
 	0xc6,			/* 11000110 */
 	0xfe,			/* 11111110 */
 	0x00,			/* 00000000 */
+
+	/*
+	 * 128 0x80 '�'
+	 */
+	0x00,			/* 00111100 */
+	0x10,			/* 01100110 */
+	0x38,			/* 11011011 */
+	0x6c,			/* 11110111 */
+	0xc6,			/* 11101111 */
+	0xc6,			/* 11111111 */
+	0xfe,			/* 01101110 */
+	0x00,			/* 00111100 */
 
 };

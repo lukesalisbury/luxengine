@@ -48,6 +48,11 @@ EntitySection::~EntitySection()
 	this->initialised = false;
 }
 
+/**
+ * @brief EntitySection::Save
+ * @param current_save_file
+ * @return
+ */
 bool EntitySection::Save(elix::File * current_save_file)
 {
 	/* Cleared Deleted Entity */
@@ -69,7 +74,7 @@ bool EntitySection::Save(elix::File * current_save_file)
 	uint32_t count = this->children.size();
 	current_save_file->WriteWithLabel( "Section Entity Count", count );
 
-	/* Parent Entity always exists, It Might have no content be t should exist */
+	/* Parent Entity always exists, It Might have no content but it should exist */
 	this->parent->Save( current_save_file );
 	if ( count )
 	{

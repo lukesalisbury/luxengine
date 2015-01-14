@@ -65,6 +65,7 @@ Entity * EntityManager::NewEntity(std::string id, std::string base, uint32_t map
 	{
 		return NULL;
 	}
+
 	Entity * new_entity = new Entity( base, id, map_id, lux::entity_system->GetSystem(base) );
 	if ( new_entity->loaded )
 	{

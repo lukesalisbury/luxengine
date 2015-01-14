@@ -13,33 +13,45 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "map_xml_reader.h"
 #include "core.h"
 
+#include <map>
 
+/**
+ * @brief LuxVirtualSprite::LuxVirtualSprite
+ */
 LuxVirtualSprite::LuxVirtualSprite(  )
 {
 
 }
 
+/**
+ * @brief LuxVirtualSprite::LuxVirtualSprite
+ * @param file
+ */
 LuxVirtualSprite::LuxVirtualSprite( std::string file )
 {
-	std::string filename = file.substr(8);
-	this->Load(filename);
+	std::string filename = file.substr(8); // strip Virtual:
+	this->Load( filename );
 }
 
+/**
+ * @brief LuxVirtualSprite::~LuxVirtualSprite
+ */
 LuxVirtualSprite::~LuxVirtualSprite()
 {
-	MapObject * object = NULL;
-	std::vector<MapObject*>::iterator l_object;
 	if ( this->objects.size() )
 	{
-		for ( l_object = this->objects.begin(); l_object != this->objects.end(); l_object++ )
+		for ( MapObjectList::iterator q = this->objects.begin(); q != this->objects.end(); q++ )
 		{
-			object = (*l_object);
-			delete object;
+			delete q->second;
 		}
 	}
 }
 
-
+/**
+ * @brief LuxVirtualSprite::Load
+ * @param file
+ * @return
+ */
 bool LuxVirtualSprite::Load( std::string file )
 {
 	MapXMLReader reader;
@@ -57,37 +69,42 @@ bool LuxVirtualSprite::Load( std::string file )
 	return true;
 }
 
-bool LuxVirtualSprite::InsertToVector( MapObject * parent, std::vector<MapObject *> & object_array, uint32_t & object_cache_count, MokoiMap * map )
+/**
+ * @brief LuxVirtualSprite::InsertToVector
+ * @param parent
+ * @param object_array
+ * @param object_cache_count
+ * @param global
+ * @return
+ */
+bool LuxVirtualSprite::InsertToVector( MapObject * parent, MapObjectList & object_array, uint32_t & object_cache_count, const bool global )
 {
 	if ( !this->objects.size() )
 		return false;
 
 	MapObject * object = NULL;
 	MapObject * cache_object = NULL;
-	std::vector<MapObject*>::iterator l_object;
-	int32_t sx = parent->position.x;
-	int32_t sy = parent->position.y;
-
+	std::map<uint32_t, MapObject*>::iterator l_object;
 
 	for ( l_object = this->objects.begin(); l_object != this->objects.end(); l_object++ )
 	{
-		object = (*l_object);
+		object = l_object->second;
 		if ( object )
 		{
 			if ( this->rect.w > 1 || this->rect.h > 1  )
 			{
-				for ( sx = 0; sx < parent->position.w; sx += this->rect.w )
+				for ( int32_t sx = 0; sx < parent->position.w; sx += this->rect.w )
 				{
-					for ( sy = 0; sy < parent->position.h; sy += this->rect.h )
+					for ( int32_t sy = 0; sy < parent->position.h; sy += this->rect.h )
 					{
 						cache_object = object->clone();
 
 						cache_object->position.x += (parent->position.x + sx);
 						cache_object->position.y += (parent->position.y + sy);
 
-						cache_object->static_map_id = ++object_cache_count;
+						cache_object->SetStaticMapID( ++object_cache_count, global );
 
-						object_array.push_back( cache_object );
+						object_array.insert( MAP_OBJECT_PAIR( cache_object->GetStaticMapID(), cache_object ) );
 
 						this->cache.push_back( cache_object ); // Add to cache
 					}

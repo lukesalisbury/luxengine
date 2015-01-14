@@ -41,12 +41,12 @@ class LuxSaveState
 
 		uint8_t GetSaveType();
 
-		bool SaveHibernateFile( GameWorldSystem * old_world, EntityManager * old_entity_manager );
-		bool SaveDataFile( GameWorldSystem * old_world, EntityManager * old_entity_manager, int32_t * info, uint32_t length  );
+		bool SaveHibernateFile( GameSystem * old_game_world, EntityManager * old_entity_manager );
+		bool SaveDataFile(GameSystem * old_game_world, EntityManager * old_entity_manager, int32_t * info, uint32_t length  );
 		bool SaveCookieFile( int32_t * info, uint32_t length );
 
-		bool LoadHibernateFile( GameWorldSystem * new_world, EntityManager * new_entity_manager );
-		bool LoadDataFile( GameWorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length );
+		bool LoadHibernateFile( GameSystem * new_game_world, EntityManager * new_entity_manager );
+		bool LoadDataFile( GameSystem * new_game_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length );
 		bool LoadCookieFile( int32_t * info, uint32_t length  );
 
 	public:
@@ -54,8 +54,8 @@ class LuxSaveState
 		void SetInformation(uint32_t id, uint8_t save_file_type, std::string file_title, elix::Image * png_screen_shot );
 		void AllowPublicAccess();
 		void SetSlot( uint8_t slot );
-		bool Restore( GameWorldSystem * new_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length );
-		bool Save( GameWorldSystem * old_world, EntityManager * old_entity_manager, int32_t * info, uint32_t length );
+		bool Restore( GameSystem * new_game_world, EntityManager * new_entity_manager, int32_t * info, uint32_t length );
+		bool Save( GameSystem * old_game_world, EntityManager * old_entity_manager, int32_t * info, uint32_t length );
 
 
 		bool ReadCookieFile( uint32_t requested_game_id );

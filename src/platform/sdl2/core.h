@@ -89,16 +89,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			bool RunExternalProgram( std::string program, std::string argument );
 
-			#ifdef NETWORKENABLED
-			bool CreateMessage(uint8_t type, bool reliable);
-			bool MessageAppend(fixed data);
-			bool MessageAppend(uint8_t data);
-			bool MessageAppend(uint32_t data);
-			bool MessageSend(bool wait = false);
-			int32_t ReadMessage(void * data);
-			void NetLock();
-			void NetUnlock();
-			#endif
 
 	};
 

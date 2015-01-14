@@ -9,12 +9,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
-#ifdef NETWORKENABLED
-
 #include <SDL.h>
 #include <SDL_endian.h>
-//#include <SDL/SDL_framerate.h>
 #include <SDL_thread.h>
+
+
 #include "core.h"
 #include "game_config.h"
 #include "engine.h"
@@ -167,12 +166,12 @@ int pc_network_thread( void *data )
 										ReadPacket<int32_t>( event.packet, (int)(6 + (n*4)), data[n] );
 									}
 									MessagePush( "msg: %d", data[0] );
-									lux::core->NetLock();
+									lux::core->NetworkLock();
 									entity->callbacks->Push( entity->_data, data_length );
 									entity->callbacks->PushArray( entity->_data, data, data_length, NULL );
 									entity->callbacks->Push( entity->_data, player );
 									entity->Call("NetMessage", (char*)"");
-									lux::core->NetUnlock();
+									lux::core->NetworkUnlock();
 									delete[] data;
 								}
 							}
@@ -196,12 +195,12 @@ int pc_network_thread( void *data )
 										{
 											ReadPacket<int32_t>( event.packet, (int)(2 + (n*4)), data[n] );
 										}
-										lux::core->NetLock();
+										lux::core->NetworkLock();
 										entity->callbacks->Push( entity->_data, data_length );
 										entity->callbacks->PushArray( entity->_data, data, data_length, NULL );
 										entity->callbacks->Push( entity->_data, pid );
 										entity->Call("NetMessage", (char*)"");
-										lux::core->NetUnlock();
+										lux::core->NetworkUnlock();
 										delete[] data;
 									}
 								}
@@ -218,7 +217,7 @@ int pc_network_thread( void *data )
 							MokoiMap * map = lux::gameworld->GetMap(map_id);
 							if ( map )
 							{
-								lux::core->NetLock();
+								lux::core->NetworkLock();
 
 								uint32_t data_length = 0;
 								ReadPacket<uint32_t>( event.packet, 6, data_length );
@@ -246,7 +245,7 @@ int pc_network_thread( void *data )
 								}
 								lux::engine->SetState(RUNNING);
 								map->server = true;
-								lux::core->NetUnlock();
+								lux::core->NetworkUnlock();
 							}
 						}
 					}
@@ -271,7 +270,7 @@ int pc_network_thread( void *data )
 	return 0;
 }
 
-bool pc_network_init()
+bool NetworkClient::Open()
 {
 	net_active = false;
 
@@ -328,7 +327,7 @@ bool pc_network_init()
 	return net_active;
 }
 
-bool CoreSystem::CreateMessage(uint8_t type, bool reliable)
+bool NetworkClient::CreateMessage(uint8_t type, bool reliable)
 {
 	if ( !net_active )
 		return false;
@@ -342,7 +341,7 @@ bool CoreSystem::CreateMessage(uint8_t type, bool reliable)
 	return (message_packet ? true : false);
 }
 
-bool CoreSystem::MessageAppend(fixed data)
+bool NetworkClient::MessageAppend(fixed data)
 {
 	uint8_t dataLength = message_packet->dataLength;
 	uint32_t p = elix::endian::big32(data);
@@ -355,7 +354,7 @@ bool CoreSystem::MessageAppend(fixed data)
 	return false;
 }
 
-bool CoreSystem::MessageAppend(uint8_t data)
+bool NetworkClient::MessageAppend(uint8_t data)
 {
 	uint8_t dataLength = message_packet->dataLength;
 	if ( !enet_packet_resize(message_packet, message_packet->dataLength + sizeof(uint8_t)) )
@@ -367,7 +366,7 @@ bool CoreSystem::MessageAppend(uint8_t data)
 	return false;
 }
 
-bool CoreSystem::MessageAppend(uint32_t data)
+bool NetworkClient::MessageAppend(uint32_t data)
 {
 	uint8_t dataLength = message_packet->dataLength;
 	uint32_t p = elix::endian::big32(data);
@@ -380,7 +379,7 @@ bool CoreSystem::MessageAppend(uint32_t data)
 	return false;
 }
 
-bool CoreSystem::MessageSend(bool wait)
+bool NetworkClient::MessageSend(bool wait)
 {
 	if ( !peer )
 	{
@@ -398,12 +397,12 @@ bool CoreSystem::MessageSend(bool wait)
 	return false;
 }
 
-int32_t CoreSystem::ReadMessage(void * data)
+int32_t NetworkClient::ReadMessage(void * data)
 {
 	return 0;
 }
 
-void CoreSystem::NetLock()
+void NetworkClient::NetworkLock()
 {
 	if ( mutex )
 	{
@@ -411,7 +410,7 @@ void CoreSystem::NetLock()
 	}
 }
 
-void CoreSystem::NetUnlock()
+void NetworkClient::NetworkUnlock()
 {
 	if ( mutex )
 	{
@@ -419,4 +418,3 @@ void CoreSystem::NetUnlock()
 	}
 }
 
-#endif

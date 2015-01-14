@@ -63,16 +63,8 @@ public:
 
 	bool RunExternalProgram( std::string program, std::string argument ) { return false; }
 
-#ifdef NETWORKENABLED
-	virtual bool CreateMessage(uint8_t type, bool reliable) = 0;
-	virtual bool MessageAppend(fixed data) = 0;
-	virtual bool MessageAppend(uint8_t data) = 0;
-	virtual bool MessageAppend(uint32_t data) = 0;
-	virtual bool MessageSend(bool wait = false) = 0;
-	virtual int32_t ReadMessage(void * data) = 0;
-	virtual void NetLock() = 0;
-	virtual void NetUnlock() = 0;
-#endif
+	void NetworkLock() {  }
+	void NetworkUnlock() {  }
 
 };
 

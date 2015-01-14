@@ -57,7 +57,8 @@ void Entity::DefaultSetup( uint32_t mapid )
 	this->active_state_flags = 0xFF;
 	this->_mapid = this->displaymap = mapid;
 
-	this->x = this->y = this->z = MAKE_INT_FIXED(5);
+	this->x = this->y = MAKE_INT_FIXED(5);
+	this->z_layer = 5;
 }
 
 void Entity::InitialSetup( std::string id )
@@ -77,10 +78,14 @@ void Entity::InitialSetup( std::string id )
 
 	if ( callbacks )
 	{
-		this->loaded = this->callbacks->Init( this->id, this->_base, this->_data, this );
-		if ( !this->loaded )
+		this->_data = this->callbacks->Init( this->id.c_str(), this->_base.c_str(), this );
+		if ( !this->_data )
 		{
 			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_INFO) << "No data for " << this->id << "|" << this->_base << std::endl;
+		}
+		else
+		{
+			this->loaded = true;
 		}
 	}
 
@@ -121,10 +126,10 @@ bool Entity::Loop()
 			}
 
 			#ifdef NETWORKENABLED
-			lux::core->NetLock();
+			lux::core->NetworkLock();
 			this->onscreen = (lux::gameworld->active_map->Ident() == this->displaymap ? true : false);
 			this->active = this->callbacks->Run( this->_data, this->sleeping );
-			lux::core->NetUnlock();
+			lux::core->NetworkUnlock();
 			#else
 			this->onscreen = true;
 
@@ -224,6 +229,10 @@ int32_t Entity::Call(std::string function, char * format, ...)
 	return -1;
 }
 
+/**
+ * @brief Entity::Save
+ * @param current_save_file
+ */
 void Entity::Save( elix::File * current_save_file )
 {
 	if ( this->deleted || !current_save_file )
@@ -234,10 +243,8 @@ void Entity::Save( elix::File * current_save_file )
 	current_save_file->WriteWithLabel( "base", this->_base );
 	current_save_file->WriteWithLabel( "x", (uint32_t)this->x );
 	current_save_file->WriteWithLabel( "y", (uint32_t)this->y );
-	current_save_file->WriteWithLabel( "z", (uint32_t)this->z );
+	current_save_file->WriteWithLabel( "z_layer", (uint32_t)this->z_layer );
 	current_save_file->WriteWithLabel( "active state flags", this->active_state_flags  );
-
-
 
 	/* Save Entity Data */
 	if ( this->callbacks )
@@ -263,20 +270,19 @@ void Entity::Restore( elix::File * current_save_file )
 	current_save_file->ReadWithLabel( "base", &this->_base );
 	this->x = current_save_file->ReadUint32WithLabel( "x", true );
 	this->y = current_save_file->ReadUint32WithLabel( "y", true );
-	this->z = current_save_file->ReadUint32WithLabel( "z", true );
+	this->z_layer = current_save_file->ReadUint32WithLabel( "z_layer", true );
 	this->active_state_flags = current_save_file->ReadUint8WithLabel( "active state flags" );
-
 
 	/* Read Entity Data */
 	entity_system_id = current_save_file->ReadUint8WithLabel("EntitySystem" );
 	this->callbacks = lux::entity_system->GetSystem( entity_system_id );
 
 
-
-	this->InitialSetup( this->id );
 	if ( this->callbacks )
 	{
+		this->InitialSetup( this->id );
 		this->callbacks->Restore( current_save_file, this->_data );
+		this->loaded = true;
 	}
 
 
@@ -484,7 +490,7 @@ std::string Entity::Infomation()
 	std::map<std::string,std::string>::iterator settings_iter;
 
 	contents << "Name: " << this->id << "#" << this->hashid << " from " << this->_base << '\n';
-	contents << "Location: " << this->x << "," << this->y << "," << this->z << " on map " << this->displaymap << '\n';
+	contents << "Location: " << this->x << "," << this->y << "," << this->z_layer << " on map " << this->displaymap << '\n';
 	contents << "Callbacks: " << this->callbacks << " | Collision Rectangle:" << this->_used_collisions << '\n';
 	contents << "Settings: " << this->_settings.size() << '\n';
 

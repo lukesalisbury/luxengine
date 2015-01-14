@@ -133,6 +133,7 @@ void opengl_graphic_create_fbotexture( Texture & fbo )
  @ fullscreen:
  - Returns true if successfull
  */
+void SDL2_OuputRenderingInfo( SDL_RendererInfo * info );
 LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
 {
 	int window_width = width;
@@ -169,9 +170,9 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	SDL_GetWindowSize( native_window, &window_width, &window_height );
 
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
+	SDL_SetHintWithPriority( SDL_HINT_RENDER_DRIVER, "opengl", SDL_HINT_OVERRIDE );
 	SDL_SetHintWithPriority( SDL_HINT_RENDER_OPENGL_SHADERS, "1", SDL_HINT_OVERRIDE );
 	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "1", SDL_HINT_OVERRIDE );
-
 
 	native_context = SDL_GL_CreateContext(native_window);
 	if ( !native_context )
@@ -179,6 +180,8 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
+
+
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
 	SDL_GL_SetSwapInterval(1); // Leave VSync On
 

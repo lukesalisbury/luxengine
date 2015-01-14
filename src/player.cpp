@@ -315,19 +315,19 @@ void Player::SetEntity(Entity * entity)
 	this->_entity = entity;
 }
 
-void Player::SetEntityPostion( fixed x, fixed y, fixed z, uint32_t mapid )
+void Player::SetEntityPostion( fixed x, fixed y, uint8_t z_layer, uint32_t mapid )
 {
 	if ( this->_entity )
 	{
 		#ifdef NETWORKENABLED
-		lux::core->NetLock();
+		lux::core->NetworkLock();
 		#endif
 		this->_entity->x = x;
 		this->_entity->y = y;
-		this->_entity->z = z;
+		this->_entity->z_layer = z_layer;
 		this->_entity->displaymap = mapid;
 		#ifdef NETWORKENABLED
-		lux::core->NetUnlock();
+		lux::core->NetworkUnlock();
 		#endif
 	}
 }
@@ -338,14 +338,14 @@ void Player::Message( int32_t * data, uint32_t size )
 	if ( this->_entity )
 	{
 		#ifdef NETWORKENABLED
-		lux::core->NetLock();
+		lux::core->NetworkLock();
 		#endif
 		this->_entity->callbacks->Push( this->_entity->_data, size );
 		this->_entity->callbacks->PushArray( this->_entity->_data, data, size, NULL );
 		this->_entity->callbacks->Push( this->_entity->_data, 0 );
 		this->_entity->Call("NetMessage", (char*)"");
 		#ifdef NETWORKENABLED
-		lux::core->NetUnlock();
+		lux::core->NetworkUnlock();
 		#endif
 	}
 }

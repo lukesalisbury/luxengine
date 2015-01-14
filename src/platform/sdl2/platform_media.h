@@ -21,8 +21,9 @@ class PlatformMedia: public BasePlatformMedia
 		~PlatformMedia();
 
 	public:
-		void Init(GraphicSystem graphic);
+		void Init( GraphicSystem graphic );
 		void Free();
+
 		LuxSprite * GetInputImage( InputDevice device, uint32_t device_number, int32_t symbol );
 
 	private:

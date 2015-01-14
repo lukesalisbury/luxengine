@@ -12,11 +12,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_VIRTUAL_SPRITE_H
 
 class MokoiMap;
-class MapObject;
 
 #include "stdheader.h"
 #include "lux_types.h"
-
+#include <map>
+#include <vector>
 
 
 class LuxVirtualSprite
@@ -27,14 +27,14 @@ public:
 	~LuxVirtualSprite();
 
 private:
-	std::vector<MapObject *> objects;
+	MapObjectList objects;
 	std::vector<MapObject *> cache;
 
 public:
 	LuxRect rect;
 
 	bool Load( std::string file );
-	bool InsertToVector( MapObject * parent, std::vector<MapObject *> & object_array, uint32_t & object_cache_count, MokoiMap * map );
+	bool InsertToVector( MapObject * parent, MapObjectList & object_array, uint32_t & object_cache_count, const bool global );
 
 };
 

@@ -546,6 +546,8 @@ int AMXAPI amx_Callback(AMX *amx, cell index, cell *result, const cell *params)
 #endif
   assert(f!=NULL);
 
+
+
   /* Now that we have found the function, patch the program so that any
    * subsequent call will call the function directly (bypassing this
    * callback).
@@ -580,6 +582,8 @@ int AMXAPI amx_Callback(AMX *amx, cell index, cell *result, const cell *params)
 
   amx->error=AMX_ERR_NONE;
   *result = f(amx,params);
+  if ( amx->error != AMX_ERR_NONE )
+	amx->function_name = GETENTRYNAME(hdr,func);
   return amx->error;
 }
 #endif /* defined AMX_DEFCALLBACK */

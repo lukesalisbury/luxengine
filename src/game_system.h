@@ -20,11 +20,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#include "entity_section.h"
 	#include "global_objects.h"
 
-	class GameWorldSystem
+	class GameSystem
 	{
 		public:
-			GameWorldSystem();
-			~GameWorldSystem();
+			GameSystem();
+			~GameSystem();
 
 			bool Init( );
 			void Loop( LuxState engine_state );
@@ -68,7 +68,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void GetDebugInfo( std::ostream & stream );
 
 
-		private:
+                        void OutputInformation();
+        private:
 			/* Entities */
 			EntitySection * global_entities;
 
@@ -99,7 +100,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			/* Map Handling */
 			MokoiMap * next_map;
 			MokoiMap * active_map;
-			std::map<uint32_t, MokoiMap *> map_list;
+			std::map<uint32_t, MokoiMap *> map_list; // Sections just store the ids not pointer
 
 			LuxMapIdent map_counter;
 
@@ -118,6 +119,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 			bool SaveEditMap( uint32_t map_ident );
 
 			/* World Section System */
+
+
+			bool InsertSection(WorldSection * section, uint32_t section_ident );
+
+
 			WorldSection * NewSection( std::string section_name, const uint8_t width, const uint8_t height );
 			WorldSection * LoadSection( std::string file_name, bool set_current = false );
 			WorldSection * GetSection( uint32_t hash );
@@ -157,6 +163,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 
 namespace lux {
-	extern GameWorldSystem * gamesystem;
+	extern GameSystem * gamesystem;
+	extern GameSystem * oldgame;
 }
 #endif

@@ -15,12 +15,51 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display.h"
 #include "core.h"
 #include "game_system.h"
+#include "elix_rng.cpp"
 
 extern ObjectEffect default_fx;
 
 MapObject::MapObject( uint8_t type )
 {
 	this->effects = default_fx;
+	InitialSetup();
+
+	if ( lux::gamesystem )
+	{
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set( MAKE_FIXED_FLOAT(this->position.x),  MAKE_FIXED_FLOAT(this->position.x) );
+		bodyDef.gravityScale = 0.1f;
+
+		this->body = lux::gamesystem->GetPhysicWorld()->CreateBody(&bodyDef);
+	}
+}
+
+MapObject::MapObject( elix::File * current_save_file )
+{
+	InitialSetup();
+
+	Restore( current_save_file);
+
+
+	if ( lux::gamesystem )
+	{
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set( MAKE_FIXED_FLOAT(this->position.x),  MAKE_FIXED_FLOAT(this->position.x) );
+		bodyDef.gravityScale = 0.1f;
+
+		this->body = lux::gamesystem->GetPhysicWorld()->CreateBody(&bodyDef);
+	}
+}
+
+MapObject::~MapObject()
+{
+	this->FreeData();
+}
+
+void MapObject::InitialSetup()
+{
 	this->effects.tile_object = true;
 	this->data = NULL;
 	this->data_type = 0;
@@ -29,6 +68,7 @@ MapObject::MapObject( uint8_t type )
 	this->speed = 1;
 	this->has_data = false;
 	this->static_map_id = 0;
+	this->ident_hash = 0;
 	this->hidden = false;
 	this->loop = true;
 	this->reverse = false;
@@ -48,43 +88,35 @@ MapObject::MapObject( uint8_t type )
 	this->auto_delete = 0;
 	this->path_current_x = this->path_current_y = 0;
 
-
-	if ( lux::gamesystem )
-	{
-		b2BodyDef bodyDef;
-		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set( MAKE_FIXED_FLOAT(this->position.x),  MAKE_FIXED_FLOAT(this->position.x) );
-		bodyDef.gravityScale = 0.1f;
-
-		this->body = lux::gamesystem->GetPhysicWorld()->CreateBody(&bodyDef);
-	}
 }
 
-MapObject::~MapObject()
-{
-	this->FreeData();
-}
+
 uint32_t MapObject::GetStaticMapID() const
 {
 	return this->static_map_id;
 }
 
-void MapObject::SetStaticMapID(const uint32_t &value, const bool global )
+void MapObject::SetStaticMapID(const uint32_t counter, const bool global )
 {
-	if ( (value & OBJECT_GLOBAL_VALUE) == OBJECT_GLOBAL_VALUE )
+
+	if ( !this->ident_hash )
 	{
-		if ( global )
-		{
-			this->static_map_id = value;
-		}
+		this->ident = "_o";
+		this->ident.append( elix::string::FromInt(counter) );
+		this->ident.append( "_" );
+		this->ident.append( elix::rng::GetRandomString() );
+
+		this->ident_hash = elix::string::Hash( this->ident );
+	}
+
+	this->static_map_id = this->ident_hash;
+	if ( global )
+	{
+		this->static_map_id |= OBJECT_GLOBAL_VALUE;
 	}
 	else
 	{
-		this->static_map_id = value;
-		if ( global )
-		{
-			this->static_map_id |= OBJECT_GLOBAL_VALUE;
-		}
+		this->static_map_id &= OBJECT_LOCAL_VALUE;
 	}
 
 
@@ -624,19 +656,19 @@ bool MapObject::CollisionRectangle( LuxRect rect[7] )
 std::string MapObject::GetInfo()
 {
 	std::stringstream s;
-	s << this->TypeName() << "\nl" << (int)this->layer << std::hex << " i" << this->static_map_id;
+	s << this->TypeName()<< " " << this->position.x << "x" << this->position.y << "\nl" << +this->layer << std::hex << " i" << this->static_map_id;
 	return s.str();
 }
 
 
-void MapObject::SetZPos(int32_t z)
+void MapObject::SetZPos(fixed z)
 {
 	if ( z < 0 ) // If Z given is less then 0, z will (layer * 1000) + (y / 8)
 	{
 		z = (this->layer * 1000) + (this->position.y / 8);
 	}
 	this->position.z = (int16_t)z;
-	this->layer = (uint8_t)(z / 1000);
+	this->layer = (uint8_t)MAKE_FIXED_INT(z);
 
 }
 

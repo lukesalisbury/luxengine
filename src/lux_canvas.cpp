@@ -30,16 +30,27 @@ LuxCanvas::LuxCanvas( std::string file )
 
 LuxCanvas::~LuxCanvas()
 {
-	MapObject * object = NULL;
-	std::vector<MapObject*>::iterator l_object;
-	if ( this->_objects.size() )
+	if ( this->objects.size() )
 	{
-		for ( l_object = this->_objects.begin(); l_object != this->_objects.end(); l_object++ )
+		for ( MapObjectListIter l_object = this->objects.begin(); l_object != this->objects.end(); l_object++ )
 		{
-			object = (*l_object);
-			delete object;
+			delete l_object->second;
 		}
 	}
+}
+
+MapObject *LuxCanvas::FindChild(uint32_t ident)
+{
+	if ( this->objects.size() )
+	{
+		MapObjectListIter l_object = this->objects.find(ident);
+
+		if ( l_object != this->objects.end() )
+		{
+			return l_object->second;
+		}
+	}
+	return NULL;
 }
 
 
@@ -54,7 +65,7 @@ bool LuxCanvas::Load( std::string file )
 	}
 	uint32_t object_cache_count = 0;
 
-	reader.ReadObjects( this->_objects, object_cache_count, NULL );
+	reader.ReadObjects( this->objects, object_cache_count, NULL );
 
 //	this->_objects.sort( ObjectSort );
 
@@ -63,19 +74,18 @@ bool LuxCanvas::Load( std::string file )
 
 bool LuxCanvas::Draw( DisplaySystem * display, int32_t x, int32_t y, int32_t z)
 {
-	if ( !this->_objects.size() )
+	if ( !this->objects.size() )
 		return false;
 
 	if ( !display )
 		return false;
 
 	MapObject * object = NULL;
-	std::vector<MapObject*>::iterator l_object;
 	LuxRect position;
 
-	for ( l_object = this->_objects.begin(); l_object != this->_objects.end(); l_object++ )
+	for ( MapObjectListIter l_object = this->objects.begin(); l_object != this->objects.end(); l_object++ )
 	{
-		object = (*l_object);
+		object = l_object->second;
 		if ( !object->hidden )
 		{
 			position = object->position;

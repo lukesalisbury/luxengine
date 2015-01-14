@@ -13,7 +13,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 void Options::SetOption( uint8_t key, int16_t value )
 {
-
 	std::map<uint8_t, int16_t>::iterator iter = this->options_values.find(key);
 	if ( iter != this->options_values.end() )
 	{

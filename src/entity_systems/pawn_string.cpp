@@ -24,24 +24,23 @@
 #endif
 #include "pawn_helper.h"
 #include "display.h"
+#include "elix_string.hpp"
+
 #if defined __WIN32__ || defined _WIN32 || defined WIN32 || defined _Windows
   #include <windows.h>
 #endif
 
 
 
-#define CHARBITS        (8*sizeof(char))
 
-#if defined _UNICODE
-# include <tchar.h>
-#elif !defined __T
-  typedef char          TCHAR;
+
+typedef char          TCHAR;
 # define __T(string)    string
 # define _tcscat        strcat
 # define _tcschr        strchr
 # define _tcscpy        strcpy
 # define _tcslen        strlen
-#endif
+
 
 
 #if !defined isdigit
@@ -929,7 +928,7 @@ static cell n_memcpy(AMX *amx,const cell *params)
 	return 0;
   }
 
-  static int str_putchar(void *dest,TCHAR ch)
+  static int str_putchar(void *dest, TCHAR ch)
   {
 	int len=_tcslen((TCHAR*)dest);
 	if (len<MAX_FORMATSTR-1) {
@@ -942,7 +941,7 @@ static cell n_memcpy(AMX *amx,const cell *params)
 
 /* strformat(dest[], size=sizeof dest, bool:pack=false, const format[], {Fixed,_}:...)
  */
-static cell n_strformat(AMX *amx,const cell *params)
+static cell n_strformat_old(AMX *amx,const cell *params)
 {
   #if defined AMX_NOSTRFMT
 	(void)amx;
@@ -953,6 +952,10 @@ static cell n_strformat(AMX *amx,const cell *params)
 	AMX_FMTINFO info;
 	TCHAR output[MAX_FORMATSTR];
 
+	if ( params[3] == 0)
+	{
+		int c = 0;
+	}
 	memset(&info,0,sizeof info);
 	info.params=params+5;
 	info.numparams=(int)(params[0]/sizeof(cell))-4;
@@ -961,7 +964,7 @@ static cell n_strformat(AMX *amx,const cell *params)
 	info.f_putstr=str_putstr;
 	info.f_putchar=str_putchar;
 	info.user=output;
-	output[0] = __T('\0');
+	output[0] = ('\0');
 
 	cstr = amx_Address(amx, params[4]);
 	if ( amx_printstring(amx,cstr,&info) )
@@ -974,6 +977,381 @@ static cell n_strformat(AMX *amx,const cell *params)
 	return 0;
 
   #endif
+}
+
+/* strformat( dest[], size=sizeof dest, bool:pack=false, const format[], {Fixed,_}:... )
+ */
+enum {
+  FMT_NONE,   /* not in format state; accept '%' */
+  FMT_START,  /* found '%', accept '+', '-' (START), '0' (filler; START), digit (WIDTH), '.' (DECIM), or '%' or format letter (done) */
+  FMT_WIDTH,  /* found digit after '%' or sign, accept digit (WIDTH), '.' (DECIM) or format letter (done) */
+  FMT_DECIM,  /* found digit after '.', accept accept digit (DECIM) or format letter (done) */
+};
+
+static int8_t amx_format_state(uint8_t c, int8_t & state, uint8_t & sign, uint8_t & decpoint, int32_t & width, int32_t & digits, uint8_t & filler)
+{
+	switch (state)
+	{
+		case FMT_NONE:
+			if ( c == '%' )
+			{
+				state=FMT_START;
+				sign='\0';
+				decpoint='.';
+				width=0;
+				digits=INT_MAX;
+				filler=' ';
+			}
+			else
+			{
+				return -1;  /* print a single character */
+			} /* if */
+			break;
+		case FMT_START:
+			if ( c == '+' || c == '-' )
+			{
+				sign=c;
+			}
+			else if ( c == '0' )
+			{
+				filler=c;
+			}
+			else if ( c>='1' && c<='9' )
+			{
+				width=(c-'0');
+				state=FMT_WIDTH;
+			}
+			else if (c == '.' || c==',' )
+			{
+				decpoint=c;
+				digits=0;
+				state=FMT_DECIM;
+			}
+			else if ( c == '%' )
+			{
+				state=FMT_NONE;
+				return -1;  /* print literal '%' */
+			}
+			else
+			{
+				return 1;   /* print formatted character */
+			} /* if */
+			break;
+		case FMT_WIDTH:
+			if ( c >= '0' && c <= '9' )
+			{
+				width = width*10 + (c-'0');
+			}
+			else if (c == '.' || c==',' )
+			{
+				decpoint=c;
+				digits=0;
+				state=FMT_DECIM;
+			}
+			else
+			{
+				return 1;   /* print formatted character */
+			} /* if */
+			break;
+		case FMT_DECIM:
+			if ( c >= '0' && c <= '9' )
+			{
+				digits = (digits*10) + (c-'0');
+			}
+			else
+			{
+				return 1;   /* print formatted character */
+			} /* if */
+			break;
+	} /* switch */
+
+	return 0;
+}
+
+static int32_t amx_format_do_char( AMX * amx, uint8_t ch, cell param, uint8_t sign, uint8_t decpoint, int32_t width, int32_t digits, uint8_t filler, std::string & output )
+{
+	cell *cptr = amx_Address(amx, param);
+	std::string format_string;
+	char buffer[30]= { 0 };
+
+	switch (ch) {
+		case ('c'):
+			width--; /* single character itself has a with of 1 */
+			if ( sign != '-' )
+			{
+				output.append(width, filler);
+			}
+			output.append(1, (char)*cptr );
+			//output.append(width, filler); ?? Old code had it.
+			return 1;
+
+		case ('d'): {
+			cell value = *cptr;
+			int length = 1;
+			if ( value < 0 || sign == '+' )
+				length++;
+			if ( value < 0 )
+				value = -value;
+			while ( value >= 10 )
+			{
+				length++;
+				value/=10;
+			} /* while */
+
+			width -= length;
+			if ( sign != '-' )
+			{
+				//output.append(width, filler);
+			}
+			if ( sign == ('+') && *cptr >= 0 )
+			{
+				output.append(1, sign);
+			}
+			#if PAWN_CELL_SIZE == 64
+			output.append( elix::string::FromInt64(*cptr) );
+			#else
+			output.append( elix::string::FromInt(*cptr) );
+			#endif
+			//output.append(width, filler);// ?? Old code had it.
+			return 1;
+		} /* case */
+
+		case ('f'): /* 32-bit floating point number */
+			/* build a format string */
+			if ( digits == INT_MAX )
+				digits = 5;
+			else if (digits>25)
+				digits = 25;
+
+
+			format_string = "%";
+			if ( sign != ('\0') )
+				format_string.append(1, sign );
+			if ( width > 0 )
+				format_string.append(elix::string::FromInt(width) );
+			format_string.append( elix::string::FromInt(digits) );
+			format_string.append( "f" );
+
+			#if PAWN_CELL_SIZE == 64
+			snprintf(buffer, 29, format_string.c_str(), *(double*)cptr);
+			#else
+			snprintf(buffer, 29, format_string.c_str(), *(float*)cptr);
+			#endif
+			output.append( buffer );
+			return 1;
+		case ('q'): /* 32-bit fixed point number */
+		case ('r'): /* if fixed point is enabled, and floating point is not, %r == %q */
+		{
+			cell value = *cptr;
+			int length = 2;
+
+			if ( value < 1000 || sign == '+' )
+				length++;
+			if ( value < 0 )
+				value = -value;
+			while ( value >= 10000 )
+			{
+				length++;
+				value/=10000;
+			} /* while */
+
+			width -= length;
+			if ( sign != '-' )
+			{
+				output.append(width, filler);
+			}
+			if ( sign == ('+') && *cptr >= 0 )
+			{
+				output.append(1, sign);
+			}
+
+			#if PAWN_CELL_SIZE == 64
+			format_string = elix::string::FromInt64(*cptr);
+			#else
+			format_string = elix::string::FromInt(*cptr);
+			#endif
+			format_string.insert( -4, 1, '.');
+
+			output.append( format_string );
+			return 1;
+		}
+		case ('s'):
+			output.append( Lux_PawnEntity_GetString(amx, param ) );
+			return 1;
+		case ('x'):
+			ucell uvalue;
+			int length=1;
+			uvalue = *(ucell*)cptr;
+			while (uvalue>=0x10)
+			{
+			  length++;
+			  uvalue>>=4;
+			} /* while */
+
+			width -= length;
+			if ( sign != '-' )
+			{
+				output.append(width, filler);
+			}
+			if ( sign == ('+') && *cptr >= 0 )
+			{
+				output.append(1, sign);
+			}
+			#if PAWN_CELL_SIZE == 64
+			output.append( elix::string::HexFromInt64(*cptr) );
+			#else
+			output.append( elix::string::HexFromInt32(*cptr) );
+			#endif
+			output.append(width, filler);// ?? Old code had it.
+			return 1;
+	} /* switch */
+	/* error in the string format, try to repair */
+	output.append(1, ch);
+	return 0;
+}
+
+
+
+/**
+ * @brief n_strformat
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell n_strformat( AMX *amx, const cell *params )
+{
+	ASSERT_PAWN_PARAM( amx, params, 5 );
+
+	std::string str = "";
+	cell * cstr = amx_Address( amx, params[4] );
+	cell * output = amx_Address( amx, params[1] );
+	int32_t length = params[2];
+	int8_t state = 0;
+	uint8_t sign = 0, decpoint = 0, filler = 0;
+	int32_t width = 0, digits = 0;
+
+	uint32_t param_index = 0;
+	uint32_t num_params = (uint32_t)(params[0]/sizeof(cell)) - 4;
+
+	if ( cstr )
+	{
+		if ( (ucell)*cstr > UNPACKEDMAX )
+		{
+			/* source string is packed */
+			uint32_t i = sizeof(ucell)-1;
+			ucell c = 0;
+			uint8_t char8 = amx_get_next_packed( cstr, c, i );
+			while ( char8 != '\0')
+			{
+				if ( char8 < 128 )
+				{
+					if ( num_params )
+					{
+						switch ( amx_format_state(char8, state, sign, decpoint, width, digits, filler) )
+						{
+							case -1:
+								str.append( 1, char8 );
+							break;
+							case 0:
+								break;
+							case 1:
+								if ( param_index >= num_params) //insufficient parameters passed
+									amx_RaiseError(amx, AMX_ERR_NATIVE);
+								else
+								{
+									uint32_t param_offset = param_index+5;
+									param_index += amx_format_do_char( amx, char8, params[param_offset], sign, decpoint, width, digits, filler, str );
+								}
+								state = FMT_NONE;
+								break;
+							default:
+								assert(0);
+						} //switch
+					}
+					else
+					{
+						str.append( 1, char8 );
+					}
+				}
+				else if ( char8 < 194 )
+				{
+					state = FMT_NONE;
+					return 0; // Error
+				}
+				else if ( char8 < 224 )
+				{
+					state = FMT_NONE;
+					str.append( 1, char8 );
+					str.append( 1, amx_get_next_packed( cstr, c, i ) );
+				}
+				else if ( char8 < 240 )
+				{
+					state = FMT_NONE;
+					str.append( 1, char8 );
+					str.append( 1, amx_get_next_packed( cstr, c, i ) );
+					str.append( 1, amx_get_next_packed( cstr, c, i ) );
+				}
+				else if ( char8 < 245 )
+				{
+					state = FMT_NONE;
+					str.append( 1, char8 );
+					str.append( 1, amx_get_next_packed( cstr, c, i ) );
+					str.append( 1, amx_get_next_packed( cstr, c, i ) );
+					str.append( 1, amx_get_next_packed( cstr, c, i ) );
+				}
+				else
+				{
+					return 0; // Error
+				}
+				char8 = amx_get_next_packed( cstr, c, i );
+			}
+
+		}
+		else
+		{
+
+			while ( *cstr != 0 )
+			{
+				uint8_t char8 = (uint8_t)*cstr++;
+				str.push_back( char8 );
+				if ( num_params )
+				{
+					switch ( amx_format_state(char8, state, sign, decpoint, width, digits, filler) )
+					{
+						case -1:
+							str.push_back( char8 );
+						break;
+						case 0:
+							break;
+						case 1:
+							if ( param_index >= num_params)  // insufficient parameters passed
+								amx_RaiseError(amx, AMX_ERR_NATIVE);
+							else
+							{
+								uint32_t param_offset = param_index+5;
+								param_index += amx_format_do_char( amx, char8, params[param_offset], sign, decpoint, width, digits, filler, str );
+							}
+							state = FMT_NONE;
+							break;
+						default:
+							assert(0);
+					} // switch
+				}
+				else
+				{
+					str.push_back( char8 );
+				}
+			}
+
+		}
+	}
+
+	Lux_PawnEntity_SetString( output, str.c_str(),length );
+
+	str.empty();
+
+	return 0;
+
 }
 
 

@@ -822,13 +822,4 @@ const AMX_NATIVE_INFO fixed_Natives[] = {
 	{ NULL, NULL }				/* terminator */
 };
 
-int AMXEXPORT AMXAPI amx_FixedInit(AMX *amx)
-{
-	return amx_Register(amx,fixed_Natives,-1);
-}
 
-int AMXEXPORT AMXAPI amx_FixedCleanup(AMX *amx)
-{
-	(void)amx;
-	return AMX_ERR_NONE;
-}

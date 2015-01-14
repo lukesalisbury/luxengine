@@ -33,10 +33,11 @@ Permission is granted to anyone to use this software for any purpose, including 
  * @return
  */
 uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const int32_t x, const int32_t y,
-								const int32_t z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite )
+								const fixed z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite )
 {
 	MapObject * map_object = NULL;
 	uint32_t ident = 0;
+
 	if ( lux::gamesystem->active_map )
 	{
 		map_object = new MapObject( type );
@@ -52,6 +53,8 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 		map_object->effects.primary_colour = get_colour.rgba;
 
 		if ( (type == OBJECT_SPRITE || type == OBJECT_CANVAS) && sprite != NULL )
+			map_object->sprite.assign( sprite );
+		if ( (type == OBJECT_TEXT) && sprite != NULL )
 			map_object->sprite.assign( sprite );
 
 		if ( global )
@@ -74,7 +77,7 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
  * @param h
  * @return
  */
-int32_t Lux_FFI_Object_Postion( uint32_t object_id, const int32_t x, const int32_t y, const int32_t z,
+int32_t Lux_FFI_Object_Postion(uint32_t object_id, const int32_t x, const int32_t y, const int32_t z,
 								const uint16_t w, const uint16_t h )
 {
 	MapObject * map_object = NULL;
@@ -362,5 +365,57 @@ uint32_t Lux_FFI_Polygon_Create( const char * name )
 uint32_t Lux_FFI_Polygon_Add_Point( const char * name, int32_t x, int32_t y )
 {
 
+	return 0;
+}
+
+/**
+ * @brief Lux_FFI_Canvas_Child_Info
+ * @param object_id
+ * @param child_name
+ * @return
+ */
+uint32_t Lux_FFI_Canvas_Child_Info(uint32_t object_id, uint32_t child_id, int32_t * x, int32_t * y, uint16_t * w, uint16_t * h )
+{
+	MapObject * map_object = NULL;
+
+	map_object = Lux_FFI_Object_Get( object_id );
+
+	if ( map_object )
+	{
+		// Check if we are really changing object
+		if ( map_object->type == OBJECT_CANVAS )
+		{
+			LuxCanvas * canvas = map_object->GetCanvas();
+			if ( canvas )
+			{
+				MapObject * child_object = canvas->FindChild( child_id );
+				if ( child_object )
+				{
+					if ( w )
+					{
+						*w = child_object->position.w;
+					}
+					if ( h )
+					{
+						*h = child_object->position.h;
+					}
+
+					if ( x )
+					{
+						*x = child_object->position.x;
+					}
+					if ( h )
+					{
+						*y = child_object->position.y;
+					}
+					return child_object->GetStaticMapID();
+
+				}
+			}
+
+		}
+
+
+	}
 	return 0;
 }

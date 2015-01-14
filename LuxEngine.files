@@ -318,7 +318,7 @@ src/platform/sdl2/platform_controls.cpp
 src/platform/sdl2/platform_config.cpp
 src/platform/sdl2/graphics_opengl.cpp
 src/platform/sdl2/graphics_native.cpp
-src/platform/sdl2/core_network.cpp
+src/platform/sdl2/network_client.cpp
 src/platform/sdl2/core.cpp
 src/platform/sdl2/audio.cpp
 ../elix/src/elix_association.cpp
@@ -1025,11 +1025,9 @@ src/main.cpp
 src/map.cpp
 src/map.h
 src/map_internal.h
-src/map_masks.cpp
 src/map_network.cpp
 src/map_object.cpp
 src/map_object.h
-src/map_object_data.cpp
 src/map_screen.cpp
 src/map_screen.h
 src/map_xml_reader.cpp
@@ -1100,3 +1098,4 @@ src/portal/portal.cpp
 src/portal/portal.h
 src/test/test_code.cpp
 src/test/test_code.h
+src/network_client.h

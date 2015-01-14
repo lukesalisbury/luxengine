@@ -22,16 +22,34 @@ class MapXMLReader
 	private:
 		tinyxml2::XMLDocument * xml_file;
 		tinyxml2::XMLElement * root;
-	public:
-		bool Load( std::string filename );
-		std::string GetTextString(tinyxml2::XMLElement * object_element , std::string default_text);
-		MapObject * ReadObject( tinyxml2::XMLElement * object_element );
-		void ReadDimension( LuxRect & rect );
-		void ReadObjects(std::vector<MapObject *> & object_array, uint32_t & object_cache_count , MokoiMap *map);
+
+		void ReadObjectPosition(tinyxml2::XMLElement* object_element, MapObject* object);
+		void ReadObjectEffect(tinyxml2::XMLElement* object_element, MapObject* object);
+		void ReadObjectType(tinyxml2::XMLElement* object_element, std::string obj_type, MapObject* object);
+		void ReadObjectSetting(tinyxml2::XMLElement* object_element, MapObject* object);
+
+		uint16_t ReadZLayer(tinyxml2::XMLElement* position_element, uint8_t & layer );
+		uint8_t ReadObjectFlipmode(tinyxml2::XMLElement *position_element);
+
+		void ReadGlobalEntity(tinyxml2::XMLElement *entity_element, tinyxml2::XMLElement *object_element);
+		void ReadLocalEntity(tinyxml2::XMLElement *object_element, MapObject *object, MokoiMap *map);
+
 		void ReadSettings( MokoiMap * map , std::map<std::string, std::string> &settings );
 		void ReadPolygon( MapObject * object, tinyxml2::XMLElement * object_element );
 		void ReadPath( MapObject * object, tinyxml2::XMLElement * object_element );
-		bool ReadEntity( MapObject * object, tinyxml2::XMLElement * object_element, MokoiMap * map );
+		std::string GetTextString(tinyxml2::XMLElement * object_element , std::string default_text );
+		MapObject * ReadObject(tinyxml2::XMLElement * object_element , const bool global, const uint32_t counter );
+		void ReadDimension( LuxRect & rect );
+public:
+		bool Load( std::string filename );
+
+		void ReadObjects(MapObjectList &object_array, uint32_t & object_cache_count , MokoiMap * map );
+
+
+
+
+
+
 };
 
 #endif // MAP_XML_READER_H

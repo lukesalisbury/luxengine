@@ -679,8 +679,9 @@ uint32_t MokoiGame::GetFile(std::string filename, uint8_t ** data, bool addnull)
 				}
 				file->Seek( info->offset );
 				file->Read( buffer, 1, info->compress);
-				unsigned long int tcompress = info->len;
-				uncompress(*data, (uLongf*)&tcompress, buffer, info->compress);
+
+				uLongf tcompress = info->len;
+				uncompress(*data, &tcompress, buffer, info->compress);
 				delete[] buffer;
 			}
 			else if ( info->path_type == MOKOI_GAME_DIRECTORY )
@@ -731,7 +732,7 @@ bool MokoiGame::CompileScripts()
 				std::string temporary_file = this->filename + (*iter);
 				std::string source_file = (*iter);
 
-
+				lux::screen::push();
 				lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << "Compiling " << (*iter) << " from " << this->filename << " to " << output_directory << std::endl;
 				lux::core->RunExternalProgram( "pawn_compiler4", source_file + " --project=" + output_directory + " --temporary=" + temporary_file + " --parent=" + this->filename );
 			}

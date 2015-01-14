@@ -23,6 +23,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define MAP_WRAPYAXIS	2
 #define MAP_WRAPBOTH	3
 
+
+
 class MokoiMap: public Options
 {
 		friend class EntityManager;
@@ -30,8 +32,7 @@ class MokoiMap: public Options
 		friend class WorldSection;
 		friend class MapXMLReader;
 	public:
-		MokoiMap( std::string name );
-		MokoiMap( std::string name, uint32_t width, uint32_t height );
+		MokoiMap( std::string name, uint32_t width = 0, uint32_t height = 0 );
 		MokoiMap( elix::File *current_save_file );
 		~MokoiMap();
 
@@ -58,8 +59,7 @@ class MokoiMap: public Options
 
 		/* Object Handling */
 		uint32_t object_cache_count;
-		std::vector<MapObject *> _objects;
-		std::map<uint32_t, MapObject *> object_cache;
+		MapObjectList object_cache;
 		void AddObjectToScreens(MapObject * object);
 		void RemoveObjectFromScreens(MapObject * object);
 
@@ -96,6 +96,8 @@ class MokoiMap: public Options
 		bool Init();
 		bool Loop();
 		bool Close();
+
+		std::string GetInfo();
 
 		/* Settings */
 		void SetIdent( uint32_t ident );

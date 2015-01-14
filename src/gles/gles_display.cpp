@@ -28,7 +28,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 */
 
 namespace gles {
-	Texture font[95];
+	Texture font[96];
 	bool customtext = false;
 	uint32_t customtext_height = 10;
 	LuxVertex scale = { 1, 1, 1 };
@@ -96,7 +96,7 @@ uint8_t Lux_GLES_GetShader(  ObjectEffect effect )
 void Lux_GLES_UnloadFont()
 {
 
-	for ( uint8_t c = 0; c < 96; c++)
+	for ( uint8_t c = 0; c < 97; c++)
 	{
 		glDeleteTextures(1, &gles::font[c].pointer );
 	}
@@ -112,7 +112,7 @@ void Lux_GLES_LoadFont()
 	glEnable( GL_TEXTURE_2D );
 	uint8_t * charflip = new uint8_t[64];
 
-	for ( uint8_t c = 0; c < 96; c++)
+	for ( uint8_t c = 0; c < 97; c++)
 	{
 		for (i = 0; i < 8; i++)
 		{
@@ -495,7 +495,7 @@ LUX_DISPLAY_FUNCTION int32_t Lux_GLES_DrawChar( int32_t cchar, int32_t x, int32_
 	}
 	else
 	{
-		texture = &gles::font[31];
+		texture = &gles::font[96];
 	}
 
 
@@ -708,6 +708,10 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect
 			cchar += next;
 
 			x += Lux_GLES_DrawChar(cchar, x, y, dest_rect.z/1000, current_effects, allow_custom);
+		}
+		else
+		{
+			object++;
 		}
 	}
 }

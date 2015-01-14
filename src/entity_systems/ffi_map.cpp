@@ -53,9 +53,10 @@ uint32_t Lux_FFI_Map_Get_Ident( const char * map_file, uint8_t create_new )
 	{
 		MokoiMap * map = NULL;
 
+
 		if ( create_new )
 		{
-			map = lux::gamesystem->CreateMap( map_file, true, true, 640, 480 );
+			map = lux::gamesystem->CreateMap( map_file, true, false, 0, 0 );
 		}
 		else
 		{
@@ -66,6 +67,7 @@ uint32_t Lux_FFI_Map_Get_Ident( const char * map_file, uint8_t create_new )
 		{
 			map_ident = map->Ident();
 		}
+
 	}
 	return map_ident;
 
@@ -167,7 +169,7 @@ uint32_t Lux_FFI_Map_Edit_New( const char * map_file, const uint32_t section_has
 	if ( lux::gamesystem )
 	{
 		MokoiMap * map = NULL;
-		map = lux::gamesystem->CreateMap( map_file, false, true, width, height );
+		map = lux::gamesystem->CreateMap( std::string(map_file), false, true, width, height );
 
 		if ( map )
 		{
@@ -211,7 +213,7 @@ uint8_t Lux_FFI_Map_Edit_Save( const uint32_t map_ident )
  * @return
  */
 uint32_t Lux_FFI_Map_Edit_Object_Create( const uint32_t map_ident, const uint8_t type, const int32_t x, const int32_t y,
-								const int32_t z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite )
+								const fixed z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite )
 {
 	MapObject * map_object = NULL;
 	MokoiMap * map = NULL;
@@ -245,7 +247,7 @@ uint32_t Lux_FFI_Map_Edit_Object_Create( const uint32_t map_ident, const uint8_t
 
 }
 
-int32_t Lux_FFI_Map_Edit_Object_Postion( const uint32_t map_ident, uint32_t object_id, const int32_t x, const int32_t y, const int32_t z,
+int32_t Lux_FFI_Map_Edit_Object_Postion( const uint32_t map_ident, uint32_t object_id, const int32_t x, const int32_t y, const fixed z,
 								const uint16_t w, const uint16_t h )
 {
 	MapObject * map_object = NULL;

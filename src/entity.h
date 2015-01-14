@@ -54,7 +54,8 @@ class Entity
 		uint8_t active_state_flags;
 
 		/* Location */
-		fixed x, y, z; /* Position is relative to map */
+		fixed x, y; /* Position is relative to map */
+		uint8_t z_layer;
 		uint32_t _mapid, displaymap;
 		void ChangeMap(uint32_t map_id);
 

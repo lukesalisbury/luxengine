@@ -484,10 +484,29 @@ static cell pawnWorldExist(AMX *amx, const cell *params)
 	cell result = 0;
 	std::string section_name = Lux_PawnEntity_GetString( amx, params[1] );
 
-	result = Lux_FFI_World_Exist( section_name.c_str() );
+	result = Lux_FFI_World_Exist( section_name.c_str(), false );
 
 	return result;
 }
+
+/**
+ * @brief pawnWorldLoad
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnWorldLoad(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 1 );
+
+	cell result = 0;
+	std::string section_name = Lux_PawnEntity_GetString( amx, params[1] );
+
+	result = Lux_FFI_World_Exist( section_name.c_str(), true );
+
+	return result;
+}
+
 
 /**
  * @brief pawnWorldEditNew
@@ -585,6 +604,7 @@ const AMX_NATIVE_INFO Maps_Natives[] = {
 	{ "WorldSet", pawnWorldSet }, //WorldSet( section_hash, grid_x, grid_y )
 	{ "WorldGetIdent", pawnWorldGetIdent }, //WorldGetIdent( section_hash, grid_x, grid_y )
 	{ "WorldExist", pawnWorldExist }, //WorldExist( section_name{} )
+	{ "WorldLoad", pawnWorldLoad }, //WorldExist( section_name{} )
 	/* World Edit */
 	{ "WorldEditNew", pawnWorldEditNew }, //WorldEditNew( section_name{}, width, height )
 	{ "WorldEditSet", pawnWorldEditSet }, //WorldEditSet( section_hash, map_ident, x, y )

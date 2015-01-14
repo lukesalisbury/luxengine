@@ -43,12 +43,14 @@ namespace lux {
 	GameConfig * config = NULL;
 	AudioSystem * audio = NULL;
 	DisplaySystem * display = NULL;
-	GameWorldSystem * gamesystem = NULL;
+	GameSystem * gamesystem = NULL;
 	EntityManager * entities = NULL;
 	MokoiGame * game_data = NULL;
 	EntitySystem * entity_system = NULL;
 	PlatformMedia * media = NULL;
 
+
+	GameSystem * oldgame = NULL;
 	namespace screen {
 		void display( std::string message );
 	}
@@ -269,7 +271,7 @@ bool LuxEngine::Start( std::string project_file )
 
 	lux::audio = new AudioSystem();
 	lux::entities = new EntityManager();
-	lux::gamesystem = new GameWorldSystem();
+	lux::gamesystem = new GameSystem();
 
 	lux::gamesystem->Init();
 
@@ -320,7 +322,7 @@ void LuxEngine::Refresh()
 				this->ShowDialog("Saving Error. Exiting", DIALOGOK);
 				this->state = NOTRUNNING;
 			}
-			this->state = RUNNING;
+			//this->state = RUNNING;
 		}
 		else if ( this->state == LOADING )
 		{
@@ -329,7 +331,7 @@ void LuxEngine::Refresh()
 				this->ShowDialog("Loaded Error. Exiting", DIALOGOK);
 				this->state = NOTRUNNING;
 			}
-			this->state = RUNNING;
+			//this->state = RUNNING;
 
 		}
 		else if ( this->state == RESETGAME )
@@ -339,7 +341,7 @@ void LuxEngine::Refresh()
 				this->ShowDialog("Loaded Error. Exiting", DIALOGOK);
 				this->state = NOTRUNNING;
 			}
-			this->state = RUNNING;
+			//this->state = RUNNING;
 
 		}
 		else if ( this->state == GUIMODE )
@@ -377,11 +379,11 @@ void LuxEngine::Loop()
 void LuxEngine::SetState(LuxState new_state)
 {
 	#ifdef NETWORKENABLED
-	lux::core->NetLock();
+	lux::core->NetworkLock();
 	#endif
 	this->state = new_state;
 	#ifdef NETWORKENABLED
-	lux::core->NetUnlock();
+	lux::core->NetworkUnlock();
 	#endif
 }
 
@@ -394,22 +396,16 @@ void LuxEngine::RunState()
 		Display ()
 	*/
 
+	lux::core->NetworkLock();
 
-
-
-	#ifdef NETWORKENABLED
-	lux::core->NetLock();
-	#endif
 	std::vector<Player *>::iterator iter = _players.begin();
 	while( iter !=  _players.end() )
 	{
 		(*iter)->Loop();
 		iter++;
 	}
-	#ifdef NETWORKENABLED
-	lux::core->NetUnlock();
-	#endif
 
+	lux::core->NetworkUnlock();
 
 	lux::gamesystem->Loop( this->state );
 	lux::audio->Loop( this->state );
@@ -534,7 +530,6 @@ bool LuxEngine::HandleSave()
 
 	saved_game.SetSlot( this->save_system_slot );
 
-
 	if ( saved_game.Save( lux::gamesystem, lux::entities, NULL, 0 ) )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "game saved" << std::endl;
@@ -550,8 +545,8 @@ bool LuxEngine::HandleSave()
 bool LuxEngine::HandleReload()
 {
 
-	GameWorldSystem * restored_world = new GameWorldSystem();
-	GameWorldSystem * current_world = lux::gamesystem;
+	GameSystem * restored_world = new GameSystem();
+	GameSystem * current_world = lux::gamesystem;
 
 	EntityManager * restored_entity_manager = new EntityManager();
 	EntityManager * current_entity_manager = lux::entities;
@@ -572,40 +567,59 @@ bool LuxEngine::HandleReload()
 bool LuxEngine::HandleLoad()
 {
 	bool successful = false;
-	GameWorldSystem * restored_world = new GameWorldSystem();
-	GameWorldSystem * current_world = lux::gamesystem;
 
+
+	GameSystem * restored_world = new GameSystem();
 	EntityManager * restored_entity_manager = new EntityManager();
+
+	GameSystem * current_world = lux::gamesystem;
 	EntityManager * current_entity_manager = lux::entities;
 
 	LuxSaveState saved_game;
 
 	saved_game.SetSlot( this->save_system_slot );
 
+	/* Map new varibles to global varibles */
+	lux::gamesystem = restored_world;
+	lux::entities = restored_entity_manager;
+
 	if ( saved_game.Restore( restored_world, restored_entity_manager, NULL, 0 ) )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "game restored" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Game restored" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "removing old world  & enitites" << std::endl;
 
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "removing old world " << std::hex << current_world << " & enitites" << current_entity_manager << std::endl;
-		delete current_world;
-		delete current_entity_manager;
+		lux::gamesystem = current_world;
+		lux::entities = current_entity_manager;
+
+		lux::oldgame = current_world;
+
+
+		//current_world->Close();
+
+//TODO: (Either merge or check if GameSystem or EntityManager free something it shouldn't
+
+		//delete current_world;
+		//delete current_entity_manager;
+
 
 		lux::gamesystem = restored_world;
 		lux::entities = restored_entity_manager;
-
-
 
 		successful = true;
 	}
 	else
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "removing failed world " << std::hex << current_world << " & enitites" << current_entity_manager << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "removing failed world & enitites" << std::endl;
+
+		lux::gamesystem = current_world;
+		lux::entities = current_entity_manager;
+
 		delete restored_world;
 		delete restored_entity_manager;
 	}
 
-	restored_world = current_world = NULL;
-	restored_entity_manager = current_entity_manager = NULL;
+//	restored_world = current_world = NULL;
+//	restored_entity_manager = current_entity_manager = NULL;
 
 
 	this->state = RUNNING;

@@ -19,6 +19,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "misc_functions.h"
 #include "display_functions.h"
 #include "elix_endian.hpp"
+#include "elix_string.hpp"
 
 #include "ffi_object.h"
 #include "ffi_spritesheet.h"
@@ -132,7 +133,7 @@ static cell pawnGraphicsDraw(AMX *amx, const cell *params)
 	new_object->type = (uint8_t)params[2];
 	new_object->position.x = params[3];
 	new_object->position.y = params[4];
-	new_object->SetZPos( (int32_t)params[5] );
+	new_object->SetZPos( (fixed)params[5] );
 	new_object->position.w = params[6];
 	new_object->position.h = params[7];
 
@@ -233,6 +234,52 @@ static cell pawnPolygonAddpoint(AMX *amx, const cell *params)
 
 }
 
+
+/** pawnCanvasChildInfo
+* native CanvasChildInfo(object_id, child{}, &x, &y, &w, &h);
+
+*/
+static cell pawnCanvasChildInfo(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 6 );
+
+	std::string name = Lux_PawnEntity_GetString(amx, params[2]);
+
+	cell * xptr, * yptr;
+	uint16_t w;
+	uint16_t h;
+	int32_t y;
+	int32_t x;
+	uint32_t object_id = params[1];
+	uint32_t child_id = elix::string::Hash(name);
+
+	child_id = Lux_FFI_Canvas_Child_Info( object_id, child_id, &x, &y, &w, &h  );
+	if ( child_id )
+	{
+		xptr = amx_Address(amx, params[3]);
+		yptr = amx_Address(amx, params[4]);
+		if ( xptr )
+			*xptr = x;
+
+		if ( yptr )
+			*yptr = y;
+
+		xptr = amx_Address(amx, params[5]);
+		yptr = amx_Address(amx, params[6]);
+		if ( xptr )
+			*xptr = w;
+
+		if ( yptr )
+			*yptr = h;
+
+
+		return 1;
+	}
+
+
+	return Lux_FFI_Polygon_Add_Point( name.c_str(), params[2], params[3] );
+
+}
 /** Display Functions */
 
 /** pawnObjectCreate
@@ -447,6 +494,9 @@ const AMX_NATIVE_INFO Graphics_Natives[] = {
 	{ "PolygonCreate", pawnPolygonCreate }, ///native PolygonCreate(string[]);
 	{ "PolygonAddPoint", pawnPolygonAddpoint }, ///native PolygonAddpoint(string[], x, y, string_size = sizeof string);
 	{ "PolygonDelete", pawnDeprecatedFunction }, ///native AnimationDelete(string[]);
+
+	/** Polygon */
+	{ "CanvasChildInfo", pawnCanvasChildInfo },
 
 	/** Display Functions */
 	{ "ObjectCreate", pawnObjectCreate }, ///native ObjectCreate(string[], type, c = 0xFFFFFFFF, string_size = sizeof string);

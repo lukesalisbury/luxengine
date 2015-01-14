@@ -26,7 +26,7 @@ extern const AMX_NATIVE_INFO Network_Natives[];
 static cell pawnEntityActive(AMX *amx, const cell *params)
 {
 	#ifdef NETWORKENABLED
-	lux::core->NetLock();
+	lux::core->NetworkLock();
 	#endif
 	cell result = -1;
 	Entity * wanted = Lux_PawnEntity_GetEntity(amx, params[1]);
@@ -35,7 +35,7 @@ static cell pawnEntityActive(AMX *amx, const cell *params)
 		result = (cell)wanted->onscreen;
 	}
 	#ifdef NETWORKENABLED
-	lux::core->NetUnlock();
+	lux::core->NetworkUnlock();
 	#endif
 	return result;
 }
@@ -48,7 +48,7 @@ static cell pawnEntityNetworkSync(AMX *amx, const cell *params)
 {
 	cell result = -1;
 	#ifdef NETWORKENABLED
-	lux::core->NetLock();
+	lux::core->NetworkLock();
 
 	Entity * wanted = Lux_PawnEntity_GetParent(amx);
 	if ( wanted != NULL )
@@ -62,7 +62,7 @@ static cell pawnEntityNetworkSync(AMX *amx, const cell *params)
 			lux::core->MessageSend(false);
 		}
 	}
-	lux::core->NetUnlock();
+	lux::core->NetworkUnlock();
 	#endif
 	return result;
 }
@@ -126,7 +126,7 @@ static cell pawnNetworkMessage(AMX *amx, const cell *params)
 	cell result = -1;
 	#ifdef NETWORKENABLED
 	cell * data;
-	lux::core->NetLock();
+	lux::core->NetworkLock();
 	if ( params[4] <= params[5] && params[4] > 0 )
 	{
 		data = amx_Address(amx, params[3]);
@@ -160,7 +160,7 @@ static cell pawnNetworkMessage(AMX *amx, const cell *params)
 			}
 		}
 	}
-	lux::core->NetUnlock();
+	lux::core->NetworkUnlock();
 	#endif
 	return result;
 }

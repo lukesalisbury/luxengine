@@ -57,7 +57,7 @@ private:
 
 	/* DisplayObject */
 	uint32_t object_cache_count;
-	std::map<uint32_t, MapObject *> object_cache;
+	MapObjectList object_cache;
 
 	/* Colllision Functions */
 	std::multimap<uint32_t, CollisionObject*> collision_list;

@@ -23,7 +23,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 /**
  * @brief GameWorldSystem::GameWorldSystem
  */
-GameWorldSystem::GameWorldSystem()
+GameSystem::GameSystem()
 {
 	this->active_map = this->next_map = NULL;
 	this->active_section = this->next_section = NULL;
@@ -32,9 +32,8 @@ GameWorldSystem::GameWorldSystem()
 	this->next_offset_position[0] = this->next_offset_position[1] = this->next_offset_position[2] = -1;
 	this->map_movement_direction = 0;
 
-
+	this->map_counter.value = 0xFFFFFFFF;
 	this->map_counter.grid.section = 1; /* Section counter */
-
 
 	this->physic_world = new b2World( b2Vec2(0.0, 9.8) );
 	this->objects = new GlobalObjects();
@@ -45,20 +44,25 @@ GameWorldSystem::GameWorldSystem()
 /**
  * @brief GameWorldSystem::~GameWorldSystem
  */
-GameWorldSystem::~GameWorldSystem()
+GameSystem::~GameSystem()
 {
 	NULLIFY( this->global_entities );
 	NULLIFY( this->objects );
 	NULLIFY( this->physic_world );
 }
 
+
+/* */
+
 /**
  * @brief GameWorldSystem::Init
  * @return
  */
-bool GameWorldSystem::Init( )
+bool GameSystem::Init( )
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Opening the World" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Opening the Game" << std::endl;
+
+	this->objects->Init();
 
 	/* Set up global Enitities */
 	if ( !this->global_entities->parent->loaded )
@@ -75,7 +79,7 @@ bool GameWorldSystem::Init( )
 	}
 
 	this->next_grid_position[0] =  this->next_grid_position[1] = 0;
-	this->next_section = this->NewSection( starting, 1, 1 );
+	this->next_section = this->NewSection( "map/" + starting, 1, 1 );
 	this->next_section->AddMap( starting, 0, 0 );
 
 	this->SwitchActive();
@@ -89,12 +93,11 @@ bool GameWorldSystem::Init( )
 	return true;
 }
 
-
 /**
  * @brief GameWorldSystem::Loop
  * @param engine_state
  */
-void GameWorldSystem::Loop( LuxState engine_state )
+void GameSystem::Loop( LuxState engine_state )
 {
 	this->SwitchActive();
 
@@ -106,46 +109,18 @@ void GameWorldSystem::Loop( LuxState engine_state )
 
 	this->active_map->SetPosition( this->current_offset_position );
 
-	/*
-	lux::display->debug_msg << "Map '" << this->active_map->Name() << "' '"<< this->active_map->Ident() << "'" << std::endl;
-	if ( this->active_section != NULL )
-	{
-		lux::display->debug_msg << "Section '" << this->active_section->file << "' '"<< (int)this->grid_position[0] << "'x'"<< (int)this->grid_position[1] << "'" << this->active_section->GetGrid(this->grid_position[0]+1, this->grid_position[1]) << std::endl;
-	}
-	*/
-
-	if ( this->active_section->IsBasic() && this->active_map->wrap_mode != 3 )
+	if ( this->active_section->IsSingleMap() && this->active_map->wrap_mode != MAP_WRAPBOTH )
 	{
 		this->CheckPosition();
 	}
 
 	this->physic_world->Step(0.01667, 6, 2);
-
 	this->objects->Loop( engine_state );
 	this->global_entities->Loop();
 	this->active_map->Loop();
 
-
-
 	/* Debug Message */
-	std::stringstream buffer;
-	for( std::map<uint32_t, WorldSection *>::iterator iter = section_list.begin(); iter != section_list.end(); ++iter )
-	{
-		WorldSection * section = iter->second;
-
-		buffer << section->Name() << std::endl;
-		for( std::map<uint32_t, MokoiMap *>::iterator iter2 = this->map_list.begin(); iter2 != map_list.end(); ++iter2 )
-		{
-			MokoiMap * map = iter2->second;
-
-			if ( map->InSection( section->Ident() ) )
-			{
-				buffer << " - " <<  map->Name() << " §c[Grid] §4Section:" << map->GridIdent() << " id: " << map->Ident() << std::endl;
-			}
-		}
-	}
-
-	lux::display->graphics.DrawMessage( buffer.str(), 1 );
+	OutputInformation();
 
 }
 
@@ -153,11 +128,12 @@ void GameWorldSystem::Loop( LuxState engine_state )
  * @brief GameWorldSystem::Close
  * @return
  */
-bool GameWorldSystem::Close()
+bool GameSystem::Close()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing the World" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing the Game" << std::endl;
 
-	this->global_entities->Close();
+	if ( this->active_map )
+		this->active_map->Close();
 
 	for( std::map<uint32_t, WorldSection *>::iterator iter = section_list.begin(); iter != section_list.end(); ++iter )
 	{
@@ -173,9 +149,12 @@ bool GameWorldSystem::Close()
 	this->map_list.clear();
 	this->section_list.clear();
 
+	this->global_entities->Close();
+	this->objects->Close();
+
+
 	return true;
 }
-
 
 /* Positions */
 
@@ -185,18 +164,19 @@ bool GameWorldSystem::Close()
  * @param offset_y
  * @param offset_z
  */
-void GameWorldSystem::SetPosition(fixed offset_x, fixed offset_y, fixed offset_z )
+void GameSystem::SetPosition(fixed offset_x, fixed offset_y, fixed offset_z )
 {
 	this->current_offset_position[0] = offset_x;
 	this->current_offset_position[1] = offset_y;
 	this->current_offset_position[2] = offset_z;
 }
+
 /**
  * @brief GameWorldSystem::GetPosition
  * @param axis
  * @return
  */
-fixed GameWorldSystem::GetPosition( uint8_t axis )
+fixed GameSystem::GetPosition( uint8_t axis )
 {
 	if ( axis == 'x')
 		return this->current_offset_position[0];
@@ -209,7 +189,7 @@ fixed GameWorldSystem::GetPosition( uint8_t axis )
 /**
  * @brief Check to see if offset moves off map.
  */
-void GameWorldSystem::CheckPosition()
+void GameSystem::CheckPosition()
 {
 	uint8_t updated_grid_position[2] = { 0,0 };
 
@@ -267,7 +247,7 @@ void GameWorldSystem::CheckPosition()
 /**
  * @brief Switch Active Sections and map.
  */
-void GameWorldSystem::SwitchActive()
+void GameSystem::SwitchActive()
 {
 	if ( this->next_section )
 	{
@@ -290,7 +270,7 @@ void GameWorldSystem::SwitchActive()
  * @param next_map
  * @return
  */
-bool GameWorldSystem::SwitchMap( MokoiMap * next_map )
+bool GameSystem::SwitchMap( MokoiMap * next_map )
 {
 	if ( !next_map )
 		return false;
@@ -349,7 +329,7 @@ bool GameWorldSystem::SwitchMap( MokoiMap * next_map )
 	/*
 	if ( this->object_cache.size() )
 	{
-		std::map<uint32_t, MapObject *>::iterator p;
+		MapObjectList::iterator p;
 		for ( p = this->object_cache.begin(); p != this->object_cache.end(); p++ )
 		{
 			lux::display->AddObjectToLayer(p->second->layer, p->second, true);
@@ -367,7 +347,7 @@ bool GameWorldSystem::SwitchMap( MokoiMap * next_map )
  * @param grid_y
  * @return
  */
-uint32_t GameWorldSystem::SetMap( WorldSection * section, uint8_t grid_x, uint8_t grid_y, fixed position_x, fixed position_y, fixed position_z  )
+uint32_t GameSystem::SetMap( WorldSection * section, uint8_t grid_x, uint8_t grid_y, fixed position_x, fixed position_y, fixed position_z  )
 {
 	if ( section )
 	{
@@ -395,7 +375,7 @@ uint32_t GameWorldSystem::SetMap( WorldSection * section, uint8_t grid_x, uint8_
  * @param grid_y
  * @return
  */
-uint32_t GameWorldSystem::SetMap( std::string section_name, uint8_t grid_x, uint8_t grid_y, fixed position_x, fixed position_y, fixed position_z  )
+uint32_t GameSystem::SetMap( std::string section_name, uint8_t grid_x, uint8_t grid_y, fixed position_x, fixed position_y, fixed position_z  )
 {
 	if ( !section_name.length() )
 		return 0;
@@ -412,11 +392,17 @@ uint32_t GameWorldSystem::SetMap( std::string section_name, uint8_t grid_x, uint
  * @param grid_y
  * @return
  */
-uint32_t GameWorldSystem::SetMap( uint32_t section_hash, uint8_t grid_x, uint8_t grid_y, fixed position_x, fixed position_y, fixed position_z  )
+uint32_t GameSystem::SetMap( uint32_t section_hash, uint8_t grid_x, uint8_t grid_y, fixed position_x, fixed position_y, fixed position_z  )
 {
-	WorldSection * section = this->GetSection( section_hash );
-
-	return this->SetMap( section, grid_x, grid_y,  position_x, position_y, position_z );
+	if ( section_hash )
+	{
+		WorldSection * section = this->GetSection( section_hash );
+		return this->SetMap( section, grid_x, grid_y,  position_x, position_y, position_z );
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 /**
@@ -427,7 +413,7 @@ uint32_t GameWorldSystem::SetMap( uint32_t section_hash, uint8_t grid_x, uint8_t
  * @param position_z
  * @return
  */
-uint32_t GameWorldSystem::SetMap( MokoiMap * map, fixed position_x, fixed position_y, fixed position_z )
+uint32_t GameSystem::SetMap( MokoiMap * map, fixed position_x, fixed position_y, fixed position_z )
 {
 	if ( map )
 	{
@@ -450,12 +436,14 @@ uint32_t GameWorldSystem::SetMap( MokoiMap * map, fixed position_x, fixed positi
 
 }
 
+/* Get Display Object*/
+
 /**
  * @brief GameWorldSystem::GetObject
  * @param object_id
  * @return
  */
-MapObject *GameWorldSystem::GetObject(uint32_t object_id)
+MapObject * GameSystem::GetObject(uint32_t object_id)
 {
 	MapObject * object = NULL;
 	if ( (object_id & OBJECT_GLOBAL_VALUE) == OBJECT_GLOBAL_VALUE )
@@ -475,7 +463,7 @@ MapObject *GameWorldSystem::GetObject(uint32_t object_id)
  * @param map
  * @return
  */
-bool GameWorldSystem::InsertMap( uint32_t ident, MokoiMap * map )
+bool GameSystem::InsertMap( uint32_t ident, MokoiMap * map )
 {
 	std::map<uint32_t, MokoiMap *>::iterator p = this->map_list.find( ident );
 
@@ -496,19 +484,22 @@ bool GameWorldSystem::InsertMap( uint32_t ident, MokoiMap * map )
  * @param height
  * @return
  */
-MokoiMap * GameWorldSystem::CreateMap( std::string map_name, bool removeable, bool editable, uint32_t width, uint32_t height )
+MokoiMap * GameSystem::CreateMap( std::string map_name, bool removeable, bool editable, uint32_t width, uint32_t height )
 {
-	WorldSection * section = this->NewSection("map/"+map_name, 1, 1);
-	MokoiMap * new_map = NULL;
 
-	if ( width && height )
+	/* If not editable map and file doesn't not exist, return NULL */
+	if ( !editable )
 	{
-		new_map = new MokoiMap( map_name, width, height );
+		if ( !lux::game_data->HasFile("./maps/" + map_name + ".xml") )
+		{
+			return NULL;
+		}
 	}
-	else
-	{
-		new_map = new MokoiMap( map_name );
-	}
+
+	MokoiMap * new_map = NULL;
+	WorldSection * section = this->NewSection( "map/" + map_name, 1, 1);
+
+	new_map = new MokoiMap( map_name, width, height );
 
 	if ( new_map )
 	{
@@ -526,16 +517,17 @@ MokoiMap * GameWorldSystem::CreateMap( std::string map_name, bool removeable, bo
  * @param id
  * @return
  */
-MokoiMap * GameWorldSystem::GetMap( uint32_t id )
+MokoiMap * GameSystem::GetMap( uint32_t id )
 {
-	if ( !id )
-		return NULL;
 	std::map<uint32_t, MokoiMap *>::iterator p;
-	for ( p = this->map_list.begin(); p != this->map_list.end(); p++ )
+	if ( id )
 	{
-		if ( id == p->second->Ident() )
+		for ( p = this->map_list.begin(); p != this->map_list.end(); p++ )
 		{
-			return p->second;
+			if ( id == p->second->Ident() )
+			{
+				return p->second;
+			}
 		}
 	}
 	return NULL;
@@ -546,7 +538,7 @@ MokoiMap * GameWorldSystem::GetMap( uint32_t id )
  * @param ident
  * @return
  */
-bool GameWorldSystem::DeleteMap( uint32_t ident )
+bool GameSystem::DeleteMap( uint32_t ident )
 {
 	std::map<uint32_t, MokoiMap *>::iterator p = this->map_list.find( ident );
 
@@ -567,16 +559,16 @@ bool GameWorldSystem::DeleteMap( uint32_t ident )
  * @param map_file
  * @return
  */
-MokoiMap * GameWorldSystem::FindMap( std::string map_file )
+MokoiMap * GameSystem::FindMap( std::string map_file )
 {
 	MokoiMap * map = NULL;
 
 	std::map<uint32_t, MokoiMap *>::iterator p;
 	for ( p = this->map_list.begin(); p != this->map_list.end(); p++ )
 	{
-		if ( map_file.compare(  p->second->Name() ) == 0 )
+		if ( map_file.compare( p->second->Name() ) == 0 )
 		{
-			map =  p->second;
+			map = p->second;
 			p = this->map_list.end();
 			break;
 		}
@@ -590,11 +582,9 @@ MokoiMap * GameWorldSystem::FindMap( std::string map_file )
  * @param name
  * @return
  */
-uint32_t GameWorldSystem::GetMapID( std::string name )
+uint32_t GameSystem::GetMapID( std::string name )
 {
-	MokoiMap * map = NULL;
-
-	map = this->FindMap(name);
+	MokoiMap * map = this->FindMap(name);
 
 	if ( map )
 		return map->Ident();
@@ -602,7 +592,20 @@ uint32_t GameWorldSystem::GetMapID( std::string name )
 		return 0;
 }
 
-/* Section System */
+/* World Section System */
+
+/**
+ * @brief GameWorldSystem::InsertSection
+ * @param section
+ * @param hash_ident
+ * @return
+ */
+bool GameSystem::InsertSection( WorldSection * section, uint32_t section_ident )
+{
+	this->section_list.insert( std::make_pair( section_ident, section ) );
+	this->map_counter.grid.section++;
+	return true;
+}
 
 /**
  * @brief GameWorldSystem::NewSection
@@ -611,15 +614,9 @@ uint32_t GameWorldSystem::GetMapID( std::string name )
  * @param height
  * @return
  */
-WorldSection * GameWorldSystem::NewSection( std::string section_name, const uint8_t width, const uint8_t height )
+WorldSection * GameSystem::NewSection( std::string section_name, const uint8_t width, const uint8_t height )
 {
-	WorldSection * new_section = new WorldSection( this->map_counter, section_name, width, height );
-
-	this->section_list.insert( std::make_pair( elix::string::Hash(section_name), new_section ) );
-
-	this->IncreaseSectionCounter();
-
-	return new_section;
+	return new WorldSection( this->map_counter, section_name, width, height );
 }
 
 /**
@@ -628,16 +625,18 @@ WorldSection * GameWorldSystem::NewSection( std::string section_name, const uint
  * @param set_current
  * @return
  */
-WorldSection * GameWorldSystem::LoadSection( std::string name, bool set_current )
+WorldSection * GameSystem::LoadSection( std::string name, bool set_current )
 {
 	WorldSection * new_section = NULL;
 
-	if ( lux::game_data->HasFile("./worlds/" + name + ".txt") )
+	if ( lux::game_data->HasFile("./worlds/" + name + ".tsv") )
 	{
 		new_section = this->NewSection( name, 64, 64 );
 
 		if ( set_current )
+		{
 			this->next_section = new_section;
+		}
 	}
 	return new_section;
 }
@@ -648,9 +647,10 @@ WorldSection * GameWorldSystem::LoadSection( std::string name, bool set_current 
  * @param load
  * @return
  */
-WorldSection * GameWorldSystem::GetSection( std::string section_name, bool load )
+WorldSection * GameSystem::GetSection( std::string section_name, bool load )
 {
 	WorldSection * requested_section = NULL;
+
 	if ( section_name.length() && this->section_list.size() )
 	{
 		uint32_t hash = elix::string::Hash( section_name );
@@ -661,7 +661,7 @@ WorldSection * GameWorldSystem::GetSection( std::string section_name, bool load 
 
 	if ( requested_section == NULL && load == true )
 	{
-		requested_section = this->LoadSection(section_name, false);
+		requested_section = this->LoadSection( section_name, false );
 	}
 
 	return requested_section;
@@ -672,7 +672,7 @@ WorldSection * GameWorldSystem::GetSection( std::string section_name, bool load 
  * @param map
  * @return
  */
-WorldSection * GameWorldSystem::GetSection( MokoiMap * map )
+WorldSection * GameSystem::GetSection( MokoiMap * map )
 {
 	WorldSection * requested_section = NULL;
 
@@ -681,10 +681,9 @@ WorldSection * GameWorldSystem::GetSection( MokoiMap * map )
 		if ( this->section_list.size() )
 		{
 			std::map<uint32_t, WorldSection *>::iterator p;
-			std::cout << "MokoiMap" << " - " << map->Name() << ":" << std::hex << map->GridIdent() << "|" << map->Ident() << std::endl;
 			for ( p = this->section_list.begin(); p != this->section_list.end(); p++ )
 			{
-				if ( map->InSection( p->second->Ident() ) )
+				if ( map->InSection( p->second->SectionIdent() ) )
 				{
 					requested_section = p->second;
 					break;
@@ -700,7 +699,7 @@ WorldSection * GameWorldSystem::GetSection( MokoiMap * map )
  * @param section_hash
  * @return
  */
-WorldSection * GameWorldSystem::GetSection( uint32_t section_hash )
+WorldSection * GameSystem::GetSection( uint32_t section_hash )
 {
 	// if section_hash
 	WorldSection * requested_section = NULL;
@@ -719,10 +718,10 @@ WorldSection * GameWorldSystem::GetSection( uint32_t section_hash )
 }
 
 /**
- * @brief GameWorldSystem::DeleteSection
+ * @brief Remove Maps for Global list
  * @param ident
  */
-void GameWorldSystem::DeleteSection(uint32_t ident )
+void GameSystem::DeleteSection( uint32_t ident )
 {
 
 	std::map<uint32_t, MokoiMap *>::iterator p = this->map_list.begin();
@@ -731,7 +730,6 @@ void GameWorldSystem::DeleteSection(uint32_t ident )
 		MokoiMap * map = p->second;
 		if ( map->InSection(ident) && !map->keep_memory )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " Section[" << std::dec << ident << "]: " << map->Name()  << " deleted" << std::endl;
 			delete map;
 			this->map_list.erase(p++);
 		}
@@ -749,7 +747,7 @@ void GameWorldSystem::DeleteSection(uint32_t ident )
  * @param grid_y
  * @return
  */
-bool GameWorldSystem::SetSectionGrid( uint8_t grid_x, uint8_t grid_y )
+bool GameSystem::SetSectionGrid( uint8_t grid_x, uint8_t grid_y )
 {
 	if ( !this->active_section )
 		return false;
@@ -772,7 +770,7 @@ bool GameWorldSystem::SetSectionGrid( uint8_t grid_x, uint8_t grid_y )
  * @param gridy
  * @return
  */
-bool GameWorldSystem::GetSectionGrid( uint8_t & gridx, uint8_t & gridy )
+bool GameSystem::GetSectionGrid( uint8_t & gridx, uint8_t & gridy )
 {
 	if ( !this->active_section )
 		return false;
@@ -789,7 +787,7 @@ bool GameWorldSystem::GetSectionGrid( uint8_t & gridx, uint8_t & gridy )
  * @param grid_y
  * @return
  */
-uint32_t GameWorldSystem::GetMapID( std::string section_name, uint8_t grid_x, uint8_t grid_y )
+uint32_t GameSystem::GetMapID( std::string section_name, uint8_t grid_x, uint8_t grid_y )
 {
 	if ( section_name.length() )
 	{
@@ -814,8 +812,6 @@ uint32_t GameWorldSystem::GetMapID( std::string section_name, uint8_t grid_x, ui
 	return 0xFFFF;
 }
 
-
-
 /* Save System */
 
 /**
@@ -823,16 +819,30 @@ uint32_t GameWorldSystem::GetMapID( std::string section_name, uint8_t grid_x, ui
  * @param current_save_file
  * @return
  */
-bool GameWorldSystem::Save( elix::File *current_save_file )
+bool GameSystem::Save( elix::File *current_save_file )
 {
 	uint32_t count = 0;
 
 	/* Save Global Entity Section */
 	this->global_entities->Save( current_save_file );
 
-	/* Save Sections */
+	/* Save Maps */
+	count = this->map_list.size();
+	current_save_file->WriteWithLabel( "Maps", count );
+	if ( count )
+	{
+		std::map<uint32_t, MokoiMap *>::iterator iter = this->map_list.begin();
+		while( iter != this->map_list.end() )
+		{
+			iter->second->Save( current_save_file );
+			iter++;
+		}
+	}
+
+
+	/* Save Worlds */
 	count = this->section_list.size();
-	current_save_file->WriteWithLabel( "Sections", count );
+	current_save_file->WriteWithLabel( "Worlds", count );
 	if ( count )
 	{
 		std::map<uint32_t, WorldSection *>::iterator iter = this->section_list.begin();
@@ -843,36 +853,17 @@ bool GameWorldSystem::Save( elix::File *current_save_file )
 		}
 	}
 
-	/* Save Maps */
-	count = this->map_list.size();
-	current_save_file->WriteWithLabel( "Maps", count );
-	if ( count )
-	{
-		std::map<uint32_t, MokoiMap *>::iterator iter = this->map_list.begin();
-		while( iter != this->map_list.end() )
-		{
-			current_save_file->WriteWithLabel( "Map ID", iter->first );
-			iter->second->Save( current_save_file );
-			iter++;
-		}
-	}
+	this->objects->Save( current_save_file );
 
 	/* Save Position and Section */
-	std::string current_section_name = "";
-
-	if ( this->active_section )
-	{
-		current_section_name = this->active_section->name;
-	}
-
-	current_save_file->WriteWithLabel( "Current Map", this->active_map->Ident() ); //Current Map ID
-	current_save_file->WriteWithLabel( "Current Section", current_section_name );
+//	current_save_file->WriteWithLabel( "Current Section", this->active_section->Ident() );
+	current_save_file->WriteWithLabel( "Current Map", this->active_map->Ident() );
 	current_save_file->WriteWithLabel( "Current X", (uint32_t)this->active_map->GetPosition(0) );
 	current_save_file->WriteWithLabel( "Current Y", (uint32_t)this->active_map->GetPosition(1) );
 	current_save_file->WriteWithLabel( "Current Z", (uint32_t)this->active_map->GetPosition(2) );
 
 
-	this->objects->Save( current_save_file );
+
 
 	return true;
 }
@@ -882,41 +873,22 @@ bool GameWorldSystem::Save( elix::File *current_save_file )
  * @param current_save_file
  * @return
  */
-bool GameWorldSystem::Restore( elix::File * current_save_file )
+bool GameSystem::Restore( elix::File * current_save_file )
 {
 	uint32_t i = 0;
 	uint32_t count = 0;
-	uint32_t restore_map_id = 0, active_map_id = 0;
-	std::string active_section_name;
+	uint32_t active_map_id = 0, active_section_id = 0;
 
 	this->map_counter.value = 0;
 
-
+	/* Load Global Entity Section */
 	if ( !this->global_entities->parent->loaded )
 	{
 		Lux_FatalError("Game requires a Main Script");
 		return false;
 	}
-	this->global_entities->Init();
-
-	/* Load Global Entity Section */
 	this->global_entities->Restore( current_save_file );
 
-	/* Load Sections */
-	count = current_save_file->ReadUint32WithLabel( "Sections", true );
-	if ( count )
-	{
-		WorldSection * new_section = NULL;
-		for( i = 0; i < count; i++ )
-		{
-			if ( Lux_GetState() != LOADING )
-				return false;
-
-			new_section = new WorldSection( current_save_file );
-
-			this->section_list.insert( std::make_pair( elix::string::Hash(new_section->name), new_section ) );
-		}
-	}
 
 	/* Load Maps */
 	count = current_save_file->ReadUint32WithLabel( "Maps", true );
@@ -927,52 +899,84 @@ bool GameWorldSystem::Restore( elix::File * current_save_file )
 		{
 			if (Lux_GetState() != LOADING )
 				return false;
+			lux::screen::push();
+			restoring_map = new MokoiMap(current_save_file);
+			this->InsertMap(restoring_map->Ident(), restoring_map );
+		}
+	}
 
-			restore_map_id = current_save_file->ReadUint32WithLabel( "Map ID", true );
 
-			restoring_map = this->GetMap(restore_map_id);
-			if ( !restoring_map )
-			{
-				restoring_map = new MokoiMap(current_save_file);
-				restoring_map->SetIdent(restore_map_id);
-				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Map not already loaded " << restore_map_id << std::endl;
-			}
-			else
-			{
-				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Map already has been loaded " << restore_map_id << std::endl;
-				restoring_map->Restore( current_save_file );
-			}
+	/* Load Sections */
+	count = current_save_file->ReadUint32WithLabel( "Worlds", true );
+	if ( count )
+	{
+		WorldSection * new_section = NULL;
+		for( i = 0; i < count; i++ )
+		{
+			if ( Lux_GetState() != LOADING )
+				return false;
+			lux::screen::push();
+			new_section = new WorldSection( current_save_file );
 
-			this->map_list[restore_map_id] = restoring_map;
+			this->section_list.insert( std::make_pair( elix::string::Hash(new_section->name), new_section ) );
 		}
 	}
 
 	if ( Lux_GetState() != LOADING )
 		return false;
 
+	this->objects->Restore( current_save_file );
+
 	/* Load Position and Section */
+//	active_section_id = current_save_file->ReadUint32WithLabel( "Current Section", true );
 	active_map_id = current_save_file->ReadUint32WithLabel( "Current Map", true ); //Current Map ID
-	current_save_file->ReadWithLabel( "Current Section", &active_section_name );
+
 	this->current_offset_position[0] = (fixed)current_save_file->ReadUint32WithLabel( "Current X", true );
 	this->current_offset_position[1] = (fixed)current_save_file->ReadUint32WithLabel( "Current Y", true );
 	this->current_offset_position[2] = (fixed)current_save_file->ReadUint32WithLabel( "Current Z", true );
 
-	this->next_section = NULL;
-
-
-
+	this->next_section = this->active_section = NULL;
 	this->next_map =  this->active_map = NULL;
-
 
 	std::map<uint32_t, MokoiMap *>::iterator p = this->map_list.find( active_map_id );
 	if ( p != this->map_list.end() )
 	{
-		this->SwitchMap( (*p).second );
-
-		this->objects->Restore( current_save_file );
+		this->SetMap( (*p).second, this->current_offset_position[0], this->current_offset_position[1] , this->current_offset_position[2] );
 
 		return true;
 	}
 	return false;
+}
 
+/* Messages */
+
+/**
+ * @brief GameWorldSystem::OutputInformation
+ */
+void GameSystem::OutputInformation()
+{
+	std::stringstream buffer;
+	for( std::map<uint32_t, WorldSection *>::iterator iter = section_list.begin(); iter != section_list.end(); ++iter )
+	{
+		WorldSection * section = iter->second;
+
+		buffer << section->Name() << std::endl;
+		for( std::map<uint32_t, MokoiMap *>::iterator iter2 = this->map_list.begin(); iter2 != map_list.end(); ++iter2 )
+		{
+			MokoiMap * map = iter2->second;
+
+			if ( map->InSection( section->SectionIdent() ) )
+			{
+				buffer << " - " <<  map->Name() << " §c[Grid] §4Section:" << map->GridIdent() << " id: " << map->Ident() << std::endl;
+
+				if ( map == this->active_map )
+				{
+					buffer << " - " <<  map->GetInfo() << std::endl;
+				}
+
+			}
+		}
+	}
+	buffer << "Global §6Objects:" << this->GetObjects()->object_cache.size() <<  " §cEntities:" << this->global_entities->children.size() << std::endl;
+	lux::display->graphics.DrawMessage( buffer.str(), 1 );
 }

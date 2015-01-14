@@ -26,6 +26,48 @@ ObjectEffect SetColourOnEffect(uint8_t R,uint8_t G,uint8_t B,uint8_t A)
 }
 */
 
+uint32_t Lux_Hex2Int(std::string color)
+{
+	cell_colour colour;
+	colour.hex = 0xFFFFFFFF;
+
+	if (color.at(0) == '#' && color.length() >= 9 )
+	{
+		for (uint8_t n = 0; n < 4; n++)
+		{
+			uint8_t temp = 0;
+			uint8_t hex1 = 0, hex2 = 0;
+
+			temp = toupper(color.at((n*2)+1));
+			if ( temp >= 48)
+				hex1 = temp - 48;
+			if ( temp >= 65)
+				hex1 = temp - 55;
+			if (hex1 > 15 )
+				hex1 = 0;
+
+			temp = toupper(color.at((n*2)+2));
+			if ( temp >= 48)
+				hex2 = temp - 48;
+			if ( temp >= 65)
+				hex2 = temp - 55;
+			if (hex2 > 15 )
+				hex2 = 0;
+			if( n == 0 )
+				colour.rgba.r = (hex1*16) + hex2;
+			else if( n == 1 )
+				colour.rgba.g = (hex1*16) + hex2;
+			else if( n == 2 )
+				colour.rgba.b = (hex1*16) + hex2;
+			else if( n == 3 )
+				colour.rgba.a = (hex1*16) + hex2;
+		}
+	}
+	return colour.hex;
+}
+
+
+
 LuxColour Lux_Hex2Colour(std::string color)
 {
 	LuxColour colour = {128, 128, 128, 255};
@@ -66,30 +108,4 @@ LuxColour Lux_Hex2Colour(std::string color)
 }
 
 
-bool Lux_Path_Load(std::string filename, std::vector<LuxPath> * path )
-{
-	uint8_t * data = NULL;
-	uint32_t length, c = 0;
-	length = lux::game_data->GetFile("./paths/" + filename, &data, false);
-	if ( length )
-	{
-		while ( c < length )
-		{
-			LuxPath point = { 0, 0, 0 };
-			memcpy( &point, data + c, 8 );
-			point.x = (int16_t)elix::endian::host16((uint16_t)point.x);
-			point.y = (int16_t)elix::endian::host16((uint16_t)point.y);
-			point.ms_length = elix::endian::host32(point.ms_length);
-			path->push_back( point );
-			c += 8;
-		}
-	}
-	if ( data )
-	{
-		delete data;
-		return length ? true : false;
-	}
-	else
-		return false;
-}
 

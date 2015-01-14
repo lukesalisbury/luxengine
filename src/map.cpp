@@ -22,28 +22,35 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "map_internal.h"
 #include "map_xml_reader.h"
+
 #include <algorithm>
 
-bool RemoveMapObject( MapObject * object) { return object->can_remove; }
 
-MokoiMap::MokoiMap( std::string name )
-{
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Opening map '" << name << "'"  << std::endl;
 
-	this->InitialSetup(name);
-}
-
+/**
+ * @brief MokoiMap::MokoiMap
+ * @param name
+ * @param width
+ * @param height
+ */
 MokoiMap::MokoiMap( std::string name, uint32_t width, uint32_t height)
 {
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Opening map '" << name << "'"  << std::endl;
 
 	this->InitialSetup(name);
 
-	this->map_width = width;
-	this->map_height = height;
+	if ( width )
+		this->map_width = width;
+
+	if ( height )
+		this->map_height = height;
 
 }
 
+/**
+ * @brief MokoiMap::MokoiMap
+ * @param current_save_file
+ */
 MokoiMap::MokoiMap( elix::File * current_save_file )
 {
 	if ( this->Restore( current_save_file ) )
@@ -52,17 +59,18 @@ MokoiMap::MokoiMap( elix::File * current_save_file )
 	}
 }
 
-
+/**
+ * @brief MokoiMap::~MokoiMap
+ */
 MokoiMap::~MokoiMap()
 {
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing Map '" << this->map_name << "'"<< std::endl;
-	std::vector< MapObject * >::iterator p;
-	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
+
+	for ( MapObjectListIter p = this->object_cache.begin(); p != this->object_cache.end(); p++ )
 	{
-		delete (*p);
+		delete p->second;
 	}
 	this->object_cache.clear();
-	this->_objects.clear();
 
 	if ( !this->screens.empty() )
 	{
@@ -135,7 +143,6 @@ void MokoiMap::SetIdent( uint32_t ident )
 	this->ident.value = ident;
 }
 
-
 /**
  * @brief MokoiMap::SetGridIdent
  * @param local
@@ -176,11 +183,10 @@ bool MokoiMap::InSection(uint32_t section)
 	return (this->ident.grid.section == section);
 }
 
-
-/*
-* MokoiMap::Name()
-*
-*/
+/**
+ * @brief MokoiMap::Name
+ * @return
+ */
 std::string MokoiMap::Name()
 {
 	return this->map_name;
@@ -202,7 +208,11 @@ void MokoiMap::SetBackgroundModifier( LuxColour mod )
 	this->background_object.effects.primary_colour.b = (uint8_t)((float)this->base_background_colour.b * fb);
 }
 
-
+/**
+ * @brief MokoiMap::GetGrid
+ * @param axis
+ * @return
+ */
 uint8_t MokoiMap::GetGrid( uint8_t axis )
 {
 	if ( axis == 'x')
@@ -219,7 +229,7 @@ bool MokoiMap::Init()
 {
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > MokoiMap Init " << this->map_name << std::endl;
 
-	lux::screen::display("Loading Map: " + this->map_name);
+	//lux::screen::display("Loading Map: " + this->map_name);
 	if ( this->LoadFile() )
 	{
 		lux::display->SetBackgroundObject( this->background_object );
@@ -238,10 +248,10 @@ bool MokoiMap::Init()
 	return this->active;
 }
 
-/*
-* MokoiMap::Loop()
-*
-*/
+/**
+ * @brief MokoiMap::Loop
+ * @return
+ */
 bool MokoiMap::Loop()
 {
 	if ( !this->loaded )
@@ -348,7 +358,7 @@ bool MokoiMap::Loop()
 
 /*
 * MokoiMap::Close()
-* Keeps Map in memory, just onload every thing else.
+* Keeps Map in memory, just unload every thing else.
 */
 bool MokoiMap::Close()
 {
@@ -370,10 +380,9 @@ bool MokoiMap::Close()
 	}
 
 	/* Clean Up Map Object */
-	std::vector<MapObject *>::iterator p = this->_objects.begin();
-	for ( ; p != this->_objects.end(); p++ )
+	for ( MapObjectListIter p = this->object_cache.begin(); p != this->object_cache.end(); p++ )
 	{
-		(*p)->FreeData();
+		p->second->FreeData();
 	}
 
 	/* Clean Up Entity */
@@ -382,6 +391,12 @@ bool MokoiMap::Close()
 	return true;
 }
 
+std::string MokoiMap::GetInfo()
+{
+	std::stringstream s;
+	s << "§6Objects:" << this->object_cache.size()<< " §cEntities:" << this->entities->children.size() << " §aScreen:" << this->screens.size();
+	return s.str();
+}
 
 bool MokoiMap::Reset()
 {
@@ -431,8 +446,6 @@ void MokoiMap::AddObjectToScreens( MapObject * object )
 	}
 }
 
-
-
 uint32_t MokoiMap::AddObject(MapObject * object, bool is_static )
 {
 	uint32_t object_id = 0;
@@ -461,7 +474,7 @@ MapObject * MokoiMap::GetObject( uint32_t ident )
 {
 	if ( !this->object_cache.empty() )
 	{
-		std::map<uint32_t, MapObject *>::iterator iter = this->object_cache.find(ident);
+		MapObjectListIter iter = this->object_cache.find(ident);
 		if( iter != this->object_cache.end() )
 			return iter->second;
 	}
@@ -470,16 +483,16 @@ MapObject * MokoiMap::GetObject( uint32_t ident )
 
 void MokoiMap::ReplaceObjectsSheets( std::string old_sheet, std::string new_sheet )
 {
-	std::vector< MapObject * >::iterator p;
-	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
+	for ( MapObjectListIter p = this->object_cache.begin(); p != this->object_cache.end(); p++ )
 	{
-		MapObject * object = (*p);
+		MapObject * object = p->second;
 		if ( object->type == OBJECT_SPRITE )
 		{
 			std::string sheet = object->sprite.substr(0, object->sprite.find_first_of(':'));
 			if ( !old_sheet.compare( sheet ) )
 			{
 				object->FreeData();
+
 				std::string sprite = object->sprite.substr(object->sprite.find_first_of(':'));
 				object->sprite = new_sheet + sprite;
 				object->SetData( OBJECT_SPRITE);
@@ -633,7 +646,6 @@ void MokoiMap::SetPosition( fixed position[3] )
 	}
 }
 
-
 fixed MokoiMap::GetPosition( uint8_t axis )
 {
 	if ( axis < 3 )
@@ -655,10 +667,19 @@ EntitySection * MokoiMap::GetEntities()
 }
 
 /* Save System */
+
+/**
+ * @brief MokoiMap::Save
+ * @param current_save_file
+ * @return
+ */
 bool MokoiMap::Save( elix::File * current_save_file )
 {
 	current_save_file->WriteWithLabel("Map Name", this->map_name );
 	current_save_file->WriteWithLabel("Map ID", this->ident.value );
+	current_save_file->WriteWithLabel("Map Width", (uint32_t)this->map_width);
+	current_save_file->WriteWithLabel("Map Height", (uint32_t)this->map_height);
+
 	current_save_file->WriteWithLabel("Map Loaded Flag", (uint8_t)this->loaded );
 
 	if ( this->entities )
@@ -676,10 +697,9 @@ bool MokoiMap::Save( elix::File * current_save_file )
 	current_save_file->WriteWithLabel("Map Display Objects", count );
 	if ( count )
 	{
-		std::map<uint32_t, MapObject *>::iterator iter = this->object_cache.begin();
+		MapObjectList::iterator iter = this->object_cache.begin();
 		while( iter != this->object_cache.end() )
 		{
-			current_save_file->WriteWithLabel("Map Object ID", iter->first );
 			iter->second->Save( current_save_file );
 			iter++;
 		}
@@ -687,102 +707,60 @@ bool MokoiMap::Save( elix::File * current_save_file )
 	return true;
 }
 
-
-
-
+/**
+ * @brief MokoiMap::Restore
+ * @param current_save_file
+ * @return
+ */
 bool MokoiMap::Restore( elix::File * current_save_file )
 {
 	uint32_t count = 0;
 	uint8_t map_loading_flag = 0;
 	uint8_t map_has_entities = 0;
-	std::map<uint32_t, MapObject *>::iterator existing_object_iter;
 
-	this->loaded = false;
 	current_save_file->ReadWithLabel("Map Name", &this->map_name );
+	this->InitialSetup(this->map_name);
 	this->ident.value= current_save_file->ReadUint32WithLabel("Map ID", true );
+
+	this->map_width = current_save_file->ReadUint32WithLabel("Map Width");
+	this->map_height = current_save_file->ReadUint32WithLabel("Map Height");
+
 	map_loading_flag = current_save_file->ReadUint8WithLabel("Map Loaded Flag");
 
-
-	this->InitialSetup(this->map_name);
-
-	if ( map_loading_flag )
-	{
-		this->LoadFile();
-
-		/* Marked the cached map objects, to see if we need to remove them, if needed */
-		for ( std::map<uint32_t, MapObject *>::iterator iter = this->object_cache.begin(); iter != this->object_cache.end(); iter++ )
-		{
-			iter->second->can_remove = true;
-			iter->second->hidden = true;
-		}
-
-		this->loaded = true;
-
-	}
-
+	/* Entities */
+	this->entities = new EntitySection( this->entity_file_name, this->ident.value );
 	map_has_entities = current_save_file->ReadUint8WithLabel("Map has Entities");
-	if ( map_has_entities && this->entities )
+	if ( map_has_entities )
 	{
 		this->entities->Restore( current_save_file );
 	}
 
+	/* Map Display Object */
 	count = current_save_file->ReadUint32WithLabel("Map Display Objects", true );
 	if ( count )
 	{
 		for( uint32_t i = 0; i < count; i++ )
 		{
-			//if (Lux_GetState() != LOADING )
-			//	return false;
-
 			MapObject * existing_object = NULL;
-			uint32_t object_id = current_save_file->ReadUint32WithLabel("Map Object ID", true );
-
-			existing_object_iter = this->object_cache.find(object_id);
-			if ( existing_object_iter != this->object_cache.end() )
-			{
-				existing_object = existing_object_iter->second;
-				existing_object->can_remove = false;
-				existing_object->hidden = false;
-			}
-			else
-			{
-				existing_object = new MapObject();
-				this->object_cache[object_id] = existing_object;
-			}
-
-
-			existing_object->Restore( current_save_file );
+			existing_object = new MapObject( current_save_file );
+			this->object_cache[existing_object->GetStaticMapID()] = existing_object;
 		}
-
-
-		/* Reove unneed cached map objects. */
-
-		for ( std::map<uint32_t, MokoiMapScreen *>::iterator q = this->screens.begin(); q != this->screens.end(); q++ )
-		{
-			q->second->Close();
-			q->second->_objects.erase( std::remove_if(q->second->_objects.begin(), q->second->_objects.end(), RemoveMapObject), q->second->_objects.end() );
-		}
-		this->_objects.erase( std::remove_if(this->_objects.begin(), this->_objects.end(), RemoveMapObject), this->_objects.end() );
-
-
-		for ( std::map<uint32_t, MapObject *>::iterator iter = this->object_cache.begin(); iter != this->object_cache.end(); iter++ )
-		{
-			if ( RemoveMapObject( iter->second ) )
-			{
-				this->object_cache.erase(iter);
-				delete iter->second;
-				iter->second = NULL;
-				iter--;
-			}
-		}
-
-
 	}
+
+
+
+	this->loaded = true;
 	return true;
 }
 
-
 /* Screen */
+
+/**
+ * @brief MokoiMap::GetScreen
+ * @param screen_number
+ * @param init_new
+ * @return
+ */
 MokoiMapScreen * MokoiMap::GetScreen(uint32_t screen_number, bool init_new)
 {
 	if ( this->dimension_width == 1 && this->dimension_height == 1 )
@@ -832,6 +810,13 @@ MokoiMapScreen * MokoiMap::LoadAllScreen(uint32_t screen_number, bool init_new)
 }
 */
 
+/**
+ * @brief MokoiMap::XY2Screen
+ * @param x
+ * @param y
+ * @param w
+ * @return
+ */
 uint32_t MokoiMap::XY2Screen(int32_t x, int32_t y, int32_t w)
 {
 	if ( this->wrap_mode )
@@ -855,6 +840,7 @@ uint32_t MokoiMap::XY2Screen(int32_t x, int32_t y, int32_t w)
 }
 
 /* Data */
+
 /**
  * @brief MokoiMap::Valid
  * @return
@@ -902,60 +888,74 @@ bool MokoiMap::LoadDimension()
 	return false;
 }
 
+/**
+ * @brief MokoiMap::SaveFile
+ * @return
+ */
 bool MokoiMap::SaveFile()
 {
 	lux::screen::display("Saving Map: " + this->map_name);
 	return false;
 }
 
-
-
+/**
+ * @brief MokoiMap::LoadFile
+ * @return
+ */
 bool MokoiMap::LoadFile()
 {
-	lux::screen::display("Loading Map: " + this->map_name);
-
 	if ( this->loaded )
 		return this->loaded;
 
 	MapXMLReader reader;
 	std::map<std::string, std::string> settings;
 
-	if ( !reader.Load("./maps/" + this->map_name + ".xml"))
-	{
-		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | maps/" + this->map_name + ".xml not a valid file." << std::endl;
-		return false;
-	}
-
-	reader.ReadSettings( this, settings );
-
 	this->wrap_mode = MAP_WRAPNONE;
 
 	this->entities = new EntitySection( this->entity_file_name, this->ident.value );
 
-	for ( std::map<std::string, std::string>::iterator cs = settings.begin(); cs != settings.end(); cs++ )
+	if ( lux::game_data->HasFile("./maps/" + this->map_name + ".xml") )
 	{
-		if ( !cs->first.compare("wrap") )
+		if ( !reader.Load("./maps/" + this->map_name + ".xml"))
 		{
-			this->wrap_mode = elix::string::ToIntU8(cs->second);
+			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | maps/" + this->map_name + ".xml not a valid file." << std::endl;
+			return false;
 		}
 
-		if ( this->entities->parent )
+		reader.ReadSettings( this, settings );
+
+		for ( std::map<std::string, std::string>::iterator cs = settings.begin(); cs != settings.end(); cs++ )
 		{
-			this->entities->parent->AddSetting( cs->first, cs->second );
+			if ( !cs->first.compare("wrap") )
+			{
+				this->wrap_mode = elix::string::ToIntU8(cs->second);
+			}
+
+			if ( this->entities->parent )
+			{
+				this->entities->parent->AddSetting( cs->first, cs->second );
+			}
 		}
+
+		/* Read Display Object */
+		reader.ReadObjects( this->object_cache, this->object_cache_count, this );
+
+		/* Set up Map Screen */
+		for ( MapObjectListIter p = this->object_cache.begin(); p != this->object_cache.end(); p++ )
+		{
+			p->second->SetData( p->second->type );
+			this->AddObjectToScreens( p->second );
+		}
+
+
+		std::map<uint32_t, MokoiMapScreen *>::iterator q = this->screens.begin();
+		for ( ; q != this->screens.end(); q++ )
+		{
+			q->second->SortObjects();
+		}
+
 	}
-
-	reader.ReadObjects( this->_objects, this->object_cache_count, this );
-
 	this->loaded = true;
-
-	/* Set up Map Screen */
-	std::vector<MapObject *>::iterator p;
-	for ( p = this->_objects.begin(); p != this->_objects.end(); p++ )
-	{
-		(*p)->SetData( (*p)->type );
-		this->AddObjectToScreens((*p));
-	}
 
 	return true;
 }

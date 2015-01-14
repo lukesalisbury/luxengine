@@ -20,7 +20,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 #include "config.h"
 #include "core.h"
-#include "map_internal.h"
 
 
 void MokoiMap::NetworkMapSwitch()
@@ -28,14 +27,14 @@ void MokoiMap::NetworkMapSwitch()
 	if ( this->server && this->ident.value )
 	{
 		lux::screen::display("Syncing with Server. (Connection may have died)" );
-		lux::core->NetLock();
+		lux::core->NetworkLock();
 		if ( lux::core->CreateMessage(7, 1) )
 		{
 			lux::core->MessageAppend(this->ident.value);
 			lux::core->MessageSend();
 			lux::engine->SetState(NOUPDATE);
 		}
-		lux::core->NetUnlock();
+		lux::core->NetworkUnlock();
 	}
 }
 
@@ -43,10 +42,10 @@ void MokoiMap::NetworkMapLoop()
 {
 	if ( this->server )
 	{
-		lux::core->NetLock();
+		lux::core->NetworkLock();
 		if (this->entities)
 			this->entities->Switch(0,0);
-		lux::core->NetUnlock();
+		lux::core->NetworkUnlock();
 		this->server = false;
 	}
 }
