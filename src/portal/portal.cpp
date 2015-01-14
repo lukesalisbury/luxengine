@@ -105,13 +105,15 @@ void LuxPortal::clear_complete_games_list(  )
 {
 	if ( LuxPortal::complete_games_list.begin() != LuxPortal::complete_games_list.end() )
 	{
-		while ( LuxPortal::complete_games_list.begin() != LuxPortal::complete_games_list.end())
-		{
-			GameInfo * info = (*LuxPortal::visible_games_list.begin());
-			delete info;
+		std::vector<GameInfo*>::iterator p = LuxPortal::complete_games_list.begin();
 
-			LuxPortal::complete_games_list.erase( LuxPortal::complete_games_list.begin() );
+		for ( ; p != LuxPortal::complete_games_list.end(); p++ )
+		{
+			GameInfo * info = (*p);
+			delete info;
 		}
+
+		LuxPortal::complete_games_list.clear();
 	}
 }
 
@@ -155,12 +157,14 @@ void LuxPortal::page_refresh(LuxRect page_rect, uint32_t start, uint32_t length 
 	/* Clear Old ones */
 	if ( LuxPortal::visible_games_list.begin() != LuxPortal::visible_games_list.end() )
 	{
-		while ( LuxPortal::visible_games_list.begin() != LuxPortal::visible_games_list.end())
+		std::vector<GameInfo*>::iterator p = LuxPortal::visible_games_list.begin();
+
+		for ( ; p != LuxPortal::visible_games_list.end(); p++ )
 		{
-			GameInfo * info = (*LuxPortal::visible_games_list.begin());
-			info->ClearGUI();
-			LuxPortal::visible_games_list.erase( LuxPortal::visible_games_list.begin() );
+			(*p)->ClearGUI();
 		}
+
+		LuxPortal::visible_games_list.clear();
 	}
 
 	if ( start > LuxPortal::complete_games_list.size() || start < 0 )
@@ -180,7 +184,6 @@ void LuxPortal::page_refresh(LuxRect page_rect, uint32_t start, uint32_t length 
 		}
 	}
 }
-
 
 /**
  * @brief LuxPortal::display_page
