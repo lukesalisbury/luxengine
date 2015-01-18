@@ -9,11 +9,13 @@
  *  If you alter, transform, or build upon this work, you may distribute the resulting work only under the same license to this one.
  * Full terms of use: http://creativecommons.org/licenses/by-nc-sa/3.0/
  ***********************************************/
-
+#include <controller>
 
 main()
 {
 	if ( InputButton(16) == 1)
-		MapChange( MapID("game") );
+	{
+		MapSet( MapGetIdent( "game", true ), 0, 0);
+	}
 }
 
