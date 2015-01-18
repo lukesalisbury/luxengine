@@ -1,19 +1,14 @@
 #include <system>
 
 #define area [.left,.top,.right,.bottom]
-
-
-
-new menu[3]{} = { \
-	"❶ Stop Music", \
-	"❷ Stop Effect", \
-	"❸ Play Dialog" \
-};
+#define point [.x,.y]
 
 new musicFiles[12]{32};
 new effectsFiles[12]{32};
 
 new textArea[area];
+
+new pointer[point];
 
 PointCollide( px, py )
 {
@@ -25,26 +20,18 @@ PointCollide( px, py )
 	return 1;
 }
 
-main()
+
+listMusic()
 {
-	new px = InputPointer(0);
-	new py = InputPointer(1);
-
-	if ( InputButton(BUTTON_ACTION3) == 1 )
-	{
-		DialogShow(0);
-	}
-
 	new i = 0;
-	while ( musicFiles[i]{0} )
+	while ( musicFiles[i]{0} ) // Check to see if the first character of a string is a valid character
 	{
-
 		textArea.left = 20;
 		textArea.right = textArea.left + ( StringLength(musicFiles[i]) * 8 );
 		textArea.top = 20 + (i*10);
 		textArea.bottom = textArea.top + 9;
 
-		if ( PointCollide(px,py) )
+		if ( PointCollide(pointer.x, pointer.y) )
 		{
 			GraphicsDraw(musicFiles[i], TEXT, textArea.left, textArea.right, 1, 0, 0, RED );
 			if ( InputButton(BUTTON_MOUSELEFT) == 1 )
@@ -58,8 +45,11 @@ main()
 		}
 		i++;
 	}
+}
 
- 	i = 0;
+listAudio()
+{
+	new i = 0;
 	while ( effectsFiles[i]{0} )
 	{
 		textArea.left = 20;
@@ -67,12 +57,12 @@ main()
 		textArea.top = 20 + (i*10);
 		textArea.bottom = textArea.top + 9;
 
-		if ( PointCollide(px,py) )
+		if ( PointCollide(pointer.x, pointer.y) )
 		{
 			GraphicsDraw(effectsFiles[i], TEXT, textArea.left, textArea.right, 1, 0, 0, RED );
 			if ( InputButton(BUTTON_MOUSELEFT) == 1 )
 			{
-				AudioPlayMusic(musicFiles[i], 0, 0);
+				AudioPlaySound(effectsFiles[i], 0, 0);
 			}
 		}
 		else
@@ -81,6 +71,21 @@ main()
 		}
 		i++;
 	}
+}
+
+main()
+{
+	pointer.x = InputPointer(0);
+	pointer.y = InputPointer(1);
+
+	// Show Dialog 
+	if ( InputButton(BUTTON_ACTION7) == 1 )
+	{
+		DialogShow(0);
+	}
+
+	listMusic();
+	listAudio();
 
 }
 
@@ -89,6 +94,7 @@ public Init(...)
 	SystemAudioVolume(SOUNDFX, 128);
 	SystemAudioVolume(MUSIC, 128);
 
+	/* Scan Directories for Files */
 	FileGetList(musicFiles, "music");
 	FileGetList(effectsFiles, "soundfx");
 }

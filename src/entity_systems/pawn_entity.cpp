@@ -122,9 +122,14 @@ static cell pawnEntityGetPosition(AMX *amx, const cell *params)
 			*xptr = params[5] ? MAKE_FIXED_INT(fixed_x) : fixed_x;
 		}
 		if ( yptr )
+		{
 			*yptr = params[5] ? MAKE_FIXED_INT(fixed_y) : fixed_y;
+		}
+
 		if ( zptr )
+		{
 			*zptr = z_layer;
+		}
 		successful = 1;
 	}
 
@@ -254,7 +259,6 @@ static cell pawnEntityCreate(AMX *amx, const cell *params)
 		uint32_t num_param = (uint32_t)( params[0]/sizeof(cell) ) - 7;
 		if ( num_param > 0 )
 		{
-
 			cptr = amx_Address(amx, params[7]);
 			if ( *cptr )
 			{
@@ -270,7 +274,6 @@ static cell pawnEntityCreate(AMX *amx, const cell *params)
 					arg_count = std::min(arg_count, num_param);
 					num_param = arg_count;
 				}
-
 
 				do
 				{
@@ -516,26 +519,26 @@ static cell pawnEntitiesList(AMX *amx, const cell *params)
 }
 
 /** pawnEntitiesNext
-* native EntitiesNext(&id, map_id = 0, string{}="", maxlength = sizeof(string));
+* native EntitiesNext(&entity:id, map_id = 0, entity_name{} = "", maxlength = sizeof(string) );
 *
 */
 static cell pawnEntitiesNext(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 4 );
 
-	cell respone = 0;
+	uint8_t respone = 0;
 	cell *cptr, * str;
-	std::string string_value = "";
 	char * entity_name = NULL;
 	uint32_t map_id = params[2];
 
-	entity_name = Lux_FFI_Entities_Next( map_id );
+	entity_name = Lux_FFI_Entities_Next( map_id, &respone );
 
 	if ( entity_name != NULL )
 	{
+		respone = 1;
 		// Store String
 		str = amx_Address( amx, params[3] );
-		amx_SetString(str, entity_name, 0, 0, params[4]);
+		Lux_PawnEntity_SetString(str, entity_name, (size_t)params[4] );
 
 		// Store hash
 		cptr = amx_Address( amx, params[1] );

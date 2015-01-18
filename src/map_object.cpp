@@ -656,7 +656,7 @@ bool MapObject::CollisionRectangle( LuxRect rect[7] )
 std::string MapObject::GetInfo()
 {
 	std::stringstream s;
-	s << this->TypeName()<< " " << this->position.x << "x" << this->position.y << "\nl" << +this->layer << std::hex << " i" << this->static_map_id;
+	s << this->TypeName()<< " " << this->position.x << "x" << this->position.y << "\nL" << +this->position.z << std::hex << " i" << this->static_map_id;
 	return s.str();
 }
 

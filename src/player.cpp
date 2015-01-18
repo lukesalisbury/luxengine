@@ -279,7 +279,7 @@ void Player::SetControllerAxis(uint8_t axis, int16_t value)
 {
 	if (axis < 4)
 	{
-		this->_pointer[axis] = value;
+		this->_controller[axis] = value;
 	}
 }
 
@@ -287,7 +287,7 @@ void Player::SetButton(uint8_t key, int16_t value)
 {
 	if (key < 16)
 	{
-		this->_pointer[key] = value;
+		this->_button[key] = value;
 	}
 }
 

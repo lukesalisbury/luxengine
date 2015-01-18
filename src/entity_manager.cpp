@@ -29,7 +29,6 @@ EntityManager::EntityManager()
 	this->_count = 0;
 	this->_global = this->_keyboard = NULL;
 
-	Lux_PawnCache_Init();
 	srand( time(NULL) );
 
 	entity_maphash = elix::string::Hash( "__map__" );

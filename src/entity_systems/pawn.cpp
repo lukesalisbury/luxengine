@@ -244,7 +244,6 @@ bool Lux_PawnEntity_LoadFile( const char * entity_name )
 
 	NULLIFY_ARRAY( temp_block );
 
-
 	return successful;
 }
 
@@ -263,6 +262,7 @@ void Lux_PawnCache_Init()
 */
 void Lux_PawnCache_Cleanup()
 {
+	/*
 	if ( pawn_entities.size() )
 	{
 		while ( pawn_entities.begin() != pawn_entities.end() )
@@ -280,6 +280,7 @@ void Lux_PawnCache_Cleanup()
 			pawn_entities.erase( pawn_entities.begin() );
 		}
 	}
+	*/
 }
 
 /**
@@ -345,7 +346,7 @@ mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_bas
 		if ( result )
 		{
 			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | AMX Clone Failed: "  << Lux_PawnEntity_StrError(result) << "." << std::endl;
-			MessagePush( (char*)"%s: [Error] %s", entity->_base.c_str(), Lux_PawnEntity_StrError(result) );
+			MessagePush( (char*)"%s: [Clone Error] %s", entity->_base.c_str(), Lux_PawnEntity_StrError(result) );
 
 			NULLIFY(entity_data);
 			NULLIFY_ARRAY(memory_block);
@@ -359,10 +360,6 @@ mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_bas
 	return static_cast<mem_pointer>(entity_data);
 }
 
-/** Lux_PawnEntity_Destroy
-* Removes Entity data
-* \param entity_data -
-*/
 /**
  * @brief Removes Entity data
  * @param entity_data
@@ -423,6 +420,7 @@ void Lux_PawnEntity_Restore(elix::File * current_save_file, mem_pointer entity_d
 		}
 		else if ( saved_data_size == unsigned_header_area_size )
 		{
+			//memset(amx->data, 44, saved_data_size);
 			current_save_file->ReadWithLabel( "Entity Header Data", (data_pointer)amx->data, sizeof(uint8_t), saved_data_size);
 		}
 		else
@@ -466,7 +464,6 @@ void Lux_PawnEntity_Save(elix::File * current_save_file, mem_pointer entity_data
 
 		amx_MemInfo(amx, NULL, &header_area_size, NULL);
 
-
 		if ( header_area_size > 0 )
 		{
 			AMX_HEADER * hdr = (AMX_HEADER *)amx->base;
@@ -490,9 +487,7 @@ void Lux_PawnEntity_Save(elix::File * current_save_file, mem_pointer entity_data
 		int32_t number_public_variables = 0;
 		char variable_name[sNAMEMAX+1];
 
-
 		amx_NumPubVars(amx, (int*)&number_public_variables);
-
 
 		current_save_file->WriteWithLabel("Entity Data Size", (uint32_t)number_public_variables );
 		if ( number_public_variables > 0 )
@@ -712,8 +707,8 @@ int32_t Lux_PawnEntity_Call( mem_pointer entity_data, char * function, native_po
 		{
 			MessagePush( (char*)"%s:%d [ID:%s] %s [%s] ", p->_base.c_str(), 0, p->id.c_str(), Lux_PawnEntity_StrError(error), amx->function_name );
 
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity:" << p->_base << "[ID:" << p->id << "]";
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Public Runtime Error - " << Lux_PawnEntity_StrError(error) << "[" << function << "]" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity:" << p->_base << "[ID:" << p->id << "] ";
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Public Runtime Error  [" << function << "]" << Lux_PawnEntity_StrError(error) << std::endl;
 		}
 
 	}

@@ -24,7 +24,7 @@ uint32_t Lux_FFI_Entity_Create(const char * script_file, const char * ident, int
 uint8_t Lux_FFI_Entity_Delete( uint32_t hash_entity );
 
 uint32_t Lux_FFI_Entities_List( uint32_t map_id );
-char * Lux_FFI_Entities_Next( uint32_t map_id );
+char * Lux_FFI_Entities_Next(uint32_t map_id , uint8_t *has_next);
 
 
 #if FFI_ALLOW_ENTITY_OBJECT

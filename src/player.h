@@ -108,7 +108,6 @@ class Player
 		void ParseButton( Player_Button * button, std::string config );
 		void ParseAxis( Player_Axis * axis, std::string config );
 
-		std::string DefaultControllerSetting( );
 		bool SetupController( std::string name );
 		void ClearController( );
 

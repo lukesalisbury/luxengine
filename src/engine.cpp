@@ -322,7 +322,8 @@ void LuxEngine::Refresh()
 				this->ShowDialog("Saving Error. Exiting", DIALOGOK);
 				this->state = NOTRUNNING;
 			}
-			//this->state = RUNNING;
+			else
+				this->state = RUNNING;
 		}
 		else if ( this->state == LOADING )
 		{
@@ -331,7 +332,8 @@ void LuxEngine::Refresh()
 				this->ShowDialog("Loaded Error. Exiting", DIALOGOK);
 				this->state = NOTRUNNING;
 			}
-			//this->state = RUNNING;
+			else
+				this->state = RUNNING;
 
 		}
 		else if ( this->state == RESETGAME )
@@ -341,7 +343,8 @@ void LuxEngine::Refresh()
 				this->ShowDialog("Loaded Error. Exiting", DIALOGOK);
 				this->state = NOTRUNNING;
 			}
-			//this->state = RUNNING;
+			else
+				this->state = RUNNING;
 
 		}
 		else if ( this->state == GUIMODE )

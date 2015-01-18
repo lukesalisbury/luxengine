@@ -679,7 +679,9 @@ bool MokoiMap::Save( elix::File * current_save_file )
 	current_save_file->WriteWithLabel("Map ID", this->ident.value );
 	current_save_file->WriteWithLabel("Map Width", (uint32_t)this->map_width);
 	current_save_file->WriteWithLabel("Map Height", (uint32_t)this->map_height);
-
+	current_save_file->WriteWithLabel("Map Background", this->base_background_colour.r );
+	current_save_file->WriteWithLabel("Map Background", this->base_background_colour.b );
+	current_save_file->WriteWithLabel("Map Background", this->base_background_colour.g );
 	current_save_file->WriteWithLabel("Map Loaded Flag", (uint8_t)this->loaded );
 
 	if ( this->entities )
@@ -720,10 +722,14 @@ bool MokoiMap::Restore( elix::File * current_save_file )
 
 	current_save_file->ReadWithLabel("Map Name", &this->map_name );
 	this->InitialSetup(this->map_name);
-	this->ident.value= current_save_file->ReadUint32WithLabel("Map ID", true );
 
+	this->ident.value= current_save_file->ReadUint32WithLabel("Map ID", true );
 	this->map_width = current_save_file->ReadUint32WithLabel("Map Width");
 	this->map_height = current_save_file->ReadUint32WithLabel("Map Height");
+
+	this->background_object.effects.primary_colour.r = this->base_background_colour.r = current_save_file->ReadUint8WithLabel("Map Background");
+	this->background_object.effects.primary_colour.g = this->base_background_colour.g = current_save_file->ReadUint8WithLabel("Map Background");
+	this->background_object.effects.primary_colour.b = this->base_background_colour.b = current_save_file->ReadUint8WithLabel("Map Background");
 
 	map_loading_flag = current_save_file->ReadUint8WithLabel("Map Loaded Flag");
 

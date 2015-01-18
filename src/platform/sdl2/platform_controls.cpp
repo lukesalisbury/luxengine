@@ -34,11 +34,6 @@ typedef struct Player_Pointer {
 } Player_Pointer;
 */
 
-std::string Player::DefaultControllerSetting( )
-{
-	return "arrows|mouse|mouse|k04|k022|k07|k020|k026|k08|k040|k079|k080|k081|k082|m01|m02|m03|m05|k041|k040|k041|m01|k061";
-}
-
 void Player::ClearController( )
 {
 
@@ -56,28 +51,28 @@ bool Player::SetupController( std::string name )
 		//Using SDL Game Controller values
 		uint32_t device_number = name.at(7)-'0';
 
-		this->_buttonConfig[0].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_A );
-		this->_buttonConfig[1].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_B );
-		this->_buttonConfig[2].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_X );
-		this->_buttonConfig[3].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_Y );
-		this->_buttonConfig[4].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_LEFTSHOULDER );
-		this->_buttonConfig[5].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER );
-		this->_buttonConfig[6].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_START );
-		this->_buttonConfig[7].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_DPAD_RIGHT );
-		this->_buttonConfig[8].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_DPAD_LEFT );
-		this->_buttonConfig[9].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_DPAD_DOWN );
-		this->_buttonConfig[10].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_DPAD_UP );
+		this->_buttonConfig[0].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_A ); // ❶
+		this->_buttonConfig[1].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_B ); // ❷
+		this->_buttonConfig[2].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_X ); // ❸
+		this->_buttonConfig[3].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_Y ); // ❹
+		this->_buttonConfig[4].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_LEFTSHOULDER ); // ❺
+		this->_buttonConfig[5].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER ); // ❻
+		this->_buttonConfig[6].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_START ); // ❼
+		this->_buttonConfig[7].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_DPAD_RIGHT ); // ❽
+		this->_buttonConfig[8].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_DPAD_LEFT ); // ❾
+		this->_buttonConfig[9].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_DPAD_DOWN ); // ❿
+		this->_buttonConfig[10].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_DPAD_UP ); // ➀
 
-		this->_buttonConfig[11].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_BACK );
-		this->_buttonConfig[12].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_LEFTSTICK );
-		this->_buttonConfig[13].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_RIGHTSTICK );
-		this->_buttonConfig[14].set(NOINPUT, device_number, SDL_CONTROLLER_BUTTON_A );
+		this->_buttonConfig[11].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_LEFTSTICK ); // ➁
+		this->_buttonConfig[12].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_GUIDE ); // ➂
+		this->_buttonConfig[13].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_RIGHTSTICK ); // ➃
+		this->_buttonConfig[14].set(NOINPUT, device_number, SDL_CONTROLLER_BUTTON_A ); // ➄
 
-		this->_buttonConfig[15].set(NOINPUT, device_number, SDL_CONTROLLER_BUTTON_A );
-		this->_buttonConfig[16].set(NOINPUT, device_number, SDL_CONTROLLER_BUTTON_A );
-		this->_buttonConfig[17].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_B );
-		this->_buttonConfig[18].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_GUIDE );
-		this->_buttonConfig[19].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_GUIDE );
+		this->_buttonConfig[15].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_BACK ); //➅
+		this->_buttonConfig[16].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_A ); // ICON_CONFIRM "➆"
+		this->_buttonConfig[17].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_B ); // ICON_CANCEL "➇"
+		this->_buttonConfig[18].set(CONTROLBUTTON, device_number, SDL_CONTROLLER_BUTTON_GUIDE ); // ICON_POINTER_PRESS "➈"
+		this->_buttonConfig[19].set(NOINPUT, device_number, SDL_CONTROLLER_BUTTON_GUIDE ); // SHUTDOWN
 
 		this->_controllerConfig[0].set(CONTROLAXIS, device_number, SDL_CONTROLLER_AXIS_LEFTX, SDL_CONTROLLER_AXIS_LEFTX, SDL_CONTROLLER_AXIS_LEFTY, SDL_CONTROLLER_AXIS_LEFTY, SDL_CONTROLLER_AXIS_INVALID, SDL_CONTROLLER_AXIS_TRIGGERLEFT );
 		this->_controllerConfig[1].set(CONTROLAXIS, device_number, SDL_CONTROLLER_AXIS_RIGHTX, SDL_CONTROLLER_AXIS_RIGHTX, SDL_CONTROLLER_AXIS_RIGHTY, SDL_CONTROLLER_AXIS_RIGHTY, SDL_CONTROLLER_AXIS_INVALID, SDL_CONTROLLER_AXIS_TRIGGERRIGHT );
@@ -85,20 +80,49 @@ bool Player::SetupController( std::string name )
 		this->_pointerConfig.set(CONTROLAXIS, device_number, SDL_CONTROLLER_AXIS_RIGHTX, SDL_CONTROLLER_AXIS_RIGHTY );
 
 	}
+	else if ( lux::config == NULL || name.compare(0, 7, "default") == 0 )
+	{
+		//Default Controllers
+		// "arrows|mouse|mouse|k04|k022|k07|k020|k026|k08|k040|k079|k080|k081|k082|m01|m02|m03|m04|k041|k040|k041|m01|k061" );
+		this->_buttonConfig[0].set(KEYBOARD, 0, SDL_SCANCODE_A ); // ❶
+		this->_buttonConfig[1].set(KEYBOARD, 0, SDL_SCANCODE_S ); // ❷
+		this->_buttonConfig[2].set(KEYBOARD, 0, SDL_SCANCODE_D ); // ❸
+		this->_buttonConfig[3].set(KEYBOARD, 0, SDL_SCANCODE_Q ); // ❹
+		this->_buttonConfig[4].set(KEYBOARD, 0, SDL_SCANCODE_W ); // ❺
+		this->_buttonConfig[5].set(KEYBOARD, 0, SDL_SCANCODE_E ); // ❻
+		this->_buttonConfig[6].set(KEYBOARD, 0, SDL_SCANCODE_RETURN ); // ❼
+		this->_buttonConfig[7].set(KEYBOARD, 0, SDL_SCANCODE_RIGHT ); // ❽
+		this->_buttonConfig[8].set(KEYBOARD, 0, SDL_SCANCODE_LEFT ); // ❾
+		this->_buttonConfig[9].set(KEYBOARD, 0, SDL_SCANCODE_DOWN ); // ❿
+		this->_buttonConfig[10].set(KEYBOARD, 0, SDL_SCANCODE_UP ); // ➀
+
+		this->_buttonConfig[11].set(MOUSEBUTTON, 0, 1 ); // ➁
+		this->_buttonConfig[12].set(MOUSEBUTTON, 0, 2 ); // ➂
+		this->_buttonConfig[13].set(MOUSEBUTTON, 0, 3 ); // ➃
+		this->_buttonConfig[14].set(NOINPUT, 0, SDL_CONTROLLER_BUTTON_A ); // ➄
+
+		this->_buttonConfig[15].set(KEYBOARD, 0, SDL_SCANCODE_ESCAPE ); //➅
+		this->_buttonConfig[16].set(KEYBOARD, 0, SDL_SCANCODE_RETURN ); // ICON_CONFIRM "➆"
+		this->_buttonConfig[17].set(KEYBOARD, 0, SDL_SCANCODE_ESCAPE ); // ICON_CANCEL "➇"
+		this->_buttonConfig[18].set(MOUSEBUTTON, 0, 1 ); // ICON_POINTER_PRESS "➈"
+		this->_buttonConfig[19].set(KEYBOARD, 0, SDL_SCANCODE_F4 ); // SHUTDOWN
+
+		this->_controllerConfig[0].set(KEYBOARD, 0, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT, SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_PAGEUP, SDL_SCANCODE_PAGEDOWN );
+		this->_controllerConfig[1].set(MOUSEAXIS, 0, 0, 0, 0, 0, 0, 0 );
+
+
+
+		this->_pointerConfig.set(MOUSEAXIS, 0, 0, 0 );
+
+
+
+
+	}
 	else
 	{
 		std::vector<std::string> values;
-		std::string settings;
 
-		if ( lux::config != NULL )
-		{
-			settings = lux::config->GetString("controller." + name);
-		}
-		else
-		{
-			settings = this->DefaultControllerSetting();
-		}
-		elix::string::Split(settings, "|", &values);
+		values = lux::config->GetArray("controller." + name);
 
 		if ( values.size() == 23 )
 		{
@@ -128,17 +152,19 @@ bool Player::SetupController( std::string name )
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "'" << name << "'' Invalid Control String '" << settings << "' Array Size:" << values.size() << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "'" << name << "'' Invalid Control String" << std::endl;
 		}
 		values.clear();
-
-
 	}
 	return true;
 }
 
 
-
+/**
+ * @brief Player::ParsePointer
+ * @param pointer
+ * @param config
+ */
 void Player::ParsePointer(Player_Pointer * pointer, std::string config)
 {
 	if (config == "mouse")
@@ -162,6 +188,11 @@ void Player::ParsePointer(Player_Pointer * pointer, std::string config)
 
 }
 
+/**
+ * @brief Player::ParseButton
+ * @param button
+ * @param config
+ */
 void Player::ParseButton(Player_Button * button, std::string config)
 {
 	if ( config.length() < 3 )

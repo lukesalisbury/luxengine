@@ -26,6 +26,19 @@ Entity::Entity(std::string base, std::string id, uint32_t mapid, LuxEntityCallba
 
 	this->InitialSetup( id );
 
+	if ( this->callbacks )
+	{
+		this->_data = this->callbacks->Init( this->id.c_str(), this->_base.c_str(), this );
+		if ( !this->_data )
+		{
+			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_INFO) << "No data for " << this->id << "|" << this->_base << std::endl;
+		}
+		else
+		{
+			this->loaded = true;
+		}
+	}
+
 }
 
 
@@ -75,20 +88,9 @@ void Entity::InitialSetup( std::string id )
 		this->_collisions[n].entity = this->hashid;
 		this->_collisions[n].rect.w = this->_collisions[n].rect.h =  0;
 	}
+/*
 
-	if ( callbacks )
-	{
-		this->_data = this->callbacks->Init( this->id.c_str(), this->_base.c_str(), this );
-		if ( !this->_data )
-		{
-			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_INFO) << "No data for " << this->id << "|" << this->_base << std::endl;
-		}
-		else
-		{
-			this->loaded = true;
-		}
-	}
-
+*/
 }
 
 void Entity::Init()
@@ -259,6 +261,10 @@ void Entity::Save( elix::File * current_save_file )
 
 }
 
+/**
+ * @brief Entity::Restore
+ * @param current_save_file
+ */
 void Entity::Restore( elix::File * current_save_file )
 {
 	lux::screen::display("Loading Saved Game");
@@ -283,6 +289,7 @@ void Entity::Restore( elix::File * current_save_file )
 		this->InitialSetup( this->id );
 		this->callbacks->Restore( current_save_file, this->_data );
 		this->loaded = true;
+		this->firstran = true;
 	}
 
 
@@ -290,6 +297,17 @@ void Entity::Restore( elix::File * current_save_file )
 }
 
 /* Entity Collisions */
+
+/**
+ * @brief Entity::AddCollision
+ * @param rect
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param type
+ * @return
+ */
 int32_t Entity::AddCollision(int32_t rect, int32_t x, int32_t y, int32_t w, int32_t h, int32_t type)
 {
 	if ( !this->_data || this->deleted )
@@ -317,6 +335,12 @@ int32_t Entity::AddCollision(int32_t rect, int32_t x, int32_t y, int32_t w, int3
 	return 0;
 }
 
+/**
+ * @brief Entity::CheckCollision
+ * @param rect
+ * @param otherRect
+ * @return
+ */
 int32_t Entity::CheckCollision(int32_t rect, LuxRect otherRect)
 {
 	if ( this->_used_collisions == -1 )
@@ -344,6 +368,10 @@ int32_t Entity::CheckCollision(int32_t rect, LuxRect otherRect)
 	return -1;
 }
 
+/**
+ * @brief Entity::SetCollisionCount
+ * @param count
+ */
 void Entity::SetCollisionCount(int32_t count)
 {
 	this->_used_collisions = count;
@@ -351,6 +379,11 @@ void Entity::SetCollisionCount(int32_t count)
 	this->SetMapCollsion();
 }
 
+/**
+ * @brief Entity::GetHits
+ * @param type
+ * @return
+ */
 int32_t Entity::GetHits( int32_t type )
 {
 	this->_hits.clear();
@@ -367,6 +400,9 @@ int32_t Entity::GetHits( int32_t type )
 	return this->_hits.size();
 }
 
+/**
+ * @brief Entity::SetMapCollsion
+ */
 void Entity::SetMapCollsion()
 {
 	if ( lux::gamesystem != NULL )
@@ -387,6 +423,9 @@ void Entity::SetMapCollsion()
 	}
 }
 
+/**
+ * @brief Entity::ClearMapCollsion
+ */
 void Entity::ClearMapCollsion()
 {
 	if ( lux::gamesystem != NULL )
@@ -400,11 +439,19 @@ void Entity::ClearMapCollsion()
 	}
 }
 
+/**
+ * @brief Entity::GetHitsCount
+ * @return
+ */
 int32_t Entity::GetHitsCount()
 {
 	return this->_hits.size();
 }
 
+/**
+ * @brief Entity::GetCurrentHit
+ * @return
+ */
 CollisionResult * Entity::GetCurrentHit()
 {
 	CollisionResult * current_hit = this->_hits.back();
@@ -413,12 +460,22 @@ CollisionResult * Entity::GetCurrentHit()
 }
 
 /* Settings */
+/**
+ * @brief Entity::AddSetting
+ * @param key
+ * @param value
+ */
 void Entity::AddSetting(std::string key, std::string value)
 {
 	std::string set_key(key), set_value(value);
 	this->_settings.insert( std::make_pair( set_key, set_value ) );
 }
 
+/**
+ * @brief Entity::AddSetting
+ * @param key
+ * @param value
+ */
 void Entity::AddSetting(std::string key, uint32_t value)
 {
 	std::stringstream stream;
@@ -426,6 +483,11 @@ void Entity::AddSetting(std::string key, uint32_t value)
 	this->_settings.insert( make_pair( key, stream.str() ) );
 }
 
+/**
+ * @brief Entity::AddSetting
+ * @param key
+ * @param value
+ */
 void Entity::AddSetting(std::string key, int32_t value)
 {
 	std::stringstream stream;
@@ -433,6 +495,11 @@ void Entity::AddSetting(std::string key, int32_t value)
 	this->_settings.insert( make_pair( key, stream.str() ) );
 }
 
+/**
+ * @brief Entity::GetSetting
+ * @param key
+ * @return
+ */
 std::string Entity::GetSetting( char * key )
 {
 	std::string strkey;
@@ -453,6 +520,11 @@ std::string Entity::GetSetting( char * key )
 	return str;
 }
 
+/**
+ * @brief Entity::GetSetting
+ * @param key
+ * @return
+ */
 std::string Entity::GetSetting( std::string key )
 {
 	std::string str = "";
@@ -467,7 +539,11 @@ std::string Entity::GetSetting( std::string key )
 	}
 	return str;
 }
-
+/**
+ * @brief Entity::GetSettingAsInt
+ * @param key
+ * @return
+ */
 int32_t Entity::GetSettingAsInt(std::string key)
 {
 	int32_t value = -1;
@@ -476,6 +552,11 @@ int32_t Entity::GetSettingAsInt(std::string key)
 	return value;
 }
 
+/**
+ * @brief Entity::GetSettingAsFloat
+ * @param key
+ * @return
+ */
 float Entity::GetSettingAsFloat(std::string key)
 {
 	float value = 0.0;
@@ -484,6 +565,10 @@ float Entity::GetSettingAsFloat(std::string key)
 	return value;
 }
 
+/**
+ * @brief Entity::Infomation
+ * @return
+ */
 std::string Entity::Infomation()
 {
 	std::stringstream contents;

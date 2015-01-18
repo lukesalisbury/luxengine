@@ -137,7 +137,6 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 	if ( !debug_window )
 		return;
 
-
 	std::string::iterator object;
 	SDL_Rect draw;
 	LuxRect rect;

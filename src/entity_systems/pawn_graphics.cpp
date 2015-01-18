@@ -280,6 +280,7 @@ static cell pawnCanvasChildInfo(AMX *amx, const cell *params)
 	return Lux_FFI_Polygon_Add_Point( name.c_str(), params[2], params[3] );
 
 }
+
 /** Display Functions */
 
 /** pawnObjectCreate

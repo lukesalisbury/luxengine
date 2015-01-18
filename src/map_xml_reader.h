@@ -17,11 +17,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 class MapXMLReader
 {
-		MapXMLReader(): xml_file(NULL) {}
+		MapXMLReader(): xml_file(NULL), object_count_z(0) {}
 		~MapXMLReader() { delete xml_file; }
 	private:
 		tinyxml2::XMLDocument * xml_file;
 		tinyxml2::XMLElement * root;
+		uint32_t object_count_z;
+
 
 		void ReadObjectPosition(tinyxml2::XMLElement* object_element, MapObject* object);
 		void ReadObjectEffect(tinyxml2::XMLElement* object_element, MapObject* object);

@@ -326,12 +326,12 @@ uint16_t MapXMLReader::ReadZLayer(tinyxml2::XMLElement* position_element, uint8_
 	uint32_t z_temporary_value = position_element->IntAttribute( "z" );
 	if ( z_temporary_value < 10 && z_temporary_value > 0 )
 	{
-		z = (uint16_t)(z_temporary_value*1000);
+		z = (uint16_t)(z_temporary_value*1000) + (object_count_z%1000);
 		layer = (uint8_t)z_temporary_value;
 	}
 	else
 	{
-		z = (uint16_t)z_temporary_value;
+		z = (uint16_t)z_temporary_value  + (object_count_z%1000);;
 		layer = (uint8_t)(z_temporary_value/1000);
 	}
 	return z;
@@ -558,6 +558,7 @@ void MapXMLReader::ReadObjects( MapObjectList & object_array, uint32_t & object_
 				/* Local object so we add it to the list */
 				object_array.insert( MAP_OBJECT_PAIR( object->GetStaticMapID(), object ) );
 				++object_cache_count;
+				++object_count_z;
 			}
 		}
 

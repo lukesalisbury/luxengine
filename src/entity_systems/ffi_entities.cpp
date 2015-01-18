@@ -259,11 +259,13 @@ uint32_t Lux_FFI_Entities_List( uint32_t map_id )
 *
 * uint32_t map_id
 */
-char * Lux_FFI_Entities_Next( uint32_t map_id )
+char * Lux_FFI_Entities_Next( uint32_t map_id, uint8_t * has_next )
 {
 	char * string = NULL;
 	std::string string_value = "";
 	EntitySection * section = NULL;
+
+	*has_next = false;
 
 	if ( map_id == 0 ) /* GLOBAL */
 	{
@@ -284,7 +286,9 @@ char * Lux_FFI_Entities_Next( uint32_t map_id )
 		{
 			string_value.assign( (*section->iter)->id );
 			section->iter++;
+			*has_next = true;
 		}
+
 	}
 
 	if ( string_value.length() )
@@ -294,5 +298,10 @@ char * Lux_FFI_Entities_Next( uint32_t map_id )
 		std::copy(string_value.begin(), string_value.end(), string);
 	}
 
+
+
 	return string;
 }
+
+
+

@@ -7,7 +7,7 @@ new target = 0;
 public Init(...)
 {
 	TextSprites(true,"alpha02.png");
-	target = MapID("entity");
+	target = MapGetIdent("entity", true);
 }
 
 public Close()
@@ -20,6 +20,6 @@ main()
 {
 	if ( TimerCountdown(time) )
 	{
-		MapChange(target, 0 , 0);
+		MapSet(target, 0 , 0);
 	}
 }

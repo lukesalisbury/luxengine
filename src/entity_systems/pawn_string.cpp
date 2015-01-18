@@ -1220,10 +1220,10 @@ static int32_t amx_format_do_char( AMX * amx, uint8_t ch, cell param, uint8_t si
  */
 static cell n_strformat( AMX *amx, const cell *params )
 {
-	ASSERT_PAWN_PARAM( amx, params, 5 );
+	ASSERT_PAWN_PARAM( amx, params, 4 );
 
 	std::string str = "";
-	cell * cstr = amx_Address( amx, params[4] );
+	cell * cstr = amx_Address( amx, params[3] );
 	cell * output = amx_Address( amx, params[1] );
 	int32_t length = params[2];
 	int8_t state = 0;
@@ -1231,7 +1231,7 @@ static cell n_strformat( AMX *amx, const cell *params )
 	int32_t width = 0, digits = 0;
 
 	uint32_t param_index = 0;
-	uint32_t num_params = (uint32_t)(params[0]/sizeof(cell)) - 4;
+	uint32_t num_params = (uint32_t)(params[0]/sizeof(cell)) - 3;
 
 	if ( cstr )
 	{
@@ -1259,7 +1259,7 @@ static cell n_strformat( AMX *amx, const cell *params )
 									amx_RaiseError(amx, AMX_ERR_NATIVE);
 								else
 								{
-									uint32_t param_offset = param_index+5;
+									uint32_t param_offset = param_index+4;
 									param_index += amx_format_do_char( amx, char8, params[param_offset], sign, decpoint, width, digits, filler, str );
 								}
 								state = FMT_NONE;
@@ -1366,7 +1366,8 @@ const AMX_NATIVE_INFO string_Natives[] = {
   { "strcopy",   n_strcopy },
   { "strdel",    n_strdel },
   { "strfind",   n_strfind },
-  { "strformat", n_strformat },
+  { "strformat", n_strformat_old },
+  { "StringFormat", n_strformat },
   { "strins",    n_strins },
   { "strlen",    n_strlen },
   { "strmid",    n_strmid },
