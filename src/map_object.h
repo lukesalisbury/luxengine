@@ -54,10 +54,14 @@ class MapObject
 
 		bool hidden;
 		bool can_remove;
+		bool is_virtual_child;
 
 		int_hash static_map_id;
+		bool IsGlobal();
 		uint32_t GetStaticMapID() const;
 		void SetStaticMapID(const uint32_t counter, const bool global);
+
+		/* Collisions */
 		bool CollisionRectangle( LuxRect rect[7] );
 
 		/* Animations */
@@ -115,10 +119,10 @@ class MapObject
 
 
 
+
 private:
-
-
 		void InitialSetup();
+
 		/* Data */
 		mem_pointer data;
 		LuxSprite * PeekSprite();

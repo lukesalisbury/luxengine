@@ -20,7 +20,7 @@ main()
 public ChangeID()
 {
 	id = random(99)+1;
-	StringFormat(string, _, true, "%d", id);
+	StringFormat(string, _, "%d", id);
 }
 
 public Close() 

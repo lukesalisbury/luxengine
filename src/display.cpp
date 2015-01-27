@@ -334,8 +334,8 @@ void DisplaySystem::ShowMessages()
 	ObjectEffect text_effects;
 	ObjectEffect rect_effects;
 
-	text_effects.SetColour(colour::yellow);
-	rect_effects.SetColour(colour::black);
+	text_effects.primary_colour = colour::yellow;
+	rect_effects.primary_colour = colour::black;
 	rect_effects.primary_colour.a = 128;
 
 	if ( this->show_collisions )
@@ -677,7 +677,7 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 				this->graphics.DrawPolygon(poly->x, poly->y, poly->count, new_position, new_effects, poly->texture);
 			break;
 		}
-		case 'l':
+		case OBJECT_LINE:
 			this->graphics.DrawLine(new_position, new_effects);
 			break;
 		case 't':
@@ -887,6 +887,6 @@ void DisplaySystem::SetBackgroundObject( MapObject background )
 void DisplaySystem::ResetBackgroundObject( )
 {
 	this->background_object.effects.primary_colour = colour::black;
-	this->background_object.effects.SetSecondaryColour( colour::black );
+	this->background_object.effects.secondary_colour = colour::black;
 	this->graphics.SetBackground( this->background_object );
 }

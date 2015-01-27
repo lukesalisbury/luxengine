@@ -79,8 +79,6 @@ typedef struct {
 	int16_t z;
 } LuxRect;
 
-
-
 inline LuxRect & operator+=(LuxRect& a, LuxRect& b) {
 	a.x += b.x;
 	a.y += b.y;
@@ -104,6 +102,17 @@ typedef struct {
 	uint8_t b;
 	uint8_t a;
 } LuxColour;
+
+
+union LuxColour2 {
+	uint32_t hex;
+	struct {
+		uint8_t a;
+		uint8_t b;
+		uint8_t g;
+		uint8_t r;
+	};
+};
 
 union cell_colour {
 	uint32_t hex;

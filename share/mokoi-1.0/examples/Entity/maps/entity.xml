@@ -10,7 +10,7 @@
 	<setting key="text-string" value="1" />
 </object>
 <object value="planetcute.png:1" type="sprite">
-	<position x="0" y="320" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<position x="0" y="408" w="672" h="80" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
 <object value="planetcute.png:2" type="sprite">

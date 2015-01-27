@@ -1,15 +1,13 @@
 #include <helper>
-#include <core>
 
-new object:display_object = object:-1;
+new object:display_object = OBJECT_NONE;
 new object_scale = 1000;
 new scale_direction = 1;
 
 public Init( ... )
 {
-	display_object = object:EntityGetNumber("object-id");
+	display_object = EntityGetObject();
 }
-
 public Close()
 {
 }
@@ -25,6 +23,5 @@ main()
 	}
 	object_scale = clamp( object_scale,   0500, 5000 );
 
-	DebugText("Scale Image: %q %q", object_scale, object_scale);
-
+	ConsoleOutput("scale");
 }

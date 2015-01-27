@@ -21,44 +21,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "config.h"
 #include "core.h"
 
-LuxColour Lux_Hex2Colour(std::string color);
-uint32_t Lux_Hex2Int(std::string color);
+#include "display_functions.h"
 
-uint32_t DetermineObjectType( std::string obj_type )
-{
-	uint32_t type = OBJECT_UNKNOWN;
-
-	if ( obj_type == "sprite" )
-	{
-		type = OBJECT_SPRITE;
-	}
-	else if ( obj_type == "rect" )
-	{
-		type = OBJECT_RECTANGLE;
-	}
-	else if ( obj_type == "line" )
-	{
-		type = OBJECT_LINE;
-	}
-	else if (obj_type == "circle")
-	{
-		type = OBJECT_CIRCLE;
-	}
-	else if (obj_type == "text")
-	{
-		type = OBJECT_TEXT;
-	}
-	else if (obj_type == "polygon")
-	{
-		type = OBJECT_POLYGON;
-	}
-	else if (obj_type == "canvas")
-	{
-		type = OBJECT_CANVAS;
-	}
-
-	return type;
-}
 
 
 /**
@@ -220,7 +184,6 @@ void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapOb
 	}
 }
 
-
 /**
  * @brief MapXMLReader::ReadGlobalEntity
  * @param entity_element
@@ -265,7 +228,7 @@ void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tiny
 				tinyxml2::QueryStringAttribute(object_element, "value", object_content );
 
 				current_entity->AddSetting("object-content", object_content );
-				current_entity->AddSetting("object-type", DetermineObjectType(object_type) );
+				current_entity->AddSetting("object-type", Lux_DetermineObjectType(object_type) );
 
 				/* */
 				position_element = object_element->FirstChildElement("position");
@@ -273,7 +236,7 @@ void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tiny
 				{
 					current_entity->x = MAKE_INT_FIXED(position_element->IntAttribute( "x" ));
 					current_entity->y = MAKE_INT_FIXED(position_element->IntAttribute( "y" ));
-					MapXMLReader::ReadZLayer( position_element, current_entity->z_layer );
+					ReadZLayer( position_element, current_entity->z_layer );
 
 					current_entity->AddSetting("object-width", position_element->IntAttribute( "w" ) );
 					current_entity->AddSetting("object-height", position_element->IntAttribute( "h" ) );
@@ -393,7 +356,6 @@ void MapXMLReader::ReadObjectEffect(tinyxml2::XMLElement* object_element, MapObj
 	}
 }
 
-
 /**
  * @brief MapXMLReader::ReadObjectType
  * @param object_element
@@ -446,6 +408,7 @@ void MapXMLReader::ReadObjectType(tinyxml2::XMLElement* object_element, std::str
 		object->sprite = "Unknown Type";
 	}
 }
+
 /**
  * @brief MapXMLReader::ReadObjectSetting
  * @param object_element
@@ -504,10 +467,7 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element, con
 	this->ReadObjectEffect( object_element, object );
 	this->ReadObjectSetting( object_element, object );
 	this->ReadObjectType( object_element, obj_type, object );
-
-	this->ReadPath(object, object_element);
-
-	this->ReadLocalEntity( object_element, object, NULL );
+	this->ReadPath( object, object_element);
 
 	return object;
 }
@@ -518,8 +478,9 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element, con
  * @param object_cache_count
  * @param map
  */
-void MapXMLReader::ReadObjects( MapObjectList & object_array, uint32_t & object_cache_count, MokoiMap * map )
+void MapXMLReader::ReadObjectsWithEntities( MapObjectList & object_array, MokoiMap * map )
 {
+	uint32_t object_cache_count = 0;
 	tinyxml2::XMLElement * child_element = NULL;
 	tinyxml2::XMLElement * entity_element = NULL;
 
@@ -546,22 +507,55 @@ void MapXMLReader::ReadObjects( MapObjectList & object_array, uint32_t & object_
 		}
 		else
 		{
-			object = this->ReadObject(child_element, is_global_object, object_cache_count);
+			object = this->ReadObject(child_element, is_global_object, ++object_cache_count);
 			if ( object )
 			{
+				this->ReadLocalEntity( child_element, object, NULL );
+
 				if ( object->type == OBJECT_VIRTUAL_SPRITE )
 				{
 					LuxVirtualSprite * sprite = object->InitialiseVirtual( );
-					sprite->InsertToVector( object, object_array, object_cache_count, map  );
+					sprite->PushObjectsToMap( object, object_array, object_cache_count, is_global_object  );
 				}
 
 				/* Local object so we add it to the list */
 				object_array.insert( MAP_OBJECT_PAIR( object->GetStaticMapID(), object ) );
-				++object_cache_count;
 				++object_count_z;
 			}
 		}
 
+	}
+}
+
+/**
+ * @brief Used by Canvas and Virtual Sprite
+ * @param object_array
+ * @param is_global
+ */
+void MapXMLReader::ReadObjects(MapObjectList & object_array, bool is_global )
+{
+	uint32_t object_cache_count = 0;
+	tinyxml2::XMLElement * child_element = NULL;
+
+	for( child_element = root->FirstChildElement("object"); child_element; child_element = child_element->NextSiblingElement("object") )
+	{
+		if ( strcmp(child_element->Value(), "object") )
+			continue;
+
+		MapObject * object = this->ReadObject(child_element, is_global, ++object_cache_count);
+		if ( object )
+		{
+			/* Local object so we add it to the list */
+			object_array.insert( MAP_OBJECT_PAIR( object->GetStaticMapID(), object ) );
+
+			if ( object->type == OBJECT_VIRTUAL_SPRITE )
+			{
+				LuxVirtualSprite * sprite = object->InitialiseVirtual( );
+				sprite->PushObjectsToMap( object, object_array, object_cache_count, is_global  );
+			}
+
+			++object_count_z;
+		}
 	}
 }
 

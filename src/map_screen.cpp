@@ -167,7 +167,7 @@ void MokoiMapScreen::DrawMask( fixed position[3] )
 	int32_t y = this->_offset_y - MAKE_FIXED_INT(position[1]);
 	int32_t x = this->_offset_x - MAKE_FIXED_INT(position[0]);
 
-	mask_colour.SetColour(colour::red);
+	mask_colour.primary_colour = colour::red;
 
 	if ( this->_mask )
 	{

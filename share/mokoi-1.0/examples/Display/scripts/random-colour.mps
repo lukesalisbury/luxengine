@@ -1,17 +1,10 @@
-#include <core>
+#include <helper>
 
-new obj = -1;
-new acolor = 0;
-
-stock SetColourBits( &v, n, p )
-{
-	new sn = clamp( n, 0, 255);
-	v |= (sn << p);
-}
+new object:obj;
 
 public Init( ... )
 {
-	obj = EntityGetNumber("object-id");
+	obj = EntityGetObject();
 }
 
 public Close()
@@ -20,15 +13,19 @@ public Close()
 
 main()
 {
-	
-	acolor = 0;
-	SetColourBits( acolor, random(255), 24); // Alpha
-	SetColourBits( acolor, random(255), 16); // Blue
-	SetColourBits( acolor, random(255), 8); // Green
-	SetColourBits( acolor, random(255), 0); // Red
+	RandomColour( obj );
+}
 
-	DebugText("%d %x", obj, acolor );
+RandomColour( object:item )
+{
 
-	ObjectEffect( object:obj, acolor );
+	new colour = 0;
+	BitsSet( colour, random(255), 24, 8); // Alpha
+	BitsSet( colour, random(255), 16, 8); // Blue
+	BitsSet( colour, random(255), 8, 8); // Green
+	BitsSet( colour, random(255), 0, 8); // Red
+
+	ObjectEffect( item, colour );
 
 }
+

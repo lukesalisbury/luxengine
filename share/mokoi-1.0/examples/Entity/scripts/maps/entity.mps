@@ -12,7 +12,7 @@ new map = 0;
 
 public CreateEntity()
 {
-	EntityCreate("simple", "", random(512),random(384), 4, map); 
+	EntityCreate("simple", "", random(512), random(384), 4, map); 
 }
 
 public Init( ... )
@@ -50,7 +50,7 @@ main()
 			if ( PointCollide(px,py, EntityPublicVariable(entity_id,"x"), EntityPublicVariable(entity_id,"y") )   )
 			{
 				if ( InputButton(11) == 1 )
-					EntityPublicFunction(entity_id, "ChangeID", "");
+					EntityPublicFunction(entity_id, "ChangeID");
 			}
 			i++; 
 		}
@@ -65,7 +65,7 @@ main()
 		} 
 	} 
 
-	if ( InputButton(0) ==1) 
+	if ( InputButton(0) ==1 ) 
 	{ 
 		CreateEntity();
 	} 

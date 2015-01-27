@@ -28,7 +28,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 */
 
 namespace gles {
-	Texture font[96];
+	Texture font[97];
 	bool customtext = false;
 	uint32_t customtext_height = 10;
 	LuxVertex scale = { 1, 1, 1 };

@@ -25,13 +25,11 @@
 #include "pawn_helper.h"
 #include "display.h"
 #include "elix_string.hpp"
+#include "engine.h"
 
 #if defined __WIN32__ || defined _WIN32 || defined WIN32 || defined _Windows
   #include <windows.h>
 #endif
-
-
-
 
 
 typedef char          TCHAR;
@@ -1070,11 +1068,26 @@ static int8_t amx_format_state(uint8_t c, int8_t & state, uint8_t & sign, uint8_
 
 static int32_t amx_format_do_char( AMX * amx, uint8_t ch, cell param, uint8_t sign, uint8_t decpoint, int32_t width, int32_t digits, uint8_t filler, std::string & output )
 {
+	uint32_t line;
 	cell *cptr = amx_Address(amx, param);
 	std::string format_string;
-	char buffer[30]= { 0 };
+	char buffer[30] = { 0 };
 
 	switch (ch) {
+		case ('D'): // Dialog
+			width--; /* single character itself has a with of 1 */
+
+			line = (uint32_t)(*cptr);
+			output.append( lux::engine->GetDialogString( line ) );
+
+			return 1;
+		case ('L'): // Language String
+			width--; /* single character itself has a with of 1 */
+
+			line = (uint32_t)(*cptr);
+			output.append( lux::engine->GetString( line ) );
+
+			return 1;
 		case ('c'):
 			width--; /* single character itself has a with of 1 */
 			if ( sign != '-' )
@@ -1101,7 +1114,10 @@ static int32_t amx_format_do_char( AMX * amx, uint8_t ch, cell param, uint8_t si
 			width -= length;
 			if ( sign != '-' )
 			{
-				//output.append(width, filler);
+				if ( width > 0 )
+				{
+					output.append(width, filler);
+				}
 			}
 			if ( sign == ('+') && *cptr >= 0 )
 			{
@@ -1122,7 +1138,6 @@ static int32_t amx_format_do_char( AMX * amx, uint8_t ch, cell param, uint8_t si
 				digits = 5;
 			else if (digits>25)
 				digits = 25;
-
 
 			format_string = "%";
 			if ( sign != ('\0') )
@@ -1225,7 +1240,7 @@ static cell n_strformat( AMX *amx, const cell *params )
 	std::string str = "";
 	cell * cstr = amx_Address( amx, params[3] );
 	cell * output = amx_Address( amx, params[1] );
-	int32_t length = params[2];
+	int32_t length = params[2] * sizeof(cell);
 	int8_t state = 0;
 	uint8_t sign = 0, decpoint = 0, filler = 0;
 	int32_t width = 0, digits = 0;
@@ -1255,7 +1270,7 @@ static cell n_strformat( AMX *amx, const cell *params )
 							case 0:
 								break;
 							case 1:
-								if ( param_index >= num_params) //insufficient parameters passed
+								if ( param_index >= num_params ) //insufficient parameters passed
 									amx_RaiseError(amx, AMX_ERR_NATIVE);
 								else
 								{

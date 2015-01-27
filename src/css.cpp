@@ -147,11 +147,11 @@ ObjectEffect CSSParser::GetEffect( LuxWidget element, _WidgetStates state )
 		{
 			if ( !(*keys).first.compare("background-color") )
 			{
-				new_effect.SetColour( (*keys).second );
+				new_effect.primary_colour = Lux_Hex2Colour( (*keys).second );
 			}
 			else if ( !(*keys).first.compare("background-color-secondary") )
 			{
-				new_effect.SetSecondaryColour( (*keys).second );
+				new_effect.secondary_colour= Lux_Hex2Colour( (*keys).second );
 			}
 			else if ( !(*keys).first.compare("background-style") )
 			{

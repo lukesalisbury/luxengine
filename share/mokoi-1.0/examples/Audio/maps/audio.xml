@@ -15,11 +15,11 @@
 	<setting key="number" value="1" />
 	<setting key="text-string" value="1" />
 </object>
-<object value="sprite-border.png:5" type="sprite">
+<object value="sprite-border.png:5" type="sprite" id="musicbox">
 	<position x="24" y="32" w="320" h="112" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
-<object value="sprite-border.png:5" type="sprite">
+<object value="sprite-border.png:5" type="sprite" id="soundbox">
 	<position x="24" y="192" w="320" h="96" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
@@ -27,16 +27,14 @@
 	<position x="408" y="32" w="208" h="112" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
+<object value="title.png:1" type="sprite">
+	<position x="400" y="392" w="256" h="128" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
 <object value="OPENDIALOG" type="text">
 	<position x="416" y="40" w="80" h="8" z="1000" l="1" r="0" f="0"/>
 	<color red="0" blue="0" green="0" alpha="255" />
 	<setting key="number" value="2" />
 	<setting key="text-string" value="7" />
-</object>
-<object value="CLOSEDIALOG" type="text">
-	<position x="416" y="80" w="88" h="8" z="1000" l="1" r="0" f="0"/>
-	<color red="0" blue="0" green="0" alpha="255" />
-	<setting key="number" value="3" />
-	<setting key="text-string" value="3" />
 </object>
 </map>

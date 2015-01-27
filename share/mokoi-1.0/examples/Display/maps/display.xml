@@ -5,197 +5,20 @@
 	<option name="music" value="" type="music" />
 	<option name="name" value="" type="" />
 </settings>
-<object value="planetcute.png:1" type="sprite">
-	<position x="288" y="40" w="48" h="80" z="0" l="0" r="0" f="0"/>
+<object value="sprite-border.png:5" type="sprite" id="drawarea">
+	<position x="56" y="80" w="528" h="336" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
-	<entity value="random-colour" language="mps" global="false"/>
-</object>
-<object value="Line" type="line">
-	<position x="9" y="68" w="53" h="73" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<entity value="random-colour" language="mps" global="false"/>
-</object>
-<object value="Circle" type="text">
-	<position x="128" y="24" w="30" h="7" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="11" />
-</object>
-<object value="Circle" type="circle">
-	<position x="136" y="40" w="33" h="47" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="aaa" value="asdasd" type=""/>
-	<entity value="random-colour" language="mps" global="false"/>
-</object>
-<object value="player1.png:side" type="sprite">
-	<position x="8" y="224" w="32" h="40" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="player1.png:side" type="sprite">
-	<position x="128" y="224" w="32" h="40" z="0" l="0" r="180" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="player1.png:side" type="sprite">
-	<position x="128" y="280" w="32" h="40" z="0" l="0" r="90" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="player1.png:side" type="sprite">
-	<position x="8" y="280" w="32" h="40" z="0" l="0" r="270" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="player1.png:side" type="sprite">
-	<position x="48" y="280" w="32" h="40" z="0" l="0" r="90" f="1"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="player1.png:side" type="sprite">
-	<position x="88" y="280" w="32" h="40" z="0" l="0" r="270" f="1"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="Line" type="line">
-	<position x="376" y="72" w="466" h="73" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="player1.png:side" type="sprite">
-	<position x="96" y="224" w="32" h="40" z="0" l="0" r="180" f="1"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="Line" type="line">
-	<position x="26" y="38" w="40" h="89" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<entity value="random-colour" language="mps" global="false"/>
-</object>
-<object value="Rectangle" type="rect">
-	<position x="184" y="224" w="72" h="72" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<entity value="style_change" language="mps" global="false"/>
-</object>
-<object value="player1.png:back_4" type="sprite">
-	<position x="184" y="328" w="32" h="40" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<entity value="style_change" language="mps" global="false"/>
-</object>
-<object value="Polygon" type="polygon">
-	<position x="193" y="40" w="56" h="38" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="0" green="255" alpha="255" />
-	<option points="5"/>
-	<point x="34" y="3"/>
-	<point x="56" y="10"/>
-	<point x="47" y="38"/>
-	<point x="21" y="35"/>
-	<point x="11" y="14"/>
-</object>
-<object value="process.png:process" type="sprite">
-	<position x="312" y="224" w="32" h="32" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<entity value="tile-image" language="mps" global="false"/>
-</object>
-<object value="process.png:process" type="sprite">
-	<position x="504" y="224" w="32" h="32" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="min" value="50" type="number"/>
-	<entity value="scale-image" language="mps" global="false"/>
-</object>
-<object value="sprite-border.png:5" type="sprite">
-	<position x="24" y="368" w="96" h="64" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="Polygon" type="text">
-	<position x="184" y="24" w="35" h="9" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="13" />
-</object>
-<object value="Borders" type="text">
-	<position x="8" y="336" w="35" h="7" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="number" value="" type="hidden"/>
-	<setting key="text-string" value="-1" />
-</object>
-<object value="Line" type="line">
-	<position x="416" y="32" w="417" h="118" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="Virtual:LogoTest" type="sprite">
-	<position x="480" y="32" w="120" h="128" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="VirtualSprites" type="text">
-	<position x="480" y="24" w="70" h="9" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="22" />
-</object>
-<object value="Path" type="text">
-	<position x="8" y="120" w="20" h="7" z="0" l="0" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="25" />
-</object>
-<object value="Rectangle" type="rect">
-	<position x="64" y="40" w="46" h="47" z="1000" l="1" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<entity value="random-colour" language="mps" global="false"/>
-</object>
-<object value="player1.png:side" type="sprite">
-	<position x="40" y="224" w="32" h="40" z="1000" l="1" r="0" f="1"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="Effects" type="text">
-	<position x="184" y="208" w="35" h="7" z="1000" l="1" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="23" />
-</object>
-<object value="planetcute.png:2" type="sprite" id="*">
-	<position x="392" y="40" w="48" h="80" z="2000" l="2" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<entity value="rotate-image" language="mps" global="false"/>
-</object>
-<object value="Animation" type="text">
-	<position x="8" y="208" w="45" h="7" z="4000" l="4" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="-1" />
-</object>
-<object value="Tinting" type="text">
-	<position x="288" y="24" w="35" h="9" z="4000" l="4" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="16" />
-</object>
-<object value="Rotating" type="text">
-	<position x="376" y="24" w="40" h="9" z="4000" l="4" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="-1" />
-</object>
-<object value="DisplayStyles" type="text">
-	<position x="2" y="2" w="65" h="9" z="6000" l="6" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="-1" />
-</object>
-<object value="Line" type="text">
-	<position x="8" y="24" w="20" h="7" z="6000" l="6" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="-1" />
-</object>
-<object value="Rectangle" type="text">
-	<position x="56" y="24" w="45" h="9" z="6000" l="6" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="12" />
-</object>
-<object value="Scaling" type="text">
-	<position x="504" y="208" w="35" h="9" z="6000" l="6" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="-1" />
-</object>
-<object value="Tiling" type="text">
-	<position x="312" y="208" w="30" h="9" z="6000" l="6" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-	<setting key="text-string" value="-1" />
 </object>
 <object value="player1.png:front" type="sprite">
-	<position x="16" y="136" w="32" h="40" z="6000" l="6" r="0" f="0"/>
+	<position x="8" y="24" w="32" h="40" z="6000" l="6" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<entity value="follow_path" language="mps" global="false"/>
 	<path>
-		<point x="16" y="136" ms="10"/>
-		<point x="608" y="136" ms="10"/>
-		<point x="608" y="448" ms="10"/>
-		<point x="328" y="176" ms="10"/>
-		<point x="16" y="176" ms="10"/>
+		<point x="8" y="24" ms="10"/>
+		<point x="608" y="24" ms="10"/>
+		<point x="608" y="440" ms="10"/>
+		<point x="8" y="440" ms="10"/>
+		<point x="8" y="24" ms="10"/>
 	</path>
 </object>
 </map>

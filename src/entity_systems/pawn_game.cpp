@@ -263,7 +263,7 @@ static cell pawnDialogShow(AMX *amx, const cell *params)
 
 
 /** pawnDialogGetString
-* native DialogGetString(line, returnstring[], maxlength=sizeof returnstring);
+* native DialogGetString(line, returnstring{}, maxlength=sizeof returnstring);
 *
 */
 static cell pawnDialogGetString(AMX *amx, const cell *params)
@@ -274,7 +274,7 @@ static cell pawnDialogGetString(AMX *amx, const cell *params)
 
 	dialog_string = Lux_FFI_Dialog_String( (uint32_t)params[1] );
 
-	return Lux_PawnEntity_SetString(cptr, dialog_string, params[3]);
+	return Lux_PawnEntity_SetString(cptr, dialog_string, params[3]*sizeof(cell) );
 }
 
 

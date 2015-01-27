@@ -217,7 +217,6 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	opengl_graphic_cursor->SetPoint(1, 8, 8);
 	opengl_graphic_cursor->SetPoint(2, 0, 12);
 
-
 	SDL_SetWindowTitle( native_window, native_window_title.c_str() );
 	Lux_SDL2_SetWindowIcon( native_window );
 

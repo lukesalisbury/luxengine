@@ -223,12 +223,12 @@ static cell pawnEntityGetNumber(AMX *amx, const cell *params)
 }
 
 /** pawnEntityCreate
-* native EntityCreate(parententity{}, id_string{}, Fixed:x, Fixed:y, z, map_id, args[]='''', {Fixed,_}:...);
+* native entity:EntityCreate(parententity{}, id_string{}, Fixed:x, Fixed:y, layer, map_id, args[]=[ARG_END], args_count = sizeof(args) {Fixed,_}:...);
 *
 */
 static cell pawnEntityCreate(AMX *amx, const cell *params)
 {
-	ASSERT_PAWN_PARAM( amx, params, 7 );
+	ASSERT_PAWN_PARAM( amx, params, 8 );
 
 	cell response = 0;
 	std::string entity_parent, entity_id;
@@ -256,7 +256,8 @@ static cell pawnEntityCreate(AMX *amx, const cell *params)
 		cell * cptr = NULL, * arg_ptr = NULL;
 		uint32_t arg_count = 0;
 		native_pointer stack_mem = NULL;
-		uint32_t num_param = (uint32_t)( params[0]/sizeof(cell) ) - 7;
+		uint32_t num_param = (uint32_t)( params[0]/sizeof(cell) ) - 8;
+
 		if ( num_param > 0 )
 		{
 			cptr = amx_Address(amx, params[7]);
@@ -277,7 +278,7 @@ static cell pawnEntityCreate(AMX *amx, const cell *params)
 
 				do
 				{
-					arg_ptr = amx_Address(amx, params[num_param+7]);
+					arg_ptr = amx_Address(amx, params[num_param+8]);
 					if ( *cptr == 'a' ) // Array, last value must be CELLMIN
 					{
 						uint32_t lemgth = 0;
@@ -398,12 +399,12 @@ static cell pawnEntityPublicVariableSet(AMX *amx, const cell *params)
 }
 
 /** pawnEntityPublicFunction
-* native EntityPublicFunction(id, function[], args[]='''', ...);
+* native EntityPublicFunction(entity:id, function{}, args[]=[ARG_END], args_count = sizeof(args), {Fixed,_}:...);
 *
 */
 static cell pawnEntityPublicFunction(AMX *amx, const cell *params)
 {
-	ASSERT_PAWN_PARAM( amx, params, 3 );
+	ASSERT_PAWN_PARAM( amx, params, 4 );
 
 	Entity * wanted_entity = Lux_PawnEntity_GetEntity( amx, params[1] );
 	if ( wanted_entity != NULL )
@@ -412,90 +413,97 @@ static cell pawnEntityPublicFunction(AMX *amx, const cell *params)
 		{
 			return -1;
 		}
+		int f;
+		cell results = 0;
 		cell * cptr = NULL, * arg_ptr = NULL;
 		std::string function_name;
+		std::string arg_string;
 		uint32_t arg_count = 0;
-		uint32_t num_param = (uint32_t)( params[0]/sizeof(cell) ) - 3 ;
+		uint32_t num_param = (uint32_t)( params[0]/sizeof(cell) ) - 4 ;
 		mem_pointer stack_mem = NULL;
 
-
 		function_name = Lux_PawnEntity_GetString(amx, params[2]);
+		arg_string = Lux_PawnEntity_GetString(amx, params[3]);
 
 		/* TODO Move check to Callback */
-		int f;
+
 		if ( amx_FindPublic( (AMX *)wanted_entity->_data, function_name.c_str(), &f) )
 		{
 			return -2;
 		}
 
-		cptr = amx_Address(amx, params[3]);
-		if ( *cptr )
+		if ( num_param > 0 )
 		{
-			while (*cptr)
+			cptr = amx_Address(amx, params[3]);
+			if ( *cptr )
 			{
-				arg_count++;
-				cptr++;
-			}
-			cptr--; //move pointer back one.
-
-			if ( num_param != arg_count )
-			{
-				arg_count = std::min(arg_count, num_param);
-				num_param = arg_count;
-			}
-
-
-			do
-			{
-				arg_ptr = amx_Address(amx, params[num_param+3]);
-				if ( *cptr == 'a' ) // Array, last value must be CELLMIN
+				// Check arg count
+				while (*cptr)
 				{
-					uint32_t lemgth = 0;
-					while ( *arg_ptr != CELLMIN )
+					arg_count++;
+					cptr++;
+				}
+				cptr--; //move pointer back one.
+
+				if ( num_param != arg_count )
+				{
+					arg_count = std::min(arg_count, num_param);
+					num_param = arg_count;
+				}
+
+				do
+				{
+					arg_ptr = amx_Address(amx, params[num_param+4]);
+					if ( *cptr == 'a' ) // Array, last value must be CELLMIN
 					{
-						lemgth++;
-						arg_ptr++;
-						if ( lemgth > 256 )
+						uint32_t lemgth = 0;
+						while ( *arg_ptr != CELLMIN )
 						{
-							break;
+							lemgth++;
+							arg_ptr++;
+							if ( lemgth > 256 )
+							{
+								break;
+							}
 						}
+						arg_ptr -= lemgth;
+						lemgth++;
+						wanted_entity->callbacks->PushArrayNative(wanted_entity->_data, arg_ptr, lemgth, (stack_mem ? NULL : &stack_mem) );
 					}
-					arg_ptr -= lemgth;
-					lemgth++;
-					wanted_entity->callbacks->PushArrayNative(wanted_entity->_data, arg_ptr, lemgth, (stack_mem ? NULL : &stack_mem) );
-				}
-				else if ( *cptr == 's' ) // String
-				{
-					uint32_t lemgth = 0;
-					while ( *arg_ptr != 0 )
+					else if ( *cptr == 's' ) // String
 					{
-						lemgth++;
-						arg_ptr++;
-						if ( lemgth > 256 )
+						uint32_t lemgth = 0;
+						while ( *arg_ptr != 0 )
 						{
-							break;
+							lemgth++;
+							arg_ptr++;
+							if ( lemgth > 256 )
+							{
+								break;
+							}
 						}
+						arg_ptr -= lemgth;
+						lemgth++;
+						wanted_entity->callbacks->PushArrayNative(wanted_entity->_data, arg_ptr, lemgth, (stack_mem ? NULL : &stack_mem) );
 					}
-					arg_ptr -= lemgth;
-					lemgth++;
-					wanted_entity->callbacks->PushArrayNative(wanted_entity->_data, arg_ptr, lemgth, (stack_mem ? NULL : &stack_mem) );
-				}
-				else if ( *cptr == 'd' ) // Value, passed by reference
-				{
-					wanted_entity->callbacks->PushArrayNative(wanted_entity->_data, arg_ptr, 1, (stack_mem ? NULL : &stack_mem) );  //Pass an argument or array “by-reference”
-				}
-				else if ( *cptr == 'n' ) //Value, passed by value
-				{
-					//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << num_param << ": " << *cptr  << " = " << *arg_ptr << std::endl;
-					int32_t value =  (int32_t)*arg_ptr;
-					wanted_entity->callbacks->Push(wanted_entity->_data,(int32_t)*arg_ptr);
-				}
-				cptr--;
-				num_param--;
-			} while ( num_param > 0 );
+					else if ( *cptr == 'd' ) // Value, passed by reference
+					{
+						wanted_entity->callbacks->PushArrayNative(wanted_entity->_data, arg_ptr, 1, (stack_mem ? NULL : &stack_mem) );  //Pass an argument or array “by-reference”
+					}
+					else if ( *cptr == 'n' ) //Value, passed by value
+					{
+						//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << num_param << ": " << *cptr  << " = " << *arg_ptr << std::endl;
+						int32_t value = (int32_t)*arg_ptr;
+						wanted_entity->callbacks->Push(wanted_entity->_data,(int32_t)*arg_ptr);
+					}
+					cptr--;
+					num_param--;
+				} while ( num_param > 0 );
+			}
 		}
-		int32_t results = wanted_entity->callbacks->Call(wanted_entity->_data, (char*)function_name.c_str(), stack_mem);
-		return (cell)results;
+		results = wanted_entity->callbacks->Call(wanted_entity->_data, (char*)function_name.c_str(), stack_mem);
+		return results;
+
 	}
 	return -1;
 }
@@ -746,7 +754,7 @@ static cell pawnPathGetPoint(AMX *amx, const cell *params)
 }
 
 /** pawnPathMoveObject
-* native PathMoveObject(object:id, speed, &x, &y, loop);
+* native PathMoveObject(object:id, Fixed:speed, &x, &y, loop);
 */
 static cell pawnPathMoveObject(AMX *amx, const cell *params)
 {

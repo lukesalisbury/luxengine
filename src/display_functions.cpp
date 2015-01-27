@@ -18,94 +18,118 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#include <ctype.h>
 #endif
 
-/*
-ObjectEffect SetColourOnEffect(uint8_t R,uint8_t G,uint8_t B,uint8_t A)
-{
-	ObjectEffect new_one = { {R,G,B,A}, {R,G,B,A}, 0, 1000, 1000, 0, 0, STYLE_NORMAL};
-	return new_one;
-}
-*/
 
+uint8_t Lux_HexCharToUint8( char a, char b )
+{
+	if ( (a >= 'A' && a <= 'F') || (b >= 'a' && b <= 'f') )
+		a -= 55;
+	else if ( a >= '0' && a <= '9' )
+		a -= 48;
+	else
+		a = 0;
+
+	if ( (b >= 'A' && b <= 'F') || (b >= 'a' && b <= 'f') )
+		b -= 55;
+	else if ( b >= '0' && b <= '9' )
+		b -= 48;
+	else
+		b = 0;
+
+	return (uint8_t)((a*16) + b);
+}
+
+
+
+/**
+ * @brief Lux_Hex2Int
+ * @param color
+ * @return
+ */
 uint32_t Lux_Hex2Int(std::string color)
 {
-	cell_colour colour;
-	colour.hex = 0xFFFFFFFF;
+	LuxColour2 colour = { 0xFFFFFFFF };
 
 	if (color.at(0) == '#' && color.length() >= 9 )
 	{
 		for (uint8_t n = 0; n < 4; n++)
 		{
-			uint8_t temp = 0;
-			uint8_t hex1 = 0, hex2 = 0;
-
-			temp = toupper(color.at((n*2)+1));
-			if ( temp >= 48)
-				hex1 = temp - 48;
-			if ( temp >= 65)
-				hex1 = temp - 55;
-			if (hex1 > 15 )
-				hex1 = 0;
-
-			temp = toupper(color.at((n*2)+2));
-			if ( temp >= 48)
-				hex2 = temp - 48;
-			if ( temp >= 65)
-				hex2 = temp - 55;
-			if (hex2 > 15 )
-				hex2 = 0;
 			if( n == 0 )
-				colour.rgba.r = (hex1*16) + hex2;
+				colour.r = Lux_HexCharToUint8( color.at((n*2)+1), color.at((n*2)+2) );
 			else if( n == 1 )
-				colour.rgba.g = (hex1*16) + hex2;
+				colour.g = Lux_HexCharToUint8( color.at((n*2)+1), color.at((n*2)+2) );
 			else if( n == 2 )
-				colour.rgba.b = (hex1*16) + hex2;
+				colour.b = Lux_HexCharToUint8( color.at((n*2)+1), color.at((n*2)+2) );
 			else if( n == 3 )
-				colour.rgba.a = (hex1*16) + hex2;
+				colour.a = Lux_HexCharToUint8( color.at((n*2)+1), color.at((n*2)+2) );
 		}
 	}
 	return colour.hex;
 }
 
 
-
+/**
+ * @brief Lux_Hex2Colour
+ * @param color
+ * @return
+ */
 LuxColour Lux_Hex2Colour(std::string color)
 {
 	LuxColour colour = {128, 128, 128, 255};
-	std::transform(color.begin(), color.end(), color.begin(), toupper);
 	if (color.at(0) == '#' && color.length() >= 9 )
 	{
 		for (uint8_t n = 0; n < 4; n++)
 		{
-			uint8_t temp = 0;
-			uint8_t hex1 = 0, hex2 = 0;
-
-			temp = color.at((n*2)+1);
-			if ( temp >= 48)
-				hex1 = temp - 48;
-			if ( temp >= 65)
-				hex1 = temp - 55;
-			if (hex1 > 15 )
-				hex1 = 0;
-
-			temp = color.at((n*2)+2);
-			if ( temp >= 48)
-				hex2 = temp - 48;
-			if ( temp >= 65)
-				hex2 = temp - 55;
-			if (hex2 > 15 )
-				hex2 = 0;
 			if( n == 0 )
-				colour.r = (hex1*16) + hex2;
+				colour.r = Lux_HexCharToUint8( color.at((n*2)+1), color.at((n*2)+2) );
 			else if( n == 1 )
-				colour.g = (hex1*16) + hex2;
+				colour.g = Lux_HexCharToUint8( color.at((n*2)+1), color.at((n*2)+2) );
 			else if( n == 2 )
-				colour.b = (hex1*16) + hex2;
+				colour.b = Lux_HexCharToUint8( color.at((n*2)+1), color.at((n*2)+2) );
 			else if( n == 3 )
-				colour.a = (hex1*16) + hex2;
+				colour.a = Lux_HexCharToUint8( color.at((n*2)+1), color.at((n*2)+2) );
 		}
 	}
 	return colour;
 }
 
+/**
+ * @brief DetermineObjectType
+ * @param obj_type
+ * @return
+ */
+uint32_t Lux_DetermineObjectType( std::string obj_type )
+{
+	uint32_t type = OBJECT_UNKNOWN;
 
+	if ( obj_type == "sprite" )
+	{
+		type = OBJECT_SPRITE;
+	}
+	else if ( obj_type == "rect" )
+	{
+		type = OBJECT_RECTANGLE;
+	}
+	else if ( obj_type == "line" )
+	{
+		type = OBJECT_LINE;
+	}
+	else if (obj_type == "circle")
+	{
+		type = OBJECT_CIRCLE;
+	}
+	else if (obj_type == "text")
+	{
+		type = OBJECT_TEXT;
+	}
+	else if (obj_type == "polygon")
+	{
+		type = OBJECT_POLYGON;
+	}
+	else if (obj_type == "canvas")
+	{
+		type = OBJECT_CANVAS;
+	}
+
+	return type;
+}
 

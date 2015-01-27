@@ -312,9 +312,9 @@ int32_t AudioSystem::PlayMusic( std::string requestMusic, int32_t loop, int32_t 
 		SDL_RWops * src = SDL_RWFromMem(data, size);
 		if ( src )
 		{
-			this->music = Mix_LoadMUS_RW( src, 0 );
+			Mix_Music * next_music = Mix_LoadMUS_RW( src, 0 );
 
-			if ( !this->music )
+			if ( !next_music )
 			{
 				lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
 			}
@@ -326,14 +326,17 @@ int32_t AudioSystem::PlayMusic( std::string requestMusic, int32_t loop, int32_t 
 					Mix_FreeMusic( this->music );
 					this->music = NULL;
 				}
-			}
 
-			if ( Mix_FadeInMusic( this->music, loop, fadeLength ) == -1 )
-			{
-				lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
-				return 0;
+				if ( Mix_FadeInMusic( next_music, loop, fadeLength ) == -1 )
+				{
+					Mix_FreeMusic( next_music );
+					lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayMusic: '" << requestMusic << "' " << Mix_GetError() << std::endl;
+					return 0;
+				}
+				this->music = next_music;
+				return 1;
 			}
-			return 1;
+			return 0;
 		}
 	}
 	lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayMusic Error: '" << requestMusic << "' "  << std::endl;

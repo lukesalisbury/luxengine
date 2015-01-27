@@ -273,12 +273,30 @@ static cell pawnCanvasChildInfo(AMX *amx, const cell *params)
 			*yptr = h;
 
 
-		return 1;
+		return child_id;
 	}
 
+	return 0;
+}
+/** pawnCanvasChildEffect
+* native CanvasChildSetEffect(object_id, child_id, colour, rotate, scale_w, scale_h, flipmode, style, colour2 );
+*/
+static cell pawnCanvasChildEffect(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 9 );
 
-	return Lux_FFI_Polygon_Add_Point( name.c_str(), params[2], params[3] );
+	uint32_t object_id = params[1];
+	uint32_t child_id = params[2];
+	uint32_t colour1 = params[3];
+	uint32_t colour2 = params[9];
 
+	uint16_t rotate = params[4];
+	uint16_t scale_w = params[5];
+	uint16_t scale_h = params[6];
+	uint8_t flipmode = params[7];
+	uint8_t style = params[8];
+
+	return Lux_FFI_Canvas_Child_Set_Effect( object_id, child_id, colour1, colour2, rotate, scale_w, scale_h, flipmode, style );
 }
 
 /** Display Functions */
@@ -316,7 +334,7 @@ static cell pawnObjectPosition(AMX *amx, const cell *params)
 	uint16_t w = params[5];
 	uint16_t h = params[6];
 
-	return Lux_FFI_Object_Postion( object_id, x, y, z, w, h );
+	return Lux_FFI_Object_Position( object_id, x, y, z, w, h );
 }
 
 /** pawnObjectInfo
@@ -498,6 +516,8 @@ const AMX_NATIVE_INFO Graphics_Natives[] = {
 
 	/** Polygon */
 	{ "CanvasChildInfo", pawnCanvasChildInfo },
+	{ "CanvasChildSetEffect", pawnCanvasChildEffect },
+
 
 	/** Display Functions */
 	{ "ObjectCreate", pawnObjectCreate }, ///native ObjectCreate(string[], type, c = 0xFFFFFFFF, string_size = sizeof string);

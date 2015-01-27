@@ -2,30 +2,30 @@
 <settings>
 	<dimensions width="2" height="1" />
 	<color red="15" blue="111" green="24" mode="0" />
-	<option name="wrap" value="0" type="" />
 </settings>
 <object value="parallax1.png:1" type="sprite">
-	<position x="0" y="208" w="1280" h="128" z="1000" l="1" r="0" f="0"/>
+	<position x="0" y="208" w="6400" h="128" z="1000" l="1" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="mirror" value="false" />
 </object>
 <object value="parallax3.png:1" type="sprite">
-	<position x="0" y="128" w="1024" h="256" z="1000" l="1" r="0" f="0"/>
+	<position x="0" y="128" w="4096" h="256" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="parallax2.png:1" type="sprite">
+	<position x="0" y="320" w="1280" h="64" z="3000" l="3" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
 <object value="parallax0.png:1" type="sprite">
-	<position x="22" y="48" w="128" h="64" z="1000" l="1" r="0" f="0"/>
+	<position x="22" y="48" w="128" h="64" z="4000" l="4" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="flip" value="false" />
 	<setting key="mirror" value="false" />
 </object>
-<object value="parallax2.png:1" type="sprite">
-	<position x="0" y="320" w="1280" h="64" z="1000" l="1" r="0" f="0"/>
-	<color red="255" blue="255" green="255" alpha="255" />
-</object>
-<object value="String 0" type="text">
-	<position x="4" y="10" w="40" h="9" z="6000" l="6" r="0" f="0"/>
+<object value="Edit Me" type="text">
+	<position x="4" y="10" w="56" h="8" z="6000" l="6" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="number" value="0" />
+	<setting key="text-string" value="0" />
 </object>
 </map>

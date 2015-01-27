@@ -101,14 +101,13 @@ bool GlobalObjects::Restore( elix::File * current_save_file )
 				return false;
 
 			uint32_t display_object_id = current_save_file->ReadUint32WithLabel( "Global Object ID", true );
-			MapObject * object = new MapObject();
+			MapObject * object = new MapObject( current_save_file );
 
-			object->Restore( current_save_file );
-			object->SetStaticMapID( this->object_cache_count, true );
+			//object->SetStaticMapID( this->object_cache_count, true );
 
 			lux::display->AddObjectToLayer( object->layer, object, true );
 
-			this->object_cache_count = std::max( this->object_cache_count, display_object_id );
+			//this->object_cache_count = std::max( this->object_cache_count, display_object_id );
 		}
 	}
 	return true;

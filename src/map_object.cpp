@@ -22,16 +22,20 @@ extern ObjectEffect default_fx;
 MapObject::MapObject( uint8_t type )
 {
 	this->effects = default_fx;
+	this->type = type;
 	InitialSetup();
+
 
 	if ( lux::gamesystem )
 	{
+		/*
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set( MAKE_FIXED_FLOAT(this->position.x),  MAKE_FIXED_FLOAT(this->position.x) );
 		bodyDef.gravityScale = 0.1f;
 
 		this->body = lux::gamesystem->GetPhysicWorld()->CreateBody(&bodyDef);
+		*/
 	}
 }
 
@@ -41,29 +45,34 @@ MapObject::MapObject( elix::File * current_save_file )
 
 	Restore( current_save_file);
 
-
 	if ( lux::gamesystem )
 	{
+		/*
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set( MAKE_FIXED_FLOAT(this->position.x),  MAKE_FIXED_FLOAT(this->position.x) );
 		bodyDef.gravityScale = 0.1f;
 
 		this->body = lux::gamesystem->GetPhysicWorld()->CreateBody(&bodyDef);
+		*/
 	}
 }
 
 MapObject::~MapObject()
 {
+	if ( lux::gamesystem )
+	{
+		//lux::gamesystem->GetPhysicWorld()->DestroyBody(this->body);
+	}
 	this->FreeData();
 }
 
 void MapObject::InitialSetup()
 {
+	this->is_virtual_child = false;
 	this->effects.tile_object = true;
 	this->data = NULL;
 	this->data_type = 0;
-	this->type = type;
 	this->timer = 0;
 	this->speed = 1;
 	this->has_data = false;
@@ -88,6 +97,11 @@ void MapObject::InitialSetup()
 	this->auto_delete = 0;
 	this->path_current_x = this->path_current_y = 0;
 
+}
+
+bool MapObject::IsGlobal()
+{
+	return ( (this->static_map_id & OBJECT_GLOBAL_VALUE) == OBJECT_GLOBAL_VALUE );
 }
 
 
@@ -125,31 +139,33 @@ void MapObject::SetStaticMapID(const uint32_t counter, const bool global )
 
 void MapObject::Save(elix::File *current_save_file)
 {
-	current_save_file->WriteWithLabel("Map Object Type", this->type );
-	current_save_file->WriteWithLabel("Map Object Timer", this->timer );
-	current_save_file->WriteWithLabel("Map Object Timer Mode", this->timer_mode );
-	current_save_file->WriteWithLabel("Map Object X", (uint32_t)this->position.x );
-	current_save_file->WriteWithLabel("Map Object Y", (uint32_t)this->position.y );
-	current_save_file->WriteWithLabel("Map Object W", this->position.w );
-	current_save_file->WriteWithLabel("Map Object H", this->position.h );
-	current_save_file->WriteWithLabel("Map Object Z", (uint16_t)this->position.z );
-	current_save_file->WriteWithLabel("Map Object r1", this->effects.primary_colour.r );
-	current_save_file->WriteWithLabel("Map Object b1", this->effects.primary_colour.b );
-	current_save_file->WriteWithLabel("Map Object g1", this->effects.primary_colour.g );
-	current_save_file->WriteWithLabel("Map Object a1", this->effects.primary_colour.a );
-	current_save_file->WriteWithLabel("Map Object r2", this->effects.secondary_colour.r );
-	current_save_file->WriteWithLabel("Map Object b2", this->effects.secondary_colour.b );
-	current_save_file->WriteWithLabel("Map Object g2", this->effects.secondary_colour.g );
-	current_save_file->WriteWithLabel("Map Object a2", this->effects.secondary_colour.a );
-	current_save_file->WriteWithLabel("Map Object rotation", this->effects.rotation );
-	current_save_file->WriteWithLabel("Map Object scale x", this->effects.scale_xaxis );
-	current_save_file->WriteWithLabel("Map Object scale y", this->effects.scale_yaxis );
-	current_save_file->WriteWithLabel("Map Object flip mode", this->effects.flip_image );
-	current_save_file->WriteWithLabel("Map Object tiling", this->effects.tile_object );
-	current_save_file->WriteWithLabel("Map Object style", this->effects.style );
-	current_save_file->WriteWithLabel("Map Object current path point", this->path_point );
-	current_save_file->WriteWithLabel("Map Object Image", this->sprite );
-
+	if ( !this->is_virtual_child )
+	{
+		current_save_file->WriteWithLabel("Map Object Type", this->type );
+		current_save_file->WriteWithLabel("Map Object Timer", this->timer );
+		current_save_file->WriteWithLabel("Map Object Timer Mode", this->timer_mode );
+		current_save_file->WriteWithLabel("Map Object X", (uint32_t)this->position.x );
+		current_save_file->WriteWithLabel("Map Object Y", (uint32_t)this->position.y );
+		current_save_file->WriteWithLabel("Map Object W", this->position.w );
+		current_save_file->WriteWithLabel("Map Object H", this->position.h );
+		current_save_file->WriteWithLabel("Map Object Z", (uint16_t)this->position.z );
+		current_save_file->WriteWithLabel("Map Object r1", this->effects.primary_colour.r );
+		current_save_file->WriteWithLabel("Map Object b1", this->effects.primary_colour.b );
+		current_save_file->WriteWithLabel("Map Object g1", this->effects.primary_colour.g );
+		current_save_file->WriteWithLabel("Map Object a1", this->effects.primary_colour.a );
+		current_save_file->WriteWithLabel("Map Object r2", this->effects.secondary_colour.r );
+		current_save_file->WriteWithLabel("Map Object b2", this->effects.secondary_colour.b );
+		current_save_file->WriteWithLabel("Map Object g2", this->effects.secondary_colour.g );
+		current_save_file->WriteWithLabel("Map Object a2", this->effects.secondary_colour.a );
+		current_save_file->WriteWithLabel("Map Object rotation", this->effects.rotation );
+		current_save_file->WriteWithLabel("Map Object scale x", this->effects.scale_xaxis );
+		current_save_file->WriteWithLabel("Map Object scale y", this->effects.scale_yaxis );
+		current_save_file->WriteWithLabel("Map Object flip mode", this->effects.flip_image );
+		current_save_file->WriteWithLabel("Map Object tiling", this->effects.tile_object );
+		current_save_file->WriteWithLabel("Map Object style", this->effects.style );
+		current_save_file->WriteWithLabel("Map Object current path point", this->path_point );
+		current_save_file->WriteWithLabel("Map Object Image", this->sprite );
+	}
 }
 
 void MapObject::Restore( elix::File * current_save_file )
@@ -554,7 +570,7 @@ mem_pointer MapObject::GetImage( ObjectEffect fx )
 
 LuxPolygon * MapObject::GetPolygon()
 {
-	if (this->data_type == 'p' && this->has_data)
+	if (this->data_type == OBJECT_POLYGON && this->has_data)
 	{
 		return (LuxPolygon*)this->data;
 	}
@@ -563,7 +579,7 @@ LuxPolygon * MapObject::GetPolygon()
 
 void MapObject::SetPolygon(LuxPolygon * poly)
 {
-	this->data_type = 'p';
+	this->data_type = OBJECT_POLYGON;
 	if ( poly )
 	{
 		this->data = (mem_pointer)poly;
@@ -579,7 +595,7 @@ void MapObject::SetPolygon(LuxPolygon * poly)
 
 LuxCanvas * MapObject::GetCanvas()
 {
-	if (this->data_type == 'M')
+	if (this->data_type == OBJECT_CANVAS)
 	{
 		return (LuxCanvas*)this->data;
 	}
@@ -588,7 +604,7 @@ LuxCanvas * MapObject::GetCanvas()
 
 void MapObject::SetCanvas(LuxCanvas * data)
 {
-	this->data_type = 'M';
+	this->data_type = OBJECT_CANVAS;
 	this->data = (mem_pointer)data;
 	this->has_data = true;
 }
@@ -606,16 +622,17 @@ LuxVirtualSprite * MapObject::GetVirtual()
 LuxVirtualSprite * MapObject::InitialiseVirtual( )
 {
 	LuxVirtualSprite * data = new LuxVirtualSprite( this->sprite );
+
 	this->data_type = OBJECT_VIRTUAL_SPRITE;
 	this->data = (mem_pointer)data;
 	this->has_data = true;
+
 	return data;
 }
 
 
 bool MapObject::CollisionRectangle( LuxRect rect[7] )
 {
-
 	LuxSprite * sprite = this->PeekSprite();
 	if ( sprite )
 	{
@@ -628,7 +645,6 @@ bool MapObject::CollisionRectangle( LuxRect rect[7] )
 			rect[c].x = rect[c].y = rect[c].w = rect[c].h = rect[c].z = 0;
 			if ( sprite->collisions[c].w )
 			{
-				//rect[c].x = this->position.x + (sprite->rect.w - (sprite->collisions[c].x + sprite->collisions[c].w)) - this->offset_x;
 				if ( this->effects.flip_image&16 )
 					rect[c].x = this->position.x + (sprite->sheet_area.w - (sprite->collisions[c].x + sprite->collisions[c].w)) ;
 				else
@@ -656,7 +672,7 @@ bool MapObject::CollisionRectangle( LuxRect rect[7] )
 std::string MapObject::GetInfo()
 {
 	std::stringstream s;
-	s << this->TypeName()<< " " << this->position.x << "x" << this->position.y << "\nL" << +this->position.z << std::hex << " i" << this->static_map_id;
+	s << this->TypeName()<< " " << this->position.x << "x" << this->position.y << "\nZ" << +this->layer << ":" << +this->position.z << std::hex << " i" << this->static_map_id;
 	return s.str();
 }
 

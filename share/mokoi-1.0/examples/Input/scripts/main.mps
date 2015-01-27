@@ -22,10 +22,10 @@ main()
 
 	if (  InputButton(0,3) == 1)
 	{
-		player =InputSetDefault(3);
+		player = InputSetDefault(3);
 	}
-	DebugText("default player: %d", player);
-	DebugText("❶ ❷ ❸ ❹ ❺ ❻ ❼ ❽ ❾ ❿ ➀ ➁ ➂ ➃ ➄ ➅	▲	△	▼	▽	◀	◁	▶	▷	◐	◒	◑	◓ ");
+	ConsoleOutput("default player: %d", player);
+	ConsoleOutput("❶❶ ❷ ❸ ❹ ❺ ❻ ❼ ❽ ❾ ❿ ➀ ➁ ➂ ➃ ➄ ➅ ▲	△	▼	▽	◀	◁	▶	▷	◐	◒	◑	◓ ");
 
 }
 

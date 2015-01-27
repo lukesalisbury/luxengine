@@ -37,10 +37,11 @@ new hour = 20;
 new minute = 0;
 new Fixed:seconds = 0.0;
 new Fixed:timemod = 2000.00;
-new str[10];
+new str{32};
+
 main()
 {
-	seconds += GameFrame2() * timemod;
+	seconds += GameFrameSeconds() * timemod;
 	if ( seconds >= 60.0 )
 	{
 		minute++;
@@ -71,6 +72,6 @@ main()
 	LayerColour(4, DayNight[hour]);
 	LayerColour(5, DayNight[hour]);
 
-	strformat(str, _,true, "Time: %02d:%02d", hour, minute);
+	StringFormat(str, _,  "Time: %02d:%02d", hour, minute);
 	GraphicsDraw(str, TEXT, 4,20,6,0, 0);
 }

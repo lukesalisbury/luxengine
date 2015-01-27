@@ -1,0 +1,59 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="176" blue="214" green="201" mode="0" />
+	<option name="music" value="" type="music" />
+	<option name="name" value="" type="" />
+</settings>
+<object value="Line" type="line">
+	<position x="9" y="68" w="89" h="86" z="0" l="0" r="0" f="0"/>
+	<color red="59" blue="216" green="220" alpha="255" />
+	<entity value="random-colour" language="mps" global="false"/>
+</object>
+<object value="Circle" type="text">
+	<position x="168" y="24" w="48" h="8" z="0" l="0" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="11" />
+</object>
+<object value="Circle" type="circle">
+	<position x="176" y="40" w="33" h="47" z="0" l="0" r="0" f="0"/>
+	<color red="36" blue="98" green="168" alpha="255" />
+	<setting key="aaa" value="asdasd" type=""/>
+	<entity value="random-colour" language="mps" global="false"/>
+</object>
+<object value="Line" type="line">
+	<position x="26" y="38" w="80" h="136" z="0" l="0" r="0" f="0"/>
+	<color red="162" blue="63" green="123" alpha="255" />
+	<entity value="random-colour" language="mps" global="false"/>
+</object>
+<object value="Polygon" type="polygon">
+	<position x="160" y="168" w="56" h="38" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="0" green="255" alpha="255" />
+	<option points="5"/>
+	<point x="34" y="3"/>
+	<point x="56" y="10"/>
+	<point x="47" y="38"/>
+	<point x="21" y="35"/>
+	<point x="11" y="14"/>
+</object>
+<object value="Polygon" type="text">
+	<position x="160" y="144" w="56" h="8" z="0" l="0" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="13" />
+</object>
+<object value="Rectangle" type="rect">
+	<position x="16" y="168" w="46" h="47" z="1000" l="1" r="0" f="0"/>
+	<color red="204" blue="25" green="25" alpha="255" />
+	<entity value="random-colour" language="mps" global="false"/>
+</object>
+<object value="Line" type="text">
+	<position x="8" y="24" w="32" h="8" z="6000" l="6" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="-1" />
+</object>
+<object value="Rectangle" type="text">
+	<position x="8" y="144" w="72" h="8" z="6000" l="6" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="12" />
+</object>
+</map>

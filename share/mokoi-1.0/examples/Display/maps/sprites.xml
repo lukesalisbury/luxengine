@@ -1,0 +1,54 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="5" blue="135" green="90" mode="0" />
+	<option name="music" value="" type="music" />
+	<option name="name" value="" type="" />
+</settings>
+<object value="player1.png:side" type="sprite">
+	<position x="16" y="32" w="32" h="40" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="136" y="32" w="32" h="40" z="0" l="0" r="180" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="136" y="80" w="32" h="40" z="0" l="0" r="90" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="8" y="80" w="32" h="40" z="0" l="0" r="270" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="48" y="80" w="32" h="40" z="0" l="0" r="90" f="1"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="96" y="80" w="32" h="40" z="0" l="0" r="270" f="1"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="104" y="32" w="32" h="40" z="0" l="0" r="180" f="1"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="Virtual:LogoTest" type="sprite">
+	<position x="216" y="32" w="120" h="128" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="VirtualSprites" type="text">
+	<position x="216" y="16" w="112" h="8" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="text-string" value="22" />
+</object>
+<object value="player1.png:side" type="sprite">
+	<position x="48" y="32" w="32" h="40" z="1000" l="1" r="0" f="1"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="Animation" type="text">
+	<position x="8" y="16" w="72" h="8" z="4000" l="4" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="text-string" value="-1" />
+</object>
+</map>

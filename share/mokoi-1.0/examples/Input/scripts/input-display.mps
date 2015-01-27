@@ -4,14 +4,14 @@
 #include <string> 
  
 new player = 0; 
-new object:obj1 = object:-1; 
-new object:obj2 = object:-1; 
-new object:obj3 = object:-1; 
+new object:obj1;
+new object:obj2; 
+new object:obj3;
 
 
-new object:textObject1 = object:-1; 
-new object:textObject2 = object:-1; 
-new object:textObject3 = object:-1; 
+new object:textObject1; 
+new object:textObject2;
+new object:textObject3;
 
 new x = 10, y = 10; 
  
@@ -76,12 +76,9 @@ public Init(...)
 	obj2 = ObjectCreate("", RECTANGLE, 100, 100, 5, 64, 16, 0xFF0000FF);
 	obj3 = ObjectCreate("", RECTANGLE, 100, 10, 5, 64, 16, 0xFF0000FF);
 
-
-
-	textObject1 = ObjectCreate(''X Axis: ◀ & ▶'', TEXT, x + 64 , y -32, 5, 0, 0, 0xFFFFFFFF); 
-	textObject2 = ObjectCreate(''Y Axis: ▲ & ▼'', TEXT, x + 64 , y -8, 5, 0, 0, 0xFFFFFFFF); 
-	textObject3 = ObjectCreate(''Z Axis: ◐ & ◑'', TEXT, x + 64 , y +16, 5, 0, 0, 0xFFFFFFFF); 
-
+	textObject1 = ObjectCreate("X Axis: ◀ & ▶", TEXT, x + 64 , y -32, 5.0, 0, 0, 0xFFFFFFFF); 
+	textObject2 = ObjectCreate("Y Axis: ▲ & ▼", TEXT, x + 64 , y -8, 5.0, 0, 0, 0xFFFFFFFF); 
+	textObject3 = ObjectCreate("Z Axis: ◐ & ◑", TEXT, x + 64 , y +16, 5.0, 0, 0, 0xFFFFFFFF); 
 
 } 
  

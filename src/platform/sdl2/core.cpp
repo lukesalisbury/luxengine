@@ -96,8 +96,6 @@ CoreSystem::CoreSystem()
 
 	SDL2_SystemInfo();
 
-
-
 	AbleOutput(true);
 	this->mouse_focus = false;
 
@@ -136,7 +134,6 @@ CoreSystem::~CoreSystem()
 	{
 		SDL_GameControllerClose( this->controller[i] );
 	}
-
 
 	SDL_DestroyWindow( this->native_window );
 
@@ -280,7 +277,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	this->internal_ms = (this->GetTime() - this->time);
 	this->frame_ms = clamp( this->internal_ms, 0, 33);
-	this->frame_ms = this->internal_ms;
+	//this->frame_ms = this->internal_ms;
 	this->animation_ms = this->frame_ms;
 
 	if ( this->state > PAUSED || old_state >= SAVING )
@@ -533,8 +530,6 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	this->RefreshInput( lux::display );
 
 	this->time = this->GetTime();
-
-
 
 	return this->state;
 }
@@ -824,7 +819,7 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 			if ( device_number >= 0 && device_number < 8 )
 			{
 				SDL_GameControllerAxis s = (SDL_GameControllerAxis)symbol;
-				if ( this->controller[device_number] && s> -1 && s < SDL_CONTROLLER_AXIS_MAX )
+				if ( this->controller[device_number] && s > SDL_CONTROLLER_AXIS_INVALID && s < SDL_CONTROLLER_AXIS_MAX )
 				{
 					return (int16_t)SDL_GameControllerGetAxis(this->controller[device_number], s) / 128;
 				}
@@ -875,8 +870,6 @@ bool CoreSystem::GamepadAdded( int32_t joystick_index )
 
 	return false;
 }
-
-
 
 void CoreSystem::VirtualGamepadAddItem( uint32_t ident, InputDevice device, std::string value )
 {

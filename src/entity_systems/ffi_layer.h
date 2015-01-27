@@ -15,7 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <stdint.h>
 
 void Lux_FFI_Layer_Rotation( int8_t layer, int16_t roll, int16_t pitch, int16_t yaw );
-void Lux_FFI_Layer_Offset( int8_t layer, int32_t x, int32_t y );
+void Lux_FFI_Layer_Offset(int8_t layer, int32_t fixed_x, int32_t fixed_y );
 void Lux_FFI_Layer_Colour( int8_t layer, uint32_t colour );
 
 #endif // FFI_LAYER_H

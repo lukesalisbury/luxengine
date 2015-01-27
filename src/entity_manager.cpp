@@ -17,12 +17,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "elix_string.hpp"
 #include "display.h"
 #include "entity_system.h"
-
 #include "entity_systems/pawn.inc"
 
 
-uint32_t entity_maphash = 0;
-uint32_t entity_mainhash = 0;
+uint32_t entity_maphash = 0xD4824F64;
+uint32_t entity_mainhash = 0x1D1A8BF1;
 
 EntityManager::EntityManager()
 {
@@ -30,10 +29,6 @@ EntityManager::EntityManager()
 	this->_global = this->_keyboard = NULL;
 
 	srand( time(NULL) );
-
-	entity_maphash = elix::string::Hash( "__map__" );
-	entity_mainhash = elix::string::Hash( "main" );
-
 }
 
 EntityManager::~EntityManager()

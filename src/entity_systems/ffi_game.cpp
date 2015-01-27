@@ -141,6 +141,6 @@ const char *  Lux_FFI_Dialog_String( uint32_t line )
 {
 	std::string dialog_string;
 	dialog_string = lux::engine->GetDialogString(line);
-	return  dialog_string.c_str();
+	return dialog_string.c_str();
 }
 

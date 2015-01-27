@@ -553,14 +553,14 @@ bool MokoiGame::LoadPatches(  )
 {
 	if ( this->ident )
 	{
-		std::string patch_path = elix::directory::User( this->public_directory, false );
+		std::string patch_path = elix::directory::User( this->public_directory, false, "" );
 		std::vector<std::string> files;
 
 		elix::path::Children( patch_path, "patches", files, false, false, false );
 		for( uint32_t i = 0; i < files.size(); i++ )
 		{
 			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Loading patch: " << files[i] << std::endl;
-			this->Scan( MOKOI_GAME_PATCH, patch_path + files[i], "" );
+			this->Scan( MOKOI_GAME_PATCH, patch_path + ELIX_DIR_SSEPARATOR + files[i], "" );
 		}
 		return true;
 	}

@@ -21,3 +21,5 @@ c:/dev/supportlibs/include/SDL2
 /usr/include/SDL2
 src/portal
 src/test
+res/input
+include/input

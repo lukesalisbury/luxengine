@@ -296,6 +296,7 @@ bool MokoiMap::Loop()
 		int32_t cx = 2;
 		int32_t cy = 2;
 		int32_t ty = -1;
+
 		if ( !(screen_number % this->dimension_width) ) // Left Row
 			x = 0;
 		if ( screen_number % (this->dimension_width-1) ) // Right Row
@@ -304,6 +305,7 @@ bool MokoiMap::Loop()
 			y = 0;
 		if ( screen_number > (this->dimension_height * (this->dimension_width-1))) // Bottom row
 			cy = 1;
+
 		lux::display->debug_msg << "Screen Loaded:";
 		for (; x < cx; x++)
 		{
@@ -742,14 +744,21 @@ bool MokoiMap::Restore( elix::File * current_save_file )
 	}
 
 	/* Map Display Object */
-	count = current_save_file->ReadUint32WithLabel("Map Display Objects", true );
-	if ( count )
+	this->object_cache_count = current_save_file->ReadUint32WithLabel("Map Display Objects", true );
+	if ( this->object_cache_count )
 	{
-		for( uint32_t i = 0; i < count; i++ )
+		for( uint32_t i = 0; i < this->object_cache_count; i++ )
 		{
 			MapObject * existing_object = NULL;
 			existing_object = new MapObject( current_save_file );
 			this->object_cache[existing_object->GetStaticMapID()] = existing_object;
+
+			if ( existing_object->type == OBJECT_VIRTUAL_SPRITE )
+			{
+				LuxVirtualSprite * sprite = existing_object->InitialiseVirtual( );
+				sprite->PushObjectsToMap( existing_object, this->object_cache, ++object_cache_count, false  );
+			}
+
 		}
 	}
 
@@ -944,7 +953,8 @@ bool MokoiMap::LoadFile()
 		}
 
 		/* Read Display Object */
-		reader.ReadObjects( this->object_cache, this->object_cache_count, this );
+		reader.ReadObjectsWithEntities( this->object_cache,  this );
+		this->object_cache_count = this->object_cache.size();
 
 		/* Set up Map Screen */
 		for ( MapObjectListIter p = this->object_cache.begin(); p != this->object_cache.end(); p++ )

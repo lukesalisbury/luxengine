@@ -80,7 +80,7 @@ std::string native_window_title;
 SDL_Rect native_graphics_dimension = {0, 0, 320,240};
 
 /* Global Variables */
-SDL_Texture * sdlgraphics_font[128];
+SDL_Texture * sdlgraphics_font[129];
 
 LuxColour sdlgraphics_colour = {0,0,0,255};
 
@@ -294,8 +294,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, 
 	position.w = 8;
 	position.h = 8;
 
-	effect.SetColour(colour::yellow);
-
+	effect.primary_colour = colour::yellow;
 
 	Lux_NATIVE_DrawRect( position, effect );
 
@@ -733,7 +732,7 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 		}
 		else
 		{
-			texture = sdlgraphics_font['?'];
+			texture = sdlgraphics_font[128];
 		}
 		offset = 7;
 		area.w = 8;

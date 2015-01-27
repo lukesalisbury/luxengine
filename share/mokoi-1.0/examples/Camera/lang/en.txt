@@ -1,3 +1,5 @@
 Parallax Scolling Test. Press ❶ to switch scolling modes.
 Functions used:\n LayerColour\n LayerSetOffset\n MapSetOffset\n SheetReplace\n CameraSetScroll
 Camera Demo
+Top Left
+Center

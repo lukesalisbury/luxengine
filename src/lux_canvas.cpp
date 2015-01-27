@@ -39,7 +39,7 @@ LuxCanvas::~LuxCanvas()
 	}
 }
 
-MapObject *LuxCanvas::FindChild(uint32_t ident)
+MapObject * LuxCanvas::FindChild(uint32_t ident)
 {
 	if ( this->objects.size() )
 	{
@@ -63,16 +63,14 @@ bool LuxCanvas::Load( std::string file )
 		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | maps/" + file + ".xml not a valid canvas file." << std::endl;
 		return false;
 	}
-	uint32_t object_cache_count = 0;
-
-	reader.ReadObjects( this->objects, object_cache_count, NULL );
+	reader.ReadObjects( this->objects, false );
 
 //	this->_objects.sort( ObjectSort );
 
 	return true;
 }
 
-bool LuxCanvas::Draw( DisplaySystem * display, int32_t x, int32_t y, int32_t z)
+bool LuxCanvas::Draw( DisplaySystem * display, int32_t x, int32_t y, int32_t z )
 {
 	if ( !this->objects.size() )
 		return false;
@@ -92,6 +90,11 @@ bool LuxCanvas::Draw( DisplaySystem * display, int32_t x, int32_t y, int32_t z)
 			position.x += x;
 			position.y += y;
 			position.z = z;
+			if ( object->type == OBJECT_LINE )
+			{
+				position.w += x;
+				position.h += y;
+			}
 			display->DrawMapObject( object, position, object->effects );
 		}
 	}

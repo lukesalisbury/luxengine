@@ -1,20 +1,32 @@
-#include <entities>
-#include <graphics>
-#include <string>
-new id = -1;
+#include <helper>
+
+new object:id;
 new x, y;
+new lx, ly;
+new timer;
+new Fixed:angle;
 
 public Init( ... )
 {
-	id = EntityGetNumber("object-id");
+	id = EntityGetObject();
 }
 
 main()
 {
-	new p = ObjectFollowPath(object:id, 60.0, x, y, true);
-	if ( p >= 0  )
-		DebugText("To:%d %dx%d",  p+1, x, y);
-	else
-		DebugText("ObjectFollowPath Error");
+	new p = PathMoveObject(id, 60.0, x, y, 1);
 
+	if ( p >= 0  )
+		ConsoleOutput("To:%d %dx%d %q",  p+1, x, y,  angle);
+	else
+		ConsoleOutput("ObjectFollowPath Error");
+
+	if ( TimerCountdownWithReset(timer, 1000) )
+	{
+		angle = fatan2(x-lx,y-ly);
+		EntityPublicFunction( MAP_ENTITY, "@SwitchCanvas", [ ARG_NUMBER, ARG_END ], _, angle);
+	}
+
+	lx = x;
+	ly = y;
+	
 }

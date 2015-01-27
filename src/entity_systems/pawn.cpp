@@ -328,32 +328,40 @@ mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_bas
 	AMX * base_amx = NULL;
 	AMX * entity_data = NULL;
 	uint8_t * memory_block = NULL;
+	int32_t result = 0;
 
 	base_amx = Lux_PawnEntity_GetBaseAMX( entity_base );
 
 	if ( base_amx != NULL )
 	{
-		amx_MemInfo( base_amx, NULL, &datasize, &stackheap);
-
-		entity_data = new AMX;
-		memory_block = new uint8_t[datasize + stackheap];
-
-		memset(entity_data, 0, sizeof(AMX));
-		memset(memory_block, 0, datasize + stackheap);
-
-
-		int32_t result = amx_Clone(entity_data, base_amx, memory_block);
+		result = amx_MemInfo( base_amx, NULL, &datasize, &stackheap);
 		if ( result )
 		{
 			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | AMX Clone Failed: "  << Lux_PawnEntity_StrError(result) << "." << std::endl;
 			MessagePush( (char*)"%s: [Clone Error] %s", entity->_base.c_str(), Lux_PawnEntity_StrError(result) );
-
-			NULLIFY(entity_data);
-			NULLIFY_ARRAY(memory_block);
 		}
 		else
 		{
-			entity_data->parent = entity;
+			entity_data = new AMX;
+			memory_block = new uint8_t[datasize + stackheap];
+
+			memset(entity_data, 0, sizeof(AMX));
+			memset(memory_block, 0, datasize + stackheap);
+
+
+			int32_t result = amx_Clone(entity_data, base_amx, memory_block);
+			if ( result )
+			{
+				lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | AMX Clone Failed: "  << Lux_PawnEntity_StrError(result) << "." << std::endl;
+				MessagePush( (char*)"%s: [Clone Error] %s", entity->_base.c_str(), Lux_PawnEntity_StrError(result) );
+
+				NULLIFY(entity_data);
+				NULLIFY_ARRAY(memory_block);
+			}
+			else
+			{
+				entity_data->parent = entity;
+			}
 		}
 	}
 
@@ -371,11 +379,15 @@ void Lux_PawnEntity_Destroy(mem_pointer entity_data)
 		AMX * entity = static_cast<AMX*>(entity_data);
 
 		amx_SetDebugHook(entity, NULL);
-		if ( entity->base != NULL )
+		if ( entity->data != NULL )
 		{
-			NULLIFY_ARRAY(entity->base);
-			memset(entity, 0, sizeof(AMX));
+			NULLIFY_ARRAY(entity->data);
 		}
+//		if ( entity->base != NULL )
+//		{
+//			NULLIFY_ARRAY(entity->base);
+//			memset(entity, 0, sizeof(AMX));
+//		}
 		delete entity;
 	}
 }

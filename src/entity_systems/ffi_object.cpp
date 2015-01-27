@@ -77,7 +77,7 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
  * @param h
  * @return
  */
-int32_t Lux_FFI_Object_Postion(uint32_t object_id, const int32_t x, const int32_t y, const int32_t z,
+int32_t Lux_FFI_Object_Position(uint32_t object_id, const int32_t x, const int32_t y, const int32_t z,
 								const uint16_t w, const uint16_t h )
 {
 	MapObject * map_object = NULL;
@@ -382,6 +382,15 @@ uint32_t Lux_FFI_Canvas_Child_Info(uint32_t object_id, uint32_t child_id, int32_
 
 	if ( map_object )
 	{
+		if ( map_object->IsGlobal() )
+		{
+			child_id |= OBJECT_GLOBAL_VALUE;
+		}
+		else
+		{
+			child_id &= OBJECT_LOCAL_VALUE;
+		}
+
 		// Check if we are really changing object
 		if ( map_object->type == OBJECT_CANVAS )
 		{
@@ -416,6 +425,64 @@ uint32_t Lux_FFI_Canvas_Child_Info(uint32_t object_id, uint32_t child_id, int32_
 		}
 
 
+	}
+	return 0;
+}
+
+/**
+ * @brief Lux_FFI_Object_Effect
+ * @param object_id
+ * @param primary_colour
+ * @param secondary_colour
+ * @param rotation
+ * @param scale_xaxis
+ * @param scale_yaxis
+ * @param flip_image
+ * @param style
+ * @return
+ */
+int32_t Lux_FFI_Canvas_Child_Set_Effect( uint32_t object_id, uint32_t child_id, uint32_t primary_colour, uint32_t secondary_colour, uint16_t rotation, uint16_t scale_xaxis, uint16_t scale_yaxis, uint8_t flip_image, uint8_t style )
+{
+	MapObject * map_object = NULL;
+
+	map_object = Lux_FFI_Object_Get( object_id );
+
+	if ( map_object )
+	{
+		if ( map_object->IsGlobal() )
+		{
+			child_id |= OBJECT_GLOBAL_VALUE;
+		}
+		else
+		{
+			child_id &= OBJECT_LOCAL_VALUE;
+		}
+
+		// Check if we are really changing object
+		if ( map_object->type == OBJECT_CANVAS )
+		{
+			LuxCanvas * canvas = map_object->GetCanvas();
+			if ( canvas )
+			{
+				MapObject * child_object = canvas->FindChild( child_id );
+				if ( child_object )
+				{
+					cell_colour colour;
+					colour.hex = elix::endian::host32(primary_colour);
+					child_object->effects.primary_colour = colour.rgba;
+
+					colour.hex = elix::endian::host32(secondary_colour);
+					child_object->effects.secondary_colour = colour.rgba;
+
+					child_object->effects.rotation = rotation;
+					child_object->effects.scale_xaxis = scale_xaxis;
+					child_object->effects.scale_yaxis = scale_yaxis;
+					child_object->effects.flip_image = flip_image;
+					child_object->effects.style = style;
+				}
+			}
+		}
+		return 1;
 	}
 	return 0;
 }

@@ -1,4 +1,4 @@
-§6"I §6have §6a §6dream." Welcome to §7Mokoi.\nPress ❼ to Close
+§6"I §6have §6a §6dream." \n\nMore Audio can added to this game by coping files to \nthe music or soundfx folder located in\n§7Windows: C:\\Users\\[User]\\AppData\\Local\\mokoi-1.0\\[e26c1a16]\n§7Other: /home/[User]/.local/share/mokoi-1.0/[e26c1a16]\n\nPress ❼ to Close
 Testing <>Colour</>
 Testing <>Colour</>
 Testing <>Colour

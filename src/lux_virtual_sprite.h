@@ -22,19 +22,16 @@ class MokoiMap;
 class LuxVirtualSprite
 {
 public:
-	LuxVirtualSprite();
 	LuxVirtualSprite(std::string file);
 	~LuxVirtualSprite();
 
 private:
 	MapObjectList objects;
-	std::vector<MapObject *> cache;
-
-public:
 	LuxRect rect;
 
+public:
 	bool Load( std::string file );
-	bool InsertToVector( MapObject * parent, MapObjectList & object_array, uint32_t & object_cache_count, const bool global );
+	bool PushObjectsToMap( MapObject * parent, MapObjectList & object_array, uint32_t & object_cache_count, const bool global );
 
 };
 

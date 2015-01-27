@@ -32,11 +32,6 @@ class ObjectEffect
 
 public:
 	uint32_t Hex();
-	void SetColour( std::string hex_string );
-	void SetSecondaryColour(std::string hex_string );
-
-	void SetColour( LuxColour colour );
-	void SetSecondaryColour( LuxColour colour );
 
 public:
 	LuxColour primary_colour;
@@ -49,7 +44,6 @@ public:
 	uint8_t flip_image;
 	uint8_t tile_object;
 	uint8_t style;
-
 
 	bool operator == (const ObjectEffect &b) const;
 

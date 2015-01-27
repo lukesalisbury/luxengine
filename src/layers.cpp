@@ -178,6 +178,7 @@ LuxRect Layer::GetObjectLocation(LuxRect map_location, uint8_t type)
 
 	screen_location.x -= MAKE_FIXED_INT(this->_x + this->_mapx);
 	screen_location.y -= MAKE_FIXED_INT(this->_y + this->_mapy);
+
 	if (type == 'l')
 	{
 		screen_location.w -= MAKE_FIXED_INT(this->_x + this->_mapx);

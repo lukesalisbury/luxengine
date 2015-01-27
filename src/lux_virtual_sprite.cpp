@@ -8,20 +8,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
+#include <map>
 
 #include "lux_virtual_sprite.h"
 #include "map_xml_reader.h"
 #include "core.h"
 
-#include <map>
 
-/**
- * @brief LuxVirtualSprite::LuxVirtualSprite
- */
-LuxVirtualSprite::LuxVirtualSprite(  )
-{
-
-}
 
 /**
  * @brief LuxVirtualSprite::LuxVirtualSprite
@@ -55,7 +48,6 @@ LuxVirtualSprite::~LuxVirtualSprite()
 bool LuxVirtualSprite::Load( std::string file )
 {
 	MapXMLReader reader;
-	uint32_t object_cache_count = 0;
 
 	if ( !reader.Load("./sprites/virtual/" + file + ".xml"))
 	{
@@ -64,20 +56,20 @@ bool LuxVirtualSprite::Load( std::string file )
 	}
 
 	reader.ReadDimension( this->rect );
-	reader.ReadObjects( this->objects, object_cache_count, NULL );
+	reader.ReadObjects( this->objects, false );
 
 	return true;
 }
 
 /**
- * @brief LuxVirtualSprite::InsertToVector
+ * @brief LuxVirtualSprite::PushObjectsToMap
  * @param parent
  * @param object_array
  * @param object_cache_count
  * @param global
  * @return
  */
-bool LuxVirtualSprite::InsertToVector( MapObject * parent, MapObjectList & object_array, uint32_t & object_cache_count, const bool global )
+bool LuxVirtualSprite::PushObjectsToMap( MapObject * parent, MapObjectList & object_array, uint32_t & object_cache_count, const bool global )
 {
 	if ( !this->objects.size() )
 		return false;
@@ -106,7 +98,6 @@ bool LuxVirtualSprite::InsertToVector( MapObject * parent, MapObjectList & objec
 
 						object_array.insert( MAP_OBJECT_PAIR( cache_object->GetStaticMapID(), cache_object ) );
 
-						this->cache.push_back( cache_object ); // Add to cache
 					}
 				}
 			}

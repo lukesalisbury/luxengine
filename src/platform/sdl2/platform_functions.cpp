@@ -23,7 +23,7 @@ Permission is granted to anyone to use this software for any purpose, including 
  * Use in Native and MessageWindow
  */
 
-SDL_Texture * debug_font[128];
+SDL_Texture * debug_font[129];
 
 /* Debug Message */
 SDL_Window * debug_window = NULL;
@@ -34,7 +34,7 @@ SDL_GLContext debug_context;
  * @brief Lux_SDL2_LoadFont
  * @param renderer
  */
-void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[128] )
+void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[129] )
 {
 	uint8_t * font_point = &gfxPrimitivesFontdata[0];
 	uint8_t i = 0, q;
@@ -61,7 +61,7 @@ void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[128] )
 /**
  * @brief Lux_SDL2_UnloadFont
  */
-void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[128] )
+void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[129] )
 {
 	for ( uint8_t c = 0; c < 128; c++)
 	{
@@ -332,7 +332,11 @@ SDL_Surface * Lux_SDL2_Image2Surface( std::string file )
 			elix::Image * png = new elix::Image(data, size);
 			if ( png->HasContent() )
 			{
-				temp_surface = SDL_CreateRGBSurfaceFrom( png->GetPixels(), png->Width(), png->Height(),32,png->Width()*4,0xff,0xff00,0xff0000, 0xff000000);
+				//temp_surface = SDL_CreateRGBSurfaceFrom( png->GetPixels(), png->Width(), png->Height(),32,png->Width()*4,0xff,0xff00,0xff0000, 0xff000000);
+
+				temp_surface = SDL_CreateRGBSurface( 0, png->Width(), png->Height(),32,0xff,0xff00,0xff0000, 0xff000000);
+				SDL_ConvertPixels(png->Width(), png->Height(), SDL_PIXELFORMAT_ABGR8888, png->GetPixels(), png->Width()*4, temp_surface->format->format, temp_surface->pixels, temp_surface->pitch);
+
 				SDL_SetSurfaceBlendMode(temp_surface, SDL_BLENDMODE_NONE);
 			}
 			delete png;
@@ -358,12 +362,7 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 			icon = Lux_SDL2_Image2Surface("./resources/icon32.png");
 	}
 
-	if ( icon != NULL )
-	{
-		SDL_SetWindowIcon(native_window, icon);
-		SDL_FreeSurface(icon);
-	}
-	else
+	if ( icon == NULL )
 	{
 		// Load Icon from resource
 		uint32_t size = 0;
@@ -378,10 +377,12 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 			elix::Image * image_file = new elix::Image(data, size);
 			if ( image_file->HasContent() )
 			{
-				icon = SDL_CreateRGBSurfaceFrom( image_file->GetPixels(), image_file->Width(), image_file->Height(), 32, image_file->Width()*4,0xff,0xff00,0xff0000, 0xff000000);
-				SDL_SetSurfaceBlendMode(icon, SDL_BLENDMODE_BLEND);
-				SDL_SetWindowIcon(native_window, icon);
-				SDL_FreeSurface(icon);
+				icon = SDL_CreateRGBSurface( 0, image_file->Width(), image_file->Height(), 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+				SDL_ConvertPixels( image_file->Width(), image_file->Height(), SDL_PIXELFORMAT_ABGR8888, image_file->GetPixels(), image_file->Width()*4, icon->format->format, icon->pixels, icon->pitch );
+				SDL_SetSurfaceBlendMode( icon, SDL_BLENDMODE_NONE );
+
+				//icon = SDL_CreateRGBSurfaceFrom( image_file->GetPixels(), image_file->Width(), image_file->Height(), 32, image_file->Width()*4,0xff,0xff00,0xff0000, 0xff000000);
+				//SDL_SetSurfaceBlendMode(icon, SDL_BLENDMODE_BLEND);
 			}
 			delete image_file;
 		}
@@ -389,6 +390,9 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 		NULLIFY_ARRAY( data );
 		NULLIFY( image_source_file );
 	}
+
+	SDL_SetWindowIcon(native_window, icon);
+	SDL_FreeSurface(icon);
 
 }
 

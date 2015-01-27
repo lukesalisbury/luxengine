@@ -25,25 +25,7 @@ namespace colour {
 	extern LuxColour yellow;
 }
 
-uint8_t HexCharToNumber( char a, char b )
-{
-	if ( a >= 'A' && a <= 'F' )
-		a -= 55;
-	else if ( a >= '0' && a <= '9' )
-		a -= 48;
-	else
-		a = 0;
-
-	if ( b >= 'A' && b <= 'F' )
-		b -= 55;
-	else if ( b >= '0' && b <= '9' )
-		b -= 48;
-	else
-		b = 0;
-
-	return (uint8_t)((a*16) + b);
-}
-
+uint8_t Lux_HexCharToUint8( char a, char b );
 
 ObjectEffect::ObjectEffect(LuxColour c1, LuxColour c2) : rotation(0), scale_xaxis(1000), scale_yaxis(1000), flip_image(0), tile_object(1), style(STYLE_NORMAL)
 {
@@ -64,8 +46,10 @@ ObjectEffect::ObjectEffect(LuxColour c1, LuxColour c2, uint8_t style) : rotation
 	this->style = style;
 }
 
-
-
+/**
+ * @brief Used for caching
+ * @return
+ */
 uint32_t ObjectEffect::Hex()
 {
 	uint32_t hex = 0;
@@ -83,44 +67,6 @@ uint32_t ObjectEffect::Hex()
 
 	return hex;
 
-}
-
-
-void ObjectEffect::SetColour( std::string hex_string )
-{
-	std::transform( hex_string.begin(), hex_string.end(), hex_string.begin(), toupper);
-	if ( hex_string.at(0) == '#' && hex_string.length() >= 9 )
-	{
-		this->primary_colour.r = HexCharToNumber( hex_string.at(1), hex_string.at(2) );
-		this->primary_colour.g = HexCharToNumber( hex_string.at(3), hex_string.at(4) );
-		this->primary_colour.b = HexCharToNumber( hex_string.at(5), hex_string.at(6) );
-		this->primary_colour.a = HexCharToNumber( hex_string.at(7), hex_string.at(8) );
-	}
-
-}
-
-void ObjectEffect::SetSecondaryColour( std::string hex_string )
-{
-	std::transform( hex_string.begin(), hex_string.end(), hex_string.begin(), toupper);
-	if ( hex_string.at(0) == '#' && hex_string.length() >= 9 )
-	{
-		this->secondary_colour.r = HexCharToNumber( hex_string.at(1), hex_string.at(2) );
-		this->secondary_colour.g = HexCharToNumber( hex_string.at(3), hex_string.at(4) );
-		this->secondary_colour.b = HexCharToNumber( hex_string.at(5), hex_string.at(6) );
-		this->secondary_colour.a = HexCharToNumber( hex_string.at(7), hex_string.at(8) );
-	}
-
-}
-
-
-void ObjectEffect::SetColour( LuxColour colour )
-{
-	this->primary_colour = colour;
-}
-
-void ObjectEffect::SetSecondaryColour( LuxColour colour )
-{
-	this->secondary_colour = colour;
 }
 
 bool ObjectEffect::operator == (const ObjectEffect &b) const

@@ -1099,3 +1099,13 @@ src/portal/portal.h
 src/test/test_code.cpp
 src/test/test_code.h
 src/network_client.h
+res/input/joystick_dreamcast.txt
+res/input/joystick_generic.txt
+res/input/joystick_xbox360.txt
+res/input/keyboard.txt
+res/input/mouse_generic.txt
+include/input/joystick_xbox360.h
+include/input/joystick_generic.h
+include/input/joystick_xbox360.h
+include/input/keyboard.h
+include/input/mouse_generic.h

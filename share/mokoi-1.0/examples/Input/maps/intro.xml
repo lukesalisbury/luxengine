@@ -8,14 +8,16 @@
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
 <object value="String 0" type="text">
-	<position x="8" y="56" w="39" h="9" z="1000" l="1" r="0" f="0"/>
+	<position x="8" y="56" w="64" h="8" z="1000" l="1" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="number" value="1" />
+	<setting key="text-string" value="-1" />
 </object>
 <object value="String 1" type="text">
-	<position x="8" y="96" w="38" h="9" z="1000" l="1" r="0" f="0"/>
+	<position x="8" y="96" w="64" h="8" z="1000" l="1" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 	<setting key="number" value="2" />
+	<setting key="text-string" value="-1" />
 </object>
 <object value="dpad1.png:1" type="sprite">
 	<position x="384" y="256" w="128" h="128" z="1000" l="1" r="0" f="0"/>

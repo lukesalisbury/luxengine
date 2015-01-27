@@ -1,6 +1,6 @@
 [Mokoi]
 player.number=1
-debug.able=false
+debug.able=true
 save.allowed=false
 map.width=640
 map.height=480
@@ -9,7 +9,7 @@ screen.height=480
 display.width=512
 display.height=384
 project.title=Display Demo
-project.author=Me, myself and I
+project.author=Mokoi Team
 project.creation=42
 project.id=1
 language.default=en

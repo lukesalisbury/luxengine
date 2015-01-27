@@ -205,7 +205,7 @@ void EntitySection::Close()
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < EntitySection Close " << this->map_id << std::endl;
 	if ( this->parent )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Section Entity Close()" << std::endl;
+		//lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Section Entity Close()" << std::endl;
 		this->parent->Close();
 	}
 
@@ -215,7 +215,7 @@ void EntitySection::Close()
 		std::vector<Entity *>::iterator iter = this->children.begin();
 		while( iter !=  this->children.end() )
 		{
-			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Entity " << (*iter)->id << " Close()" << std::endl;
+			//lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Entity " << (*iter)->id << " Close()" << std::endl;
 			(*iter)->Close();
 			iter++;
 		}

@@ -20,7 +20,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include <SDL.h>
 
-
 PlatformMedia::PlatformMedia()
 {
 	this->joystick_generic_sheet = NULL;
@@ -69,7 +68,7 @@ void PlatformMedia::Init(GraphicSystem graphic)
 	elix::Image * image_xbox_joystick = new elix::Image(joystick_xbox360_image_data, joystick_xbox360_image_size);
 	this->joystick_xbox360_sheet = new LuxSheet(graphic);
 	this->joystick_xbox360_sheet->SetName("Input Icons: Xbox 360 Gamepad");
-	for ( int32_t c = 0; c < joystick_generic_sheet_size; c++ )
+	for ( int32_t c = 0; c < joystick_xbox360_sheet_size; c++ )
 	{
 		this->joystick_xbox360_sheet->ParseSimpleText( joystick_xbox360_sheet_data[c] );
 	}
@@ -164,13 +163,18 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 			{
 				std::string key_name = "axis";
 				key_name.append("A");
-				if ( symbol > 0 )
+
+				if ( symbol & 0x80000000 )
+				{
+					key_name.append("-");
+					symbol &= 0x7FFFFFFF;
+				}
+				else
 				{
 					key_name.append("+");
 				}
 
 				key_name.append(elix::string::FromInt(symbol));
-
 				if ( this->controller[device_number] )
 				{
 					return this->controller[device_number]->GetSprite(key_name);

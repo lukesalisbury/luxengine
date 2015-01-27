@@ -9,11 +9,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #ifndef _DISPLAY_FUNCTION_H_
-	#define _DISPLAY_FUNCTION_H_
+#define _DISPLAY_FUNCTION_H_
 
 	#include "lux_types.h"
 	LuxColour Lux_Hex2Colour(std::string colour);
-	ObjectEffect SetColourOnEffect(uint8_t R, uint8_t G, uint8_t B, uint8_t A);
+	uint32_t Lux_Hex2Int(std::string color);
+	uint32_t Lux_DetermineObjectType( std::string obj_type );
 
 #endif
 /* _DISPLAY_FUNCTION_H_ */

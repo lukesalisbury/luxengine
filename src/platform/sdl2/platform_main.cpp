@@ -103,9 +103,7 @@ bool testMode = false;
 
 						if ( selected_game.type == GI_FILE  )
 						{
-							lux::global_config->SetString("project.file", selected_game.url );
-
-							if ( lux::engine->Start() )
+							if ( lux::engine->Start(selected_game.url) )
 							{
 								lux::engine->Loop();
 							}

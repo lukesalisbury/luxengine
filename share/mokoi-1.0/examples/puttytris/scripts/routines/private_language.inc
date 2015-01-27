@@ -4,3 +4,4 @@
 #define LANG_CREATOR 2
 #define LANG_GAMEOVER 3
 #define LANG_PLAYAGAIN 4
+#define LANG_CONTROLS 5

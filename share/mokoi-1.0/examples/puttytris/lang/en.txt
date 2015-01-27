@@ -1,3 +1,6 @@
 Hello
 Puttytris
 Created by Luke Salisbury
+Game Over
+Play Again?
+❽ ❾ Movement\n➀ Rotate

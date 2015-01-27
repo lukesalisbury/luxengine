@@ -1,4 +1,5 @@
 Newfgdfg String
-Collision Test Map.\nPress F11 to see Mask.\nPress F10 to see Collision Rectangles
+Collision Test Map.\nPress F11 to see Mask.\nPress F9 to see Collision Rectangles
 Functions Used:\n fsin\n fcos\n ObjectPosition\n ObjectReplace\n ObjectEffect\n CollisionCalculate\n CollisionSet\n MaskGetValue\n EntityGetNumber
 Collision
+LANG-4

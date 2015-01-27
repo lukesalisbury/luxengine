@@ -23,7 +23,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 MapObject * Lux_FFI_Object_Get( uint32_t object_id )
 {
 	MapObject * object = NULL;
-	if ( lux::gamesystem )
+
+	if ( lux::gamesystem && object_id )
 	{
 		object = lux::gamesystem->GetObject(object_id);
 	}

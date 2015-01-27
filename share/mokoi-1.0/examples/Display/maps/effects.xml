@@ -1,0 +1,73 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="191" blue="35" green="35" mode="0" />
+	<option name="music" value="" type="music" />
+	<option name="name" value="" type="" />
+</settings>
+<object value="planetcute.png:1" type="sprite" id="sprite_tint">
+	<position x="176" y="24" w="48" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="random-colour" language="mps" global="false"/>
+</object>
+<object value="Rectangle" type="rect" id="rect_effect">
+	<position x="8" y="24" w="72" h="72" z="0" l="0" r="0" f="0"/>
+	<color red="24" blue="69" green="210" alpha="255" />
+	<entity value="style_change" language="mps" global="false"/>
+</object>
+<object value="player1.png:back_4" type="sprite" id="sprite_effect">
+	<position x="112" y="40" w="32" h="40" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="style_change" language="mps" global="false"/>
+</object>
+<object value="process.png:process" type="sprite" id="sprite_tile">
+	<position x="8" y="136" w="96" h="128" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="tile-image" language="mps" global="false"/>
+</object>
+<object value="process.png:process" type="sprite" id="sprite_scale">
+	<position x="176" y="136" w="32" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="max" value="2000" type="number"/>
+	<setting key="min" value="50" type="number"/>
+	<entity value="scale-image" language="mps" global="false"/>
+</object>
+<object value="Rectangle" type="rect">
+	<position x="264" y="64" w="80" h="4" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="Rectangle" type="rect">
+	<position x="304" y="24" w="4" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="Effects" type="text">
+	<position x="8" y="8" w="56" h="8" z="1000" l="1" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="23" />
+</object>
+<object value="planetcute.png:2" type="sprite" id="sprite_rotate">
+	<position x="282" y="25" w="48" h="80" z="2000" l="2" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="rotate-image" language="mps" global="false"/>
+</object>
+<object value="Tinting" type="text">
+	<position x="176" y="8" w="56" h="8" z="4000" l="4" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="16" />
+</object>
+<object value="Rotating" type="text">
+	<position x="264" y="8" w="64" h="8" z="4000" l="4" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="-1" />
+</object>
+<object value="Scaling" type="text">
+	<position x="176" y="120" w="56" h="8" z="6000" l="6" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="-1" />
+</object>
+<object value="Tiling" type="text">
+	<position x="8" y="120" w="48" h="8" z="6000" l="6" r="0" f="0"/>
+	<color red="0" blue="0" green="0" alpha="255" />
+	<setting key="text-string" value="-1" />
+</object>
+</map>

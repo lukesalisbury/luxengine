@@ -1,3 +1,6 @@
 Entities
-Press Button 0/A to create new entity. \nClick entity to change it's number
+Press ❶ to create new entity. \nClick entity to change it's number
 Function Used:\n GraphicsDraw\n random\n EntityCreate\n EntityFunction\n EntityPublicFunction\n EntityPublicVariable\n EntityPublicVariableSet\n EntityDelete\n funcidx\n EntitiesList\n EntitiesNext\n
+LANG-3
+LANG-4
+LANG-5

@@ -64,8 +64,6 @@ Player::Player(uint32_t id, uint8_t control)
 	this->_entity = NULL;
 	this->_pointer[0] = this->_pointer[1] = this->_pointer[2] = 10;
 
-
-
 	this->PlayerColour = default_fx;
 	this->PlayerColour.primary_colour.r = this->PlayerColour.primary_colour.b = this->PlayerColour.primary_colour.g = this->PlayerColour.primary_colour.a = 200;
 
@@ -133,6 +131,7 @@ void Player::CachePointerValues()
 			break;
 		}
 	}
+
 }
 
 void Player::CacheAxisValues( uint8_t n )
@@ -166,7 +165,8 @@ void Player::CacheAxisValues( uint8_t n )
 		default:
 			break;
 	}
-
+//	if ( this->_buttonConfig[n].device == CONTROLBUTTON || this->_buttonConfig[n].device == CONTROLAXIS )
+//		lux::display->debug_msg << "axis[" << +n << "] x:" << this->_controller[(n*3)+0] << " y:" << this->_controller[(n*3)+1] << " z:" << this->_controller[(n*3)+2] << std::endl;
 }
 
 void Player::CacheButtonValues(uint8_t n)
@@ -178,6 +178,9 @@ void Player::CacheButtonValues(uint8_t n)
 		this->_button[n] = (this->_button[n] ? 2 : 1);
 	else
 		this->_button[n] = 0;
+
+//	if ( this->_buttonConfig[n].device == CONTROLBUTTON || this->_buttonConfig[n].device == CONTROLAXIS )
+//		lux::display->debug_msg << "button[" << +n << "] " << this->_button[n] << std::endl;
 }
 
 void Player::Loop()
@@ -232,8 +235,18 @@ LuxSprite * Player::GetInputSprite( int8_t axis, int8_t key, int8_t pointer )
 		{
 			uint8_t a = axis/6; // Axis (Either 1 or 2)
 			uint8_t s = axis%6; // Axis Direction
+			int32_t m = 0;
 
-			sprite = lux::media->GetInputImage(this->_controllerConfig[a].device, this->_controllerConfig[a].device_number, this->_controllerConfig[a].sym[s]);
+
+			if ( this->_controllerConfig[a].device == CONTROLAXIS )
+			{
+				m = ( s % 2 ? 0 : 0x80000000 ); //If remainder, we want positive value
+			}
+
+			sprite = lux::media->GetInputImage(
+						this->_controllerConfig[a].device,
+						this->_controllerConfig[a].device_number,
+						this->_controllerConfig[a].sym[s] | m );
 		}
 		else if ( key >= 0 && key < 19 )
 		{

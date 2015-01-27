@@ -33,12 +33,12 @@ void Lux_FFI_Layer_Rotation( int8_t layer, int16_t roll, int16_t pitch, int16_t 
  * @param x
  * @param y
  */
-void Lux_FFI_Layer_Offset( int8_t layer, int32_t x, int32_t y )
+void Lux_FFI_Layer_Offset( int8_t layer, int32_t fixed_x, int32_t fixed_y )
 {
 	if ( layer == -1)
-		lux::display->SetCameraView( (fixed)x, (fixed)y );
+		lux::display->SetCameraView( (fixed)fixed_x, (fixed)fixed_y );
 	else
-		lux::display->SetCameraView( layer, (fixed)x, (fixed)y );
+		lux::display->SetCameraView( layer, (fixed)fixed_x, (fixed)fixed_y );
 }
 
 /**

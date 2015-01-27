@@ -1,2 +1,8 @@
 Input
 Function Used:\n InputAxis\n InputButton\n InputPointer
+BUTTON
+AXIS
+POINTER
+PLAYER1
+PLAYER2
+PLAYER3

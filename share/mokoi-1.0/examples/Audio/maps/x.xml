@@ -1,0 +1,15 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="128" blue="128" green="128" mode="0" />
+</settings>
+<object value="sprite-border.png:5" type="sprite">
+	<position x="194" y="32" w="160" h="112" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="MUSIC" type="text">
+	<position x="439" y="59" w="40" h="8" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<setting key="text-string" value="0" />
+</object>
+</map>

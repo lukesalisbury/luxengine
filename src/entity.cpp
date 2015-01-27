@@ -347,6 +347,7 @@ int32_t Entity::CheckCollision(int32_t rect, LuxRect otherRect)
 	{
 		return -1;
 	}
+
 	if ( rect == -1 )
 	{
 		int32_t ireturn = 0;
@@ -359,12 +360,14 @@ int32_t Entity::CheckCollision(int32_t rect, LuxRect otherRect)
 	}
 	else if ( rect < 0 )
 	{
+
 	}
 	else if ( rect < this->_used_collisions )
 	{
 		if ( this->_collisions[rect].rect.w != 0 && this->_collisions[rect].rect.h != 0 )
 			return Lux_Util_RectCollide(this->_collisions[rect].rect, otherRect);
 	}
+
 	return -1;
 }
 

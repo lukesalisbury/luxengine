@@ -1,9 +1,4 @@
-#include <graphics> 
-#include <entities> 
-#include <string> 
-#include <mokoi> 
-#include <core>
- 
+
 new Fixed:CheckPoints[4]; 
 new Fixed:_x_, Fixed:_y_, Fixed:_z_  ; 
 new dx, dy,dz; 
@@ -15,7 +10,7 @@ new sprites[4]{} = ["player1.png:side", "player1.png:back", "player1.png:side", 
 
 EntityMove() 
 { 
-	new Fixed:speed =  _speed_ * GameFrame2(); 
+	new Fixed:speed =  _speed_ * GameFrameSeconds(); 
 	_x_ += (speed * fsin(angle, degrees)); 
 	_y_ += (speed * fcos(angle, degrees)); 
 
@@ -24,7 +19,7 @@ EntityMove()
 	dy = fround(_y_); 
 
 
-	ObjectPosition(obj, dx,dy, -1, 0,0);
+	ObjectPosition(obj, dx, dy, -1, 0,0);
 	if ( changed )
 	{
 		new dir = fround(angle/90);
@@ -83,14 +78,16 @@ check_collision()
  
 public Init(...) 
 { 
-	EntityGetPosition(_x_, _y_, _z_); 
-	dz = fround(_z_); 
+
+	EntityGetPosition(_x_, _y_, dz); 
+
 	angle = random(8) * 33.0; 
-	obj = object:EntityGetNumber("object-id"); 
+	obj = EntityGetObject(); 
 
 	new dir = fround(angle/90.0);
 	dir = clamp(0,3);
 	ObjectReplace(obj, sprites[dir], SPRITE); 
+
 } 
  
 public Close() 
