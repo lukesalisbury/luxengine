@@ -4,7 +4,7 @@
  *  cannot always be implemented with portable C functions. In other words,
  *  these routines must be ported to other environments.
  *
- *  Copyright (c) ITB CompuPhase, 1997-2011
+ *  Copyright (c) ITB CompuPhase, 1997-2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -18,7 +18,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amxcons.c 4523 2011-06-21 15:03:47Z thiadmer $
+ *  Version: $Id: amxcons.c 5181 2015-01-21 09:44:28Z thiadmer $
  */
 
 #if defined _UNICODE || defined __UNICODE__ || defined UNICODE
@@ -200,7 +200,7 @@ static TCHAR *formatfixed(TCHAR *string,cell value,TCHAR align,int width,TCHAR d
   string[0]=__T('\0');
 
   /* add sign */
-  i=_tcslen(string);
+  i=(int)_tcslen(string);
   string[i]=vsign;
   string[i+1]=__T('\0');
 
@@ -209,12 +209,12 @@ static TCHAR *formatfixed(TCHAR *string,cell value,TCHAR align,int width,TCHAR d
 
   /* add fractional part */
   if (digits>0) {
-	i=_tcslen(string);
+    i=(int)_tcslen(string);
 	string[i]=decpoint;
 	amx_strval(string+i+1,(long)value,SV_DECIMAL,-digits);
   } /* if */
 
-  len=_tcslen(string);
+  len=(int)_tcslen(string);
   if (len<width) {
 	/* pad to the requested width */
 	for (i=len; i<width; i++)
@@ -585,6 +585,4 @@ int amx_printstring(AMX *amx,cell *cstr,AMX_FMTINFO *info)
 
   return paramidx;
 }
-
-
 

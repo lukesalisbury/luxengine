@@ -1071,21 +1071,21 @@ static int32_t amx_format_do_char( AMX * amx, uint8_t ch, cell param, uint8_t si
 	uint32_t line;
 	cell *cptr = amx_Address(amx, param);
 	std::string format_string;
+	std::string dialog_string;
 	char buffer[30] = { 0 };
 
 	switch (ch) {
 		case ('D'): // Dialog
-			width--; /* single character itself has a with of 1 */
 
 			line = (uint32_t)(*cptr);
-			output.append( lux::engine->GetDialogString( line ) );
+			dialog_string = lux::engine->GetDialogString( line );
+			output.append( dialog_string );
 
 			return 1;
 		case ('L'): // Language String
-			width--; /* single character itself has a with of 1 */
-
 			line = (uint32_t)(*cptr);
-			output.append( lux::engine->GetString( line ) );
+			dialog_string = lux::engine->GetString( line );
+			output.append( dialog_string );
 
 			return 1;
 		case ('c'):
@@ -1095,9 +1095,7 @@ static int32_t amx_format_do_char( AMX * amx, uint8_t ch, cell param, uint8_t si
 				output.append(width, filler);
 			}
 			output.append(1, (char)*cptr );
-			//output.append(width, filler); ?? Old code had it.
 			return 1;
-
 		case ('d'): {
 			cell value = *cptr;
 			int length = 1;
@@ -1263,6 +1261,7 @@ static cell n_strformat( AMX *amx, const cell *params )
 					if ( num_params )
 					{
 						switch ( amx_format_state(char8, state, sign, decpoint, width, digits, filler) )
+						//switch(-1)
 						{
 							case -1:
 								str.append( 1, char8 );
@@ -1281,7 +1280,7 @@ static cell n_strformat( AMX *amx, const cell *params )
 								break;
 							default:
 								assert(0);
-						} //switch
+						}
 					}
 					else
 					{
@@ -1324,7 +1323,6 @@ static cell n_strformat( AMX *amx, const cell *params )
 		}
 		else
 		{
-
 			while ( *cstr != 0 )
 			{
 				uint8_t char8 = (uint8_t)*cstr++;
@@ -1361,7 +1359,8 @@ static cell n_strformat( AMX *amx, const cell *params )
 		}
 	}
 
-	Lux_PawnEntity_SetString( output, str.c_str(),length );
+	//str = Lux_PawnEntity_GetString( amx, params[3] );
+	Lux_PawnEntity_SetString( output, str.c_str(), length );
 
 	str.empty();
 

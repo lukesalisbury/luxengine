@@ -3,4 +3,36 @@
 	<dimensions width="1" height="1" />
 	<color red="255" blue="0" green="0" mode="0" />
 </settings>
+<object value="planetcute.png:1" type="sprite">
+	<position x="0" y="56" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:1" type="sprite">
+	<position x="0" y="96" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:1" type="sprite">
+	<position x="0" y="136" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:2" type="sprite">
+	<position x="0" y="176" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="224" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="264" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="304" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="344" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
 </map>

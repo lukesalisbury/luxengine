@@ -629,7 +629,6 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 		return;
 	}
 
-
 	switch ( object->type )
 	{
 		case OBJECT_SPRITE:
@@ -651,26 +650,23 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 						}
 					}
 				}
-
-
 			}
-
 			break;
 		}
-		case 'r':
+		case OBJECT_RECTANGLE:
 			this->graphics.DrawRect(new_position, new_effects);
 			break;
-		case 'c':
+		case OBJECT_CIRCLE:
 			this->graphics.DrawCircle(new_position, new_effects);
 			break;
-		case 'M':
+		case OBJECT_CANVAS:
 		{
 			LuxCanvas * canvas = object->GetCanvas();
 			if ( canvas )
 				canvas->Draw( this, new_position.x, new_position.y, new_position.z );
 			break;
 		}
-		case 'p':
+		case OBJECT_POLYGON:
 		{
 			LuxPolygon * poly = object->GetPolygon();
 			if ( poly )
@@ -680,7 +676,7 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 		case OBJECT_LINE:
 			this->graphics.DrawLine(new_position, new_effects);
 			break;
-		case 't':
+		case OBJECT_TEXT:
 			this->graphics.DrawText(object->sprite, new_position, new_effects, true);
 			break;
 		default:
@@ -767,6 +763,7 @@ bool DisplaySystem::AddObjectToLayer(uint32_t layer, MapObject * new_object, boo
 	}
 	else
 	{
+
 		MessagePush( (char *)"Failed to Add '%s' to layer %d", new_object->TypeName().c_str(), layer );
 	}
 	return false;

@@ -109,12 +109,13 @@ void GameSystem::Loop( LuxState engine_state )
 
 	this->active_map->SetPosition( this->current_offset_position );
 
-	if ( this->active_section->IsSingleMap() && this->active_map->wrap_mode != MAP_WRAPBOTH )
+	if ( !this->active_section->IsSingleMap() && this->active_map->wrap_mode != MAP_WRAPBOTH )
 	{
 		this->CheckPosition();
 	}
 
-	this->physic_world->Step(0.01667, 6, 2);
+	//this->physic_world->Step(0.01667, 6, 2); //Disable Box2d for now
+
 	this->objects->Loop( engine_state );
 	this->global_entities->Loop();
 	this->active_map->Loop();
@@ -168,7 +169,8 @@ void GameSystem::SetPosition(fixed offset_x, fixed offset_y, fixed offset_z )
 {
 	this->current_offset_position[0] = offset_x;
 	this->current_offset_position[1] = offset_y;
-	this->current_offset_position[2] = offset_z;
+	if ( offset_z == -1 )
+		this->current_offset_position[2] = offset_z;
 }
 
 /**
@@ -261,6 +263,8 @@ void GameSystem::SwitchActive()
 			this->active_section = this->next_section;
 			this->next_section = NULL;
 			this->next_map = NULL;
+			this->next_grid_position[0] = 0;
+			this->next_grid_position[1] = 0;
 		}
 	}
 }
@@ -310,12 +314,20 @@ bool GameSystem::SwitchMap( MokoiMap * next_map )
 			if ( this->global_entities )
 				this->global_entities->Switch( next_map->map_width, 0 );
 		}
+		else
+		{
+			if ( this->global_entities )
+				this->global_entities->Switch( 0, 0 );
+		}
 		this->map_movement_direction = 0;
 
 	}
 
 	/* Set new Map to active and call it's Init */
 	this->active_map = next_map;
+	this->grid_position[0] = this->next_grid_position[0];
+	this->grid_position[1] = this->next_grid_position[1];
+
 
 	if ( this->next_offset_position[0] != -1 )
 		this->current_offset_position[0] = this->next_offset_position[0];
@@ -326,16 +338,8 @@ bool GameSystem::SwitchMap( MokoiMap * next_map )
 	this->active_map->Init();
 
 	/* Add Global Display objects */
-	/*
-	if ( this->object_cache.size() )
-	{
-		MapObjectList::iterator p;
-		for ( p = this->object_cache.begin(); p != this->object_cache.end(); p++ )
-		{
-			lux::display->AddObjectToLayer(p->second->layer, p->second, true);
-		}
-	}
-	*/
+	this->GetObjects()->ReorderObjects();
+
 	return true;
 }
 

@@ -2,18 +2,19 @@
 <settings>
 	<dimensions width="1" height="1" />
 	<color red="128" blue="128" green="128" mode="0" />
-	<option name="wrap" value="3" type="" />
+	<option name="centerview" value="false" type="hidden" />
+	<option name="wrap" value="3" type="hidden" />
 </settings>
-<object value="Rectangle" type="rect" >
-	<position x="58" y="67" w="200" h="116" z="0" r="0" f="0"/>
+<object value="Rectangle" type="rect">
+	<position x="58" y="67" w="200" h="116" z="0" l="0" r="0" f="0"/>
 	<color red="153" blue="98" green="98" alpha="255" />
 </object>
-<object value="Circle" type="circle" >
-	<position x="339" y="163" w="112" h="92" z="0" r="0" f="0"/>
+<object value="Circle" type="circle">
+	<position x="339" y="163" w="112" h="92" z="0" l="0" r="0" f="0"/>
 	<color red="70" blue="177" green="226" alpha="255" />
 </object>
-<object value="title.png:1" type="sprite" >
-	<position x="120" y="288" w="256" h="64" z="0" r="0" f="0"/>
+<object value="title.png:1" type="sprite">
+	<position x="67" y="225" w="256" h="128" z="0" l="0" r="0" f="0"/>
 	<color red="255" blue="255" green="255" alpha="255" />
 </object>
 </map>

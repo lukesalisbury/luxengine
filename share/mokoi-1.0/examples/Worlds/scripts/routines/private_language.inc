@@ -1,0 +1,5 @@
+#define DIALOG_EDIT ME 0
+#define LANG_TITLE 0
+#define LANG_FUNCTIONS 1
+#define LANG_HELPTEXT 2
+#define LANG_LANG-3 3

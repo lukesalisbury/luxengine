@@ -1,2 +1,6 @@
 Save
 Functions Used:\n GameGetDetail\n GameSetDetail\n GameDetail\n TimestampCurrent\n TimestampDetails
+Save Slot : Press ❶\nTime:
+Save Slot : Press ❷\nTime:
+LANG-4
+LANG-5

@@ -1,0 +1,72 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="91" blue="197" green="151" mode="0" />
+</settings>
+<object value="planetcute.png:1" type="sprite">
+	<position x="96" y="56" w="432" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="64" w="96" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:1" type="sprite">
+	<position x="96" y="96" w="432" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="104" w="96" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:1" type="sprite">
+	<position x="96" y="136" w="432" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="144" w="96" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:2" type="sprite">
+	<position x="96" y="176" w="432" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="184" w="96" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="224" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="264" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="304" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:3" type="sprite">
+	<position x="0" y="344" w="528" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="title.png:1" type="sprite">
+	<position x="161" y="234" w="256" h="128" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="local" language="mps" global="false"/>
+</object>
+<object value="HornGirl.png:front" type="sprite" id="player">
+	<position x="184" y="64" w="96" h="96" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="simple" language="mps" global="true"/>
+</object>
+<object value="Polygon" type="polygon">
+	<position x="397" y="15" w="72" h="19" z="1000" l="1" r="0" f="0"/>
+	<color red="235" blue="48" green="48" alpha="255" />
+	<option points="3"/>
+	<point x="72" y="11"/>
+	<point x="41" y="19"/>
+	<point x="42" y="2"/>
+</object>
+</map>

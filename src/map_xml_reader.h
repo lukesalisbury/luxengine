@@ -17,12 +17,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 class MapXMLReader
 {
-		MapXMLReader(): xml_file(NULL), object_count_z(0) {}
+		MapXMLReader(): xml_file(NULL), object_z_offset(0) {}
 		~MapXMLReader() { delete xml_file; }
 	private:
 		tinyxml2::XMLDocument * xml_file;
 		tinyxml2::XMLElement * root;
-		uint32_t object_count_z;
+		uint32_t object_z_offset;
 
 		std::string GetTextString(tinyxml2::XMLElement * object_element, std::string default_text );
 
@@ -31,7 +31,8 @@ class MapXMLReader
 		void ReadObjectType(tinyxml2::XMLElement* object_element, std::string obj_type, MapObject* object);
 		void ReadObjectSetting(tinyxml2::XMLElement* object_element, MapObject* object);
 
-		uint16_t ReadZLayer(tinyxml2::XMLElement* position_element, uint8_t & layer );
+		fixed ReadZ(tinyxml2::XMLElement* position_element );
+		uint8_t ReadLayer(tinyxml2::XMLElement* position_element );
 		uint8_t ReadObjectFlipmode(tinyxml2::XMLElement *position_element);
 
 		void ReadGlobalEntity(tinyxml2::XMLElement *entity_element, tinyxml2::XMLElement *object_element);

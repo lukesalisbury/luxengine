@@ -66,12 +66,13 @@ void Entity::DefaultSetup( uint32_t mapid )
 	this->firstran = false;
 	this->active = true;
 	this->deleted = false;
+	this->closing = false;
 	this->sleeping = false;
 	this->active_state_flags = 0xFF;
 	this->_mapid = this->displaymap = mapid;
 
-	this->x = this->y = MAKE_INT_FIXED(5);
-	this->z_layer = 5;
+	this->x = this->y = this->z_layer = MAKE_INT_FIXED(5);
+
 }
 
 void Entity::InitialSetup( std::string id )
@@ -102,6 +103,7 @@ void Entity::Init()
 		this->callbacks->Call(this->_data, (char*)"Init", NULL);
 		this->callbacks->Call(this->_data, (char*)"AutoPostInit", NULL);
 		this->firstran = true;
+		this->closing = false;
 	}
 }
 
@@ -161,12 +163,17 @@ void Entity::Update()
 
 void Entity::Close()
 {
-	if ( this->_data && !this->deleted)
+	if ( this->_data && !this->closing && !this->deleted )
 	{
+		this->closing = true;
 		this->ClearMapCollsion();
-		this->callbacks->Call(this->_data, (char*)"AutoPreClose", NULL);
-		this->callbacks->Call(this->_data, (char*)"Close", NULL);
-		this->callbacks->Call(this->_data, (char*)"AutoPostClose", NULL);
+		if ( this->callbacks )
+		{
+			this->callbacks->Call(this->_data, (char*)"AutoPreClose", NULL);
+			this->callbacks->Call(this->_data, (char*)"Close", NULL);
+			this->callbacks->Call(this->_data, (char*)"AutoPostClose", NULL);
+		}
+
 	}
 	this->firstran = false;
 }

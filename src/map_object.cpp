@@ -208,7 +208,7 @@ mem_pointer MapObject::GetData()
 
 void MapObject::SetData( uint8_t type )
 {
-	this->has_data = false;
+	//this->has_data = false;
 	if ( type == OBJECT_SPRITE )
 	{
 		LuxSprite * sdata = lux::display->GetSprite( this->sprite );
@@ -672,7 +672,7 @@ bool MapObject::CollisionRectangle( LuxRect rect[7] )
 std::string MapObject::GetInfo()
 {
 	std::stringstream s;
-	s << this->TypeName()<< " " << this->position.x << "x" << this->position.y << "\nZ" << +this->layer << ":" << +this->position.z << std::hex << " i" << this->static_map_id;
+	s << this->TypeName()<< " " << this->position.x << "x" << this->position.y << "\nZ" << +this->layer << ":" << +this->position.z;
 	return s.str();
 }
 

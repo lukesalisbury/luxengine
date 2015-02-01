@@ -1,6 +1,6 @@
 [Mokoi]
 player.number=1
-debug.able=true
+debug.able=false
 save.allowed=false
 map.width=640
 map.height=480

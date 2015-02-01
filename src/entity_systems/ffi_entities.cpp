@@ -28,7 +28,7 @@ Permission is granted to anyone to use this software for any purpose, including 
  * @param fixed_z
  * @return
  */
-uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, uint8_t z_layer )
+uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, int32_t fixed_y, int32_t fixed_z_layer )
 {
 	#ifdef NETWORKENABLED
 	lux::core->NetworkLock();
@@ -40,8 +40,8 @@ uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, in
 			wanted->x = (fixed)fixed_x;
 		if ( fixed_y != FIXED_MIN )
 			wanted->y = (fixed)fixed_y;
-		if ( z_layer != 0xFF )
-			wanted->z_layer = z_layer;
+		if ( fixed_z_layer != FIXED_MIN )
+			wanted->z_layer = (fixed)fixed_z_layer;
 	}
 	#ifdef NETWORKENABLED
 	lux::core->NetworkUnlock();
@@ -57,7 +57,7 @@ uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, in
  * @param fixed_z
  * @return
  */
-uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, uint8_t * z_layer)
+uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z_layer)
 {
 	#ifdef NETWORKENABLED
 	lux::core->NetworkLock();
@@ -69,8 +69,8 @@ uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, 
 			*fixed_x = wanted->x;
 		if ( fixed_y )
 			*fixed_y = wanted->y;
-		if ( z_layer )
-			*z_layer = wanted->z_layer;
+		if ( fixed_z_layer )
+			*fixed_z_layer = wanted->z_layer;
 	}
 	#ifdef NETWORKENABLED
 	lux::core->NetworkUnlock();
@@ -152,11 +152,11 @@ uint8_t Lux_FFI_Entity_Set_Position(uint32_t hash_entity , int32_t fixed_x, int3
 *
 * return Entity X/Y Positions
 */
-uint8_t Lux_FFI_Entity_Get_Position(uint32_t hash_entity , int32_t * fixed_x, int32_t * fixed_y, uint8_t * z_layer)
+uint8_t Lux_FFI_Entity_Get_Position(uint32_t hash_entity , int32_t * fixed_x, int32_t * fixed_y, int32_t * fixed_z_layer)
 {
 	Entity * wanted = lux::entities->GetEntity(hash_entity);
 
-	return Lux_FFI_Entity_Object_Get_Position( wanted, fixed_x, fixed_y, z_layer );
+	return Lux_FFI_Entity_Object_Get_Position( wanted, fixed_x, fixed_y, fixed_z_layer );
 }
 
 /** Lux_FFI_Entity_Get_Setting

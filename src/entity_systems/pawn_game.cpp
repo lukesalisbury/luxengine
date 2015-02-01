@@ -197,7 +197,7 @@ static cell pawnGameDetails(AMX *amx, const cell *params)
 			for (uint8_t count = 0; count < 64; count++)
 			{
 				*cptr = cookie_data[count];
-				cptr += sizeof(cell);
+				cptr ++;
 			}
 
 			delete[] cookie_data;

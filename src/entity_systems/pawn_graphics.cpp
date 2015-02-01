@@ -127,6 +127,10 @@ static cell pawnSheetSpriteDimension(AMX *amx, const cell *params)
 static cell pawnGraphicsDraw(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 8 );
+	char str[50];
+	cell *cstr;
+	cstr=amx_Address(amx,params[1]);
+	amx_GetString(str,cstr,0,UNLIMITED);
 
 	MapObject * new_object = new MapObject();
 	new_object->sprite = Lux_PawnEntity_GetString(amx, params[1]);

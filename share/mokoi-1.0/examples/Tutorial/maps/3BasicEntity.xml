@@ -1,0 +1,19 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="128" blue="128" green="128" mode="0" />
+</settings>
+<object value="tutorial-sheet1.png:1" type="sprite">
+	<position x="46" y="34" w="32" h="224" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="tutorial-sheet1.png:1" type="sprite">
+	<position x="211" y="40" w="320" h="32" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="tutorial-sheet1.png:2" type="sprite">
+	<position x="329" y="179" w="32" h="32" z="1000" l="1" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+	<entity value="firstentity" language="mps" global="false"/>
+</object>
+</map>

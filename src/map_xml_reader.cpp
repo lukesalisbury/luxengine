@@ -136,7 +136,6 @@ void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapOb
 	if ( entity_element )
 	{
 		std::string entity_file_name = "";
-
 		tinyxml2::QueryStringAttribute( entity_element, "value", entity_file_name);
 
 		if ( entity_file_name.length() )
@@ -144,6 +143,8 @@ void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapOb
 			Entity * current_entity = lux::entities->NewEntity(object->ident, entity_file_name, ( map ? map->Ident() : 0 ) );
 			if ( current_entity )
 			{
+				current_entity->AddSetting("global", 0 );
+
 				cell_colour temporary_colour_value;
 
 				current_entity->x = MAKE_INT_FIXED(object->position.x);
@@ -205,6 +206,8 @@ void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tiny
 		current_entity = lux::entities->NewEntity( object_ident, entity_file_name, 0 );
 		if ( current_entity )
 		{
+			current_entity->AddSetting( "global", 1 );
+
 			for ( tinyxml2::XMLElement * setting_element = object_element->FirstChildElement("setting"); setting_element; setting_element = setting_element->NextSiblingElement("setting") )
 			{
 				std::string attrvalue;
@@ -236,7 +239,7 @@ void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tiny
 				{
 					current_entity->x = MAKE_INT_FIXED(position_element->IntAttribute( "x" ));
 					current_entity->y = MAKE_INT_FIXED(position_element->IntAttribute( "y" ));
-					ReadZLayer( position_element, current_entity->z_layer );
+					current_entity->z_layer = this->ReadZ( position_element );
 
 					current_entity->AddSetting("object-width", position_element->IntAttribute( "w" ) );
 					current_entity->AddSetting("object-height", position_element->IntAttribute( "h" ) );
@@ -278,26 +281,30 @@ void MapXMLReader::ReadPath( MapObject * object, tinyxml2::XMLElement * object_e
 }
 
 /**
- * @brief MapXMLReader::ReadZLayer
+ * @brief MapXMLReader::ReadZ
  * @param position_element
  * @param z
  * @param layer
  */
-uint16_t MapXMLReader::ReadZLayer(tinyxml2::XMLElement* position_element, uint8_t & layer )
+fixed MapXMLReader::ReadZ(tinyxml2::XMLElement* position_element)
 {
-	uint16_t z = 1;
-	uint32_t z_temporary_value = position_element->IntAttribute( "z" );
-	if ( z_temporary_value < 10 && z_temporary_value > 0 )
-	{
-		z = (uint16_t)(z_temporary_value*1000) + (object_count_z%1000);
-		layer = (uint8_t)z_temporary_value;
-	}
-	else
-	{
-		z = (uint16_t)z_temporary_value  + (object_count_z%1000);;
-		layer = (uint8_t)(z_temporary_value/1000);
-	}
-	return z;
+	int32_t z_temporary_value = position_element->IntAttribute( "z" );
+	int32_t l_temporary_value = position_element->IntAttribute( "l" );
+
+	if ( z_temporary_value == 0 )
+		z_temporary_value = ( l_temporary_value * 1000 );
+	z_temporary_value += object_z_offset;
+
+	return (fixed) z_temporary_value;
+
+}
+
+uint8_t MapXMLReader::ReadLayer(tinyxml2::XMLElement* position_element)
+{
+	uint32_t l_temporary_value = position_element->IntAttribute( "l" );
+
+	return static_cast<uint8_t>(l_temporary_value);
+
 }
 
 /**
@@ -334,7 +341,8 @@ void MapXMLReader::ReadObjectPosition(tinyxml2::XMLElement* object_element, MapO
 		object->position.y = position_element->IntAttribute( "y" );
 		object->position.w = position_element->IntAttribute( "w" );
 		object->position.h = position_element->IntAttribute( "h" );
-		object->position.z = this->ReadZLayer(position_element, object->layer );
+		object->position.z = this->ReadZ(position_element);
+		object->layer = (object->position.z / 1000);
 		object->effects.flip_image = this->ReadObjectFlipmode( position_element);
 	}
 }
@@ -510,7 +518,7 @@ void MapXMLReader::ReadObjectsWithEntities( MapObjectList & object_array, MokoiM
 			object = this->ReadObject(child_element, is_global_object, ++object_cache_count);
 			if ( object )
 			{
-				this->ReadLocalEntity( child_element, object, NULL );
+				this->ReadLocalEntity( child_element, object, map );
 
 				if ( object->type == OBJECT_VIRTUAL_SPRITE )
 				{
@@ -520,7 +528,9 @@ void MapXMLReader::ReadObjectsWithEntities( MapObjectList & object_array, MokoiM
 
 				/* Local object so we add it to the list */
 				object_array.insert( MAP_OBJECT_PAIR( object->GetStaticMapID(), object ) );
-				++object_count_z;
+
+				++object_z_offset;
+				object_z_offset %= 1000; // Don't want the z offset to move object to new layer
 			}
 		}
 
@@ -554,7 +564,8 @@ void MapXMLReader::ReadObjects(MapObjectList & object_array, bool is_global )
 				sprite->PushObjectsToMap( object, object_array, object_cache_count, is_global  );
 			}
 
-			++object_count_z;
+			++object_z_offset;
+			object_z_offset %= 1000; // Don't want the z offset to move object to new layer
 		}
 	}
 }

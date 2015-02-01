@@ -31,7 +31,7 @@ main()
 			ObjectEffect(obj, 0xFF0000FF);
 			if ( InputButton(BUTTON_MOUSELEFT) == 1 )
 			{
-				EntityPublicFunction( __MAP_ENTITY__, action );
+				EntityPublicFunction( MAP_ENTITY, action );
 			}
 		}
 	}

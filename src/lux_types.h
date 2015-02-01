@@ -76,7 +76,7 @@ inline LuxWidget& operator^=(LuxWidget& a, LuxWidget b) {
 typedef struct {
 	int32_t x, y;
 	uint16_t w, h;
-	int16_t z;
+	fixed z;
 } LuxRect;
 
 inline LuxRect & operator+=(LuxRect& a, LuxRect& b) {

@@ -26,6 +26,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <algorithm>
 
 
+bool ObjectSort(MapObject * a, MapObject * b );
 
 /**
  * @brief MokoiMap::MokoiMap
@@ -364,7 +365,7 @@ bool MokoiMap::Loop()
 */
 bool MokoiMap::Close()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < MokoiMap Init " << this->map_name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < MokoiMap Close " << this->map_name << std::endl;
 
 	this->active = false;
 	this->server = false;
@@ -446,6 +447,7 @@ void MokoiMap::AddObjectToScreens( MapObject * object )
 		if ( screen )
 			screen->_objects.push_back(object);
 	}
+
 }
 
 uint32_t MokoiMap::AddObject(MapObject * object, bool is_static )
@@ -963,7 +965,6 @@ bool MokoiMap::LoadFile()
 			this->AddObjectToScreens( p->second );
 		}
 
-
 		std::map<uint32_t, MokoiMapScreen *>::iterator q = this->screens.begin();
 		for ( ; q != this->screens.end(); q++ )
 		{
@@ -978,7 +979,6 @@ bool MokoiMap::LoadFile()
 
 bool MokoiMap::HasSnapshot()
 {
-
 	return false;
 }
 

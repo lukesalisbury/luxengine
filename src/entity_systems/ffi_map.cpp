@@ -137,7 +137,7 @@ void Lux_FFI_Map_Offset_Set( int32_t x, int32_t y )
 {
 	if ( lux::gamesystem )
 	{
-		lux::gamesystem->SetPosition(x, y, -1);
+		lux::gamesystem->SetPosition( x, y, -1);
 	}
 }
 

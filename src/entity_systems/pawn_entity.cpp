@@ -78,7 +78,7 @@ static cell pawnFunctionCall(AMX *amx, const cell *params)
 
 /** Entity Position Functions  */
 /** pawnEntitySetPosition
-* native EntitySetPosition(Fixed:x = Fixed:cellmin, Fixed:y = Fixed:cellmin, z = cellmin, id = SELF);
+* native EntitySetPosition(Fixed:x = Fixed:cellmin, Fixed:y = Fixed:cellmin, Fixed:zlayer = Fixed:cellmin, id = SELF);
 * Updates Entity X/Y Positions
 */
 static cell pawnEntitySetPosition(AMX *amx, const cell *p)
@@ -87,10 +87,10 @@ static cell pawnEntitySetPosition(AMX *amx, const cell *p)
 
 	cell successful = 0;
 	Entity * entity = NULL;
-	uint8_t z_layer = ( p[3] == CELLMIN ? 0xFF : (uint8_t)p[3]);
+
 	entity = Lux_PawnEntity_GetEntity( amx, p[4] );
 
-	successful = Lux_FFI_Entity_Object_Set_Position( entity, p[1], p[2], z_layer );
+	successful = Lux_FFI_Entity_Object_Set_Position( entity, p[1], p[2], p[3] );
 
 	return successful;
 }
@@ -105,14 +105,14 @@ static cell pawnEntityGetPosition(AMX *amx, const cell *params)
 
 	cell successful = 0;
 	int32_t fixed_x, fixed_y;
-	uint8_t z_layer;
+	int32_t fixed_z_layer;
 	cell * xptr, * yptr, * zptr;
 
 	Entity * entity = NULL;
 
 	entity = Lux_PawnEntity_GetEntity( amx, params[4] );
 
-	if ( Lux_FFI_Entity_Object_Get_Position( entity, &fixed_x, &fixed_y, &z_layer ) )
+	if ( Lux_FFI_Entity_Object_Get_Position( entity, &fixed_x, &fixed_y, &fixed_z_layer ) )
 	{
 		xptr = amx_Address(amx, params[1]);
 		yptr = amx_Address(amx, params[2]);
@@ -128,7 +128,7 @@ static cell pawnEntityGetPosition(AMX *amx, const cell *params)
 
 		if ( zptr )
 		{
-			*zptr = z_layer;
+			*zptr = params[5] ? MAKE_FIXED_INT(fixed_z_layer) : fixed_z_layer;
 		}
 		successful = 1;
 	}
@@ -223,7 +223,7 @@ static cell pawnEntityGetNumber(AMX *amx, const cell *params)
 }
 
 /** pawnEntityCreate
-* native entity:EntityCreate(parententity{}, id_string{}, Fixed:x, Fixed:y, layer, map_id, args[]=[ARG_END], args_count = sizeof(args) {Fixed,_}:...);
+* native entity:EntityCreate(parententity{}, id_string{}, Fixed:x, Fixed:y, Fixed:zlayer, map_id, args[]=[ARG_END], args_count = sizeof(args) {Fixed,_}:...);
 *
 */
 static cell pawnEntityCreate(AMX *amx, const cell *params)
@@ -250,7 +250,7 @@ static cell pawnEntityCreate(AMX *amx, const cell *params)
 	{
 		wanted_entity->x = params[3];
 		wanted_entity->y = params[4];
-		wanted_entity->z_layer = ( params[5] == CELLMIN ? 0xFF : static_cast<uint8_t>(params[5]) );
+		wanted_entity->z_layer = params[5];
 		wanted_entity->SetMapCollsion();
 
 		cell * cptr = NULL, * arg_ptr = NULL;

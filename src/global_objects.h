@@ -39,7 +39,7 @@ public:
 	MapObject * GetObject( uint32_t ident );
 	bool RemoveObject( uint32_t ident );
 	void ClearObjects();
-
+	void ReorderObjects();
 
 
 

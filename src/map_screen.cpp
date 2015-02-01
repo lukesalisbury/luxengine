@@ -194,22 +194,23 @@ void MokoiMapScreen::DrawMask( fixed position[3] )
 	}
 }
 
-bool MapObjectSort(MapObject * a, MapObject * b )
-{
-	if ( a->position.z < b->position.z )
-		return true;
-	if ( a->position.y < b->position.y )
-		return true;
-	if ( a->position.x < b->position.x )
-		return true;
+//bool MapObjectSort(MapObject * a, MapObject * b )
+//{
+//	if ( a->layer < b->layer )
+//		return true;
+//	if ( a->position.z < b->position.z )
+//		return true;
+//	if ( a->position.y < b->position.y )
+//		return true;
+//	if ( a->position.x < b->position.x )
+//		return true;
 
+//	return false;
+//}
 
-
-	return false;
-}
-
+bool ObjectSort(MapObject * a, MapObject * b );
 void MokoiMapScreen::SortObjects()
 {
-	this->_objects.sort( MapObjectSort );
+	this->_objects.sort( ObjectSort );
 }
 

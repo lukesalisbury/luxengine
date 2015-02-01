@@ -180,6 +180,22 @@ void GlobalObjects::ClearObjects()
 		}
 	}
 }
+
+/**
+ * @brief GlobalObjects::ReorderObjects
+ */
+void GlobalObjects::ReorderObjects()
+{
+	if ( this->object_cache.size() )
+	{
+		MapObjectList::iterator p;
+		for ( p = this->object_cache.begin(); p != this->object_cache.end(); p++ )
+		{
+			lux::display->AddObjectToLayer(p->second->layer, p->second, true);
+		}
+	}
+}
+
 /**
  * @brief GlobalObjects::RemoveObject
  * @param ident

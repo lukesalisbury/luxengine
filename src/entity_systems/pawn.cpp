@@ -819,6 +819,9 @@ size_t Lux_PawnEntity_SetString(cell * dest, const char * source, size_t dest_si
 	dest_size /= sizeof(cell);
 	for ( size_t count = 0; count < dest_size; count++ )
 		amx_SwapCell( (ucell *)&dest[count] );
+
+	//for (i=(int)(len/sizeof(cell)); i>=0; i--)
+	//	amx_SwapCell((ucell *)&dest[i]);
 	#endif
 
 	// Unpacked Strings
@@ -838,6 +841,7 @@ std::string Lux_PawnEntity_GetString(AMX * amx, cell param)
 {
 	std::string str = "";
 	cell * cstr = amx_Address( amx, param );
+
 	if (cstr)
 	{
 		if ( (ucell)*cstr > UNPACKEDMAX )
@@ -846,7 +850,6 @@ std::string Lux_PawnEntity_GetString(AMX * amx, cell param)
 			uint32_t i = sizeof(ucell)-1;
 			ucell c = 0;
 			uint8_t char8 = amx_get_next_packed( cstr, c, i );
-//			uint32_t char32 = 0;
 			while ( char8 != '\0')
 			{
 				if ( char8 < 128 )
@@ -859,38 +862,17 @@ std::string Lux_PawnEntity_GetString(AMX * amx, cell param)
 				}
 				else if ( char8 < 224 )
 				{
-//					char32 = ((char8 << 6) & 0x7ff) + (amx_get_next_packed( cstr, c, i ) & 0x3f);
-//					str.append( 1, char32 );
 					str.append( 1, char8 );
 					str.append( 1, amx_get_next_packed( cstr, c, i ) );
-
 				}
 				else if ( char8 < 240 )
 				{
-//					uint32_t next = amx_get_next_packed( cstr, c, i ) & 0xff;
-//					char32 = ((char8 << 12) & 0xffff) + ((next << 6) & 0xfff);
-
-//					next = amx_get_next_packed( cstr, c, i ) & 0x3f;
-//					char32 += next;
-
-//					str.append( 1, char32 );
 					str.append( 1, char8 );
 					str.append( 1, amx_get_next_packed( cstr, c, i ) );
 					str.append( 1, amx_get_next_packed( cstr, c, i ) );
 				}
 				else if ( char8 < 245 )
 				{
-//					uint32_t next = amx_get_next_packed( cstr, c, i ) & 0xff;
-//					char32 = ((char8 << 18) & 0xffff) + ((next << 12) & 0x3ffff);
-
-//					next = amx_get_next_packed( cstr, c, i ) & 0xff;
-//					char32 += (next << 6) & 0xfff;
-
-//					next = amx_get_next_packed( cstr, c, i ) & 0x3f;
-//					char32 += next;
-
-//					str.append( 1, char32 );
-
 					str.append( 1, char8 );
 					str.append( 1, amx_get_next_packed( cstr, c, i ) );
 					str.append( 1, amx_get_next_packed( cstr, c, i ) );

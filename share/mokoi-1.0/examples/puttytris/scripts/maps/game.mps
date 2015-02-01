@@ -98,11 +98,11 @@ UpdateScores()
 		save[0] = score[0]; 
 		//GameSave(1, save); 
 	} 
-	StringFormat(scorestr, _, _, "%d", score[0]); 
+	StringFormat(scorestr, _,"%d", score[0]); 
 	ObjectReplace(object:scoreobj[0], scorestr, TEXT); 
-	StringFormat(scorestr, _, _, "%d", score[1]); 
+	StringFormat(scorestr, _, "%d", score[1]); 
 	ObjectReplace(object:scoreobj[1], scorestr, TEXT); 
-	StringFormat(scorestr, _, _, "%d", save[0]); 
+	StringFormat(scorestr, _,"%d", save[0]); 
 	ObjectReplace(object:scoreobj[2], scorestr, TEXT); 
 } 
  
@@ -560,7 +560,7 @@ public Init(...)
 	scoreobj[1] = ObjectCreate("0", TEXT, 200, 432, 6.0, 0, 0, 0x000000FF); 
 	scoreobj[2] = ObjectCreate("1", TEXT, 200, 456, 6.000, 0, 0, 0x000000FF); 
  
-	StringFormat(scorestr, _, _, "%d", save[0]); 
+	StringFormat(scorestr, _, "%d", save[0]); 
 	 
 	ObjectReplace(object:scoreobj[2], scorestr, TEXT); 
  

@@ -37,14 +37,6 @@ main()
 
 	displayinfo();
 
-	
-	new object:id = ObjectHash("logo", false);
-	new x,y,w,h;
-
-	ObjectInfo(id, w, h,x,y);
-
-	ConsoleOutput("%s (%d) %dx%d %dx%d", "logo", id, x,y,w,h );
-
 }
 
 public load()
@@ -69,7 +61,7 @@ displayinfo()
 
 	map_id = WorldGetIdent( 0, section_grid_x , section_grid_y );
 
-	StringFormat(string1, _, false, "§d%dx%d §4%d",  section_grid_x , section_grid_y, map_id); /* _ means past default argument */
+	StringFormat(string1, _,  "§d%dx%d §4%d",  section_grid_x , section_grid_y, map_id); /* _ means past default argument */
 	GraphicsDraw(string1, TEXT, 8, 8, 1, 0, 0 ); 
 
 }

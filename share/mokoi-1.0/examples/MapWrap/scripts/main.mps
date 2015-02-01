@@ -40,7 +40,7 @@ new Fixed:timemod = 2000.00;
 new str[10];
 main()
 {
-	seconds += GameFrame2() * timemod;
+	seconds += GameFrameSeconds() * timemod;
 	if ( seconds >= 60.0 )
 	{
 		minute++;
@@ -50,19 +50,9 @@ main()
 	{
 		hour++;
 		minute -= 60;
-		if ( hour == 6)
-		{
-			SheetReplace("parallax1.png", "parallax1a.png");
-			SheetReplace("parallax0.png", "parallax0a.png");
-		}
-		else if ( hour == 18)
-		{
-			SheetReplace("parallax1a.png", "parallax1.png");
-			SheetReplace("parallax0a.png", "parallax0.png");
-		}
 	}
-	if ( hour > 23 ) 
-		hour -= 24;
+
+	hour %= 24;
 
 	LayerColour(0, DayNight[hour]);
 	LayerColour(1, DayNight[hour]);

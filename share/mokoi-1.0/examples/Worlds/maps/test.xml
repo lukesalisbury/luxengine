@@ -1,0 +1,18 @@
+<map xmlns="http://mokoi.info/projects/mokoi">
+<settings>
+	<dimensions width="1" height="1" />
+	<color red="128" blue="128" green="128" mode="0" />
+</settings>
+<object value="planetcute.png:3" type="sprite">
+	<position x="296" y="126" w="48" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="planetcute.png:1" type="sprite">
+	<position x="312" y="149" w="48" h="80" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+<object value="title.png:1" type="sprite">
+	<position x="174" y="236" w="256" h="128" z="0" l="0" r="0" f="0"/>
+	<color red="255" blue="255" green="255" alpha="255" />
+</object>
+</map>

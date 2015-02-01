@@ -54,8 +54,7 @@ class Entity
 		uint8_t active_state_flags;
 
 		/* Location */
-		fixed x, y; /* Position is relative to map */
-		uint8_t z_layer;
+		fixed x, y, z_layer; /* Position is relative to map */
 		uint32_t _mapid, displaymap;
 		void ChangeMap(uint32_t map_id);
 
@@ -83,7 +82,7 @@ class Entity
 		float GetSettingAsFloat(std::string key);
 
 		/* Data Functions */
-		bool deleted, firstran, active, loaded, onscreen;
+		bool deleted, firstran, active, loaded, onscreen, closing;
 		void * _data;
 		void FreeData();
 

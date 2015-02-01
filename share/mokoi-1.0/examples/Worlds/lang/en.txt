@@ -1,3 +1,4 @@
 Map
-BTN0 switches to section 'Section1'.\nBTN1 switches to section 'Section2'.\nBTN2 switches to back to File mode.\n
-Function Used:
+Function Used:\nWorldSet
+Press ❶ to switches to section 'Section1'.\nPress ❷ to switches to section 'Section2'.\nPress ❸ to switches to new section.\nPress ❹ to create a new section.\n
+Press ❶
