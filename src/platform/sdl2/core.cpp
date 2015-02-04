@@ -415,7 +415,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 					break;
 				}
 				case SDL_FINGERDOWN:
-				case SDL_FINGERUP:
+				//case SDL_FINGERUP:
 				{
 					if ( touch_events_count < 10 )
 					{
@@ -431,9 +431,8 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 				}
 	#ifdef EMULATE_TOUCH
 				case SDL_MOUSEBUTTONDOWN:
-				case SDL_MOUSEBUTTONUP:
+				//case SDL_MOUSEBUTTONUP:
 				{
-
 					if ( touch_events_count < 10 )
 					{
 						float x = (float)event.button.x;
@@ -538,7 +537,6 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 {
 	SDL_PumpEvents();
 
-	//this->mouse_button = SDL_GetMouseState(&this->mouse_position[0], &this->mouse_position[1]);
 	if ( display )
 	{
 		if ( display->graphics.Display2Screen )
@@ -546,7 +544,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 			display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
 		}
 	}
-	//SDL_JoystickUpdate();
+
 }
 
 bool CoreSystem::TextListen( bool able )
@@ -578,9 +576,10 @@ void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count
 				if ( touch_events_count )
 				{
 					uint8_t c = 0;
+					bool hit = false;
 					while ( c < touch_events_count )
 					{
-						bool hit = false;
+
 						points[0] = (int32_t)(this->touch_events[c].x * display->screen_dimension.w);
 						points[1] = (int32_t)(this->touch_events[c].y * display->screen_dimension.h);
 
@@ -594,13 +593,18 @@ void CoreSystem::CheckTouch( DisplaySystem * display, uint8_t touch_events_count
 							}
 						}
 
-						if ( hit )
-						{
-							button->state = (this->touch_events[c].type = SDL_FINGERDOWN ? 1 : 0);
-						}
-
 						c++;
 					}
+
+					if ( hit )
+					{
+						button->state = (this->touch_events[c].type = SDL_FINGERDOWN ? 1 : 1);
+					}
+					else
+					{
+						button->state = 0;
+					}
+
 				}
 				else
 				{
@@ -695,6 +699,11 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 					{
 						this->mouse_button[event.button.button] = (event.button.state == SDL_PRESSED);
 					}
+				}
+				else
+				{
+
+					this->mouse_button[1] = (event.button.state == SDL_PRESSED);
 				}
 				break;
 			}

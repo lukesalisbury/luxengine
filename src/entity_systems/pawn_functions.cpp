@@ -42,6 +42,8 @@ static cell pawnAudioPlayMusic(AMX *amx, const cell *params)
 	int32_t fadeLength = params[3];
 	std::string pname = Lux_PawnEntity_GetString(amx, params[1]);
 
+	amx->flags &= ~AMX_FLAG_WATCH; // Loading audio may take a long time
+
 	return Lux_FFI_Audio_Play_Music( pname.c_str(), loops, fadeLength );
 
 }

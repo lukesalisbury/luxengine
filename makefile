@@ -146,8 +146,6 @@ OBJ += $(PLATFORM_OBJECTS)
 UI = $(wildcard res/input/*.txt)
 UIH = $(patsubst res/input/%.txt, include/input/%.h, $(UI))
 
-include resources.mk
-RESOURCES = $(addprefix $(INSTALLDIR)/, $(RESOURCES_FILES) )
 
 #Build
 .PHONY: all-before all clean
@@ -212,13 +210,11 @@ $(BIN): $(OBJDIR)/update_input_header.exe $(UIH) $(OBJ) $(EXTRABINARIES)
 install-bin: $(BIN)
 	@cp $(BUILDDIR)/$(BIN) $(INSTALLDIR)/bin/
 
-$(INSTALLDIR)/share/%: share/%
-	@$(MKDIR) $(dir $@)
-	cp $< $@
 
-install: $(RESOURCES) install-bin
+install: install-bin
 	@echo --------------------------------
 	@echo Installing to $(INSTALLDIR)
+	@cp -r ./share/ $(INSTALLDIR)/
 
 compiler:
 	$(MAKE) -C $(CURDIR)/../meg/meg_pawn BUILDDIR=$(CURDIR)/$(BUILDDIR)

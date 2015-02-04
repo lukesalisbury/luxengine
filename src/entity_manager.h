@@ -26,18 +26,18 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			uint32_t GetRandomID( std::string * id );
 			void SetSaveMode(uint8_t mode);
-		private:
 
+		private:
 			/* Entity Manager */
 			uint32_t _count;
 			std::map<uint32_t, Entity *> _entities;
-
 
 		public:
 			Entity * _global, * _keyboard;
 			Entity * NewEntity( std::string id, std::string base, uint32_t map_id );
 			Entity * GetEntity( uint32_t entity_id );
 			bool AddEntity( Entity * enw );
+			bool RemoveEntity( uint32_t entity_id );
 	};
 
 namespace lux

@@ -39,7 +39,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 		private:
 			const uint8_t * keystate;
 			int keystate_count;
-			bool mouse_button[5];
+			bool mouse_button[6];
 			int32_t mouse_scroll;
 			int32_t mouse_position[2];
 

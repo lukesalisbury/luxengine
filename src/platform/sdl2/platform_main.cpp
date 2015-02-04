@@ -19,7 +19,26 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 bool testMode = false;
 
-#if defined(STANDALONE)
+#if defined(ANDROID_NDK)
+#include <android/asset_manager.h>
+	extern "C" int main( int argc, char *argv[] )
+	{
+		if ( argc )
+		{
+			std::string base_executable = (argc ? argv[0] : "/lux" );
+			lux::engine = new LuxEngine( base_executable );
+			if ( lux::engine->Start("puttytris.game") )
+			{
+				lux::engine->Loop();
+			}
+			lux::engine->Close();
+			delete lux::engine;
+		}
+		std::cout << "Error can not file executable." << std::endl;
+		return 0;
+	}
+
+#elif defined(STANDALONE)
 
 	extern "C" int main( int argc, char *argv[] )
 	{
@@ -27,15 +46,15 @@ bool testMode = false;
 		{
 			std::string base_executable = (argc ? argv[0] : "/lux" );
 			lux::engine = new LuxEngine( base_executable );
-			lux::global_config->SetString("project.file", argv[0]);
-			if ( lux::engine->Start() )
+			//lux::global_config->SetString("project.file", );
+			if ( lux::engine->Start(argv[0]) )
 			{
 				lux::engine->Loop();
 			}
 			lux::engine->Close();
 			delete lux::engine;
 		}
-		std::cout << "Error can not file executable." << std::endl
+		std::cout << "Error can not file executable." << std::endl;
 		return 0;
 	}
 

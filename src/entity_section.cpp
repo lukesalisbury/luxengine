@@ -157,6 +157,8 @@ bool EntitySection::Loop()
 		{
 			if (this->children[i])
 				this->children[i]->Loop();
+
+
 		}
 
 		// Clean up
@@ -165,7 +167,13 @@ bool EntitySection::Loop()
 		{
 			if ( (*iter)->deleted )
 			{
+				lux::entities->RemoveEntity( (*iter)->hashid );
+				this->_entities.erase((*iter)->hashid);
+
 				delete (*iter);
+				(*iter) = NULL;
+
+
 				iter = this->children.erase(iter);
 			}
 			else
@@ -226,7 +234,12 @@ void EntitySection::Close()
 		{
 			if ( (*iter)->deleted )
 			{
+				uint32 h = (*iter)->hashid;
 				delete (*iter);
+
+				lux::entities->RemoveEntity( h );
+				this->_entities.erase(h);
+
 				iter = this->children.erase(iter);
 			}
 			else

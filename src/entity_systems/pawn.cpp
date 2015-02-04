@@ -102,9 +102,9 @@ int Lux_PawnEntity_Monitor(AMX * amx)
 	{
 		uint32_t t = lux::core->GetTime();
 		Entity * p = Lux_PawnEntity_GetParent(amx);
-		if ( t > p->starting_run_time + 50 )
+		if ( t > p->starting_run_time + 120 )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Script '" << p->_base << "' running to long (" << amx->function_name  << "). Force Sleep" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Script '" << p->_base << "' running to long (" << (amx->function_name ? amx->function_name : "main")  << "). Force Sleep" << std::endl;
 			p->sleeping = true;
 			return AMX_ERR_SLEEP;
 		}

@@ -1,4 +1,4 @@
-C:\dev\Android\android-ndk-r9\ndk-build.cmd NDK_DEBUG=1 %1
+C:\dev\Android\android-ndk-r10d\ndk-build.cmd NDK_DEBUG=1 %1
 
 pause
 

@@ -110,7 +110,7 @@ Entity * EntityManager::GetEntity(uint32_t entity_id )
 	p = this->_entities.find(entity_id);
 	if ( p != this->_entities.end() )
 	{
-		if ( !p->second->deleted )
+		if ( p->second->isActive() )
 		{
 			return p->second;
 		}
@@ -126,4 +126,9 @@ bool EntityManager::AddEntity( Entity * enw )
 	this->_entities[enw->hashid] = enw;
 	this->_count = this->_entities.size();
 	return true;
+}
+
+bool EntityManager::RemoveEntity(uint32_t entity_id)
+{
+	return !!this->_entities.erase(entity_id);
 }

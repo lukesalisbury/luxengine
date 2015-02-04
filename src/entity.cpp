@@ -121,7 +121,7 @@ bool Entity::Loop()
 
 	if ( this->_data )
 	{
-		if ( this->active )
+		if ( this->active && !this->deleted)
 		{
 			starting_run_time = lux::core->GetTime();
 			if ( !this->firstran )
@@ -183,6 +183,18 @@ void Entity::Delete()
 	this->Close();
 	this->active = false;
 	this->deleted = true;
+}
+
+bool Entity::isActive()
+{
+	if ( this->_data && !this->closing && !this->deleted )
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void Entity::FreeData()

@@ -38,6 +38,8 @@ class Entity
 		void Close();
 		void Delete();
 
+		bool isActive();
+
 		/**/
 		void Save( elix::File * current_save_file );
 		void Restore( elix::File * current_save_file );

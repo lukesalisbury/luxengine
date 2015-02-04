@@ -581,6 +581,10 @@ int AMXAPI amx_Callback(AMX *amx, cell index, cell *result, const cell *params)
    */
 
   amx->error=AMX_ERR_NONE;
+
+  if ( amx->flags & AMX_FLAG_WATCH )
+	  amx->function_name = GETENTRYNAME(hdr,func);
+
   *result = f(amx,params);
   if ( amx->error != AMX_ERR_NONE )
 	amx->function_name = GETENTRYNAME(hdr,func);

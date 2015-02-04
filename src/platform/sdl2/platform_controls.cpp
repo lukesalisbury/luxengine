@@ -99,9 +99,9 @@ bool Player::SetupController( std::string name )
 		this->_buttonConfig[11].set(MOUSEBUTTON, 0, 1 ); // ➁
 		this->_buttonConfig[12].set(MOUSEBUTTON, 0, 2 ); // ➂
 		this->_buttonConfig[13].set(MOUSEBUTTON, 0, 3 ); // ➃
-		this->_buttonConfig[14].set(NOINPUT, 0, SDL_CONTROLLER_BUTTON_A ); // ➄
+		this->_buttonConfig[14].set(MOUSEWHEEL, 0, 0 ); // ➄
 
-		this->_buttonConfig[15].set(KEYBOARD, 0, SDL_SCANCODE_ESCAPE ); //➅
+		this->_buttonConfig[15].set(MOUSEWHEEL, 0, 1 ); //➅
 		this->_buttonConfig[16].set(KEYBOARD, 0, SDL_SCANCODE_RETURN ); // ICON_CONFIRM "➆"
 		this->_buttonConfig[17].set(KEYBOARD, 0, SDL_SCANCODE_ESCAPE ); // ICON_CANCEL "➇"
 		this->_buttonConfig[18].set(MOUSEBUTTON, 0, 1 ); // ICON_POINTER_PRESS "➈"
@@ -230,6 +230,10 @@ void Player::ParseButton(Player_Button * button, std::string config)
 			break;
 		case 'h':
 			button->device = CONTROLHAT;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [CONTROLHAT] #" << button->device_number << " - " << button->sym << std::endl;
+			break;
+		case 't':
+			button->device = TOUCHSCREEN;
 			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Player Button: [CONTROLHAT] #" << button->device_number << " - " << button->sym << std::endl;
 			break;
 		case 'r':

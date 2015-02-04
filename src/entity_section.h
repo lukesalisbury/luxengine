@@ -23,7 +23,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 		private:
 			bool initialised;
-			uint8_t _magic[3];
 			uint32_t map_id;
 			std::map<uint32_t, Entity *> _entities;
 

@@ -75,7 +75,7 @@ int32_t Lux_Util_FileDownloaderEntityCallback( void * data )
 int32_t Lux_Util_FileDownloaderBackground( std::string urlArg, std::string origFile, UserInterface * ui )
 {
 	LuxRect region = {10, (ui->ui_region.h/2)-25, (ui->ui_region.w-20), 50, 0 };
-	Widget * dialog = ui->AddChild(region, DIALOGOK, colour::white, "Downloading code has been disabled");
+	Widget * dialog = ui->AddChild( region, DIALOGOK, "Downloading code has been disabled");
 
 	while ( !ui->Loop() )
 	{

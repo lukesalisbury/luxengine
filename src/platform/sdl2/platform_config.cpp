@@ -57,12 +57,11 @@ void Config::PlatformSettings()
 	*/
 
 
-	/* axis-1|axis-2|pointer|BUTTON_ACTION1|ACTION2|ACTION3|ACTION4|ACTION5|ACTION6|MENU|ARROWUP|ARROWDOWN|ARROWRIGHT|ARROWLEFT|MOUSELEFT|MOUSEMIDDLE|MOUSERIGHT|MOUSEUP|MOUSEDOWN|CONFIRM|CANCEL|POINTER_PRESS|shutdown*/
+	/* axis-1|axis-2|pointer|BUTTON_ACTION1|ACTION2|ACTION3|ACTION4|ACTION5|ACTION6|MENU|ARROWRIGHT|ARROWLEFT|ARROWDOWN|ARROWUP|MOUSELEFT|MOUSEMIDDLE|MOUSERIGHT|MOUSEUP|MOUSEDOWN|CONFIRM|CANCEL|POINTER_PRESS|shutdown*/
 
 
 	this->SetString("controller.keyboard1", "arrows|mouse|mouse|k04|k022|k07|k020|k026|k08|k040|k079|k080|k081|k082|m01|m02|m03|m04|k041|k040|k041|m01|k061" );
-	this->SetString("controller.virtual1", "arrows|n|mouse|r,-50x-50,40x40|n|n|n|n|n|m01|n|n|r,50x-40,30x30|r,10x-40,30x30|n|n|n|n|n|k040|k041|m01|k061" );
-
+	this->SetString("controller.virtual1", "arrows|n|mouse|nA1|nA2|nA3|nA4|nA5|nA6|m01|r,50x-40,30x30|r,10x-40,30x30|n|r,-50x-50,40x40|nML|nMM|nMR|nMU|nMD|k040|k041|m01|k061" );
 
 	this->SetString("player.controller1", "default0" );
 	this->SetString("player.controller2", "gamepad0" );
