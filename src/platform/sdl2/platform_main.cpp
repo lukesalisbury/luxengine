@@ -58,6 +58,49 @@ bool testMode = false;
 		return 0;
 	}
 
+#elif defined(EMSCRIPTEN)
+#include <emscripten.h>
+
+bool running = false;
+extern "C" {
+	void loopGame()
+	{
+		lux::engine->Refresh();
+	}
+
+	int32_t loadGame( char * file )
+	{
+		lux::engine = new LuxEngine( "/luxengine" );
+		return lux::engine->Start( file );
+	}
+
+	void startGame( )
+	{
+		emscripten_set_main_loop( loopGame, 0, 0);
+		running = true;
+	}
+
+
+
+	void pauseGame()
+	{
+		if ( running )
+			emscripten_cancel_main_loop();
+		else
+			startGame();
+	}
+
+	void endGame()
+	{
+		emscripten_cancel_main_loop();
+		lux::engine->Close();
+	}
+
+}
+extern "C" int main( int argc, char *argv[] )
+{
+	return 0;
+}
 #else
 	void main_args( int argc, char *argv[] )
 	{

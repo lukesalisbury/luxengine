@@ -26,6 +26,7 @@ AudioSystem::AudioSystem()
 	this->music_volume = 96;
 	this->effects_volume = 96;
 	this->dialog_volume = 96;
+#ifndef NOAUDIO
 	this->music = NULL;
 	this->primary_dialog = this->secondary_dialog = NULL;
 
@@ -68,6 +69,7 @@ AudioSystem::AudioSystem()
 			audiolist_file.clear();
 		}
 	}
+#endif
 }
 
 /**
@@ -75,7 +77,7 @@ AudioSystem::AudioSystem()
  */
 AudioSystem::~AudioSystem ( )
 {
-
+#ifndef NOAUDIO
 	for( std::map<std::string, Mix_Chunk*>::iterator iter = this->soundfx.begin(); iter != this->soundfx.end(); ++iter )
 	{
 		this->UnloadAudio( iter->second );
@@ -88,6 +90,7 @@ AudioSystem::~AudioSystem ( )
 	Mix_FreeMusic( this->music );
 
 	Mix_CloseAudio();
+#endif
 }
 
 /**
@@ -109,12 +112,18 @@ bool AudioSystem::LoadAudio( std::string filename )
 {
 	if ( !enabled )
 		return false;
-
+#ifndef NOAUDIO
 	Mix_Chunk * audio = this->ReturnAudio( filename, true );
 
 	return (audio != NULL);
+#else
+	return false;
+#endif
+
+
 }
 
+#ifndef NOAUDIO
 /**
  * @brief AudioSystem::UnloadAudio
  * @param audio
@@ -207,6 +216,8 @@ uint32_t AudioSystem::EffectLength( Mix_Chunk * chunk )
 	return (frames * 1000) / freq;
 }
 
+#endif
+
 /**
  * @brief AudioSystem::PlayEffect
  * @param requestSound
@@ -218,7 +229,7 @@ int32_t AudioSystem::PlayEffect ( std::string requestSound, int32_t x, int32_t y
 {
 	if ( !enabled )
 		return 0;
-
+#ifndef NOAUDIO
 	Mix_Chunk * sample = this->FindEffect( "./soundfx/" + requestSound );
 	if ( sample )
 	{
@@ -239,6 +250,7 @@ int32_t AudioSystem::PlayEffect ( std::string requestSound, int32_t x, int32_t y
 		return (int32_t)len;
 	}
 	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << requestSound << " not found" << std::endl;
+#endif
 	return 0;
 }
 
@@ -258,7 +270,7 @@ int32_t AudioSystem::PlayDialog( int32_t requestSound, int8_t channel )
 	uint8_t * data = NULL;
 	uint32_t size;
 	std::string filename;
-
+#ifndef NOAUDIO
 	filename.assign( "./dialog/en." );
 	filename.append( elix::string::FromInt(requestSound) );
 	filename.append( ".ogg" );
@@ -289,6 +301,7 @@ int32_t AudioSystem::PlayDialog( int32_t requestSound, int8_t channel )
 
 		}
 	}
+#endif
 	return (int32_t)len;
 }
 
@@ -305,6 +318,7 @@ int32_t AudioSystem::PlayMusic( std::string requestMusic, int32_t loop, int32_t 
 		return 0;
 
 	uint8_t * data = NULL;
+#ifndef NOAUDIO
 	uint32_t size = lux::game_data->GetFile("./music/" + requestMusic, &data, false);
 
 	if ( size )
@@ -340,6 +354,7 @@ int32_t AudioSystem::PlayMusic( std::string requestMusic, int32_t loop, int32_t 
 		}
 	}
 	lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | PlayMusic Error: '" << requestMusic << "' "  << std::endl;
+#endif
 	return 0;
 }
 
@@ -349,7 +364,9 @@ int32_t AudioSystem::PlayMusic( std::string requestMusic, int32_t loop, int32_t 
  */
 void AudioSystem::StopDialog(int8_t channel)
 {
+#ifndef NOAUDIO
 	Mix_HaltChannel(channel);
+#endif
 }
 
 /**
@@ -357,7 +374,9 @@ void AudioSystem::StopDialog(int8_t channel)
  */
 void AudioSystem::StopEffects()
 {
+#ifndef NOAUDIO
 	Mix_HaltChannel(-1);
+#endif
 }
 
 /**
@@ -365,7 +384,9 @@ void AudioSystem::StopEffects()
  */
 void AudioSystem::StopMusic()
 {
+#ifndef NOAUDIO
 	Mix_HaltMusic();
+#endif
 }
 
 /**
@@ -374,11 +395,12 @@ void AudioSystem::StopMusic()
  */
 void AudioSystem::PauseDialog(int8_t channel)
 {
+#ifndef NOAUDIO
 	if ( Mix_Paused(channel) )
 		Mix_Pause(channel);
 	else
 		Mix_Resume(channel);
-
+#endif
 }
 
 /**
@@ -386,10 +408,12 @@ void AudioSystem::PauseDialog(int8_t channel)
  */
 void AudioSystem::PauseEffects()
 {
+#ifndef NOAUDIO
 	if ( Mix_Paused(-1) )
 		Mix_Pause(-1);
 	else
 		Mix_Resume(-1);
+#endif
 }
 
 /**
@@ -397,10 +421,12 @@ void AudioSystem::PauseEffects()
  */
 void AudioSystem::PauseMusic()
 {
+	#ifndef NOAUDIO
 	if ( Mix_PausedMusic() )
 		Mix_ResumeMusic();
 	else
 		Mix_PauseMusic();
+#endif
 }
 
 
@@ -430,13 +456,14 @@ int32_t AudioSystem::SetMusicVolume(int32_t volume)
 {
 	if ( !enabled )
 		return 0;
-
+#ifndef NOAUDIO
 	if ( volume >= 0 )
 	{
 		this->music_volume = clamp(volume, 0, 128 );
 
 		Mix_VolumeMusic(this->music_volume);
 	}
+#endif
 	return this->music_volume;
 
 }
@@ -450,12 +477,13 @@ int32_t AudioSystem::SetEffectsVolume(int32_t volume)
 {
 	if ( !enabled )
 		return 0;
-
+#ifndef NOAUDIO
 	if ( volume >= 0 )
 	{
 		this->effects_volume = clamp(volume, 0, 128 );
 		Mix_Volume(-1, this->effects_volume);
 	}
+#endif
 	return this->effects_volume;
 
 }
@@ -470,7 +498,7 @@ int32_t AudioSystem::SetDialogVolume(int32_t volume)
 {
 	if ( !enabled )
 		return 0;
-
+#ifndef NOAUDIO
 	if ( volume >= 0 )
 	{
 		this->dialog_volume = clamp(volume, 0, 128 );
@@ -478,6 +506,7 @@ int32_t AudioSystem::SetDialogVolume(int32_t volume)
 		Mix_Volume(0, this->dialog_volume);
 		Mix_Volume(1, this->dialog_volume);
 	}
+#endif
 	return this->dialog_volume;
 }
 
@@ -488,7 +517,7 @@ void AudioSystem::PauseAll()
 {
 	if ( !enabled )
 		return;
-
+#ifndef NOAUDIO
 	if ( this->paused )
 	{
 		Mix_ResumeMusic();
@@ -501,5 +530,6 @@ void AudioSystem::PauseAll()
 		Mix_Pause(-1);
 		this->paused = true;
 	}
+#endif
 }
 

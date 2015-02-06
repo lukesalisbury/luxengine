@@ -13,7 +13,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #define USE_RWOPS
 #include <SDL_thread.h>
+#ifndef NOAUDIO
 #include <SDL_mixer.h>
+#endif
 #include <map>
 #include "base_audio.h"
 
@@ -36,6 +38,7 @@ class AudioSystem: public BaseAudioSystem
 		int32_t dialog_volume;
 
 		/* Resource Management */
+		#ifndef NOAUDIO
 		Mix_Chunk * primary_dialog;
 		Mix_Chunk * secondary_dialog;
 		Mix_Music * music;
@@ -46,6 +49,7 @@ class AudioSystem: public BaseAudioSystem
 		uint32_t EffectLength( Mix_Chunk * chunk );
 
 		bool UnloadAudio(Mix_Chunk *audio);
+		#endif
 	public:
 		bool Loop(LuxState engine_state);
 

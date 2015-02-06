@@ -52,7 +52,6 @@ void SDL2_OuputRenderingInfo( SDL_RendererInfo * info )
 
 }
 
-
 void SDL2_SystemInfo()
 {
 	int n = SDL_GetNumRenderDrivers();
@@ -94,7 +93,7 @@ CoreSystem::CoreSystem()
 
 	SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_HAPTIC | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER );
 
-	SDL2_SystemInfo();
+	//SDL2_SystemInfo();
 
 	AbleOutput(true);
 	this->mouse_focus = false;
@@ -825,7 +824,7 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 		}
 		case CONTROLAXIS:
 		{
-			if ( device_number >= 0 && device_number < 8 )
+			if ( device_number < 8 )
 			{
 				SDL_GameControllerAxis s = (SDL_GameControllerAxis)symbol;
 				if ( this->controller[device_number] && s > SDL_CONTROLLER_AXIS_INVALID && s < SDL_CONTROLLER_AXIS_MAX )
@@ -837,7 +836,7 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 		}
 		case CONTROLBUTTON:
 		{
-			if ( device_number >= 0 && device_number < 8 )
+			if ( device_number < 8 )
 			{
 				SDL_GameControllerButton s = (SDL_GameControllerButton)symbol;
 				if ( this->controller[device_number] && s < SDL_CONTROLLER_BUTTON_MAX )

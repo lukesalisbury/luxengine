@@ -167,7 +167,7 @@ void LuxPortal::page_refresh(LuxRect page_rect, uint32_t start, uint32_t length 
 		LuxPortal::visible_games_list.clear();
 	}
 
-	if ( start > LuxPortal::complete_games_list.size() || start < 0 )
+	if ( start > LuxPortal::complete_games_list.size() )
 	{
 		return;
 	}

@@ -232,7 +232,6 @@ void MapObject::SetData( uint8_t type )
 	else if ( type == OBJECT_TEXT )
 	{
 		this->has_data = true;
-		this->data = data;
 		this->data_type = 't';
 	}
 	else
@@ -429,7 +428,6 @@ void MapObject::SetSprite(LuxSprite * data)
 	if ( data )
 	{
 		this->data = (void*)data;
-		this->type = type;
 		this->data_type = OBJECT_SPRITE;
 		this->has_data = true;
 		this->sprite_width = data->sheet_area.w;

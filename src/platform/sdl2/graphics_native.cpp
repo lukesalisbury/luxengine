@@ -206,8 +206,10 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
 		SDL_RenderPresent(native_renderer);
 
 		SDL_SetRenderDrawColor(native_renderer, sdlgraphics_colour.r, sdlgraphics_colour.g, sdlgraphics_colour.b, 255);
-		SDL_RenderClear(native_renderer);
 
+		#ifndef EMSCRIPTEN
+		SDL_RenderClear(native_renderer);
+		#endif
 	}
 }
 

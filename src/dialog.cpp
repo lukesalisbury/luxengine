@@ -79,17 +79,6 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 	region.x = (lux::display->screen_dimension.w - region.w) / 2;
 	region.y = (lux::display->screen_dimension.h / 2) - (region.h/2);
 
-/*
-	if ( dialog == DIALOGTEXT )
-	{
-		region.y -= 20;
-		region.w += 20;
-	}
-	else
-	{
-		region.h += 40;
-	}
-*/
 	lux::gui = new UserInterface(lux::display);
 	lux::gui->SetRegion( region );
 	lux::gui->AddChild( region, dialog, text );

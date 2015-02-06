@@ -349,7 +349,6 @@ void LuxEngine::Refresh()
 		}
 		else if ( this->state == GUIMODE )
 		{
-			lux::display->DrawGameStatic();
 			if ( lux::gui )
 			{
 				if ( this->LoopDialog() )
