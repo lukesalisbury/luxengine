@@ -366,6 +366,13 @@ void LuxEngine::Refresh()
 			else
 				this->state = RUNNING;
 		}
+		else if ( this->state == RELOADENTITIES )
+		{
+			// Quick Hack
+			lux::gamesystem->GetEntities()->ReloadEntities();
+			lux::gamesystem->active_map->entities->ReloadEntities();
+			this->state = RUNNING;
+		}
 	}
 }
 

@@ -313,6 +313,12 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 						case SDLK_PAUSE:
 							this->state = (this->state == PAUSED ? RUNNING : PAUSED);
 							break;
+						case SDLK_F1: //
+						{
+							this->state = RELOADENTITIES;
+							break;
+						}
+
 						case SDLK_F5: // Quick Save
 						{
 							if (this->state ==  RUNNING )
@@ -521,11 +527,82 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 					break;
 			}
 		}
+		else
+		{
+			switch( event.type )
+			{
+				case SDL_KEYDOWN:
+				{
+					switch ( event.key.keysym.sym )
+					{
+
+						case SDLK_F8:
+						{
+							lux::display->show_spriteinfo = !lux::display->show_spriteinfo;
+							break;
+						}
+						case SDLK_F9:
+						{
+							lux::display->show_collisions = !lux::display->show_collisions;
+							break;
+						}
+
+						case SDLK_F12:
+						{
+							lux::engine->SettingDialog();
+							break;
+						}
+						case SDLK_F10:
+						{
+							/* Debug Message Window */
+							lux::display->show_debug = !lux::display->show_debug;
+							if ( lux::display->show_debug )
+							{
+								Lux_SDL2_OpenMessageWindow( );
+							}
+							else
+							{
+								Lux_SDL2_CloseMessageWindow( );
+							}
+							break;
+						}
+						case SDLK_F11:
+						{
+							lux::display->show_mask = !lux::display->show_mask;
+							break;
+						}
+					}
+					break;
+				}
+				case SDL_WINDOWEVENT:
+				{
+					if ( event.window.event == SDL_WINDOWEVENT_CLOSE )
+					{
+						lux::display->show_debug = !lux::display->show_debug;
+						if ( lux::display->show_debug )
+						{
+							Lux_SDL2_OpenMessageWindow( );
+						}
+						else
+						{
+							Lux_SDL2_CloseMessageWindow( );
+						}
+					}
+
+					break;
+				}
+			}
+		}
 	}
 
 	this->CheckTouch( lux::display, touch_events_count );
 
-	this->RefreshInput( lux::display );
+	// Scale Mouse
+	if ( lux::display->graphics.Display2Screen )
+	{
+		lux::display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
+	}
+
 
 	this->time = this->GetTime();
 
@@ -534,15 +611,6 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 void CoreSystem::RefreshInput( DisplaySystem * display )
 {
-	SDL_PumpEvents();
-
-	if ( display )
-	{
-		if ( display->graphics.Display2Screen )
-		{
-			display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
-		}
-	}
 
 }
 
@@ -710,6 +778,13 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 			{
 				this->mouse_position[0] = event.motion.x;
 				this->mouse_position[1] = event.motion.y;
+
+				// Scale Mouse
+				if ( display->graphics.Display2Screen )
+				{
+					display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
+				}
+
 				break;
 			}
 			case SDL_MOUSEWHEEL:
@@ -760,6 +835,8 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 		}
 
 		this->CheckTouch( display, touch_events_count );
+
+
 		return 1;
 	}
 	return 0;

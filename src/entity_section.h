@@ -42,6 +42,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			void Append( Entity * enw );
 			Entity * GetEntity( uint32_t entity_id );
+			bool ReloadEntities();
 	};
 
 #endif

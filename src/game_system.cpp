@@ -133,8 +133,12 @@ bool GameSystem::Close()
 {
 	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing the Game" << std::endl;
 
+	this->global_entities->Close();
+
 	if ( this->active_map )
 		this->active_map->Close();
+
+	this->active_map = NULL;
 
 	for( std::map<uint32_t, WorldSection *>::iterator iter = section_list.begin(); iter != section_list.end(); ++iter )
 	{
@@ -150,7 +154,7 @@ bool GameSystem::Close()
 	this->map_list.clear();
 	this->section_list.clear();
 
-	this->global_entities->Close();
+
 	this->objects->Close();
 
 
@@ -432,8 +436,8 @@ uint32_t GameSystem::SetMap( MokoiMap * map, fixed position_x, fixed position_y,
 		this->next_offset_position[1] = position_y;
 		this->next_offset_position[2] = position_z;
 
-		if ( this->next_map && this->next_section )
-			std::cout << "[Next Active] " << this->next_section->Name() << "  " << this->next_map->Name() << std::endl;
+		//if ( this->next_map && this->next_section )
+		//	std::cout << "[Next Active] " << this->next_section->Name() << "  " << this->next_map->Name() << std::endl;
 	}
 
 	return ( this->next_map == NULL ? 0 : this->next_map->Ident() );
@@ -971,7 +975,7 @@ void GameSystem::OutputInformation()
 
 			if ( map->InSection( section->SectionIdent() ) )
 			{
-				buffer << " - " <<  map->Name() << " §c[Grid] §4Section:" << map->GridIdent() << " id: " << map->Ident() << std::endl;
+				buffer << " - " <<  map->Name() << " §c" << map->GridIdent() << " §4" << map->Ident() << std::endl;
 
 				if ( map == this->active_map )
 				{

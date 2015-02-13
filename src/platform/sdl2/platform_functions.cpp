@@ -110,16 +110,13 @@ void Lux_SDL2_OpenMessageWindow(  )
 			y = 25;
 
 		SDL_SetHintWithPriority( SDL_HINT_RENDER_DRIVER, "software", SDL_HINT_OVERRIDE );
-		debug_window = SDL_CreateWindow("Messages", static_cast<int>(x), static_cast<int>(y), 480, 360, SDL_WINDOW_SHOWN);
+		debug_window = SDL_CreateWindow("Messages", static_cast<int>(x), static_cast<int>(y), 480, 320, SDL_WINDOW_SHOWN);
+		//debug_window = SDL_CreateWindow("Messages", 0, 0, 800, 600, SDL_WINDOW_FULLSCREEN_DESKTOP|SDL_WINDOW_BORDERLESS);
 		debug_renderer = SDL_CreateRenderer(debug_window, -1, SDL_RENDERER_SOFTWARE );
-
-
-
 
 		if ( !debug_renderer )
 		{
 			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
-
 		}
 		else
 		{

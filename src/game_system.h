@@ -34,13 +34,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 			bool Save( elix::File *current_save_file );
 			bool Restore( elix::File *current_save_file );
 
-
 			/* Position */
 
 
 			/* Position Movement */
 			uint32_t SetMap( MokoiMap * map, fixed position_x, fixed position_y, fixed position_z );
-
 
 			/* Map Handling */
 
@@ -66,9 +64,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			/* Debug Information*/
 			void GetDebugInfo( std::ostream & stream );
+			void OutputInformation();
 
-
-                        void OutputInformation();
         private:
 			/* Entities */
 			EntitySection * global_entities;

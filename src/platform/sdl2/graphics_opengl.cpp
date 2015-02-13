@@ -148,7 +148,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	native_window_flags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL;
 
 	if ( fullscreen )
-		native_window_flags |= SDL_WINDOW_FULLSCREEN;
+		native_window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
 	native_render_flags = SDL_RENDERER_ACCELERATED;
 	native_window_title = title;

@@ -79,7 +79,8 @@ void Entity::InitialSetup( std::string id )
 {
 	this->id = id;
 	this->hashid = elix::string::Hash( this->id );
-	this->AddSetting("id", this->id);
+	//this->AddSetting("id", this->id);
+	this->AddSetting("id", this->hashid);
 
 	this->_used_collisions = 7;
 	for ( uint8_t n = 0; n < this->_used_collisions; n++)
@@ -89,9 +90,7 @@ void Entity::InitialSetup( std::string id )
 		this->_collisions[n].entity = this->hashid;
 		this->_collisions[n].rect.w = this->_collisions[n].rect.h =  0;
 	}
-/*
 
-*/
 }
 
 void Entity::Init()
@@ -99,9 +98,9 @@ void Entity::Init()
 	if ( !this->firstran )
 	{
 		this->SetMapCollsion();
-		this->callbacks->Call(this->_data, (char*)"AutoPreInit", NULL);
+		this->callbacks->Call(this->_data, (char*)"@AutoPreInit", NULL);
 		this->callbacks->Call(this->_data, (char*)"Init", NULL);
-		this->callbacks->Call(this->_data, (char*)"AutoPostInit", NULL);
+		this->callbacks->Call(this->_data, (char*)"@AutoPostInit", NULL);
 		this->firstran = true;
 		this->closing = false;
 	}
@@ -158,7 +157,7 @@ void Entity::Update()
 		this->Init();
 	}
 	this->callbacks->Call(this->_data, (char*)"UpdatePosition", NULL);
-	this->callbacks->Call(this->_data, (char*)"AutoUpdatePosition", NULL);
+	this->callbacks->Call(this->_data, (char*)"@AutoUpdatePosition", NULL);
 }
 
 void Entity::Close()
@@ -169,9 +168,9 @@ void Entity::Close()
 		this->ClearMapCollsion();
 		if ( this->callbacks )
 		{
-			this->callbacks->Call(this->_data, (char*)"AutoPreClose", NULL);
+			this->callbacks->Call(this->_data, (char*)"@AutoPreClose", NULL);
 			this->callbacks->Call(this->_data, (char*)"Close", NULL);
-			this->callbacks->Call(this->_data, (char*)"AutoPostClose", NULL);
+			this->callbacks->Call(this->_data, (char*)"@AutoPostClose", NULL);
 		}
 
 	}

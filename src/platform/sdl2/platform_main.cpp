@@ -80,8 +80,6 @@ extern "C" {
 		running = true;
 	}
 
-
-
 	void pauseGame()
 	{
 		if ( running )
@@ -138,7 +136,6 @@ extern "C" int main( int argc, char *argv[] )
 			}
 		}
 	}
-
 
 	extern "C" int main( int argc, char *argv[] )
 	{

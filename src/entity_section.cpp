@@ -14,6 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 
 extern LuxEntityCallback EntitySystemPawn;
+void Lux_PawnEntity_QuickReload(Entity * entity);
 
 EntitySection::EntitySection( std::string parent_entity, uint32_t id )
 {
@@ -132,6 +133,23 @@ void EntitySection::Init()
 		}
 	}
 	this->initialised = true;
+}
+
+bool EntitySection::ReloadEntities()
+{
+	uint32_t count = this->children.size();
+	if ( count )
+	{
+		for( uint32_t i = 0; i < count; i++ )
+		{
+			if (this->children[i])
+			{
+				Lux_PawnEntity_QuickReload( this->children[i] );
+			}
+		}
+	}
+
+	return true;
 }
 
 bool EntitySection::Loop()

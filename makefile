@@ -22,7 +22,6 @@ ifneq ($(CUSTOMSETTINGS), )
 	include custom/$(CUSTOMSETTINGS).make
 endif
 
-
 #Compiler
 COMPILER_LIBS += $(OPTIMIZER) $(DEBUG) -L'lib' $(PLATFORM_LIBS)
 COMPILER_FLAGS += $(OPTIMIZER) $(DEBUG) -I'../elix/src' -I'src' -I'src/$(PLATFORM_DIRECTORY)' -I'include'  -DTIXML_USE_STL -D$(PLATFORM) -DPLATFORMBITS=$(PLATFORMBITS) $(PLATFORM_FLAGS)
@@ -162,7 +161,7 @@ all-before:
 
 $(OBJDIR)/update_input_header.exe:
 	@-$(MKDIR) $(dir $@)
-	@$(CPP) update_input_header.cpp -o $(OBJDIR)/update_input_header.exe  -s
+#	@$(CPP) update_input_header.cpp -o $(OBJDIR)/update_input_header.exe  -s
 
 include/input/%.h: res/input/%.txt
 	$(OBJDIR)/update_input_header.exe $< $@

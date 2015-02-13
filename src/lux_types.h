@@ -35,6 +35,7 @@ typedef enum {
 	RESETGAME,
 	EXITING,
 	INVALIDPOSITION,
+	RELOADENTITIES,
 	GAMEERROR = -1
 } LuxState;
 

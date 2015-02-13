@@ -615,7 +615,7 @@ uint8_t MokoiGame::GetType() { return type; }
 
 bool MokoiGame::HasFile(std::string file)
 {
-#if DREAMCAST
+	#if DREAMCAST
 	/* Temp fix for reading ISO 9660*/
 	elix::string::Replace( file, "-", "_" );
 	size_t q = file.find_first_of(".", 5);

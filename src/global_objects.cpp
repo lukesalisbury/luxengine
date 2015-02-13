@@ -259,15 +259,15 @@ void GlobalObjects::DrawCollisions()
 			if ( p->second->rect.w != 0 && p->second->rect.h != 0 )
 			{
 				screen_location = p->second->rect;
-				screen_location.z = 6999;
-				screen_location.x -= MAKE_FIXED_INT(lux::gamesystem->active_map->GetPosition('x') );
-				screen_location.y -= MAKE_FIXED_INT(lux::gamesystem->active_map->GetPosition('y') );
+				screen_location.z = 7000;
+				screen_location.x -= MAKE_FIXED_INT( lux::gamesystem->active_map->GetPosition('x') );
+				screen_location.y -= MAKE_FIXED_INT( lux::gamesystem->active_map->GetPosition('y') );
 				effects.primary_colour.r = (p->second->type %5) * 128;
 				effects.primary_colour.b = (p->second->type /5) * 64;
 				effects.primary_colour.g = p->second->type  * 25;
 				effects.primary_colour.a = 128;
 				lux::display->graphics.DrawRect(screen_location, effects);
-				screen_location.y -= 16;
+				//screen_location.y -= 16;
 			}
 		}
 	}

@@ -276,6 +276,24 @@ Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, std::string tex
 		}
 	}
 
+
+	uint16_t border_width = css->GetSize( (type >= DIALOGEXT ? DIALOG : type), ENABLED, "border-width" );
+
+	if ( border_width )
+	{
+		region.x -= border_width;
+		region.y -= border_width;
+		region.w += border_width*2;
+		region.h += border_width*2;
+	}
+
+	if ( type >= DIALOG )
+	{
+		region.y -= button_positions[0].h/2;
+		region.h += button_positions[0].h/2;
+
+	}
+
 	Widget * child = new Widget( region, ( type >= DIALOGEXT ? DIALOG : type), this->css );
 	child->SetText(text);
 	this->children_widget.push_back(child);
@@ -508,8 +526,8 @@ int32_t UserInterface::Loop()
 	int16_t mouse_button = (this->controller->GetButton(PLAYER_POINTER) > 0);
 	int16_t move_x = this->controller->GetControllerAxis(0);
 	int16_t move_y = this->controller->GetControllerAxis(1);
-	int16_t mouse_x = this->controller->GetPointer(0);
-	int16_t mouse_y = this->controller->GetPointer(1);
+	int32_t mouse_x = this->controller->GetPointer(0);
+	int32_t mouse_y = this->controller->GetPointer(1);
 
 	if (move_x != 0)
 		move_x /= 160;
