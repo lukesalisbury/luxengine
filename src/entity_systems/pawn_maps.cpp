@@ -572,9 +572,11 @@ const AMX_NATIVE_INFO Maps_Natives[] = {
 	{ "MaskRefresh", pawnMaskRefresh},
 	{ "MaskGetValue", pawnMaskGetValue},
 	{ "MaskFill", pawnMaskFill},
+
 	/* Map Offset Functions */
 	{ "MapOffsetSet", pawnMapSetOffset}, //MapSetOffset(Fixed:x, Fixed:y)
 	{ "MapOffsetGet", pawnMapGetOffset}, //MapGetOffset(axis)
+
 	/* Map Functions */
 	{ "MapCurrentIdent", pawnMapCurrentIdent }, // MapCurrentIdent( )
 	{ "MapCurrentDimension", pawnMapCurrentDimension }, // MapCurrentDimension(&w, &h )
@@ -584,6 +586,7 @@ const AMX_NATIVE_INFO Maps_Natives[] = {
 	{ "MapReset", pawnMapReset}, //MapReset()
 	{ "MapSnapshot", pawnMapSnapshot}, //MapSnapshot()
 	{ "MapDelete", pawnMapDelete}, //MapDelete( map_ident )
+
 	/* Map Edit Functions */
 	{ "MapEditNew", pawnMapEditNew}, //MapEditNew( map_file{}, section_hash, width, height)
 	{ "MapEditSave", pawnMapEditSave}, //MapEditSave( map_ident )
@@ -594,17 +597,21 @@ const AMX_NATIVE_INFO Maps_Natives[] = {
 	{ "MapEditObjectReplace", pawnMapEditObjectReplace}, //MapEditObjectReplace( map_ident, object_id, type, sprite[] )
 	{ "MapEditObjectFlag", pawnMapEditObjectFlag}, //MapEditObjectFlag( map_ident, object_id, key, value );
 	{ "MapEditObjectDelete", pawnMapEditObjectDelete}, //MapEditObjectDelete( map_ident, object_id )
+
 	/* Map collision Functions */
 	{ "MapCollisionCurrent", pawnMapCollisionCurrent },
 	{ "MapCollisionList", pawnMapCollisionList },
+
 	/* Map Object Functions */
 	{ "MapObjectCurrent", pawnDeprecatedFunction },
 	{ "MapObjectList", pawnDeprecatedFunction },
+
 	/* World Functions */
 	{ "WorldSet", pawnWorldSet }, //WorldSet( section_hash, grid_x, grid_y )
 	{ "WorldGetIdent", pawnWorldGetIdent }, //WorldGetIdent( section_hash, grid_x, grid_y )
 	{ "WorldExist", pawnWorldExist }, //WorldExist( section_name{} )
 	{ "WorldLoad", pawnWorldLoad }, //WorldExist( section_name{} )
+
 	/* World Edit */
 	{ "WorldEditNew", pawnWorldEditNew }, //WorldEditNew( section_name{}, width, height )
 	{ "WorldEditSet", pawnWorldEditSet }, //WorldEditSet( section_hash, map_ident, x, y )

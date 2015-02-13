@@ -362,16 +362,17 @@ static cell pawnObjectInfo(AMX *amx, const cell *params)
 		if ( yptr )
 			*yptr = h;
 
+		if (  params[0] / sizeof(cell)  == 5 )
+		{
+			xptr = amx_Address(amx, params[4]);
+			yptr = amx_Address(amx, params[5]);
 
-		xptr = amx_Address(amx, params[4]);
-		yptr = amx_Address(amx, params[5]);
+			if ( xptr )
+				*xptr = x;
 
-		if ( xptr )
-			*xptr = x;
-
-		if ( yptr )
-			*yptr = y;
-
+			if ( yptr )
+				*yptr = y;
+		}
 		return 1;
 	}
 	return 0;

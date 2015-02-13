@@ -1907,7 +1907,10 @@ int AMXAPI amx_Register(AMX *amx, const AMX_NATIVE_INFO *list, int number)
       if (funcptr!=NULL)
         func->address=(ucell)(intptr_t)funcptr;
       else
+	  {
+		  amx->function_name = GETENTRYNAME(hdr,func);
         err=AMX_ERR_NOTFOUND;
+	  }
     } /* if */
     func=(AMX_FUNCSTUB*)((unsigned char*)func+hdr->defsize);
   } /* for */

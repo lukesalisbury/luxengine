@@ -289,7 +289,7 @@ uint8_t Lux_FFI_Object_Delete( uint32_t object_id )
 	{
 		if ( (object_id & OBJECT_GLOBAL_VALUE) == OBJECT_GLOBAL_VALUE )
 			return lux::gamesystem->GetObjects()->RemoveObject( object_id );
-		else
+		else if (lux::gamesystem->active_map)
 			return lux::gamesystem->active_map->RemoveObject( object_id );
 	}
 	return 0;
