@@ -18,6 +18,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "elix_string.hpp"
 
 bool testMode = false;
+void * clientWindowID = NULL;
+
 
 #if defined(ANDROID_NDK)
 #include <android/asset_manager.h>
@@ -99,93 +101,97 @@ extern "C" int main( int argc, char *argv[] )
 {
 	return 0;
 }
+
 #else
-	void main_args( int argc, char *argv[] )
-	{
-		int c = argc;
-		while ( c > 1 ) {
-			--c;
-			if ( strcmp(argv[c], "--portal") == 0 )
-			{
-				LuxPortal::use = true;
-				LuxPortal::active = true;
-			}
-			else if ( strcmp(argv[c], "--window") == 0 )
-			{
-				lux::global_config->SetBoolean("display.fullscreen", false);
-			}
-			else if ( strcmp(argv[c], "--fullscreen") == 0 )
-			{
-				lux::global_config->SetBoolean("display.fullscreen", true);
-			}
-			else if ( strcmp(argv[c], "--test") == 0 )
-			{
-				testMode = true;
-			}
-			else if ( argv[c][0] != '-' )
-			{
-				lux::global_config->SetString("project.file", argv[c]);
-				LuxPortal::add_previous_game( argv[c] );
-				LuxPortal::use = false;
-				LuxPortal::active = false;
+std::string project_file = "";
 
-			}
-			else
-			{
-				// Unknown argument.
-			}
-		}
-	}
-
-	extern "C" int main( int argc, char *argv[] )
-	{
-		std::string base_executable = (argc ? argv[0] : "/luxengine" );
-
-		lux::engine = new LuxEngine( base_executable );
-
-		main_args( argc, argv );
-
-		if ( testMode )
+void main_args( int argc, char *argv[] )
+{
+	int c = argc;
+	while ( c > 1 ) {
+		--c;
+		if ( strcmp(argv[c], "--test") == 0 )
 		{
-			luxtest::run();
+			testMode = true;
+		}
+		else if ( strncmp(argv[c], "--windowid=",11) == 0 )
+		{
+			clientWindowID = (void*)strtoul( argv[c]+11, NULL, 0 );
+			std::cout << "clientWindowID " << clientWindowID << std::endl;
+		}
+		else if ( argv[c][0] != '-' )
+		{
+			project_file = argv[c];
+			LuxPortal::add_previous_game( argv[c] );
+			LuxPortal::use = false;
+			LuxPortal::active = false;
 		}
 		else
 		{
-			LuxPortal::open();
-			if ( LuxPortal::use )
-			{
-				while ( LuxPortal::active )
-				{
-					if ( LuxPortal::run() )
-					{
-						GameInfoValues selected_game = LuxPortal::get_selected();
+			// Unknown argument.
+		}
+	}
+}
 
-						if ( selected_game.type == GI_FILE  )
+extern "C" int main( int argc, char *argv[] )
+{
+	std::string base_executable = (argc ? argv[0] : "/luxengine" );
+
+	main_args( argc, argv );
+
+	if ( testMode )
+	{
+		luxtest::run();
+	}
+	else if ( clientWindowID != 0 )
+	{
+		lux::engine = new LuxEngine( clientWindowID );
+		if ( lux::engine->Start(project_file) )
+		{
+			lux::engine->Loop();
+		}
+		lux::engine->Close();
+		delete lux::engine;
+	}
+	else
+	{
+		lux::engine = new LuxEngine( base_executable );
+		LuxPortal::open();
+		if ( LuxPortal::use )
+		{
+			while ( LuxPortal::active )
+			{
+				if ( LuxPortal::run() )
+				{
+					GameInfoValues selected_game = LuxPortal::get_selected();
+
+					if ( selected_game.type == GI_FILE  )
+					{
+						if ( lux::engine->Start(selected_game.url) )
 						{
-							if ( lux::engine->Start(selected_game.url) )
-							{
-								lux::engine->Loop();
-							}
-							lux::engine->Close();
+							lux::engine->Loop();
 						}
+						lux::engine->Close();
 					}
 				}
 			}
-			else
-			{
-				if ( lux::engine->Start() )
-				{
-					lux::engine->Loop();
-				}
-				lux::engine->Close();
-			}
-			LuxPortal::close();
 		}
-
+		else
+		{
+			if ( lux::engine->Start(project_file) )
+			{
+				lux::engine->Loop();
+			}
+			lux::engine->Close();
+		}
+		LuxPortal::close();
 		delete lux::engine;
-
-		return 0;
 	}
+
+
+
+	return 0;
+}
 
 #endif
 

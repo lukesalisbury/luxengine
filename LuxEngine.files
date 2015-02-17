@@ -1109,3 +1109,4 @@ include/input/joystick_generic.h
 include/input/joystick_xbox360.h
 include/input/keyboard.h
 include/input/mouse_generic.h
+src/platform/sdl2/platform_launch.cpp

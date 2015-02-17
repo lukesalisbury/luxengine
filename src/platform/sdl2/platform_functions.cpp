@@ -237,10 +237,7 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 
 		if ( cchar != 0 )
 		{
-			if ( cchar == 'S' )
-			{
-				int q = 0;
-			}
+
 			if ( !Lux_Util_CheckTextColour( cchar, font_color, watch_for_color ) )
 			{
 				SDL_Texture * texture = NULL;

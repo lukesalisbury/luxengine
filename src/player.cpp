@@ -113,8 +113,9 @@ void Player::CachePointerValues()
 	{
 		case CONTROLAXIS:
 		{
-			this->_pointer[0] += lux::core->GetInput(CONTROLAXIS, this->_pointerConfig.device_number,this->_pointerConfig.sym[0])/64;
-			this->_pointer[1] += lux::core->GetInput(CONTROLAXIS, this->_pointerConfig.device_number,this->_pointerConfig.sym[2])/64;
+			//TODO
+			this->_pointer[0] += lux::core->GetInput(CONTROLAXIS, this->_pointerConfig.device_number,this->_pointerConfig.sym[0]) / 128;
+			this->_pointer[1] += lux::core->GetInput(CONTROLAXIS, this->_pointerConfig.device_number,this->_pointerConfig.sym[2]) / 128;
 			this->_pointer[2] = 1;
 			break;
 		}

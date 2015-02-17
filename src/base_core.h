@@ -28,6 +28,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 class BaseCoreSystem
 {
 public:
+	BaseCoreSystem( const void * window_ptr ) {};
 	BaseCoreSystem() {};
 	virtual ~BaseCoreSystem() {};
 

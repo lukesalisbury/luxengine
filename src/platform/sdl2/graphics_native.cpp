@@ -100,10 +100,6 @@ int32_t sdlgraphics_customtext_height = 32;
 /* Local Functions */
 
 
-
-
-
-
 /* Lux_NATIVE_Init
  * Init video mode
  @ width:
@@ -155,7 +151,9 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( std::string title,  uint16_t width, u
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(native_renderer, &info);
 
-	native_window_title = lux::config->GetString("project.title") + " (SDL2 Rendering "+info.name+")";
+	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Rendering " << info.name << std::endl;
+
+	native_window_title = lux::config->GetString("project.title");
 
 	native_graphics_dimension.x = 0;
 	native_graphics_dimension.y = 0;
@@ -699,6 +697,9 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 	int8_t button;
 	int8_t pointer;
 
+	area.x = x;
+	area.y = y;
+
 	UnicodeToInput( cchar, &axis, &button, &pointer );
 
 	if ( axis >= 0 || button >= 0 || pointer >= 0 )
@@ -711,8 +712,7 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 		sprite_data = lux::display->GetSprite( lux::display->sprite_font, elix::string::FromInt(cchar) );
 	}
 
-	area.x = x;
-	area.y = y;
+
 
 	if ( sprite_data )
 	{
@@ -753,33 +753,36 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 
 LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
 {
-	SDL_Rect draw;
-	uint16_t x = dest_rect.x;
+	int32_t x, y;
 	std::string::iterator object;
+	bool watch_for_color = false;
+	ObjectEffect current_effects = effects;
 
-	draw.w = draw.h = 8;
+	x = dest_rect.x;
+	y = dest_rect.y;
 
 	for ( object = text.begin(); object != text.end(); object++ )
 	{
 		uint8_t utfchar = *object;
 		uint32_t cchar = utfchar;
-		/*
-		194-223 2 bytes
-		224-239 3 bytes
-		240-244 4 bytes
-		*/
+
+
 		if (cchar == '\n' || cchar == '\r')
 		{
-			dest_rect.y += ( sdlgraphics_customtext && allow_custom ? sdlgraphics_customtext_height + 2 : 10);
+			y += ( sdlgraphics_customtext && allow_custom ? sdlgraphics_customtext_height + 2 : 10);
 			x = dest_rect.x;
+			cchar = 0;
+			current_effects.primary_colour = effects.primary_colour; // reset effects
 		}
 		else if ( cchar <= 32 )
 		{
 			x += 7;
+			cchar = 0;
+			current_effects.primary_colour = effects.primary_colour; // reset effects
 		}
 		else if ( cchar <= 128 )
 		{
-			x += Lux_NATIVE_DrawChar(cchar, x, dest_rect.y, effects, allow_custom);
+
 		}
 		else if ( cchar < 224 )
 		{
@@ -787,8 +790,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 			uint32_t next = *object;
 
 			cchar = ((cchar << 6) & 0x7ff) + (next & 0x3f);
-			x += Lux_NATIVE_DrawChar(cchar, x, dest_rect.y, effects, allow_custom);
-
 		}
 		else if ( cchar < 240 )
 		{
@@ -802,7 +803,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 			next = (*object) & 0x3f;
 			cchar += next;
 
-			x += Lux_NATIVE_DrawChar(cchar, x, dest_rect.y, effects, allow_custom);
 		}
 		else if ( cchar < 245 )
 		{
@@ -812,7 +812,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 			next = (*object) & 0xff;
 			cchar = ((cchar << 18) & 0xffff) + ((next << 12) & 0x3ffff);
 
-
 			object++;
 			next = (*object) & 0xff;
 			cchar += (next << 6) & 0xfff;
@@ -820,9 +819,16 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 			object++;
 			next = (*object) & 0x3f;
 			cchar += next;
-
-			x += Lux_NATIVE_DrawChar(cchar, x, dest_rect.y, effects, allow_custom);
 		}
+
+		if ( cchar != 0 )
+		{
+			if ( !Lux_Util_CheckTextColour( cchar, current_effects.primary_colour, watch_for_color ) )
+			{
+				x += Lux_NATIVE_DrawChar( cchar, x, y, current_effects, allow_custom );
+			}
+		}
+
 	}
 }
 

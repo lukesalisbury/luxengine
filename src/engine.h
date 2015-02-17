@@ -34,6 +34,7 @@ class LuxEngine
 	public:
 		~LuxEngine();
 		LuxEngine( std::string executable = "/");
+		LuxEngine( const void * window_ptr );
 
 		bool ShowDialog(std::string text, LuxWidget dialog = DIALOGYESNO, std::string * answer = NULL);
 		void FatalError(std::string reason);

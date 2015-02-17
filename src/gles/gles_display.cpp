@@ -666,7 +666,6 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect
 
 			cchar = ((cchar << 6) & 0x7ff) + (next & 0x3f);
 
-
 			if ( cchar == 0xA7 )
 			{
 				watch_for_color = true;

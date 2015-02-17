@@ -278,8 +278,9 @@ Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, std::string tex
 
 
 	uint16_t border_width = css->GetSize( (type >= DIALOGEXT ? DIALOG : type), ENABLED, "border-width" );
+	std::string box_model = css->GetString( (type >= DIALOGEXT ? DIALOG : type), ENABLED, "box-model" );
 
-	if ( border_width )
+	if ( border_width && !box_model.compare("border") )
 	{
 		region.x -= border_width;
 		region.y -= border_width;
@@ -291,7 +292,6 @@ Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, std::string tex
 	{
 		region.y -= button_positions[0].h/2;
 		region.h += button_positions[0].h/2;
-
 	}
 
 	Widget * child = new Widget( region, ( type >= DIALOGEXT ? DIALOG : type), this->css );

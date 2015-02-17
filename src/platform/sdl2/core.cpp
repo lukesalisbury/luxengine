@@ -32,6 +32,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define _WIN32_IE 0x0600
 	#include <io.h>
 	#include <shlobj.h>
+	#include <SDL_syswm.h>
 #endif
 
 /* Network Thread */
@@ -87,6 +88,41 @@ void SDL2_SystemInfo()
 }
 
 /* Local functions */
+CoreSystem::CoreSystem( const void * window_ptr )
+{
+	//SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+	SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_HAPTIC | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER );
+
+	this->mouse_focus = false;
+
+	memset( this->controller, 0, sizeof(SDL_GameController*)*8);
+
+	this->native_window = SDL_CreateWindowFrom( window_ptr );
+
+	if ( !this->native_window )
+	{
+		std::cout << __FILE__ << ":" << __LINE__ << " | Couldn't create Window. " << SDL_GetError() << std::endl;
+		this->good = false;
+	}
+	else
+	{
+		this->state = RUNNING;
+		this->lockfps = true;
+		this->keystate = SDL_GetKeyboardState( &this->keystate_count );
+		this->good = true;
+		this->time = this->GetTime();
+
+		int32_t nJoysticks = SDL_NumJoysticks();
+		for ( int32_t i = 0; i < nJoysticks; i++ )
+		{
+			if ( SDL_IsGameController(i) )
+			{
+				this->GamepadAdded( i );
+			}
+		}
+	}
+}
+
 CoreSystem::CoreSystem()
 {
 	//SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
@@ -523,6 +559,14 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 					}
 					break;
 				}
+				case SDL_CONTROLLERDEVICEADDED:
+					break;
+				case SDL_CONTROLLERDEVICEREMOVED:
+					break;
+
+				case SDL_USEREVENT:
+
+					break;
 				default:
 					break;
 			}
@@ -906,7 +950,13 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 				SDL_GameControllerAxis s = (SDL_GameControllerAxis)symbol;
 				if ( this->controller[device_number] && s > SDL_CONTROLLER_AXIS_INVALID && s < SDL_CONTROLLER_AXIS_MAX )
 				{
-					return (int16_t)SDL_GameControllerGetAxis(this->controller[device_number], s) / 128;
+					int16_t r = (int16_t)SDL_GameControllerGetAxis(this->controller[device_number], s) / 128;
+					if ( s < SDL_CONTROLLER_AXIS_TRIGGERLEFT )
+					{
+						if ( 50 > r && r > -50) // Poor Deadzone
+							r = 0;
+					}
+					return r;
 				}
 			}
 			return 0;

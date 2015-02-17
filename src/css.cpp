@@ -101,14 +101,13 @@ void CSSParser::AddContent( std::string content )
 		}
 	}
 
-/*
-	for ( std::vector<CSSElement*>::iterator it = this->elements.begin(); it != this->elements.end(); it++ )
-	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << (*it)->element << ":" << (*it)->state << "" << std::endl;
-		for ( std::map<std::string, std::string>::iterator key = (*it)->key.begin(); key != (*it)->key.end(); key++ )
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
-	}
-*/
+//	for ( std::vector<CSSElement*>::iterator it = this->elements.begin(); it != this->elements.end(); it++ )
+//	{
+//		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << (*it)->element << ":" << (*it)->state << "" << std::endl;
+//		for ( std::map<std::string, std::string>::iterator key = (*it)->key.begin(); key != (*it)->key.end(); key++ )
+//			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
+//	}
+
 }
 
 

@@ -34,6 +34,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	class CoreSystem: public BaseCoreSystem
 	{
 		public:
+			CoreSystem( const void * window_ptr );
 			CoreSystem();
 			~CoreSystem();
 		private:

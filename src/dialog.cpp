@@ -72,7 +72,7 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 
 	LuxRect region = { 20, 29, 64, 50, 0 };
 
-	Lux_Util_SetRectFromText( region, text, 8, 8, (lux::display->screen_dimension.w/8) - 8  );
+	Lux_Util_SetRectFromText( region, text, 8, 12, (lux::display->screen_dimension.w/8) - 8  );
 
 	region.h += 16; //padding
 	region.w += 16; //padding

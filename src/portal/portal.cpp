@@ -179,7 +179,7 @@ void LuxPortal::page_refresh(LuxRect page_rect, uint32_t start, uint32_t length 
 		if ( info->type != GI_INVALID )
 		{
 			// Add Button to GUI
-			page_rect.y += info->SetGUI( i+1, page_rect.x, page_rect.y, page_rect.w, 40  );
+			page_rect.y += info->SetGUI( i+1, page_rect.x, page_rect.y, page_rect.w, 32  );
 			LuxPortal::visible_games_list.push_back( info );
 		}
 	}

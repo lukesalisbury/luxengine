@@ -73,13 +73,16 @@ DisplaySystem::DisplaySystem()
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
 	}
-	#else
+	#endif
+
+	if ( !is_display_setup )
+	{
 	if ( GraphicsNative.InitGraphics( this->title, this->screen_dimension.w, this->screen_dimension.h, this->bpp, this->fullscreen ) )
 	{
 		this->graphics = GraphicsNative;
 		is_display_setup = true;
 	}
-	#endif
+	}
 
 	if ( !is_display_setup )
 	{
@@ -110,13 +113,16 @@ DisplaySystem::DisplaySystem( std::string title, uint16_t width, uint16_t height
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
 	}
-	#else
+	#endif
+	if ( !is_display_setup )
+	{
 	if ( GraphicsNative.InitGraphics( title, width, height, bpp, fullscreen ) )
 	{
 		this->graphics = GraphicsNative;
 		is_display_setup = true;
 	}
-	#endif
+	}
+
 
 	if ( !is_display_setup )
 	{

@@ -18,7 +18,6 @@ void UserInterface::SetTheme()
 {
 	this->css = new CSSParser("dialog { border-style:inset; color:#FFFFFFFF; background-color:#703030FF; min-height: 40px;  }\
 imagebutton, button, dialog { \
-	box-model:border;\
 	border-color:#703030FF;\
 	border-width:2px;\
 	border-style:outset;\
