@@ -97,7 +97,31 @@ CoreSystem::CoreSystem( const void * window_ptr )
 
 	memset( this->controller, 0, sizeof(SDL_GameController*)*8);
 
+	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
 	this->native_window = SDL_CreateWindowFrom( window_ptr );
+
+
+
+	#ifdef __GNUWIN32__
+/*
+	SDL_SysWMinfo info;
+	SDL_GetWindowWMInfo(this->native_window, &info);
+
+
+	HDC    hdc = GetDC(info.info.win.window);
+	HGLRC  hglrc;
+
+	// create a rendering context
+	hglrc = wglCreateContext(hdc);
+
+	// make it the calling thread's current rendering context
+	wglMakeCurrent(hdc, hglrc);
+
+	this->native_window->flags |= SDL_WINDOW_OPENGL;
+*/
+	#endif
+
+
 
 	if ( !this->native_window )
 	{
@@ -349,7 +373,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 						case SDLK_PAUSE:
 							this->state = (this->state == PAUSED ? RUNNING : PAUSED);
 							break;
-						case SDLK_F1: //
+						case SDLK_F4: //
 						{
 							this->state = RELOADENTITIES;
 							break;

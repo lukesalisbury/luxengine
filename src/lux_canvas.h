@@ -28,7 +28,7 @@ class LuxCanvas
 
 	private:
 		MapObjectList objects;
-
+		bool is_virtual;
 	public:
 		LuxRect rect;
 

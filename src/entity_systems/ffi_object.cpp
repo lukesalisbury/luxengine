@@ -53,7 +53,13 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 		map_object->effects.primary_colour = get_colour.rgba;
 
 		if ( (type == OBJECT_SPRITE || type == OBJECT_CANVAS) && sprite != NULL )
+		{
 			map_object->sprite.assign( sprite );
+			if ( !map_object->sprite.compare( 0, 8, "Virtual:" ) )
+			{
+				map_object->type = OBJECT_CANVAS;
+			}
+		}
 		if ( (type == OBJECT_TEXT) && sprite != NULL )
 			map_object->sprite.assign( sprite );
 
@@ -382,14 +388,15 @@ uint32_t Lux_FFI_Canvas_Child_Info(uint32_t object_id, uint32_t child_id, int32_
 
 	if ( map_object )
 	{
-		if ( map_object->IsGlobal() )
-		{
-			child_id |= OBJECT_GLOBAL_VALUE;
-		}
-		else
-		{
-			child_id &= OBJECT_LOCAL_VALUE;
-		}
+		child_id &= OBJECT_LOCAL_VALUE;
+//		if ( map_object->IsGlobal() )
+//		{
+//			child_id |= OBJECT_GLOBAL_VALUE;
+//		}
+//		else
+//		{
+//			child_id &= OBJECT_LOCAL_VALUE;
+//		}
 
 		// Check if we are really changing object
 		if ( map_object->type == OBJECT_CANVAS )
@@ -449,14 +456,15 @@ int32_t Lux_FFI_Canvas_Child_Set_Effect( uint32_t object_id, uint32_t child_id, 
 
 	if ( map_object )
 	{
-		if ( map_object->IsGlobal() )
-		{
-			child_id |= OBJECT_GLOBAL_VALUE;
-		}
-		else
-		{
-			child_id &= OBJECT_LOCAL_VALUE;
-		}
+		child_id &= OBJECT_LOCAL_VALUE;
+//		if ( map_object->IsGlobal() )
+//		{
+//			child_id |= OBJECT_GLOBAL_VALUE;
+//		}
+//		else
+//		{
+//			child_id &= OBJECT_LOCAL_VALUE;
+//		}
 
 		// Check if we are really changing object
 		if ( map_object->type == OBJECT_CANVAS )

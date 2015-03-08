@@ -93,12 +93,12 @@ void LuxSprite::FreeData(  )
 }
 
 /* Animation */
-void LuxSprite::AddFrame( uint32_t name, int16_t x, int16_t y,	uint32_t ms )
+void LuxSprite::AddFrame( uint32_t name, int16_t x, int16_t y,	uint32_t ms, uint8_t flip )
 {
 
 }
 
-void LuxSprite::AddFrame( LuxSprite * sprite, int16_t x, int16_t y,	uint32_t ms )
+void LuxSprite::AddFrame( LuxSprite * sprite, int16_t x, int16_t y,	uint32_t ms, uint8_t flip )
 {
 	SpriteFrame frame;
 	frame.sprite = sprite;
@@ -106,7 +106,7 @@ void LuxSprite::AddFrame( LuxSprite * sprite, int16_t x, int16_t y,	uint32_t ms 
 	frame.x = x;
 	frame.y = y;
 	frame.ms = ms;
-
+	frame.f = flip;
 	this->frames.push_back( frame );
 
 	this->sheet_area.w = sprite->sheet_area.w > this->sheet_area.w ? sprite->sheet_area.w : this->sheet_area.w;

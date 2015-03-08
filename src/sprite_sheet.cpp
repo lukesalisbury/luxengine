@@ -218,6 +218,7 @@ bool LuxSheet::ParseXML()
 				int32_t x = 0;
 				int32_t y = 0;
 				uint32_t ms = 0;
+				uint8_t flip = 0;
 				std::string frame_name;
 				std::map<uint32_t, LuxSprite *>::iterator frame_sprite;
 				for ( ; frame_element; frame_element = frame_element->NextSiblingElement("frame") )
@@ -231,8 +232,8 @@ bool LuxSheet::ParseXML()
 							tinyxml2::QueryIntAttribute( frame_element, "x", x, 0 );
 							tinyxml2::QueryIntAttribute( frame_element, "y", y, 0 );
 							tinyxml2::QueryUnsignedAttribute( frame_element, "ms", ms );
-
-							t_sprite->AddFrame( frame_sprite->second, x, y, ms );
+							tinyxml2::QueryUint8Attribute( frame_element, "f", flip );
+							t_sprite->AddFrame( frame_sprite->second, x, y, ms, flip );
 						}
 						else
 						{

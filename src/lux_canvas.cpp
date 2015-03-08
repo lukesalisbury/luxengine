@@ -20,11 +20,13 @@ bool ObjectSort(MapObject * a, MapObject * b );
 
 LuxCanvas::LuxCanvas(  )
 {
-
+	is_virtual = false;
 }
 
 LuxCanvas::LuxCanvas( std::string file )
 {
+	is_virtual = !file.compare( 0, 8, "Virtual:" );
+
 	this->Load(file);
 }
 
@@ -57,10 +59,20 @@ MapObject * LuxCanvas::FindChild(uint32_t ident)
 bool LuxCanvas::Load( std::string file )
 {
 	MapXMLReader reader;
+	std::string file_path;
 
-	if ( !reader.Load("./maps/" + file + ".xml"))
+	if ( is_virtual )
 	{
-		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | maps/" + file + ".xml not a valid canvas file." << std::endl;
+		file_path = "./sprites/virtual/" + file.substr(8) + ".xml";
+	}
+	else
+	{
+		file_path = "./maps/" + file + ".xml";
+	}
+
+	if ( !reader.Load(file_path))
+	{
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | " + file_path +" not a valid canvas file." << std::endl;
 		return false;
 	}
 	reader.ReadObjects( this->objects, false );

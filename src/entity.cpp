@@ -567,7 +567,7 @@ std::string Entity::GetSetting( std::string key )
  */
 int32_t Entity::GetSettingAsInt(std::string key)
 {
-	int32_t value = -1;
+	int32_t value = 0;
 	std::stringstream stream( this->GetSetting(key) );
 	stream >> value;
 	return value;

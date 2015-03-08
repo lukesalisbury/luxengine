@@ -20,8 +20,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_systems/pawn.inc"
 
 
-uint32_t entity_maphash = 0xD4824F64;
-uint32_t entity_mainhash = 0x1D1A8BF1;
+uint32_t entity_maphash = 0xD4824F64; //__map__
+uint32_t entity_mainhash = 0x1D1A8BF1; //__main__
 
 EntityManager::EntityManager()
 {

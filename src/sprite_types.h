@@ -21,6 +21,7 @@ typedef struct {
 	int16_t x;
 	int16_t y;
 	uint32_t ms;
+	uint8_t f;
 } SpriteFrame;
 
 typedef struct {

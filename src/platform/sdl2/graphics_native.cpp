@@ -554,7 +554,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 	double angle = (double)effect.rotation;
 	SDL_RendererFlip flipmode = SDL_FLIP_NONE;
 
-	SDL_Rect draw, area;
+	SDL_Rect draw;
 	SDL_Point point;
 	SDL_Point repeat;
 
@@ -579,6 +579,8 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 	if ( effect.flip_image == 1 )// Switch Axis
 	{
 		angle += 90.0;
+		draw.x += point.y - point.x;
+		draw.y += point.x - point.y;
 	}
 	else if ( effect.flip_image == 2 )// Switch Axis
 	{
@@ -587,6 +589,8 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 	else if ( effect.flip_image == 3 )// Switch Axis
 	{
 		angle += 90.0;
+		draw.x += point.y - point.x;
+		draw.y += point.x - point.y;
 		flipmode = (SDL_RendererFlip)(SDL_FLIP_VERTICAL | SDL_FLIP_HORIZONTAL);
 	}
 

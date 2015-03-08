@@ -39,8 +39,8 @@ public:
 
 
 	/* Animation */
-	void AddFrame( uint32_t name, int16_t x, int16_t y,	uint32_t ms );
-	void AddFrame( LuxSprite * sprite, int16_t x, int16_t y, uint32_t ms );
+	void AddFrame( uint32_t name, int16_t x, int16_t y, uint32_t ms, uint8_t flip );
+	void AddFrame( LuxSprite * sprite, int16_t x, int16_t y, uint32_t ms, uint8_t flip );
 	bool RemoveFrame( uint32_t name );
 
 

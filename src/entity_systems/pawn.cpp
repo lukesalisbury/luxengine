@@ -230,6 +230,8 @@ AMX * Lux_PawnEntity_LoadFile( const char * entity_name )
 			//pawn_entities[entity_name] = temp_amx;
 			//successful = true;
 
+
+
 			goto function_exit;
 		}
 
@@ -368,6 +370,11 @@ mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_bas
 			else
 			{
 				entity_data->parent = entity;
+				cell * internal_ident = NULL;
+				if ( amx_FindPubVar( entity_data, "internal_ident", &internal_ident) == AMX_ERR_NONE )
+				{
+					*internal_ident = entity->hashid;
+				}
 			}
 		}
 	}
@@ -377,6 +384,12 @@ mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_bas
 	if ( entity_data != NULL )
 	{
 		entity_data->parent = entity;
+
+		cell * internal_ident = NULL;
+		if ( amx_FindPubVar( entity_data, "internal_ident", &internal_ident) == AMX_ERR_NONE )
+		{
+			*internal_ident = entity->hashid;
+		}
 	}
 
 #endif

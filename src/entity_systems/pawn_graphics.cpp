@@ -302,19 +302,27 @@ static cell pawnCanvasChildEffect(AMX *amx, const cell *params)
 /** Display Functions */
 
 /** pawnObjectCreate
-* native ObjectCreate(string[], type, x, y, z, w, h, c = 0xFFFFFFFF, global = false, string_size = sizeof string);
+* native ObjectCreate(string[], type, x, y, z, w, h, c = 0xFFFFFFFF, global = 0, string_size = sizeof string);
 *
 */
 static cell pawnObjectCreate(AMX *amx, const cell *p )
 {
 	ASSERT_PAWN_PARAM( amx, p, 9 );
 
+	uint8_t global = p[9];
 	uint32_t results = 0;
 	std::string sprite;
 
 	sprite = Lux_PawnEntity_GetString(amx, p[1]);
 
-	results = Lux_FFI_Object_Create( (uint8_t)p[9], p[2], p[3], p[4], (int32_t)p[5], (uint16_t)p[6], (uint16_t)p[7], p[8], sprite.c_str() );
+	if ( p[9] == -1 )
+	{
+		global = Lux_PawnEntity_GetParent( amx )->_mapid == 0;
+
+	}
+
+
+	results = Lux_FFI_Object_Create( global, p[2], p[3], p[4], (int32_t)p[5], (uint16_t)p[6], (uint16_t)p[7], p[8], sprite.c_str() );
 
 	return results;
 

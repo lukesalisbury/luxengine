@@ -1,5 +1,5 @@
-imagebutton, button { color: #FFFFFFFF; border-width: 2;}
-imagebutton:hover, button:hover { color: #FFFFFFFF; border-color: #575570DD; background-color: #575570DD; border-width: 2; border-style:solid; }
+imagebutton { color: #FFFFFFFF; border-width: 2; min-height:40px;}
+imagebutton:hover { color: #FFFFFFFF; border-color: #575570DD; background-color: #575570DD; border-width: 5; border-style:solid; }
 guibackground { background-color: #007DBDFF; background-color-secondary: #ACD2E7FF; background-style: vertical-gradient; }
 
 box { background-color: #007DBD00;  } 
