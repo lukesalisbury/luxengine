@@ -102,13 +102,13 @@ bool MokoiMapScreen::Close()
 uint16_t MokoiMapScreen::GetMaskValue(uint16_t x, uint16_t y)
 {
 	if ( !this->initialised )
-		return 0;
+		return 0xFFFF;
 
 	if ( this->_mask )
 	{
 		return Lux_Mask_GetValue(this->_mask, x - this->_offset_x, y - this->_offset_y);
 	}
-	return 0;
+	return 0xFFFF;
 }
 
 void MokoiMapScreen::FillMask(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t value)

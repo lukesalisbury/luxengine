@@ -157,7 +157,7 @@ void MapObject::Save(elix::File *current_save_file)
 		current_save_file->WriteWithLabel("Map Object b2", this->effects.secondary_colour.b );
 		current_save_file->WriteWithLabel("Map Object g2", this->effects.secondary_colour.g );
 		current_save_file->WriteWithLabel("Map Object a2", this->effects.secondary_colour.a );
-		current_save_file->WriteWithLabel("Map Object rotation", this->effects.rotation );
+		current_save_file->WriteWithLabel("Map Object rotation", (uint16_t)this->effects.rotation );
 		current_save_file->WriteWithLabel("Map Object scale x", this->effects.scale_xaxis );
 		current_save_file->WriteWithLabel("Map Object scale y", this->effects.scale_yaxis );
 		current_save_file->WriteWithLabel("Map Object flip mode", this->effects.flip_image );

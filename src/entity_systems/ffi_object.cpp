@@ -129,7 +129,7 @@ int32_t Lux_FFI_Object_Position(uint32_t object_id, const int32_t x, const int32
  * @param h
  * @return
  */
-int32_t Lux_FFI_Object_Info(const uint32_t object_id, uint16_t * w, uint16_t * h, int32_t * x, int32_t *y )
+int32_t Lux_FFI_Object_Info(const uint32_t object_id, uint16_t * w, uint16_t * h, int32_t * x, int32_t *y, int32_t *z )
 {
 	MapObject * map_object = NULL;
 
@@ -150,10 +150,16 @@ int32_t Lux_FFI_Object_Info(const uint32_t object_id, uint16_t * w, uint16_t * h
 		{
 			*x = map_object->position.x;
 		}
-		if ( h )
+		if ( y )
 		{
 			*y = map_object->position.y;
 		}
+
+		if ( z )
+		{
+			*z = map_object->position.z;
+		}
+
 		return 1;
 
 	}

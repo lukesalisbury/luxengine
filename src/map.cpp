@@ -41,10 +41,10 @@ MokoiMap::MokoiMap( std::string name, uint32_t width, uint32_t height)
 	this->InitialSetup(name);
 
 	if ( width )
-		this->map_width = width;
+		this->map_width = MAKE_INT_FIXED(width);
 
 	if ( height )
-		this->map_height = height;
+		this->map_height = MAKE_INT_FIXED(height);
 
 }
 
@@ -897,8 +897,8 @@ bool MokoiMap::LoadDimension()
 			tinyxml2::QueryUnsignedAttribute( dimensions_elem, "height", this->dimension_height);
 		}
 
-		this->map_width = MAKE_INT_FIXED( this->dimension_width * this->default_map_width );
-		this->map_height = MAKE_INT_FIXED( this->dimension_height * this->default_map_height );
+		this->map_width = ( this->dimension_width * this->default_map_width );
+		this->map_height = ( this->dimension_height * this->default_map_height );
 		delete xml_file;
 		return true;
 	}
@@ -1000,7 +1000,7 @@ uint16_t MokoiMap::GetMaskValue(uint16_t x, uint16_t y)
 	screen = this->GetScreen( XY2Screen( x, y, this->dimension_width ) );
 	if ( screen )
 		return screen->GetMaskValue(x, y);
-	return 0;
+	return 0xFFFF;
 }
 
 void MokoiMap::FillMask(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t value)

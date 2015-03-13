@@ -533,6 +533,13 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 				{
 					this->mouse_position[0] = event.motion.x;
 					this->mouse_position[1] = event.motion.y;
+
+					// Scale Mouse
+					if ( lux::display->graphics.Display2Screen )
+					{
+						lux::display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
+					}
+
 					break;
 				}
 				case SDL_MOUSEWHEEL:
@@ -666,10 +673,10 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	this->CheckTouch( lux::display, touch_events_count );
 
 	// Scale Mouse
-	if ( lux::display->graphics.Display2Screen )
-	{
-		lux::display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
-	}
+//	if ( lux::display->graphics.Display2Screen )
+//	{
+//		lux::display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
+//	}
 
 
 	this->time = this->GetTime();

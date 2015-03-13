@@ -37,7 +37,7 @@ public:
 	LuxColour primary_colour;
 	LuxColour secondary_colour;
 
-	uint16_t rotation;
+	int16_t rotation;
 	uint16_t scale_xaxis;
 	uint16_t scale_yaxis;
 

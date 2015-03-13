@@ -149,7 +149,7 @@ void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapOb
 
 				current_entity->x = MAKE_INT_FIXED(object->position.x);
 				current_entity->y = MAKE_INT_FIXED(object->position.y);
-				current_entity->z_layer = MAKE_INT_FIXED(object->layer);
+				current_entity->z_layer = object->position.z;
 
 				for ( tinyxml2::XMLElement * setting_element = object_element->FirstChildElement("setting"); setting_element; setting_element = setting_element->NextSiblingElement("setting") )
 				{

@@ -208,6 +208,12 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
 		#ifndef EMSCRIPTEN
 		SDL_RenderClear(native_renderer);
 		#endif
+
+
+		/* Debug Messages */
+		if ( lux::display && lux::display->show_debug )
+			Lux_SDL2_OpenMessageWindow();
+		Lux_SDL2_PresentMessageWindow();
 	}
 }
 

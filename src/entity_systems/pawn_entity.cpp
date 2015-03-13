@@ -181,7 +181,7 @@ static cell pawnEntityGetSettingHash(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
-	cell response = -1;
+	cell response = 0;
 	char * string = NULL;
 	std::string stf_key = "";
 

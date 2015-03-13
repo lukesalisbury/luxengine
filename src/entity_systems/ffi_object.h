@@ -17,7 +17,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const int32_t x, const int32_t y, const int32_t z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite );
 int32_t Lux_FFI_Object_Position(uint32_t object_id, const int32_t x, const int32_t y, const int32_t z, const uint16_t w, const uint16_t h );
-int32_t Lux_FFI_Object_Info( const uint32_t object_id, uint16_t * w, uint16_t * h, int32_t * x, int32_t * y );
+int32_t Lux_FFI_Object_Info(const uint32_t object_id, uint16_t * w, uint16_t * h, int32_t * x, int32_t * y , int32_t *z);
 int32_t Lux_FFI_Object_Effect( uint32_t object_id, uint32_t primary_colour, uint32_t secondary_colour, uint16_t rotation, uint16_t scale_xaxis, uint16_t scale_yaxis, uint8_t flip_image, uint8_t style );
 int32_t Lux_FFI_Object_Replace( uint32_t object_id, uint8_t type, const char * sprite );
 int16_t Lux_FFI_Object_Flag( uint32_t object_id, uint8_t key, int16_t value );

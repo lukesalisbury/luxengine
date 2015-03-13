@@ -137,6 +137,13 @@ static cell pawnGraphicsDraw(AMX *amx, const cell *params)
 	new_object->position.w = params[6];
 	new_object->position.h = params[7];
 
+
+	if (  params[0] / sizeof(cell) == 9 )
+	{
+		int16_t r = (int16_t)params[9];
+		new_object->effects.rotation = r;
+	}
+
 	cell_colour colour;
 	colour.hex = elix::endian::host32(params[8]);
 	new_object->effects.primary_colour = colour.rgba;
@@ -352,14 +359,15 @@ static cell pawnObjectInfo(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 3 );
 
-	cell * xptr, * yptr;
+	cell * xptr, * yptr, * zptr;
 	uint16_t w;
 	uint16_t h;
 	int32_t y;
 	int32_t x;
+	int32_t z;
 	uint32_t object_id = params[1];
 
-	if ( Lux_FFI_Object_Info( object_id, &w, &h, &x, &y ) )
+	if ( Lux_FFI_Object_Info( object_id, &w, &h, &x, &y, &z ) )
 	{
 		xptr = amx_Address(amx, params[2]);
 		yptr = amx_Address(amx, params[3]);
@@ -370,16 +378,18 @@ static cell pawnObjectInfo(AMX *amx, const cell *params)
 		if ( yptr )
 			*yptr = h;
 
-		if (  params[0] / sizeof(cell)  == 5 )
+		if (  params[0] / sizeof(cell) == 6 )
 		{
 			xptr = amx_Address(amx, params[4]);
 			yptr = amx_Address(amx, params[5]);
+			zptr = amx_Address(amx, params[6]);
 
 			if ( xptr )
 				*xptr = x;
-
 			if ( yptr )
 				*yptr = y;
+			if ( zptr )
+				*zptr = z;
 		}
 		return 1;
 	}

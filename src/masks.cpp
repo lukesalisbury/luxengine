@@ -77,13 +77,14 @@ bool Lux_Mask_Free(Lux_Mask * mask)
 uint16_t Lux_Mask_GetValue(Lux_Mask * mask, uint16_t x, uint16_t y)
 {
 	uint32_t point = x + (mask->width * y);
-	if ( x > mask->width )
+	if ( x >= mask->width )
 	{
 		return 256;
 	}
 	if ( mask->length >= point )
 	{
-		return (uint16_t)mask->data[point];
+		uint8_t p = mask->data[point];
+		return (uint16_t)p;
 	}
 	return 256;
 }

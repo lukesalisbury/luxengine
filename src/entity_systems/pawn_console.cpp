@@ -37,6 +37,27 @@ static int debugmsg_putchar(void * dest, char ch)
 	return 0;
 }
 
+static int debugcons_putstr(void * dest,const char * str)
+{
+	std::string * a = (std::string *)dest;
+
+	a->append(str);
+
+	return 0;
+}
+
+static int debugcons_putchar(void * dest, char ch)
+{
+	std::string * a = (std::string *)dest;
+
+	a->append(1, ch);
+
+	return 0;
+}
+
+
+
+
 /**
  * @brief pawnConsoleLog
  * @param amx
@@ -45,22 +66,47 @@ static int debugmsg_putchar(void * dest, char ch)
  */
 static cell pawnConsoleLog(AMX *amx,const cell *params)
 {
-	cell *cstr;
-	AMX_FMTINFO info;
+	if ( lux::display->show_debug )
+	{
+		std::string msg = "";
+		cell *cstr;
+		AMX_FMTINFO info;
 
-	memset( &info, 0, sizeof info );
-	info.params = params+2;
-	info.numparams = (int)(params[0]/sizeof(cell))-1;
-	info.skip = 0;
-	info.length = INT_MAX;
-	info.f_putstr = cons_putstr;
-	info.f_putchar = cons_putchar;
+		memset( &info, 0, sizeof info );
+		info.params = params+2;
+		info.numparams = (int)(params[0]/sizeof(cell))-1;
+		info.skip = 0;
+		info.length = INT_MAX;
+		info.user = &msg;
 
-	cstr = amx_Address(amx, params[1]);
-	cons_putstr(NULL, "Game: ");
-	amx_printstring(amx,cstr,&info);
-	cons_putstr(NULL, "\n");
-	fflush(stdout);
+		cstr = amx_Address(amx, params[1]);
+		info.f_putstr = debugcons_putstr;
+		info.f_putchar = debugcons_putchar;
+
+		amx_printstring(amx,cstr,&info);
+
+		MessagePush(msg.c_str() );
+	}
+	else
+	{
+		cell *cstr;
+		AMX_FMTINFO info;
+
+		memset( &info, 0, sizeof info );
+		info.params = params+2;
+		info.numparams = (int)(params[0]/sizeof(cell))-1;
+		info.skip = 0;
+		info.length = INT_MAX;
+
+
+		cstr = amx_Address(amx, params[1]);
+		info.f_putstr = cons_putstr;
+		info.f_putchar = cons_putchar;
+		cons_putstr(NULL, "Game: ");
+		amx_printstring(amx,cstr,&info);
+		cons_putstr(NULL, "\n");
+		fflush(stdout);
+	}
 	return 0;
 }
 

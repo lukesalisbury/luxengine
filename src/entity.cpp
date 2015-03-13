@@ -79,8 +79,6 @@ void Entity::InitialSetup( std::string id )
 {
 	this->id = id;
 	this->hashid = elix::string::Hash( this->id );
-	//this->AddSetting("id", this->id);
-	this->AddSetting("id", this->hashid);
 
 	this->_used_collisions = 7;
 	for ( uint8_t n = 0; n < this->_used_collisions; n++)

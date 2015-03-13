@@ -120,9 +120,9 @@ void Lux_SDL2_OpenMessageWindow(  )
 		}
 		else
 		{
-			SDL_RendererInfo info;
-			SDL_GetRendererInfo(debug_renderer, &info);
-			SDL2_OuputRenderingInfo( &info );
+//			SDL_RendererInfo info;
+//			SDL_GetRendererInfo(debug_renderer, &info);
+//			SDL2_OuputRenderingInfo( &info );
 
 			Lux_SDL2_LoadFont( debug_renderer, debug_font );
 		}

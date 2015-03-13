@@ -54,5 +54,14 @@ else
 endif
 
 
+#FINALOUTPUT = libmokoi.dll
+
+#$(FINALOUTPUT): $(PLATFORM_OBJECTS)
+#	@echo --------------------------------
+#	@echo -----$(FINALOUTPUT)
+#	@-$(MKDIR) $(BUILDDIR)
+#	@$(CPP) $(OBJ) -o $(BUILDDIR)/$(FINALOUTPUT) $(COMPILER_LIBS) -shared
+
+
 $(OBJDIR)/lux.res: $(RES_SOURCE)
 	@windres -i $(RES_SOURCE) --input-format=rc -o $@ -O coff -F $(RES_OUTPUT)
