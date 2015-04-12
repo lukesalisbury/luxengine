@@ -73,6 +73,7 @@ void SDL2_SystemInfo()
 	}
 
 	std::cout << "CPU: " << SDL_GetCPUCount() << std::endl;
+	/*
 	std::cout << "CPU Features" << (SDL_HasRDTSC()? " RDTSC" : "");
 	std::cout << (SDL_HasAltiVec()? " AltiVec" : "");
 	std::cout << (SDL_HasMMX()? " MMX" : "");
@@ -83,6 +84,7 @@ void SDL2_SystemInfo()
 	std::cout << (SDL_HasSSE41()? " SSE4.1" : "");
 	std::cout << (SDL_HasSSE42()? " SSE4.2" : "");
 	std::cout << (SDL_HasAVX()? " AVX" : "") << std::endl;
+	*/
 	std::cout << "System RAM " << SDL_GetSystemRAM() << "MB" << std::endl;
 
 }
