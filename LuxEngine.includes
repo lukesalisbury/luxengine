@@ -42,3 +42,6 @@ src/libs/Box2D/Common
 src/libs/Box2D/Dynamics/Contacts
 src/scripting/amx4
 src/scripting/squirrel
+makefiles
+src/platform/3ds
+C:\dev\devkitpro\libctru\include

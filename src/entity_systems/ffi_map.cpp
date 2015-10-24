@@ -41,12 +41,12 @@ uint8_t Lux_FFI_Map_Set( const uint32_t map_ident, const int32_t offset_x, const
 }
 
 /**
- * @brief Lux_FFI_Map_Get_Ident
+ * @brief Lux_FFI_Map_Find_Ident
  * @param map_file
  * @param create_new
  * @return
  */
-uint32_t Lux_FFI_Map_Get_Ident( const char * map_file, uint8_t create_new )
+uint32_t Lux_FFI_Map_Find_Ident( const char * map_file )
 {
 	uint32_t map_ident = 0;
 	if ( lux::game_system )

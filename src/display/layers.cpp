@@ -15,7 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "misc_functions.h"
 #include "game_config.h"
 
-#include "gles/gles.hpp"
+//#include "gles/gles.hpp"
 
 #define MAX_LAYER_OBJECTS 20480
 

@@ -39,7 +39,8 @@ static cell pawnFunctionIdent(AMX *amx,const cell *params)
 {
 	char name[64];
 	cell *cstr;
-	int32_t index, err, len;
+	int index, len;
+	int32_t err;
 
 	cstr = amx_Address(amx, params[1]);
 

@@ -143,7 +143,7 @@ void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapOb
 			Entity * current_entity = lux::entities->NewEntity(object->ident, entity_file_name, ( map ? map->Ident() : 0 ) );
 			if ( current_entity )
 			{
-				current_entity->AddSetting("global", 0 );
+				current_entity->AddSetting("global", (int32_t)0 );
 
 				cell_colour temporary_colour_value;
 
@@ -158,9 +158,9 @@ void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapOb
 					if ( tinyxml2::QueryStringAttribute(setting_element, "value", attrvalue) == tinyxml2::XML_SUCCESS && tinyxml2::QueryStringAttribute(setting_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
 					{
 						if ( attrvalue.compare("true") == 0 )
-							current_entity->AddSetting( attrkey, 1 );
+							current_entity->AddSetting( attrkey, (int32_t)1 );
 						else if ( attrvalue.compare("false") == 0 )
-							current_entity->AddSetting( attrkey, 0 );
+							current_entity->AddSetting( attrkey, (int32_t)0 );
 						else if ( elix::string::HasPrefix(attrkey, "object-colour-") )
 							current_entity->AddSetting( attrkey, Lux_Hex2Int(attrvalue) );
 						else
@@ -206,7 +206,7 @@ void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tiny
 		current_entity = lux::entities->NewEntity( object_ident, entity_file_name, 0 );
 		if ( current_entity )
 		{
-			current_entity->AddSetting( "global", 1 );
+			current_entity->AddSetting( "global", (uint32_t)1 );
 
 			for ( tinyxml2::XMLElement * setting_element = object_element->FirstChildElement("setting"); setting_element; setting_element = setting_element->NextSiblingElement("setting") )
 			{
@@ -215,9 +215,9 @@ void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tiny
 				if ( tinyxml2::QueryStringAttribute(setting_element, "value", attrvalue) == tinyxml2::XML_SUCCESS && tinyxml2::QueryStringAttribute(setting_element, "key", attrkey) == tinyxml2::XML_SUCCESS )
 				{
 					if ( attrvalue.compare("true") == 0 )
-						current_entity->AddSetting( attrkey, 1 );
+						current_entity->AddSetting( attrkey, (uint32_t)1 );
 					else if ( attrvalue.compare("false") == 0 )
-						current_entity->AddSetting( attrkey, 0 );
+						current_entity->AddSetting( attrkey, (uint32_t)0 );
 					else if ( elix::string::HasPrefix(attrkey, "object-colour-") )
 						current_entity->AddSetting( attrkey, Lux_Hex2Int(attrvalue) );
 					else
@@ -241,10 +241,10 @@ void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tiny
 					current_entity->y = MAKE_INT_FIXED(position_element->IntAttribute( "y" ));
 					current_entity->z_layer = this->ReadZ( position_element );
 
-					current_entity->AddSetting("object-width", position_element->IntAttribute( "w" ) );
-					current_entity->AddSetting("object-height", position_element->IntAttribute( "h" ) );
+					current_entity->AddSetting("object-width", (uint32_t) position_element->IntAttribute( "w" ) );
+					current_entity->AddSetting("object-height", (uint32_t) position_element->IntAttribute( "h" ) );
 
-					current_entity->AddSetting("object-flip", this->ReadObjectFlipmode(position_element) );
+					current_entity->AddSetting("object-flip", (uint32_t) this->ReadObjectFlipmode(position_element) );
 				}
 
 			}

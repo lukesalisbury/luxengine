@@ -187,14 +187,14 @@ static cell pawnMapGetIdent(AMX *amx, const cell *params)
 	uint32_t ident = 0;
 	if ( params[2] == 1 )
 	{
-		ident = Lux_FFI_Map_Get_Ident( map_file.c_str() );
+		ident = Lux_FFI_Map_Create( map_file.c_str() );
 	}
 	else if ( params[2] == -1 )
 	{
 		ident = Lux_FFI_Map_Find_Ident( map_file.c_str() );
 		if ( ident == 0)
 		{
-			ident = Lux_FFI_Map_Get_Ident( map_file.c_str() );
+			ident = Lux_FFI_Map_Create( map_file.c_str() );
 		}
 	}
 	else

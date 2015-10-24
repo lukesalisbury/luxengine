@@ -35,6 +35,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#include <sys/socket.h>
 	#include <netdb.h>
 	#include <netinet/in.h>
+#elif __3DS__
+	#include <3ds.h>
+	#include <sys/socket.h>
+	#include <netdb.h>
+	#include <netinet/in.h>
 #elif defined (__GAMECUBE__) || defined (__WII__)
 	#include <ogcsys.h>
 	#include <gccore.h>

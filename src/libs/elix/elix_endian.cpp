@@ -24,6 +24,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #elif defined (__NDS__)
 	#include <sys/socket.h>
 	#define ENDIAN_NETWORK 1
+#elif defined (__3DS__)
+	#include <arpa/inet.h>
+	#include <sys/socket.h>
+	#define ENDIAN_NETWORK 1
 #elif defined (DREAMCAST)
 	#include <endian.h>
 	#define ENDIAN_NETWORK 1

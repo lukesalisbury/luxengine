@@ -231,12 +231,13 @@ typedef int (AMXAPI *AMX_IDLE)(struct tagAMX *amx, int AMXAPI Exec(struct tagAMX
   #define AMX_NO_ALIGN
 #endif
 
-#if defined __GNUC__
-  #define PACKED        __attribute__((packed))
-#else
-  #define PACKED
+#if !defined PACKED
+	#if defined __GNUC__
+	  #define PACKED        __attribute__((packed))
+	#else
+	  #define PACKED
+	#endif
 #endif
-
 #if !defined AMX_NO_ALIGN
   #if defined __LINUX__ || defined __FreeBSD__ || defined __APPLE__
 	#pragma pack(1)         /* structures must be packed (byte-aligned) */

@@ -57,6 +57,7 @@ namespace lux {
 /* Engine Class */
 LuxEngine::LuxEngine( const void * window_ptr )
 {
+	#ifdef SDL2
 	elix::program::Set( PROGRAM_NAME, PROGRAM_VERSION_STABLE, PROGRAM_DOCUMENTS, "/" );
 
 	this->default_player = 1;
@@ -64,7 +65,6 @@ LuxEngine::LuxEngine( const void * window_ptr )
 	this->game_fps = 0;
 	this->game_fps_time = 0;
 	this->game_fps_last = 0;
-
 
 	lux::core = new CoreSystem( window_ptr );
 	lux::global_config = new Config();
@@ -78,8 +78,9 @@ LuxEngine::LuxEngine( const void * window_ptr )
 		this->FatalError("Couldn't init Core.");
 		this->state = GAMEERROR;
 	}
-
+	#endif
 }
+
 
 LuxEngine::LuxEngine( std::string executable )
 {

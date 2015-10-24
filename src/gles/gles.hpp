@@ -28,20 +28,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 
 
-enum {
-	SHADER_DEFAULT,
-	SHADER_GLOW,
-	SHADER_NEGATIVE,
-	SHADER_REPLACE,
-	SHADER_GREY,
-	SHADER_CUSTOM1,
-	SHADER_CUSTOM2,
-	SHADER_CUSTOM3,
-	SHADER_CUSTOM4,
-	SHADER_CUSTOM5,
-	SHADER_CUSTOM6,
-	NUM_SHADERS
-};
+
 
 struct Texture {
 	GLuint pointer;

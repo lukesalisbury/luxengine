@@ -20,6 +20,7 @@ int32_t Lux_FFI_Map_Offset_Get( uint8_t axis );
 
 uint8_t Lux_FFI_Map_Set( const uint32_t map_ident, const int32_t offset_x, const int32_t offset_y );
 uint32_t Lux_FFI_Map_Find_Ident( const char * map_file );
+uint32_t Lux_FFI_Map_Get_Ident(const char * map_file);
 uint32_t Lux_FFI_Map_Create( const char * map_file );
 uint8_t Lux_FFI_Map_Reset();
 uint8_t Lux_FFI_Map_Snapshot();
