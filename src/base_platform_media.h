@@ -12,14 +12,18 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define BASE_PLATFORM_MEDIA_H
 
 #include "sprite_sheet.h"
+
 class BasePlatformMedia
 {
-		BasePlatformMedia() {};
-		virtual ~BasePlatformMedia() {};
+		BasePlatformMedia() {}
+		~BasePlatformMedia() {}
 	public:
-		virtual void Init(GraphicSystem graphic) = 0;
-		virtual void Free() = 0;
-		virtual LuxSprite * GetInputImage( InputDevice device, uint32_t device_number, int32_t symbol ) = 0;
+		void Init(GraphicSystem graphic) { }
+		void Free() { }
+		LuxSprite * GetInputImage( InputDevice device, uint32_t device_number, int32_t symbol ) {
+			return NULL;
+		}
+
 };
 
 

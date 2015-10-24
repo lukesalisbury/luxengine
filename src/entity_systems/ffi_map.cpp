@@ -12,8 +12,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_map.h"
 
 #include "game_system.h"
-#include "elix_endian.hpp"
-#include "display.h"
+#include "elix/elix_endian.hpp"
+#include "display/display.h"
 
 /**
  * @brief Lux_FFI_Map_Set
@@ -24,13 +24,13 @@ Permission is granted to anyone to use this software for any purpose, including 
  */
 uint8_t Lux_FFI_Map_Set( const uint32_t map_ident, const int32_t offset_x, const int32_t offset_y )
 {
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		MokoiMap * map = lux::gamesystem->GetMap( map_ident );
+		MokoiMap * map = lux::game_system->GetMap( map_ident );
 
 		if ( map )
 		{
-			if ( lux::gamesystem->SetMap(map, (fixed)offset_x, (fixed)offset_y, (fixed)-1 ) > 0 )
+			if ( lux::game_system->SetMap(map, (fixed)offset_x, (fixed)offset_y, (fixed)-1 ) > 0 )
 			{
 				return true;
 			}
@@ -49,19 +49,33 @@ uint8_t Lux_FFI_Map_Set( const uint32_t map_ident, const int32_t offset_x, const
 uint32_t Lux_FFI_Map_Get_Ident( const char * map_file, uint8_t create_new )
 {
 	uint32_t map_ident = 0;
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
 		MokoiMap * map = NULL;
 
+		map = lux::game_system->FindMap( map_file );
 
-		if ( create_new )
+		if ( map )
 		{
-			map = lux::gamesystem->CreateMap( map_file, true, false, 0, 0 );
+			map_ident = map->Ident();
 		}
-		else
-		{
-			map = lux::gamesystem->FindMap( map_file );
-		}
+
+	}
+	return map_ident;
+
+}
+/**
+ * @brief Lux_FFI_Map_Create
+ * @param map_file
+ * @return
+ */
+uint32_t Lux_FFI_Map_Create( const char * map_file )
+{
+	uint32_t map_ident = 0;
+	if ( lux::game_system )
+	{
+		MokoiMap * map = NULL;
+		map = lux::game_system->CreateMap( map_file, true, false, 0, 0 );
 
 		if ( map )
 		{
@@ -79,9 +93,9 @@ uint32_t Lux_FFI_Map_Get_Ident( const char * map_file, uint8_t create_new )
  */
 uint8_t Lux_FFI_Map_Reset()
 {
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		MokoiMap * map = lux::gamesystem->GetActiveMap();
+		MokoiMap * map = lux::game_system->GetActiveMap();
 		if ( map )
 		{
 			if ( map->HasSnapshot() )
@@ -103,9 +117,9 @@ uint8_t Lux_FFI_Map_Reset()
  */
 uint8_t Lux_FFI_Map_Snapshot()
 {
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		MokoiMap * map = lux::gamesystem->GetActiveMap();
+		MokoiMap * map = lux::game_system->GetActiveMap();
 		if ( map )
 		{
 			return map->SaveSnapshot();
@@ -121,9 +135,9 @@ uint8_t Lux_FFI_Map_Snapshot()
  */
 uint8_t Lux_FFI_Map_Delete( const uint32_t map_ident )
 {
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		return lux::gamesystem->DeleteMap(map_ident);
+		return lux::game_system->DeleteMap(map_ident);
 	}
 	return false;
 }
@@ -135,9 +149,9 @@ uint8_t Lux_FFI_Map_Delete( const uint32_t map_ident )
  */
 void Lux_FFI_Map_Offset_Set( int32_t x, int32_t y )
 {
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		lux::gamesystem->SetPosition( x, y, -1);
+		lux::game_system->SetPosition( x, y, -1);
 	}
 }
 
@@ -148,9 +162,9 @@ void Lux_FFI_Map_Offset_Set( int32_t x, int32_t y )
  */
 int32_t Lux_FFI_Map_Offset_Get( uint8_t axis )
 {
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		return lux::gamesystem->GetPosition(axis);
+		return lux::game_system->GetPosition(axis);
 	}
 	return 0xFFFFFFFF;
 }
@@ -166,10 +180,10 @@ int32_t Lux_FFI_Map_Offset_Get( uint8_t axis )
 uint32_t Lux_FFI_Map_Edit_New( const char * map_file, const uint32_t section_hash, uint32_t width, uint32_t height)
 {
 	uint32_t map_ident = 0;
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
 		MokoiMap * map = NULL;
-		map = lux::gamesystem->CreateMap( std::string(map_file), false, true, width, height );
+		map = lux::game_system->CreateMap( std::string(map_file), false, true, width, height );
 
 		if ( map )
 		{
@@ -186,9 +200,9 @@ uint32_t Lux_FFI_Map_Edit_New( const char * map_file, const uint32_t section_has
  */
 uint8_t Lux_FFI_Map_Edit_Save( const uint32_t map_ident )
 {
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		MokoiMap * map = lux::gamesystem->GetMap( map_ident );
+		MokoiMap * map = lux::game_system->GetMap( map_ident );
 
 		if ( map )
 		{
@@ -219,9 +233,9 @@ uint32_t Lux_FFI_Map_Edit_Object_Create( const uint32_t map_ident, const uint8_t
 	MokoiMap * map = NULL;
 
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		map = lux::gamesystem->GetMap( map_ident );
+		map = lux::game_system->GetMap( map_ident );
 		if ( map )
 		{
 			map_object = new MapObject( type );
@@ -254,9 +268,9 @@ int32_t Lux_FFI_Map_Edit_Object_Postion( const uint32_t map_ident, uint32_t obje
 	MokoiMap * map = NULL;
 
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		map = lux::gamesystem->GetMap( map_ident );
+		map = lux::game_system->GetMap( map_ident );
 		if ( map )
 		{
 			map_object = map->GetObject( object_id );
@@ -308,9 +322,9 @@ int32_t Lux_FFI_Map_Edit_Object_Effect( const uint32_t map_ident, uint32_t objec
 	MokoiMap * map = NULL;
 
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		map = lux::gamesystem->GetMap( map_ident );
+		map = lux::game_system->GetMap( map_ident );
 		if ( map )
 		{
 			cell_colour colour;
@@ -346,9 +360,9 @@ int32_t Lux_FFI_Map_Edit_Object_Replace(const uint32_t map_ident, uint32_t objec
 	MokoiMap * map = NULL;
 
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		map = lux::gamesystem->GetMap( map_ident );
+		map = lux::game_system->GetMap( map_ident );
 		if ( map )
 		{
 			// Check if we are really changing object
@@ -391,9 +405,9 @@ int16_t Lux_FFI_Map_Edit_Object_Flag( const uint32_t map_ident, const uint32_t o
 	MokoiMap * map = NULL;
 
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		map = lux::gamesystem->GetMap( map_ident );
+		map = lux::game_system->GetMap( map_ident );
 		if ( map )
 		{
 			switch ( key )
@@ -441,9 +455,9 @@ uint8_t Lux_FFI_Map_Edit_Object_Delete( const uint32_t map_ident, const uint32_t
 {
 	MokoiMap * map = NULL;
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		map = lux::gamesystem->GetMap( map_ident );
+		map = lux::game_system->GetMap( map_ident );
 		if ( map )
 		{
 			map->RemoveObject( object_id );

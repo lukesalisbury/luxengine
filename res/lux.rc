@@ -4,23 +4,23 @@ A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "res\\mokoi-gaming.ico"
 GAMEICON ICON MOVEABLE PURE "res\\mokoi.game.ico"
 
 1 VERSIONINFO
-FILEVERSION 0,9,6,1000
-PRODUCTVERSION 0,9,6,1000
+FILEVERSION 0,9,7,1000
+PRODUCTVERSION 0,9,7,1000
 FILETYPE VFT_APP
 {
 	BLOCK "StringFileInfo"
 	{
 		BLOCK "0C0904E4"
 		{
-			VALUE "CompanyName", "Mokoi Gaming"
-			VALUE "FileVersion", "0.96"
-			VALUE "FileDescription", "Lux Engine - Mokoi Gaming"
+			VALUE "CompanyName", "Mokoi"
+			VALUE "FileVersion", "0.97"
+			VALUE "FileDescription", "Mokoi's Lux Engine"
 			VALUE "InternalName", "luxengine"
-			VALUE "LegalCopyright", "Mokoi Gaming"
+			VALUE "LegalCopyright", "Mokoi"
 			VALUE "LegalTrademarks", ""
 			VALUE "OriginalFilename", ""
 			VALUE "ProductName", "Lux Engine"
-			VALUE "ProductVersion", "0.96"
+			VALUE "ProductVersion", "0.97"
 		}
 	}
 BLOCK "VarFileInfo"

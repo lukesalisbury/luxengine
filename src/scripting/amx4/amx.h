@@ -52,7 +52,7 @@
   #endif
 #endif
 #if defined HAVE_STDINT_H
-  #include "elix_intdef.h"
+  #include "elix/elix_intdef.h"
 #elif defined HAVE_INTTYPES_H
   #include <inttypes.h>
 #else

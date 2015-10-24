@@ -15,13 +15,13 @@ class MapObject;
 
 #include "luxengine.h"
 #include "sprite_types.h"
-#include "display_types.h"
+#include "display/display_types.h"
 #include "object_effect.h"
 #include "lux_canvas.h"
 #include "lux_polygon.h"
 #include "lux_virtual_sprite.h"
 
-#include "Box2D/Box2D.h"
+#include "libs/Box2D/Box2D.h"
 
 #define MAP_OBJECT_PAIR(a,b) std::pair<uint32_t, MapObject *>(a,b)
 

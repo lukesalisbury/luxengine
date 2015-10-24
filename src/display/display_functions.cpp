@@ -10,16 +10,21 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "luxengine.h"
 #include "mokoi_game.h"
-#include "elix_string.hpp"
-#include "elix_endian.hpp"
+#include "elix/elix_string.hpp"
+#include "elix/elix_endian.hpp"
 #include <sstream>
 #include <algorithm>
 #ifndef toupper
 	#include <ctype.h>
 #endif
 
-
-uint8_t Lux_HexCharToUint8( char a, char b )
+/**
+ * @brief Lux_HexCharToUint8
+ * @param a
+ * @param b
+ * @return
+ */
+inline uint8_t Lux_HexCharToUint8( char a, char b )
 {
 	if ( (a >= 'A' && a <= 'F') || (b >= 'a' && b <= 'f') )
 		a -= 55;

@@ -17,7 +17,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 AudioSystem::AudioSystem ( )
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Audio System" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Audio System" << std::endl;
 	mm_ds_system sys;
 	sys.mod_count 			= 0;
 	sys.samp_count			= 0;
@@ -82,7 +82,7 @@ int AudioSystem::SetEffectsVolume( int volume )
 	return 0;
 }
 
-void AudioSystem::PauseAll()
+void AudioSystem::Pause()
 {
 
 }

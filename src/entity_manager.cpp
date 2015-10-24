@@ -14,8 +14,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "entity_manager.h"
 #include "game_system.h"
-#include "elix_string.hpp"
-#include "display.h"
+#include "elix/elix_string.hpp"
+#include "display/display.h"
 #include "entity_system.h"
 #include "entity_systems/pawn.inc"
 
@@ -67,16 +67,16 @@ Entity * EntityManager::NewEntity(std::string id, std::string base, uint32_t map
 		{
 			if ( map_id )
 			{
-				MokoiMap * map = lux::gamesystem->GetMap(map_id);
+				MokoiMap * map = lux::game_system->GetMap(map_id);
 				if ( map && map->entities )
 				{
 					map->entities->Append(new_entity);
 					return new_entity;
 				}
 			}
-			else if ( lux::gamesystem->GetEntities() )
+			else if ( lux::game_system->GetEntities() )
 			{
-				lux::gamesystem->GetEntities()->Append(new_entity);
+				lux::game_system->GetEntities()->Append(new_entity);
 				return new_entity;
 			}
 
@@ -90,9 +90,9 @@ Entity * EntityManager::GetEntity(uint32_t entity_id )
 {
 	if ( entity_id == entity_maphash )
 	{
-		if ( lux::gamesystem->active_map != NULL )
-			if ( lux::gamesystem->active_map->entities != NULL)
-				return lux::gamesystem->active_map->entities->parent;
+		if ( lux::game_system->active_map != NULL )
+			if ( lux::game_system->active_map->entities != NULL)
+				return lux::game_system->active_map->entities->parent;
 			else
 				return NULL;
 		else
@@ -100,8 +100,8 @@ Entity * EntityManager::GetEntity(uint32_t entity_id )
 	}
 	else if ( entity_id == entity_mainhash )
 	{
-		if ( lux::gamesystem != NULL )
-			return lux::gamesystem->GetEntities()->parent;
+		if ( lux::game_system != NULL )
+			return lux::game_system->GetEntities()->parent;
 		else
 			return NULL;
 	}

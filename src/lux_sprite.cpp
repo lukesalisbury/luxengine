@@ -9,9 +9,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "luxengine.h"
-#include "display.h"
+#include "display/display.h"
 #include "mokoi_game.h"
-#include "elix_endian.hpp"
+#include "elix/elix_endian.hpp"
 
 ObjectEffect default_fx( (LuxColour){255,255,255,255}, (LuxColour){255,255,255,255} );
 
@@ -88,7 +88,7 @@ void LuxSprite::FreeData(  )
 	else
 	{
 		if ( this->data )
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "LuxSprite Memory Leak" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "LuxSprite Memory Leak" << std::endl;
 	}
 }
 

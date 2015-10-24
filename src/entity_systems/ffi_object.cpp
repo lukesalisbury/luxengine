@@ -12,9 +12,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_object.h"
 #include "ffi_functions.h"
 
-#include "display.h"
+#include "display/display.h"
 #include "game_system.h"
-#include "elix_endian.hpp"
+#include "elix/elix_endian.hpp"
 
 
 /** Display Object Functions */
@@ -38,7 +38,7 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 	MapObject * map_object = NULL;
 	uint32_t ident = 0;
 
-	if ( lux::gamesystem->active_map )
+	if ( lux::game_system->active_map )
 	{
 		map_object = new MapObject( type );
 
@@ -64,9 +64,9 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 			map_object->sprite.assign( sprite );
 
 		if ( global )
-			ident = lux::gamesystem->GetObjects()->AddObject(map_object, true);
+			ident = lux::game_system->GetObjects()->AddObject(map_object, true);
 		else
-			ident = lux::gamesystem->active_map->AddObject(map_object, true);
+			ident = lux::game_system->active_map->AddObject(map_object, true);
 	}
 	return ident;
 
@@ -297,12 +297,12 @@ int16_t Lux_FFI_Object_Flag( uint32_t object_id, uint8_t key, int16_t value )
  */
 uint8_t Lux_FFI_Object_Delete( uint32_t object_id )
 {
-	if ( lux::gamesystem->active_map )
+	if ( lux::game_system->active_map )
 	{
 		if ( (object_id & OBJECT_GLOBAL_VALUE) == OBJECT_GLOBAL_VALUE )
-			return lux::gamesystem->GetObjects()->RemoveObject( object_id );
-		else if (lux::gamesystem->active_map)
-			return lux::gamesystem->active_map->RemoveObject( object_id );
+			return lux::game_system->GetObjects()->RemoveObject( object_id );
+		else if (lux::game_system->active_map)
+			return lux::game_system->active_map->RemoveObject( object_id );
 	}
 	return 0;
 }

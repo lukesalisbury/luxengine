@@ -13,14 +13,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #define SYSTEM_MESSAGE_ERROR 1
 #define SYSTEM_MESSAGE_WARNING 2
-#define SYSTEM_MESSAGE_DEBUG 3
-#define SYSTEM_MESSAGE_INFO 4
-#define SYSTEM_MESSAGE_LOG 5
+#define SYSTEM_MESSAGE_VISUAL_WARNING 3
+#define SYSTEM_MESSAGE_DEBUG 4
+#define SYSTEM_MESSAGE_INFO 5
+#define SYSTEM_MESSAGE_LOG 6
 
 
 #include "luxengine.h"
 #include "lux_types.h"
-#include "display.h"
+#include "display/display.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -28,9 +29,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 class BaseCoreSystem
 {
 public:
-	BaseCoreSystem( const void * window_ptr ) {};
-	BaseCoreSystem() {};
-	virtual ~BaseCoreSystem() {};
+	BaseCoreSystem( const void * window_ptr ) {}
+	BaseCoreSystem() {}
+	virtual ~BaseCoreSystem() {}
 
 protected:
 	bool good;

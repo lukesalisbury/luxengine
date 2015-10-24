@@ -63,13 +63,13 @@ class Entity
 		/* Collision Data */
 		int32_t _used_collisions;
 		CollisionObject _collisions[16];
-		std::vector<CollisionResult*> _hits;
+		std::vector<CollisionResult> _hits;
 		int32_t AddCollision(int32_t rect, int32_t x, int32_t y, int32_t w, int32_t h, int32_t type );
 		int32_t CheckCollision(int32_t rect, LuxRect otherRect);
 		void SetCollisionCount(int32_t count);
 		int32_t GetHits( int32_t type = -1 );
 		int32_t GetHitsCount();
-		CollisionResult * GetCurrentHit();
+		CollisionResult GetCurrentHit();
 		void UpdateMapCollsion();
 		void SetMapCollsion();
 		void ClearMapCollsion();

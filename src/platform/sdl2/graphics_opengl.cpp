@@ -13,13 +13,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "luxengine.h"
 #include "map_object.h"
 #include "mokoi_game.h"
-#include "elix_png.hpp"
+#include "elix/elix_png.hpp"
 #include "game_config.h"
 #include "core.h"
 
-#include "display_types.h"
+#include "display/display_types.h"
 #include "graphics_opengl.h"
-#include "graphics_system.h"
+#include "display/graphics_system.h"
 #include "gles/gles.hpp"
 #include "gles/gles_display.hpp"
 #include "gles/gl_camera.hpp"
@@ -133,8 +133,7 @@ void opengl_graphic_create_fbotexture( Texture & fbo )
  @ fullscreen:
  - Returns true if successfull
  */
-void SDL2_OuputRenderingInfo( SDL_RendererInfo * info );
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t bpp )
 {
 	int window_width = width;
 	int window_height = height;
@@ -147,12 +146,11 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	/* Set Init Flags */
 	native_window_flags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL;
 
-	if ( fullscreen )
+	if ( lux::config->GetBoolean("display.fullscreen") )
 		native_window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
 	native_render_flags = SDL_RENDERER_ACCELERATED;
-	native_window_title = title;
-
+	native_window_title = lux::config->GetString("window.title") + " [NativeOpenGL]";
 	//native_screen_match = lux::config->GetBoolean("screen.matchdisplay");
 
 	if ( width > height )
@@ -177,7 +175,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	native_context = SDL_GL_CreateContext(native_window);
 	if ( !native_context )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
 
@@ -187,10 +185,10 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 
 	SDL_GL_MakeCurrent(native_window, native_context);
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Renderer: " << glGetString(GL_RENDERER) << " " << glGetString(GL_VERSION) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "OpenGL Feature: ";
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << ( SDL_GL_ExtensionSupported((char *)"GL_ARB_texture_non_power_of_two") ? "NPOT" : "POT");
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << ( SDL_GL_ExtensionSupported((char *)"GL_EXT_framebuffer_object") ? " FBO" : "") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "OpenGL Renderer: " << glGetString(GL_RENDERER) << " " << glGetString(GL_VERSION) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "OpenGL Feature: ";
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << ( SDL_GL_ExtensionSupported((char *)"GL_ARB_texture_non_power_of_two") ? "NPOT" : "POT");
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << ( SDL_GL_ExtensionSupported((char *)"GL_EXT_framebuffer_object") ? " FBO" : "") << std::endl;
 
 
 	native_graphics_dimension.w = width;

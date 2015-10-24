@@ -14,8 +14,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 class Widget;
 
 #include "luxengine.h"
-#include "gui_types.h"
-#include "css.h"
+#include "gui/gui_types.h"
+#include "gui/css.h"
 #include "object_effect.h"
 #include "lux_sprite.h"
 #include "sprite_sheet.h"
@@ -103,6 +103,8 @@ class Widget
 
 		void * GetData() { return this->data; }
 		void SetData(void * data) { this->data = data; }
+
+		void SetIcon(LuxSprite * data) { this->data = (void *)data; }
 
 		bool SendEvent(int32_t event_code);
 

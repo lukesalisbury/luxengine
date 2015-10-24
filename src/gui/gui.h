@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define _GUI_H_
 
 #include "luxengine.h"
-#include "display.h"
+#include "display/display.h"
 #include "gui_types.h"
 #include "widget.h"
 #include "player.h"

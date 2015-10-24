@@ -10,8 +10,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 
 #include "engine.h"
-#include "elix_string.hpp"
-#include "display.h"
+#include "elix/elix_string.hpp"
+#include "display/display.h"
 #include "mokoi_game.h"
 #include "map_object.h"
 #include "masks.h"

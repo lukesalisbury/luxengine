@@ -11,16 +11,16 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "engine.h"
 #include "core.h"
-#include "gui.h"
+#include "gui/gui.h"
 #include "game_config.h"
 #include "audio.h"
-#include "display.h"
+#include "display/display.h"
 #include "game_system.h"
 #include "entity_manager.h"
 #include "misc_functions.h"
 #include "mokoi_game.h"
-#include "elix_path.hpp"
-#include "elix_program.hpp"
+#include "elix/elix_path.hpp"
+#include "elix/elix_program.hpp"
 #include <algorithm>
 #include "save_system.h"
 
@@ -32,7 +32,6 @@ namespace colour {
 	LuxColour blue = {0, 0, 255, 255};
 	LuxColour yellow = {255, 255, 0, 255};
 	LuxColour grey = {178,178,178,255};
-
 }
 
 namespace lux {
@@ -43,12 +42,11 @@ namespace lux {
 	GameConfig * config = NULL;
 	AudioSystem * audio = NULL;
 	DisplaySystem * display = NULL;
-	GameSystem * gamesystem = NULL;
+	GameSystem * game_system = NULL;
 	EntityManager * entities = NULL;
 	MokoiGame * game_data = NULL;
 	EntitySystem * entity_system = NULL;
 	PlatformMedia * media = NULL;
-
 
 	GameSystem * oldgame = NULL;
 	namespace screen {
@@ -70,7 +68,6 @@ LuxEngine::LuxEngine( const void * window_ptr )
 
 	lux::core = new CoreSystem( window_ptr );
 	lux::global_config = new Config();
-	lux::media = new PlatformMedia();
 
 	if ( lux::core->Good() )
 	{
@@ -99,10 +96,9 @@ LuxEngine::LuxEngine( std::string executable )
 
 	lux::core = new CoreSystem();
 	lux::global_config = new Config();
-	lux::media = new PlatformMedia();
 
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, PROGRAM_NAME" - Version "PROGRAM_VERSION" Log" );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, PROGRAM_NAME" - Version "PROGRAM_VERSION" Log" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "-------------------------------------" );
 
 	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, PROGRAM_NAME" - Version "PROGRAM_VERSION" Error Log" );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, "-------------------------------------" );
@@ -111,23 +107,21 @@ LuxEngine::LuxEngine( std::string executable )
 	{
 		base_directory = elix::path::GetBase( executable, true );
 
-		lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Program Location: " + executable );
+		lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "Program Location: " + executable );
 	}
 
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Base Directory: " + base_directory );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
-	/*
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User: " + elix::directory::User("test", false, "test") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "User Documents: " + elix::directory::Documents( false ) );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "\t\t" + elix::directory::Documents( false, "test.txt") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Global Documents: " + elix::directory::Documents( true) );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "\t\t" + elix::directory::Documents( true, "test.txt") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Cache: " + elix::directory::Cache("")  );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "Resources: " + elix::directory::Resources("") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "\t\t" + elix::directory::Resources("examples") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "\t\t" + elix::directory::Resources("examples", "readme.txt") );
-	lux::core->SystemMessage( SYSTEM_MESSAGE_INFO, "-------------------------------------" );
-	*/
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "Base Directory: " + base_directory );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "-------------------------------------" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "User: " + elix::directory::User("test", false, "test") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "User Documents: " + elix::directory::Documents( false ) );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "\t\t" + elix::directory::Documents( false, "test.txt") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "Global Documents: " + elix::directory::Documents( true) );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "\t\t" + elix::directory::Documents( true, "test.txt") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "Cache: " + elix::directory::Cache("")  );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "Resources: " + elix::directory::Resources("") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "\t\t" + elix::directory::Resources("examples") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "\t\t" + elix::directory::Resources("examples", "readme.txt") );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "-------------------------------------" );
 
 	if ( lux::core->Good() )
 	{
@@ -152,16 +146,16 @@ LuxEngine::~LuxEngine()
 
 void LuxEngine::Close()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "<-----------------LuxEngine::Close-----------------|" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "<-----------------LuxEngine::Close-----------------|" << std::endl;
 	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "<-----------------LuxEngine::Close-----------------|" << std::endl;
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		lux::gamesystem->Close();
+		lux::game_system->Close();
 	}
 
 	NULLIFY(lux::entities);
-	NULLIFY(lux::gamesystem);
+	NULLIFY(lux::game_system);
 	NULLIFY(lux::audio);
 	NULLIFY(lux::gui);
 	NULLIFY(lux::display);
@@ -176,20 +170,24 @@ void LuxEngine::Close()
 bool LuxEngine::Start()
 {
 	if ( this->state == GAMEERROR )
-	{
 		return false;
-	}
+
 	return this->Start( lux::global_config->GetString("project.file") );
 }
 
+/**
+ * @brief LuxEngine::Start
+ * @param project_file
+ * @return
+ */
 bool LuxEngine::Start( std::string project_file )
 {
 	if ( this->state == GAMEERROR )
 		return false;
 
 	this->state = RUNNING;
-
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO, ">----------------LuxEngine::Start-------------------|");
+	this->next_state = NOTRUNNING;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG, ">----------------LuxEngine::Start-------------------|");
 	lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, ">----------------LuxEngine::Start-------------------|");
 
 	/* Strip quotes from name if they have it. */
@@ -199,7 +197,7 @@ bool LuxEngine::Start( std::string project_file )
 		lux::global_config->SetString( "project.file", project_file );
 	}
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Loading Game: " << project_file << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Loading Game: " << project_file << std::endl;
 
 	lux::entity_system = new EntitySystem();
 	lux::game_data = new MokoiGame( project_file );
@@ -211,13 +209,14 @@ bool LuxEngine::Start( std::string project_file )
 		lux::display->SetBackgroundColour( colour::grey );
 		lux::display->graphics.Show();
 
-		/*
-		lux::engine->ShowDialog("DIALOGOK", DIALOGOK, NULL );
-		lux::engine->ShowDialog("DIALOGYESNO", DIALOGYESNO, NULL );
-		lux::engine->ShowDialog("DIALOGYESNOCANCEL", DIALOGYESNOCANCEL, NULL );
 
-		lux::engine->ShowDialog("DIALOGTEXT", DIALOGTEXT, NULL );
-		*/
+//		lux::engine->ShowDialog("DIALOGOK", DIALOGOK, NULL );
+//		lux::engine->ShowDialog("DIALOGYESNO", DIALOGYESNO, NULL );
+//		lux::engine->ShowDialog("DIALOGYESNOCANCEL", DIALOGYESNOCANCEL, NULL );
+
+//		lux::engine->ShowDialog("DIALOGTEXT", DIALOGTEXT, NULL );
+//		return false;
+
 
 		if ( this->state == GAMEERROR )
 			return false;
@@ -247,6 +246,30 @@ bool LuxEngine::Start( std::string project_file )
 			}
 		}
 
+		if ( lux::config->Has("package.sounds") )
+		{
+			std::string package_music_name = lux::config->GetString("package.sounds");
+			lux::screen::display("Loading Content Package");
+			if ( !lux::game_data->LoadPackage( package_music_name ) )
+			{
+				this->ShowDialog("Can not find " + package_music_name + "\n"PACKAGE_GET_URL + package_music_name + "\nExiting game.", DIALOGOK);
+				this->state = GAMEERROR;
+				return false;
+			}
+		}
+
+		if ( lux::config->Has("package.graphics") )
+		{
+			std::string package_music_name = lux::config->GetString("package.graphics");
+			lux::screen::display("Loading Content Package");
+			if ( !lux::game_data->LoadPackage( package_music_name ) )
+			{
+				this->ShowDialog("Can not find " + package_music_name + "\n"PACKAGE_GET_URL + package_music_name + "\nExiting game.", DIALOGOK);
+				this->state = GAMEERROR;
+				return false;
+			}
+		}
+
 		if ( lux::config->GetBoolean("patches.scan") )
 		{
 			lux::screen::display("Loading Patches");
@@ -258,7 +281,7 @@ bool LuxEngine::Start( std::string project_file )
 			std::vector<std::string> patch_list = lux::config->GetArray("patches.list");
 			for( uint8_t i = 0; i < patch_list.size(); i++ )
 			{
-				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Patch " << patch_list[i] << " " << lux::game_data->AddPackage( patch_list[i] ) << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Patch " << patch_list[i] << " " << lux::game_data->AddPackage( patch_list[i] ) << std::endl;
 			}
 		}
 	}
@@ -298,10 +321,11 @@ bool LuxEngine::Start( std::string project_file )
 
 	lux::audio = new AudioSystem();
 	lux::entities = new EntityManager();
-	lux::gamesystem = new GameSystem();
+	lux::game_system = new GameSystem();
 
-	lux::gamesystem->Init();
+	lux::game_system->Init();
 
+	// Networked Game
 	if ( lux::config->GetBoolean("server.able") )
 	{
 		lux::screen::display("Connecting to Server");
@@ -317,15 +341,39 @@ bool LuxEngine::Start( std::string project_file )
 	return (this->state == GAMEERROR ? false : true);
 }
 
+/**
+ * @brief LuxEngine::Refresh
+ */
 void LuxEngine::Refresh()
 {
-
 	if ( this->state > NOTRUNNING )
 	{
 		this->state = lux::core->HandleFrame( this->state );
 
+		if ( this->state == RUNNING )
+		{
+			if ( lux::core->GetTime() > (this->game_fps_time + 1000) )
+			{
+				this->game_fps_last = this->game_fps;
+				this->game_fps_time = lux::core->GetTime();
+				this->game_fps = 0;
+			}
+			this->game_fps++;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "FPS: " << (this->game_fps_last < 30 ? "§c" : "§a") << this->game_fps_last << std::endl;
+		}
+		else
+		{
+			lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "State: §a" << this->state << " §c" << lux::core->GetTime() << std::endl;
+		}
+
 		if ( this->state == PAUSED )
 		{
+			lux::display->Display(this->state);
+			lux::core->Idle();
+		}
+		else if ( this->state == NOUPDATE )
+		{
+			lux::display->Display(this->state);
 			lux::core->Idle();
 		}
 		else if ( this->state == INVALIDPOSITION )
@@ -335,12 +383,6 @@ void LuxEngine::Refresh()
 		else if ( this->state == RUNNING )
 		{
 			this->RunState();
-		}
-		else if ( this->state == NOUPDATE )
-		{
-			lux::screen::display("Syncing with Server. (Connection may have died)" );
-			lux::display->Loop(this->state);
-			lux::core->Idle();
 		}
 		else if ( this->state == SAVING )
 		{
@@ -384,7 +426,6 @@ void LuxEngine::Refresh()
 					this->state = GAMEERROR;
 				}
 			}
-
 		}
 		else if ( this->state == EXITING )
 		{
@@ -396,22 +437,34 @@ void LuxEngine::Refresh()
 		else if ( this->state == RELOADENTITIES )
 		{
 			// Quick Hack
-			lux::gamesystem->GetEntities()->ReloadEntities();
-			lux::gamesystem->active_map->entities->ReloadEntities();
+			lux::game_system->GetEntities()->ReloadEntities();
+			lux::game_system->active_map->entities->ReloadEntities();
 			this->state = RUNNING;
 		}
 	}
 }
 
+/**
+ * @brief LuxEngine::Loop
+ */
 void LuxEngine::Loop()
 {
 	while ( this->state > NOTRUNNING )
 	{
 		this->Refresh();
+		if ( this->next_state != NOTRUNNING )
+		{
+			this->state = this->next_state;
+			this->next_state = NOTRUNNING;
+		}
 	}
 	this->Close();
 }
 
+/**
+ * @brief LuxEngine::SetState
+ * @param new_state
+ */
 void LuxEngine::SetState(LuxState new_state)
 {
 	#ifdef NETWORKENABLED
@@ -423,6 +476,9 @@ void LuxEngine::SetState(LuxState new_state)
 	#endif
 }
 
+/**
+ * @brief LuxEngine::RunState
+ */
 void LuxEngine::RunState()
 {
 	/* Game Loop
@@ -433,39 +489,37 @@ void LuxEngine::RunState()
 	*/
 
 	lux::core->NetworkLock();
-
 	std::vector<Player *>::iterator iter = _players.begin();
 	while( iter !=  _players.end() )
 	{
 		(*iter)->Loop();
 		iter++;
 	}
-
 	lux::core->NetworkUnlock();
 
-	lux::gamesystem->Loop( this->state );
+	lux::game_system->Loop( this->state );
 	lux::audio->Loop( this->state );
 	lux::display->Loop( this->state );
 
 
-	if ( lux::core->GetTime() > (this->game_fps_time + 1000) )
-	{
-		this->game_fps_last = this->game_fps;
-		this->game_fps_time = lux::core->GetTime();
-		this->game_fps = 0;
-	}
-	this->game_fps++;
-	lux::display->debug_msg << "FPS: " << (this->game_fps_last < 30 ? "§c" : "§a") << this->game_fps_last << std::endl;
 
 }
 
 /* Players */
 
+/**
+ * @brief LuxEngine::AddPlayer
+ * @param player
+ */
 void LuxEngine::AddPlayer(Player * player)
 {
 	this->_players.push_back(player);
 }
 
+/**
+ * @brief LuxEngine::RemovePlayer
+ * @param player
+ */
 void LuxEngine::RemovePlayer(Player * player)
 {
 	std::vector<Player*>::iterator iter = std::find(this->_players.begin(), this->_players.end(), player);
@@ -473,6 +527,10 @@ void LuxEngine::RemovePlayer(Player * player)
 		this->_players.erase(iter);
 }
 
+/**
+ * @brief LuxEngine::SetDefaultPlayer
+ * @param player
+ */
 void LuxEngine::SetDefaultPlayer( uint32_t player )
 {
 	if ( player )
@@ -481,6 +539,11 @@ void LuxEngine::SetDefaultPlayer( uint32_t player )
 	}
 }
 
+/**
+ * @brief LuxEngine::GetPlayer
+ * @param player
+ * @return
+ */
 Player * LuxEngine::GetPlayer( uint32_t player )
 {
 	uint32_t player_position = ( player == 0 ? this->default_player : player ) -1;
@@ -491,6 +554,12 @@ Player * LuxEngine::GetPlayer( uint32_t player )
 	return NULL;
 }
 
+/**
+ * @brief LuxEngine::GetPlayerAxis
+ * @param player_id
+ * @param axis
+ * @return
+ */
 int16_t LuxEngine::GetPlayerAxis(uint32_t player_id, uint8_t axis)
 {
 	Player * player = this->GetPlayer( player_id );
@@ -501,6 +570,12 @@ int16_t LuxEngine::GetPlayerAxis(uint32_t player_id, uint8_t axis)
 	return 0;
 }
 
+/**
+ * @brief LuxEngine::GetPlayerButton
+ * @param player_id
+ * @param key
+ * @return
+ */
 int16_t LuxEngine::GetPlayerButton(uint32_t player_id, uint8_t key)
 {
 	Player * player = this->GetPlayer( player_id );
@@ -510,7 +585,12 @@ int16_t LuxEngine::GetPlayerButton(uint32_t player_id, uint8_t key)
 	}
 	return 0;
 }
-
+/**
+ * @brief LuxEngine::GetPlayerPointer
+ * @param player_id
+ * @param axis
+ * @return
+ */
 int16_t LuxEngine::GetPlayerPointer(uint32_t player_id, uint8_t axis)
 {
 	Player * player = this->GetPlayer( player_id );
@@ -520,7 +600,12 @@ int16_t LuxEngine::GetPlayerPointer(uint32_t player_id, uint8_t axis)
 	}
 	return 0;
 }
-
+/**
+ * @brief LuxEngine::SetPlayerAxis
+ * @param player_id
+ * @param value
+ * @param axis
+ */
 void LuxEngine::SetPlayerAxis(uint32_t player_id, int16_t value, uint8_t axis)
 {
 	Player * player = this->GetPlayer( player_id );
@@ -529,7 +614,12 @@ void LuxEngine::SetPlayerAxis(uint32_t player_id, int16_t value, uint8_t axis)
 		player->SetControllerAxis(axis, value);
 	}
 }
-
+/**
+ * @brief LuxEngine::SetPlayerButton
+ * @param player_id
+ * @param value
+ * @param key
+ */
 void LuxEngine::SetPlayerButton(uint32_t player_id, int16_t value, uint8_t key)
 {
 	Player * player = this->GetPlayer( player_id );
@@ -539,7 +629,12 @@ void LuxEngine::SetPlayerButton(uint32_t player_id, int16_t value, uint8_t key)
 	}
 
 }
-
+/**
+ * @brief LuxEngine::SetPlayerPointer
+ * @param player_id
+ * @param value
+ * @param axis
+ */
 void LuxEngine::SetPlayerPointer(uint32_t player_id, int16_t value, uint8_t axis)
 {
 	Player * player = this->GetPlayer( player_id );
@@ -549,6 +644,11 @@ void LuxEngine::SetPlayerPointer(uint32_t player_id, int16_t value, uint8_t axis
 	}
 }
 
+/**
+ * @brief LuxEngine::GameState
+ * @param new_state
+ * @return
+ */
 int32_t LuxEngine::GameState(int32_t new_state)
 {
 	if ( new_state != -1 )
@@ -560,15 +660,19 @@ int32_t LuxEngine::GameState(int32_t new_state)
 
 
 /* Save System */
+/**
+ * @brief LuxEngine::HandleSave
+ * @return
+ */
 bool LuxEngine::HandleSave()
 {
 	LuxSaveState saved_game;
 
 	saved_game.SetSlot( this->save_system_slot );
 
-	if ( saved_game.Save( lux::gamesystem, lux::entities, NULL, 0 ) )
+	if ( saved_game.Save( lux::game_system, lux::entities, NULL, 0 ) )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "game saved" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "game saved" << std::endl;
 		return true;
 	}
 
@@ -578,16 +682,19 @@ bool LuxEngine::HandleSave()
 
 }
 
+/**
+ * @brief LuxEngine::HandleReload
+ * @return
+ */
 bool LuxEngine::HandleReload()
 {
-
 	GameSystem * restored_world = new GameSystem();
-	GameSystem * current_world = lux::gamesystem;
+	GameSystem * current_world = lux::game_system;
 
 	EntityManager * restored_entity_manager = new EntityManager();
 	EntityManager * current_entity_manager = lux::entities;
 
-	lux::gamesystem = restored_world;
+	lux::game_system = restored_world;
 	lux::entities = restored_entity_manager;
 
 	delete current_world;
@@ -596,19 +703,20 @@ bool LuxEngine::HandleReload()
 	this->state = PAUSED;
 
 	return true;
-
-
 }
 
+/**
+ * @brief LuxEngine::HandleLoad
+ * @return
+ */
 bool LuxEngine::HandleLoad()
 {
 	bool successful = false;
 
-
 	GameSystem * restored_world = new GameSystem();
 	EntityManager * restored_entity_manager = new EntityManager();
 
-	GameSystem * current_world = lux::gamesystem;
+	GameSystem * current_world = lux::game_system;
 	EntityManager * current_entity_manager = lux::entities;
 
 	LuxSaveState saved_game;
@@ -616,15 +724,15 @@ bool LuxEngine::HandleLoad()
 	saved_game.SetSlot( this->save_system_slot );
 
 	/* Map new varibles to global varibles */
-	lux::gamesystem = restored_world;
+	lux::game_system = restored_world;
 	lux::entities = restored_entity_manager;
 
 	if ( saved_game.Restore( restored_world, restored_entity_manager, NULL, 0 ) )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Game restored" << std::endl;
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "removing old world  & enitites" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Game restored" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "removing old world  & enitites" << std::endl;
 
-		lux::gamesystem = current_world;
+		lux::game_system = current_world;
 		lux::entities = current_entity_manager;
 
 		lux::oldgame = current_world;
@@ -632,57 +740,69 @@ bool LuxEngine::HandleLoad()
 
 		//current_world->Close();
 
-//TODO: (Either merge or check if GameSystem or EntityManager free something it shouldn't
+		//TODO: (Either merge or check if GameSystem or EntityManager free something it shouldn't
 
 		//delete current_world;
 		//delete current_entity_manager;
 
 
-		lux::gamesystem = restored_world;
+		lux::game_system = restored_world;
 		lux::entities = restored_entity_manager;
 
 		successful = true;
 	}
 	else
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "removing failed world & enitites" << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "removing failed world & enitites" << std::endl;
 
-		lux::gamesystem = current_world;
+		lux::game_system = current_world;
 		lux::entities = current_entity_manager;
 
 		delete restored_world;
 		delete restored_entity_manager;
 	}
 
-//	restored_world = current_world = NULL;
-//	restored_entity_manager = current_entity_manager = NULL;
-
-
 	this->state = RUNNING;
 	this->save_system_slot = 0xFF;
 
 	return successful;
-
-
 }
 
+/**
+ * @brief LuxEngine::RestoreSaveGame
+ * @param slot
+ * @return
+ */
 bool LuxEngine::RestoreSaveGame( uint8_t slot )
 {
 	this->save_system_slot = slot;
 
 	return false;
 }
-
+/**
+ * @brief LuxEngine::WriteSaveGame
+ * @param slot
+ * @param info
+ * @param length
+ * @return
+ */
 bool LuxEngine::WriteSaveGame( uint8_t slot, int32_t * info, uint32_t length )
 {
 	LuxSaveState saved_game;
 	saved_game.SetInformation( lux::game_data->ident, LUX_SAVE_COOKIE_TYPE, "", NULL );
 	saved_game.SetSlot( slot );
-	saved_game.Save( lux::gamesystem, lux::entities, info, length );
+	saved_game.Save( lux::game_system, lux::entities, info, length );
 
 	return true;
 }
-
+/**
+ * @brief LuxEngine::ReadSaveInfo
+ * @param slot
+ * @param info
+ * @param length
+ * @param project_id
+ * @return
+ */
 bool LuxEngine::ReadSaveInfo(uint8_t slot, int32_t * info, uint32_t length, uint32_t project_id )
 {
 	LuxSaveState saved_game;
@@ -694,9 +814,6 @@ bool LuxEngine::ReadSaveInfo(uint8_t slot, int32_t * info, uint32_t length, uint
 	{
 		return true;
 	}
-
-
-
 
 	return false;
 }

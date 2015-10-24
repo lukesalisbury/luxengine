@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 	#include "stdheader.h"
 	#include "lux_types.h"
-	#include "elix_file.hpp"
+	#include "libs/elix/elix_file.hpp"
 
 	//lux::screen::display
 	namespace lux {
@@ -25,8 +25,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 	}
 
 	void Lux_FatalError( std::string reason );
-	void Lux_DisplayMessage( std::string reason );
+
 	void Lux_SetState( LuxState new_state );
 	LuxState Lux_GetState( );
-	void MessagePush(const char *message, ... );
+
+
+	void Lux_DisplayMessage( std::string reason );
+	void Lux_Util_PushMessage(const char *message, ... );
 #endif

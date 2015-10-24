@@ -59,9 +59,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 			/* World Section Editing */
 
 
-
-
-
 			/* Debug Information*/
 			void GetDebugInfo( std::ostream & stream );
 			void OutputInformation();
@@ -160,7 +157,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 
 namespace lux {
-	extern GameSystem * gamesystem;
+	extern GameSystem * game_system;
 	extern GameSystem * oldgame;
 }
 #endif

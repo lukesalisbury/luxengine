@@ -9,7 +9,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "gui.h"
 #include "core.h"
 #include "misc_functions.h"
@@ -40,7 +40,7 @@ LuxState Lux_GetState( )
 
 bool LuxEngine::LoopDialog()
 {
-	lux::display->DrawGameStatic();
+	lux::display->Display(PAUSED);
 	this->msgdialog = lux::gui->ReturnResult();
 	return ( this->msgdialog == 1 ? true : false);
 }
@@ -66,7 +66,7 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 {
 	if ( lux::display == NULL )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << "No Display. Message: " << text << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "No Display Available. Message: " << text << std::endl;
 		return false;
 	}
 
@@ -125,7 +125,7 @@ void LuxEngine::FatalError(std::string reason)
 
 		if ( lux::display == NULL )
 		{
-			lux::display = new DisplaySystem( "System Error", 640, 480, 16, false );
+			lux::display = new DisplaySystem( 640, 480, 16 );
 		}
 		this->ShowDialog(reason, DIALOGOK);
 	}

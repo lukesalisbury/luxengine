@@ -13,9 +13,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "lux_types.h"
 #include "player.h"
-#include "elix_file.hpp"
+#include "elix/elix_file.hpp"
 #include "platform_media.h"
-#include "gui.h"
+#include "gui/gui.h"
 #include <vector>
 #include <string>
 
@@ -38,10 +38,7 @@ class LuxEngine
 
 		bool ShowDialog(std::string text, LuxWidget dialog = DIALOGYESNO, std::string * answer = NULL);
 		void FatalError(std::string reason);
-		bool CreateQuickDisplay();
-		UserInterface *  CreateQuickGUI();
 
-		void SettingDialog( );
 
 		bool Start( std::string project_file );
 		bool Start();
@@ -52,7 +49,7 @@ class LuxEngine
 
 		/* Engine State */
 		LuxState state;
-
+		LuxState next_state;
 		void SetState(LuxState new_state);
 		int32_t GameState(int32_t new_state);
 
@@ -80,6 +77,8 @@ class LuxEngine
 		std::string GetDialogString(uint32_t line);
 		std::string GetString(uint32_t line);
 
+		/* Engine Media */
+		PlatformMedia media;
 	private:
 		/* Engine State */
 		int32_t game_state;
@@ -106,18 +105,18 @@ class LuxEngine
 		int32_t load_screen;
 
 		/* message dialog */
+		LuxState msgstate;
 		int32_t msgdialog;
 		std::string * msgdialog_return;
 		bool CreateDialog(std::string text, LuxWidget dialog, std::string * answer = NULL );
 		bool LoopDialog();
 		bool EndDialog( LuxWidget dialog = DIALOGYESNO );
-		LuxState msgstate;
+
 
 };
 
 namespace lux
 {
 	extern LuxEngine * engine;
-	extern PlatformMedia * media;
 }
 #endif /* _ENGINE_H_ */

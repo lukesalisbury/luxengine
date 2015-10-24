@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef _WORKERTHREAD_H_
 	#define _WORKERTHREAD_H_
 
-	#include "elix_intdef.h"
+	#include "elix/elix_intdef.h"
 	class WorkerThread
 	{
 		public:

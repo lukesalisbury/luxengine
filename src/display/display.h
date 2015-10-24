@@ -15,8 +15,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <map>
 
 #include "lux_types.h"
-#include "display_types.h"
-#include "layers.h"
+#include "display/display_types.h"
+#include "display/layers.h"
 #include "lux_sprite.h"
 #include "sprite_sheet.h"
 #include "core.h"
@@ -29,7 +29,7 @@ class DisplaySystem
 {
 public:
 	DisplaySystem();
-	DisplaySystem( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+	DisplaySystem(uint16_t width, uint16_t height, uint8_t bpp);
 	~DisplaySystem();
 
 private:
@@ -49,18 +49,19 @@ private:
 	std::map<std::string, LuxSheet *> _sheets;
 	std::map<uint32_t, LuxSprite *> _sprites;
 
+	void Draw(Layer *current_layer);
 public:
 	bool Init();
 	void Loop(LuxState engine_state);
-	void DrawGameStatic();
+	void Display(LuxState engine_state);
 	bool Close();
 
 	GraphicSystem graphics;
 
-
+	std::stringstream dynamic_text;
+	std::stringstream static_text;
 
 	/* Settings and Misc Variable */
-	std::stringstream debug_msg;
 	std::string sprite_font;
 	bool show_debug;
 	bool show_mask;
@@ -75,9 +76,11 @@ public:
 	void DrawCursor();
 	void SetRectFromText(LuxRect & area, std::string text, uint8_t text_width, uint8_t text_height );
 	void ShowMessages();
-	void UpdateResolution() {};
+
+	void UpdateResolution();
 
 	void SetTextFont( bool enable, std::string font_sheet );
+
 
 	/* Resource Management */
 	void ReloadSheets();

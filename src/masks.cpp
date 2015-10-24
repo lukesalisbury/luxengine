@@ -11,6 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "masks.h"
 #include "mokoi_game.h"
 #include "core.h"
+
 Lux_Mask * Lux_Mask_New(uint16_t width, uint16_t height)
 {
 	Lux_Mask * mask = new Lux_Mask();
@@ -27,23 +28,26 @@ Lux_Mask * Lux_Mask_New(uint16_t width, uint16_t height)
 	return mask;
 }
 
-bool Lux_Mask_Load(std::string filename, Lux_Mask * mask)
+
+bool Lux_Mask_ReadPGM( std::stringstream & mask_file, Lux_Mask * mask )
 {
-	if (mask->ref)
-	{
-		return false;
-	}
-	std::stringstream mask_file;
 	uint32_t count = 0;
 
-	if ( lux::game_data->GetStream("./masks/" + filename, &mask_file) )
+	std::string pgm_type;
+	std::string buffer;
+	std::getline(mask_file, pgm_type);
+
+	if ( pgm_type.compare("P5") == 0 )
 	{
+
+
 		mask_file.read((char*)&mask->width, sizeof(uint16_t));
 		mask_file.read((char*)&mask->height, sizeof(uint16_t));
 		mask->length = mask->width * mask->height;
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Mask Overflow: " << mask->width << " " << mask->height <<" " << mask->length << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Mask Overflow: " << mask->width << " " << mask->height <<" " << mask->length << std::endl;
 		mask->data = new uint8_t[mask->length];
 		mask->ref++;
+
 		char ch;
 		while( mask_file.get(ch) )
 		{
@@ -52,10 +56,28 @@ bool Lux_Mask_Load(std::string filename, Lux_Mask * mask)
 				mask->data[count] = (uint8_t)ch;
 			}
 			else
-				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Mask Overflow: " << ch << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Mask Overflow: " << ch << std::endl;
 			count++;
 		}
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << std::endl;
+
+	}
+	return false;
+}
+
+bool Lux_Mask_Load(std::string filename, Lux_Mask * mask)
+{
+	if (mask->ref)
+	{
+		return false;
+	}
+
+	std::stringstream mask_file;
+
+
+	if ( lux::game_data->GetStream("./masks/" + filename, &mask_file) )
+	{
+		Lux_Mask_ReadPGM( mask_file,  mask );
+
 		mask_file.clear();
 	}
 	return true;

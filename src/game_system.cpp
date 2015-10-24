@@ -11,8 +11,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <cstdlib>
 
 #include "engine.h"
-#include "display.h"
-#include "elix_string.hpp"
+#include "display/display.h"
+#include "elix/elix_string.hpp"
 #include "mokoi_game.h"
 #include "entity_section.h"
 #include "game_system.h"
@@ -60,7 +60,7 @@ GameSystem::~GameSystem()
  */
 bool GameSystem::Init( )
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " > Opening the Game" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << " > Opening the Game" << std::endl;
 
 	this->objects->Init();
 
@@ -131,7 +131,7 @@ void GameSystem::Loop( LuxState engine_state )
  */
 bool GameSystem::Close()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < Closing the Game" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << " < Closing the Game" << std::endl;
 
 	this->global_entities->Close();
 

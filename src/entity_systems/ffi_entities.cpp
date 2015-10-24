@@ -233,13 +233,13 @@ uint32_t Lux_FFI_Entities_List( uint32_t map_id )
 
 	if ( map_id == 0 ) /* GLOBAL */
 	{
-		section = lux::gamesystem->GetEntities();
+		section = lux::game_system->GetEntities();
 	}
 	else if ( map_id )/* Map */
 	{
-		if ( lux::gamesystem->GetMap( map_id ) )
+		if ( lux::game_system->GetMap( map_id ) )
 		{
-			section = lux::gamesystem->GetMap( map_id )->GetEntities();
+			section = lux::game_system->GetMap( map_id )->GetEntities();
 		}
 	}
 
@@ -269,13 +269,13 @@ char * Lux_FFI_Entities_Next( uint32_t map_id, uint8_t * has_next )
 
 	if ( map_id == 0 ) /* GLOBAL */
 	{
-		section = lux::gamesystem->GetEntities();
+		section = lux::game_system->GetEntities();
 	}
 	else if ( map_id )/* Map */
 	{
-		if ( lux::gamesystem->GetMap( map_id ) )
+		if ( lux::game_system->GetMap( map_id ) )
 		{
-			section = lux::gamesystem->GetMap( map_id )->GetEntities();
+			section = lux::game_system->GetMap( map_id )->GetEntities();
 		}
 	}
 

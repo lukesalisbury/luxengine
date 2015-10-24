@@ -10,15 +10,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include <cstdlib>
 
-#include "display.h"
+#include "display/display.h"
 #include "core.h"
 #include "game_config.h"
 #include "engine.h"
 #include "game_system.h"
 #include "lux_canvas.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "mokoi_game.h"
-#include "display_types.h"
+#include "display/display_types.h"
 
 extern GraphicSystem GraphicsNone;
 extern GraphicSystem GraphicsNative;
@@ -26,40 +26,9 @@ extern GraphicSystem GraphicsNative;
 extern GraphicSystem GraphicsOpenGL;
 #endif
 
-std::string static_messages_text;
-uint8_t static_messages_count = 0;
-
-void MessagePush( const char * message, ... )
-{
-	char * text = new char[128];
-	va_list args;
-	va_start( args, message );
-	vsnprintf( text, 127, message, args );
-	va_end(args);
-
-	static_messages_text.append(text);
-	static_messages_text.append("\n");
-	static_messages_count++;
-
-	if ( static_messages_count == 13 )
-	{
-		static_messages_text.erase(0, static_messages_text.find("\n") + 1);
-		static_messages_count--;
-	}
-
-	delete [] text;
-}
-
-
-
-void Lux_DisplayMessage( std::string reason )
-{
-	if ( lux::display )
-	{
-		lux::display->debug_msg << reason << std::endl;
-	}
-}
-
+/**
+ * @brief DisplaySystem::DisplaySystem
+ */
 DisplaySystem::DisplaySystem()
 {
 	bool is_display_setup = false;
@@ -68,7 +37,7 @@ DisplaySystem::DisplaySystem()
 	this->Init();
 
 	#if DISPLAYMODE_OPENGL
-	if ( GraphicsOpenGL.InitGraphics( this->title, this->screen_dimension.w, this->screen_dimension.h, this->bpp, this->fullscreen ) )
+	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp ) )
 	{
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
@@ -77,38 +46,43 @@ DisplaySystem::DisplaySystem()
 
 	if ( !is_display_setup )
 	{
-	if ( GraphicsNative.InitGraphics( this->title, this->screen_dimension.w, this->screen_dimension.h, this->bpp, this->fullscreen ) )
-	{
-		this->graphics = GraphicsNative;
-		is_display_setup = true;
-	}
+		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp ) )
+		{
+			this->graphics = GraphicsNative;
+			is_display_setup = true;
+		}
 	}
 
 	if ( !is_display_setup )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Graphic System Failed" << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << "Graphic System Failed" << std::endl;
 		return;
 	}
 
 	this->cache_sprites = (this->graphics.CacheSprite);
-	if ( lux::media != NULL )
-		lux::media->Init(this->graphics);
+	lux::engine->media.Init(this->graphics);
 
 }
 
-DisplaySystem::DisplaySystem( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen  )
+/**
+ * @brief DisplaySystem::DisplaySystem
+ * @param width
+ * @param height
+ * @param bpp
+ */
+DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp  )
 {
 	bool is_display_setup = false;
 
 	this->InitialSetup();
+	this->Init();
 
 	this->screen_dimension.w = width;
 	this->screen_dimension.h = height;
 	this->bpp = bpp;
-	this->fullscreen = fullscreen;
 
 	#if DISPLAYMODE_OPENGL
-	if ( GraphicsOpenGL.InitGraphics( title, width, height, bpp, fullscreen ) )
+	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp ) )
 	{
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
@@ -116,34 +90,38 @@ DisplaySystem::DisplaySystem( std::string title, uint16_t width, uint16_t height
 	#endif
 	if ( !is_display_setup )
 	{
-	if ( GraphicsNative.InitGraphics( title, width, height, bpp, fullscreen ) )
-	{
-		this->graphics = GraphicsNative;
-		is_display_setup = true;
-	}
+		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp ) )
+		{
+			this->graphics = GraphicsNative;
+			is_display_setup = true;
+		}
 	}
 
 
 	if ( !is_display_setup )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Graphic System Failed" << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << "Graphic System Failed" << std::endl;
 		return;
 	}
 
 	this->cache_sprites = (this->graphics.CacheSprite);
-	if ( lux::media != NULL )
-		lux::media->Init( this->graphics );
+	lux::engine->media.Init( this->graphics );
 }
 
+/**
+ * @brief DisplaySystem::~DisplaySystem
+ */
 DisplaySystem::~DisplaySystem()
 {
 	delete this->overlay_layer;
 
-	if ( lux::media != NULL )
-		lux::media->Free();
+	lux::engine->media.Free();
 	this->Close();
 }
 
+/**
+ * @brief DisplaySystem::InitialSetup
+ */
 void DisplaySystem::InitialSetup()
 {
 	if ( lux::core == NULL )
@@ -164,14 +142,16 @@ void DisplaySystem::InitialSetup()
 
 }
 
-/**/
+/**
+ * @brief DisplaySystem::Init
+ * @return
+ */
 bool DisplaySystem::Init()
 {
 	this->graphics.TextSprites( false );
 
 	if ( lux::config )
 	{
-		this->title = lux::config->GetString("project.title");
 		this->screen_dimension.w = lux::config->GetNumber("screen.width");
 		this->screen_dimension.h = lux::config->GetNumber("screen.height");
 		this->bpp = (uint8_t)lux::config->GetNumber("display.bpp") * 8;
@@ -196,93 +176,87 @@ bool DisplaySystem::Init()
 	}
 
 	/* Preload Spritesheets */
-	std::stringstream sprite_file;
-	std::string buffer;
-	if ( lux::game_data->GetStream("./preload/spritesheets.txt", &sprite_file) )
+	if ( lux::game_data )
 	{
-		do
+		std::stringstream sprite_file;
+		std::string buffer;
+		if ( lux::game_data->GetStream("./preload/spritesheets.txt", &sprite_file) )
 		{
-			std::getline (sprite_file, buffer);
-			elix::string::Trim(&buffer);
-			if ( buffer.length() )
+			do
 			{
-				lux::screen::display("Loading Spritesheet: " + buffer);
-				this->RefSheet(buffer);
-			}
-		} while ( !sprite_file.eof() );
-		sprite_file.clear();
+				std::getline (sprite_file, buffer);
+				elix::string::Trim(&buffer);
+				if ( buffer.length() )
+				{
+					lux::screen::display("Loading Spritesheet: " + buffer);
+					this->RefSheet(buffer);
+				}
+			} while ( !sprite_file.eof() );
+			sprite_file.clear();
+		}
 	}
 	return true;
 }
 
-void DisplaySystem::Loop(LuxState engine_state)
+void DisplaySystem::Draw(Layer * current_layer)
+{
+	if ( current_layer->shader )
+	{
+		this->graphics.CacheDisplay( current_layer->display_layer );
+		current_layer->Display();
+		this->graphics.DrawCacheDisplay( current_layer->display_layer, current_layer->shader );
+	}
+	else
+	{
+		if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
+		{
+			this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
+			current_layer->Display();
+			this->graphics.SetRotation(0,0,0);
+		}
+		else
+		{
+			current_layer->Display();
+		}
+	}
+}
+
+/**
+ * @brief DisplaySystem::LoopStatic
+ */
+void DisplaySystem::Display( LuxState engine_state )
 {
 	int i = 0;
 	std::vector<Layer *>::iterator p;
 	for ( p = this->_layers.begin(); p != this->_layers.end(); p++ )
 	{
-
 		Layer * current_layer = (*p);
 		if ( this->show_layers[i] )
 		{
-			if ( current_layer->shader )
-			{
-				this->graphics.CacheDisplay( current_layer->display_layer );
-				current_layer->Display();
-
-				this->debug_msg << "Layer: " << (int)current_layer->display_layer << " using FBO" << std::endl;
-
-				this->graphics.DrawCacheDisplay( current_layer->display_layer, current_layer->shader );
-			}
-			else
-			{
-				if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
-				{
-					this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
-					current_layer->Display();
-					this->graphics.SetRotation(0,0,0);
-				}
-				else
-				{
-					current_layer->Display();
-				}
-			}
+			this->Draw(current_layer);
 		}
+		if ( engine_state == RUNNING )
+			current_layer->RemoveDynamicObject();
 		i++;
 	}
-
 	this->DisplayOverlay();
-
-	this->DrawCursor();
 	this->ShowMessages();
+}
+
+/**
+ * @brief DisplaySystem::Loop
+ * @param engine_state
+ */
+void DisplaySystem::Loop(LuxState engine_state)
+{
+	this->Display(engine_state);
 	this->graphics.Show();
 }
 
-void DisplaySystem::DrawGameStatic()
-{
-	int i = 0;
-	std::vector<Layer *>::iterator p;
-	for ( p = this->_layers.begin(); p != this->_layers.end(); p++ )
-	{
-		Layer * current_layer = (*p);
-		if ( this->show_layers[i] )
-		{
-			if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
-			{
-				this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
-				current_layer->Display();
-				this->graphics.SetRotation(0,0,0);
-			}
-			else
-			{
-				current_layer->Display();
-			}
-		}
-		i++;
-	}
-	DisplayOverlay();
-}
 
+/**
+ * @brief DisplaySystem::DisplayOverlay
+ */
 void DisplaySystem::DisplayOverlay()
 {
 	if ( this->overlay_layer )
@@ -291,6 +265,10 @@ void DisplaySystem::DisplayOverlay()
 	}
 }
 
+/**
+ * @brief DisplaySystem::Close
+ * @return
+ */
 bool DisplaySystem::Close()
 {
 	this->ClearLayers(false);
@@ -321,6 +299,9 @@ bool DisplaySystem::Close()
 	return true;
 }
 
+/**
+ * @brief DisplaySystem::DrawCursor
+ */
 void DisplaySystem::DrawCursor()
 {
 	if ( this->show_cursor && lux::engine )
@@ -335,6 +316,9 @@ void DisplaySystem::DrawCursor()
 
 }
 
+/**
+ * @brief DisplaySystem::ShowMessages
+ */
 void DisplaySystem::ShowMessages()
 {
 	ObjectEffect text_effects;
@@ -346,23 +330,29 @@ void DisplaySystem::ShowMessages()
 
 	if ( this->show_collisions )
 	{
-		lux::gamesystem->GetObjects()->DrawCollisions();
+		lux::game_system->GetObjects()->DrawCollisions();
 	}
 
 	if ( this->show_mask )
 	{
-		lux::gamesystem->active_map->DrawMask();
+		lux::game_system->active_map->DrawMask();
 	}
 
 	if ( this->show_debug )
 	{
-		this->graphics.DrawMessage( this->debug_msg.str(), 0 );
-		this->graphics.DrawMessage( static_messages_text, 3 );
+		this->graphics.DrawMessage( this->dynamic_text.str(), 0 );
+		this->graphics.DrawMessage( this->static_text.str(), 3 );
+
+		this->static_text.str("");
+
 	}
-	this->debug_msg.str("");
+	this->dynamic_text.str("");
 
 }
-
+/**
+ * @brief DisplaySystem::UpdateResolution
+ */
+void DisplaySystem::UpdateResolution() {}
 
 
 
@@ -456,7 +446,7 @@ void DisplaySystem::UnrefSheet(std::string name)
 
 	if ( iter_sheet == this->_sheets.end() )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "RefSheet Failed: " << name << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "RefSheet Failed: " << name << std::endl;
 		return;
 	}
 
@@ -769,8 +759,7 @@ bool DisplaySystem::AddObjectToLayer(uint32_t layer, MapObject * new_object, boo
 	}
 	else
 	{
-
-		MessagePush( (char *)"Failed to Add '%s' to layer %d", new_object->TypeName().c_str(), layer );
+		lux::core->SystemMessage( SYSTEM_MESSAGE_VISUAL_WARNING ) << "Failed to Add '" << new_object->TypeName().c_str() << "' to layer " << layer << std::endl;
 	}
 	return false;
 }
@@ -856,8 +845,8 @@ void DisplaySystem::SetLayerColour( uint32_t layer,  LuxColour colour )
 	if ( layer < this->_layers.size() )
 	{
 		this->_layers[layer]->colour = colour;
-		if ( layer == 0 && lux::gamesystem->active_map )
-			lux::gamesystem->active_map->SetBackgroundModifier( colour );
+		if ( layer == 0 && lux::game_system->active_map )
+			lux::game_system->active_map->SetBackgroundModifier( colour );
 	}
 }
 

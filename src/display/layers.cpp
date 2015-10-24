@@ -8,8 +8,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#include "layers.h"
-#include "display.h"
+#include "display/layers.h"
+#include "display/display.h"
 #include "game_system.h"
 #include "core.h"
 #include "misc_functions.h"
@@ -206,6 +206,15 @@ bool Layer::ObjectOnScreen(LuxRect o, uint8_t flipmode, LuxRect s)
 	return 1;
 }
 
+/**
+ * @brief Layer::ObjectOnVirtualScreen
+ * @param o
+ * @param flipmode
+ * @param s
+ * @param offx
+ * @param offy
+ * @return
+ */
 bool Layer::ObjectOnVirtualScreen(LuxRect & o, uint8_t flipmode, LuxRect s, uint32_t offx, uint32_t offy )
 {
 	o.x += offx;
@@ -227,53 +236,18 @@ bool Layer::ObjectOnVirtualScreen(LuxRect & o, uint8_t flipmode, LuxRect s, uint
 }
 
 /* Caching Functions */
-void Layer::GetSurface() {}
+
 
 /* Drawing Functions */
-void Layer::Display()
+void Layer::DisplayList(std::list<MapObject*> & list )
 {
 	MapObject * object;
 	std::list<MapObject*>::iterator l_object;
-	if ( lux::gamesystem )
-	{
-		if ( lux::gamesystem->active_map )
-		{
-			/* Map Offsets */
-			this->_mapx = lux::gamesystem->active_map->GetPosition(0);
-			this->_mapy = lux::gamesystem->active_map->GetPosition(1);
-
-			this->_mapw = MAKE_FIXED_INT(lux::gamesystem->active_map->map_width);
-			this->_maph = MAKE_FIXED_INT(lux::gamesystem->active_map->map_height);
-
-			this->wrap_layer = lux::gamesystem->active_map->wrap_mode;
-			if ( this->wrap_layer )
-			{
-				/* Get valid top left poisition */
-				this->wrap_mapw = (MAKE_FIXED_INT(this->_mapx) / this->_mapw) * this->_mapw;
-				this->wrap_maph = (MAKE_FIXED_INT(this->_mapy) / this->_maph) * this->_maph;
-
-				this->wrap_dimension.x = ( this->wrap_layer == MAP_WRAPYAXIS ? this->_mapx : this->_mapx - this->_mapw ); // MAP_WRAPXAXIS or MAP_WRAPBOTH enabled
-				this->wrap_dimension.y = ( this->wrap_layer == MAP_WRAPXAXIS ? this->_mapy : this->_mapy - this->_maph ); // MAP_WRAPYAXIS or MAP_WRAPBOTH enabled
-				this->wrap_dimension.w = ( this->wrap_layer == MAP_WRAPYAXIS ? this->_mapw : this->_mapw * 2 ); // MAP_WRAPXAXIS or MAP_WRAPBOTH enabled
-				this->wrap_dimension.h = ( this->wrap_layer == MAP_WRAPXAXIS ? this->_maph : this->_maph * 2 ); // MAP_WRAPYAXIS or MAP_WRAPBOTH enabled
-			}
-		}
-	}
-
-	this->_parent->graphics.SetRotation( this->_roll, this->_pitch, this->_yaw);
-
-	/* QUICK HACK TO SUPPORT BETTER Z INDEXING */
-	if ( this->refreshz )
-	{
-		this->objects_static.sort( ObjectSort );
-	}
-	this->refreshz = false;
-	/* QUICK HACK TO SUPPORT BETTER Z INDEXING */
-
 	LuxRect obj_position;
-	if ( this->objects_static.size() )
+
+	if ( !list.empty() )
 	{
-		for ( l_object = this->objects_static.begin(); l_object != this->objects_static.end(); l_object++ )
+		for ( l_object = list.begin(); l_object != list.end(); l_object++ )
 		{
 			object = (*l_object);
 			if (!object)
@@ -317,30 +291,74 @@ void Layer::Display()
 			}
 		}
 	}
-
-	if ( this->objects_dynamic.size() )
-	{
-		for ( l_object = this->objects_dynamic.begin(); l_object != this->objects_dynamic.end(); l_object++ )
-		{
-
-			object = (*l_object);
-			obj_position = this->GetObjectLocation(object->position, object->type);
-			if ( ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->screen_dimension) )
-			{
-				this->_parent->DrawMapObject(object, obj_position, Lux_Util_MergeEffects(this->colour,object->effects) );
-			}
-			delete object;
-		}
-		if ( !this->_cachedynamic )
-		{
-			this->objects_dynamic.clear();
-		}
-	}
 }
 
 
+/**
+ * @brief Layer::Display
+ */
+void Layer::Display()
+{
+
+	if ( lux::game_system )
+	{
+		if ( lux::game_system->active_map )
+		{
+			/* Map Offsets */
+			this->_mapx = lux::game_system->active_map->GetPosition(0);
+			this->_mapy = lux::game_system->active_map->GetPosition(1);
+
+			this->_mapw = MAKE_FIXED_INT(lux::game_system->active_map->map_width);
+			this->_maph = MAKE_FIXED_INT(lux::game_system->active_map->map_height);
+
+			this->wrap_layer = lux::game_system->active_map->wrap_mode;
+			if ( this->wrap_layer )
+			{
+				/* Get valid top left poisition */
+				this->wrap_mapw = (MAKE_FIXED_INT(this->_mapx) / this->_mapw) * this->_mapw;
+				this->wrap_maph = (MAKE_FIXED_INT(this->_mapy) / this->_maph) * this->_maph;
+
+				this->wrap_dimension.x = ( this->wrap_layer == MAP_WRAPYAXIS ? this->_mapx : this->_mapx - this->_mapw ); // MAP_WRAPXAXIS or MAP_WRAPBOTH enabled
+				this->wrap_dimension.y = ( this->wrap_layer == MAP_WRAPXAXIS ? this->_mapy : this->_mapy - this->_maph ); // MAP_WRAPYAXIS or MAP_WRAPBOTH enabled
+				this->wrap_dimension.w = ( this->wrap_layer == MAP_WRAPYAXIS ? this->_mapw : this->_mapw * 2 ); // MAP_WRAPXAXIS or MAP_WRAPBOTH enabled
+				this->wrap_dimension.h = ( this->wrap_layer == MAP_WRAPXAXIS ? this->_maph : this->_maph * 2 ); // MAP_WRAPYAXIS or MAP_WRAPBOTH enabled
+			}
+		}
+	}
+
+	this->_parent->graphics.SetRotation( this->_roll, this->_pitch, this->_yaw);
+
+	/* QUICK HACK TO SUPPORT BETTER Z INDEXING */
+	if ( this->refreshz )
+	{
+		this->objects_static.sort( ObjectSort );
+	}
+	this->refreshz = false;
+	/* QUICK HACK TO SUPPORT BETTER Z INDEXING */
+
+	this->DisplayList(this->objects_static);
+	this->DisplayList(this->objects_dynamic);
+
+}
+
+/**
+ * @brief Layer::RemoveDynamicObject
+ */
+void Layer::RemoveDynamicObject()
+{
+	while ( this->objects_dynamic.begin() != this->objects_dynamic.end())
+	{
+		delete (*this->objects_dynamic.begin());
+		this->objects_dynamic.erase( this->objects_dynamic.begin() );
+	}
+	//this->objects_dynamic.clear();
+}
 
 
+/**
+ * @brief Layer::SetShader
+ * @param new_shader
+ */
 void Layer::SetShader( uint8_t new_shader )
 {
 	if ( new_shader < NUM_SHADERS )

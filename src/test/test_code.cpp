@@ -11,12 +11,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "game_config.h"
 #include "engine.h"
-#include "elix_string.hpp"
-#include "elix_path.hpp"
+#include "elix/elix_string.hpp"
+#include "elix/elix_path.hpp"
 #include "mokoi_game.h"
 #include "tinyxml/tinyxml2ext.h"
 #include "worker.h"
-#include "gui.h"
+#include "gui/gui.h"
 #include "downloader.h"
 #include "project_media.h"
 
@@ -32,7 +32,7 @@ namespace luxtest
 	LuxSprite * logo = NULL;
 
 	bool opengl = true;
-	int16_t mode = 1;
+	int16_t mode = 2;
 	LuxRect region = {0, 0, 512, 384, 0};
 
 	ObjectEffect initial_effect;
@@ -69,7 +69,7 @@ bool luxtest::Shapes( ObjectEffect effect )
 
 	LuxRect text_position = {0,0,0,0,0};
 	LuxRect rectangle_position = { 40, 40, 40,60, 0 };
-	LuxRect circle_position = { 81, 40, 40,60, 0};
+	LuxRect circle_position = { 81, 40, 40, 60, 0};
 	LuxRect line_position = { 169, 140, 10,160, 0};
 	LuxRect polygon_position = { 260, 40, 10,160, 0};
 
@@ -121,8 +121,9 @@ bool luxtest::Sprites( ObjectEffect effect )
 void luxtest::start()
 {
 	lux::config = new GameConfig();
+	lux::config->SetString("window.title", "Test Mode");
 
-	luxtest::display = new DisplaySystem("Test Mode", 320, 240, 8, 1);
+	luxtest::display = new DisplaySystem( 320, 240, 8 );
 	luxtest::region = luxtest::display->screen_dimension;
 
 	logo = luxtest::display->graphics.PNGtoSprite(lux_media::testimage, lux_media::testimage_size);
@@ -168,7 +169,7 @@ void luxtest::loop()
 		if ( initial_effect.rotation >= 360 )
 			initial_effect.rotation -= 360;
 
-		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "rotation: " << initial_effect.rotation << std::endl;
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "rotation: " << initial_effect.rotation << std::endl;
 	}
 
 	if ( controller->GetButton(6) == 1 )
@@ -178,7 +179,7 @@ void luxtest::loop()
 			initial_effect.flip_image = 16;
 		if ( initial_effect.flip_image >= 20 )
 			initial_effect.flip_image -= 20;
-		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "flip_image: " << (int)initial_effect.flip_image << std::endl;
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "flip_image: " << (int)initial_effect.flip_image << std::endl;
 	}
 	if ( controller->GetButton(1) == 1 )
 	{
@@ -189,7 +190,7 @@ void luxtest::loop()
 			initial_effect.scale_xaxis = 500;
 			initial_effect.scale_yaxis = 500;
 		}
-		//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "flip_image: " << (int)initial_effect.flip_image << std::endl;
+		//lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "flip_image: " << (int)initial_effect.flip_image << std::endl;
 	}
 	if ( controller->GetButton(2) == 1 )
 	{

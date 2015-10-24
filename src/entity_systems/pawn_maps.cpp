@@ -11,13 +11,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "audio.h"
 #include "config.h"
 #include "core.h"
-#include "display.h"
+#include "display/display.h"
 #include "engine.h"
 #include "mokoi_game.h"
 #include "entity_manager.h"
 #include "pawn_helper.h"
 #include "game_system.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 
 #include "ffi_mask.h"
 #include "ffi_map.h"
@@ -107,9 +107,9 @@ static cell pawnMapGetOffset(AMX *amx, const cell *params)
 static cell pawnMapCurrentIdent(AMX *amx, const cell *params)
 {
 	cell responed = 0;
-	if ( lux::gamesystem->active_map != NULL )
+	if ( lux::game_system->active_map != NULL )
 	{
-		responed = lux::gamesystem->active_map->Ident();
+		responed = lux::game_system->active_map->Ident();
 	}
 	return responed;
 
@@ -126,10 +126,10 @@ static cell pawnMapCurrentGrid(AMX *amx, const cell *params)
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
 	cell responed = 0;
-	if ( lux::gamesystem->active_section != NULL )
+	if ( lux::game_system->active_section != NULL )
 	{
-		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::gamesystem->grid_position[0]) );
-		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::gamesystem->grid_position[1]) );
+		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::game_system->grid_position[0]) );
+		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::game_system->grid_position[1]) );
 		responed = 1;
 	}
 	return responed;
@@ -146,10 +146,10 @@ static cell pawnMapCurrentDimension(AMX *amx, const cell *params)
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
 	cell responed = 0;
-	if ( lux::gamesystem->active_map != NULL )
+	if ( lux::game_system->active_map != NULL )
 	{
-		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::gamesystem->active_map->map_width) );
-		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::gamesystem->active_map->map_height) );
+		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::game_system->active_map->map_width) );
+		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::game_system->active_map->map_height) );
 		responed = 1;
 	}
 	return responed;
@@ -184,10 +184,25 @@ static cell pawnMapGetIdent(AMX *amx, const cell *params)
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
 	std::string map_file = Lux_PawnEntity_GetString( amx, params[1] );
-	uint8_t create_new = (uint8_t)params[2];
+	uint32_t ident = 0;
+	if ( params[2] == 1 )
+	{
+		ident = Lux_FFI_Map_Get_Ident( map_file.c_str() );
+	}
+	else if ( params[2] == -1 )
+	{
+		ident = Lux_FFI_Map_Find_Ident( map_file.c_str() );
+		if ( ident == 0)
+		{
+			ident = Lux_FFI_Map_Get_Ident( map_file.c_str() );
+		}
+	}
+	else
+	{
+		ident = Lux_FFI_Map_Find_Ident( map_file.c_str() );
+	}
 
-	return Lux_FFI_Map_Get_Ident( map_file.c_str(), create_new );
-
+	return ident;
 }
 
 /**

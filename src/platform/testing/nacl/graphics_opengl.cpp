@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "misc_functions.h"
 #include "mokoi_game.h"
 #include "map_object.h"
@@ -168,7 +168,7 @@ SDL_Surface * Lux_OGL_LoadSpriteImage(std::string file)
 				SDL_SetAlpha(temp_surface, 0, 255);
 			}
 			else
-				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "not a png image" << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "not a png image" << std::endl;
 		}
 	}
 	return temp_surface;
@@ -221,7 +221,7 @@ bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen
 	oglGraphics_screen = SDL_SetVideoMode(scaled_width, scaled_height, bpp, oglGraphics_flags );
 	if ( !oglGraphics_screen )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't set " << scaled_width << "x" << scaled_height << " video mode. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Couldn't set " << scaled_width << "x" << scaled_height << " video mode. " << SDL_GetError() << std::endl;
 		return false;
 	}
 	oglGraphics_dimension.w = width;
@@ -250,13 +250,13 @@ bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Video Driver: OpenGL " << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Vendor: " << glGetString(GL_VENDOR) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Renderer: " << glGetString(GL_RENDERER) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Version: " << glGetString(GL_VERSION) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Format: " << oglGraphics_screen->w << "x" << oglGraphics_screen->h << "x" << (int)oglGraphics_screen->format->BitsPerPixel << "bpp" << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Pointer Offset: " << oglGraphics_ratio_width << "x" << oglGraphics_ratio_height << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | GL_ARB_texture_non_power_of_two: " << Lux_OGL_QueryExtension("GL_ARB_texture_non_power_of_two") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Video Driver: OpenGL " << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Vendor: " << glGetString(GL_VENDOR) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Renderer: " << glGetString(GL_RENDERER) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Version: " << glGetString(GL_VERSION) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Format: " << oglGraphics_screen->w << "x" << oglGraphics_screen->h << "x" << (int)oglGraphics_screen->format->BitsPerPixel << "bpp" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Pointer Offset: " << oglGraphics_ratio_width << "x" << oglGraphics_ratio_height << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | GL_ARB_texture_non_power_of_two: " << Lux_OGL_QueryExtension("GL_ARB_texture_non_power_of_two") << std::endl;
 
 
 	SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -467,7 +467,7 @@ void Lux_OGL_DrawRect( LuxRect dest_rect, Effects image_effects)
 {
 	if (!oglGraphics_screen)
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
 	}
 	int32_t z = dest_rect.z/1000;
 	glDisable(GL_TEXTURE_2D);
@@ -591,7 +591,7 @@ void Lux_OGL_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, Effects image_eff
 {
 	if ( !oglGraphics_screen )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
 		return;
 	}
 	if ( data == NULL )
@@ -814,7 +814,7 @@ void Lux_OGL_DrawCircle( LuxRect dest_rect, Effects image_effects )
 {
 	if (!oglGraphics_screen)
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
 	}
 	int32_t z = dest_rect.z/1000;
 	float angle;

@@ -10,12 +10,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "engine.h"
 #include "world_section.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "mokoi_game.h"
 #include "entity_section.h"
 #include "config.h"
 #include "game_system.h"
-#include "display.h"
+#include "display/display.h"
 #include <cstdlib>
 
 
@@ -38,7 +38,7 @@ WorldSection::WorldSection( LuxMapIdent ident, std::string file, uint8_t width, 
 
 	this->LoadFile();
 
-	lux::gamesystem->InsertSection( this, this->hash );
+	lux::game_system->InsertSection( this, this->hash );
 
 }
 
@@ -56,7 +56,7 @@ WorldSection::WorldSection( elix::File * current_save_file )
  */
 WorldSection::~WorldSection()
 {
-	lux::gamesystem->DeleteSection( this->SectionIdent() );
+	lux::game_system->DeleteSection( this->SectionIdent() );
 
 	delete [] this->grid;
 }
@@ -210,9 +210,9 @@ bool WorldSection::AddMap( MokoiMap * map_object, const uint8_t x, const uint8_t
 				}
 			}
 		}
-		if ( lux::gamesystem )
+		if ( lux::game_system )
 		{
-			lux::gamesystem->InsertMap( map_object->Ident(), map_object );
+			lux::game_system->InsertMap( map_object->Ident(), map_object );
 		}
 
 		return true;
@@ -261,7 +261,7 @@ MokoiMap * WorldSection::GetMap( const uint16_t grid_id  )
 
 	if ( ident )
 	{
-		map = lux::gamesystem->GetMap( ident );
+		map = lux::game_system->GetMap( ident );
 	}
 
 	return map;
@@ -274,7 +274,7 @@ MokoiMap * WorldSection::GetMap( const uint8_t grid_x, const uint8_t grid_y )
 
 	if ( ident )
 	{
-		map = lux::gamesystem->GetMap( ident );
+		map = lux::game_system->GetMap( ident );
 	}
 
 	return map;

@@ -11,9 +11,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "gles.hpp"
 #include "bitfont.h"
-#include "display.h"
+#include "display/display.h"
 #include "misc_functions.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include <math.h>
 #ifndef LUX_DISPLAY_FUNCTION
 #define LUX_DISPLAY_FUNCTION

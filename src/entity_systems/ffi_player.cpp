@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "game_config.h"
 #include "game_system.h"
 
-#include "elix_endian.hpp"
+#include "elix/elix_endian.hpp"
 #include "entity_manager.h"
 
 

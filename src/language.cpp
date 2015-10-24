@@ -9,10 +9,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "engine.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "mokoi_game.h"
 #include "game_config.h"
-#include "gui.h"
+#include "gui/gui.h"
 
 namespace colour {
 	LuxColour lang_dialog = {150, 150, 200, 200};

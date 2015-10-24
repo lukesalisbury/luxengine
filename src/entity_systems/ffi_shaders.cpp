@@ -13,8 +13,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "stdheader.h"
 #include "map_object.h"
 
-#include "display.h"
-#include "layers.h"
+#include "display/display.h"
+#include "display/layers.h"
 
 
 /**

@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "game_system.h"
 #include "audio.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 
 /**
  * @brief Lux_FFI_Object_Get
@@ -24,9 +24,9 @@ MapObject * Lux_FFI_Object_Get( uint32_t object_id )
 {
 	MapObject * object = NULL;
 
-	if ( lux::gamesystem && object_id )
+	if ( lux::game_system && object_id )
 	{
-		object = lux::gamesystem->GetObject(object_id);
+		object = lux::game_system->GetObject(object_id);
 	}
 	return object;
 }

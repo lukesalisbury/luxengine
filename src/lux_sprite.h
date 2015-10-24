@@ -16,9 +16,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "lux_types.h"
 #include "sprite_types.h"
-#include "display_types.h"
+#include "display/display_types.h"
 #include "object_effect.h"
-
+#include "masks.h"
 
 class LuxSprite
 {
@@ -54,7 +54,7 @@ public:
 
 	uint8_t mask_value;
 	std::string mask_file;
-
+	Lux_Mask mask_image;
 
 	bool has_collision_areas;
 	LuxRect collisions[7];

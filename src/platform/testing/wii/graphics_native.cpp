@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "misc_functions.h"
 #include "mokoi_game.h"
 #include "map_object.h"

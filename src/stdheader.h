@@ -48,7 +48,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <string>
 #include <cstring>
 #include <cstdarg>
-#include "elix_intdef.h"
+#include "libs/elix/elix_intdef.h"
 
 typedef intptr_t native_type;
 typedef void * native_pointer;
@@ -56,8 +56,8 @@ typedef void * mem_pointer;
 typedef int32_t fixed;
 typedef uint32_t int_hash;
 
+#include "libs/elix/elix_file.hpp"
 
-#include "elix_file.hpp"
 
 #define NULLIFY(x) if (x != NULL) { delete(x); x = NULL; }
 #define NULLIFY_ARRAY(x) if (x != NULL) { delete [] x; x = NULL; }

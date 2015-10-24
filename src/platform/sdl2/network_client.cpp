@@ -17,10 +17,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "game_config.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "entity_manager.h"
 #include "game_system.h"
-#include "elix_endian.hpp"
+#include "elix/elix_endian.hpp"
 #include <sstream>
 
 #include "network_types.h"
@@ -103,12 +103,12 @@ int pc_network_thread( void *data )
 								char * username = new char[event.packet->dataLength-1];
 								memcpy(username, event.packet->data+2, event.packet->dataLength-2);
 								username[event.packet->dataLength-2] = 0;
-								MessagePush( "Player (%s) Joined", username );
+								Lux_Util_PushMessage( "Player (%s) Joined", username );
 								new_player->SetName(username);
 								delete username;
 							}
 							else
-								MessagePush( "Player Joined" );
+								Lux_Util_PushMessage( "Player Joined" );
 							if ( client_entity.length() )
 							{
 								Entity * player_entity = lux::entities->NewEntity("*", client_entity, 0);
@@ -165,7 +165,7 @@ int pc_network_thread( void *data )
 									{
 										ReadPacket<int32_t>( event.packet, (int)(6 + (n*4)), data[n] );
 									}
-									MessagePush( "msg: %d", data[0] );
+									Lux_Util_PushMessage( "msg: %d", data[0] );
 									lux::core->NetworkLock();
 									entity->callbacks->Push( entity->_data, data_length );
 									entity->callbacks->PushArray( entity->_data, data, data_length, NULL );
@@ -313,7 +313,7 @@ bool NetworkClient::Open()
 					net_id = event.packet->data[1];
 				}
 			}
-			MessagePush( "Message %d for %d.", event.packet->data[0], net_id);
+			Lux_Util_PushMessage( "Message %d for %d.", event.packet->data[0], net_id);
 			std::cout << __FILE__ << ":" << __LINE__ << " | Connection to " << server_ip << " succeeded." << std::endl;
 			net_active = true;
 			sdlcore_thread = SDL_CreateThread( pc_network_thread, "LuxNet", NULL );
@@ -383,13 +383,13 @@ bool NetworkClient::MessageSend(bool wait)
 {
 	if ( !peer )
 	{
-		MessagePush( "MessageSend called, but not connected.");
+		Lux_Util_PushMessage( "MessageSend called, but not connected.");
 		return false;
 	}
 	if ( net_id )
 	{
 		if ( enet_peer_send(peer, 0, message_packet) )
-			MessagePush( "Error Sending %d.", message_packet->data[0] );
+			Lux_Util_PushMessage( "Error Sending %d.", message_packet->data[0] );
 		//enet_packet_destroy(message_packet);
 		message_packet = NULL;
 		return true;

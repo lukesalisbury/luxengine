@@ -237,7 +237,7 @@ static const void * const amx_opcodelist[] = {
     NEXT(cip,op);
   op_load_i:
     /* verify address */
-    if (pri>=hea && pri<stk || (ucell)pri>=(ucell)amx->stp)
+	if ((pri>=hea && pri<stk) || (ucell)pri>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     pri=_R(data,pri);
     NEXT(cip,op);
@@ -245,7 +245,7 @@ static const void * const amx_opcodelist[] = {
     GETPARAM(offs);
   __lodb_i:
     /* verify address */
-    if (pri>=hea && pri<stk || (ucell)pri>=(ucell)amx->stp)
+	if ((pri>=hea && pri<stk) || (ucell)pri>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     switch (offs) {
     case 1:
@@ -288,7 +288,7 @@ static const void * const amx_opcodelist[] = {
     NEXT(cip,op);
   op_stor_i:
     /* verify address */
-    if (alt>=hea && alt<stk || (ucell)alt>=(ucell)amx->stp)
+	if ((alt>=hea && alt<stk) || (ucell)alt>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     _W(data,alt,pri);
     NEXT(cip,op);
@@ -296,7 +296,7 @@ static const void * const amx_opcodelist[] = {
     GETPARAM(offs);
   __strb_i:
     /* verify address */
-    if (alt>=hea && alt<stk || (ucell)alt>=(ucell)amx->stp)
+	if ((alt>=hea && alt<stk) || (ucell)alt>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     switch (offs) {
     case 1:
@@ -563,13 +563,13 @@ static const void * const amx_opcodelist[] = {
     /* verify top & bottom memory addresses, for both source and destination
      * addresses
      */
-    if (pri>=hea && pri<stk || (ucell)pri>=(ucell)amx->stp)
+	if ((pri>=hea && pri<stk) || (ucell)pri>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
-    if ((pri+offs)>hea && (pri+offs)<stk || (ucell)(pri+offs)>(ucell)amx->stp)
+	if (((pri+offs)>hea && (pri+offs)<stk) || (ucell)(pri+offs)>(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
-    if (alt>=hea && alt<stk || (ucell)alt>=(ucell)amx->stp)
+	if ((alt>=hea && alt<stk) || (ucell)alt>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
-    if ((alt+offs)>hea && (alt+offs)<stk || (ucell)(alt+offs)>(ucell)amx->stp)
+	if ( ((alt+offs)>hea && (alt+offs)<stk) || (ucell)(alt+offs)>(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     #if defined _R_DEFAULT
       memcpy(data+(int)alt, data+(int)pri, (int)offs);
@@ -590,13 +590,13 @@ static const void * const amx_opcodelist[] = {
     /* verify top & bottom memory addresses, for both source and destination
      * addresses
      */
-    if (pri>=hea && pri<stk || (ucell)pri>=(ucell)amx->stp)
+	if ((pri>=hea && pri<stk) || (ucell)pri>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
-    if ((pri+offs)>hea && (pri+offs)<stk || (ucell)(pri+offs)>(ucell)amx->stp)
+	if (((pri+offs)>hea && (pri+offs)<stk) || (ucell)(pri+offs)>(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
-    if (alt>=hea && alt<stk || (ucell)alt>=(ucell)amx->stp)
+	if ((alt>=hea && alt<stk) || (ucell)alt>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
-    if ((alt+offs)>hea && (alt+offs)<stk || (ucell)(alt+offs)>(ucell)amx->stp)
+	if ( ((alt+offs)>hea && (alt+offs)<stk) || (ucell)(alt+offs)>(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     #if defined _R_DEFAULT
       pri=memcmp(data+(int)alt, data+(int)pri, (int)offs);
@@ -612,9 +612,9 @@ static const void * const amx_opcodelist[] = {
     GETPARAM(offs);
   __fill:
     /* verify top & bottom memory addresses */
-    if (alt>=hea && alt<stk || (ucell)alt>=(ucell)amx->stp)
+	if ((alt>=hea && alt<stk) || (ucell)alt>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
-    if ((alt+offs)>hea && (alt+offs)<stk || (ucell)(alt+offs)>(ucell)amx->stp)
+	if ( ((alt+offs)>hea && (alt+offs)<stk) || (ucell)(alt+offs)>(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     for (i=(int)alt; offs>=(int)sizeof(cell); i+=sizeof(cell), offs-=sizeof(cell))
       _W32(data,i,pri);
@@ -812,7 +812,7 @@ static const void * const amx_opcodelist[] = {
   op_lidx:
     offs=pri*sizeof(cell)+alt;  /* implicit shift value for a cell */
     /* verify address */
-    if (offs>=hea && offs<stk || (ucell)offs>=(ucell)amx->stp)
+	if ((offs>=hea && offs<stk) || (ucell)offs>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     pri=_R(data,offs);
     NEXT(cip,op);
@@ -820,7 +820,7 @@ static const void * const amx_opcodelist[] = {
     GETPARAM(offs);
     offs=(pri << (int)offs)+alt;
     /* verify address */
-    if (offs>=hea && offs<stk || (ucell)offs>=(ucell)amx->stp)
+	if ((offs>=hea && offs<stk) || (ucell)offs>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     pri=_R(data,offs);
     NEXT(cip,op);
@@ -1145,7 +1145,7 @@ static const void * const amx_opcodelist[] = {
     GETPARAM_P(offs,op);
     offs=(pri << (int)offs)+alt;
     /* verify address */
-    if (offs>=hea && offs<stk || (ucell)offs>=(ucell)amx->stp)
+	if ((offs>=hea && offs<stk) || (ucell)offs>=(ucell)amx->stp)
       ABORT(amx,AMX_ERR_MEMACCESS);
     pri=_R(data,offs);
     NEXT(cip,op);

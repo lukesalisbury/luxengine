@@ -10,12 +10,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "luxengine.h"
 #include "map_object.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "lux_canvas.h"
-#include "display.h"
+#include "display/display.h"
 #include "core.h"
 #include "game_system.h"
-#include "elix_rng.cpp"
+#include "elix/elix_rng.cpp"
 
 extern ObjectEffect default_fx;
 
@@ -26,7 +26,7 @@ MapObject::MapObject( uint8_t type )
 	InitialSetup();
 
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
 		/*
 		b2BodyDef bodyDef;
@@ -45,7 +45,7 @@ MapObject::MapObject( elix::File * current_save_file )
 
 	Restore( current_save_file);
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
 		/*
 		b2BodyDef bodyDef;
@@ -60,7 +60,7 @@ MapObject::MapObject( elix::File * current_save_file )
 
 MapObject::~MapObject()
 {
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
 		//lux::gamesystem->GetPhysicWorld()->DestroyBody(this->body);
 	}
@@ -292,7 +292,7 @@ void MapObject::IncrementAnimation( LuxSprite * sprite )
 	{
 		return;
 	}
-	this->timer += lux::core->GetAnimationDelta() * this->speed;
+	this->timer += lux::core->animation_ms * this->speed;
 
 	if ( this->timer >= sprite->animation_length )
 	{
@@ -350,7 +350,7 @@ LuxSprite * MapObject::PeekAnimationFrame( LuxSprite * sprite )
 	SpriteFrame current_frame;
 	uint32_t timer = this->timer;
 
-	timer += lux::core->GetAnimationDelta() * this->speed;
+	timer += lux::core->animation_ms * this->speed;
 
 	if ( timer >= sprite->animation_length )
 	{
@@ -453,7 +453,7 @@ void MapObject::SetSprite(LuxSprite * data)
 	}
 	else
 	{
-		MessagePush( (char*)"Sprite missing: %s", this->sprite.c_str() );
+		lux::core->SystemMessage( SYSTEM_MESSAGE_VISUAL_WARNING ) << "Sprite missing: " << this->sprite.c_str() << std::endl;
 	}
 }
 

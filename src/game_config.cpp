@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "game_config.h"
 #include "core.h"
 #include "mokoi_game.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 
 GameConfig::GameConfig()
 {
@@ -34,6 +34,16 @@ GameConfig::GameConfig()
 		}
 
 		this->LoadFromStream(config_file);
+
+		/* Read CSS file */
+		if ( lux::game_data->HasFile("./gui.css") )
+		{
+			std::string css = lux::game_data->GetFileAsString("./gui.css");
+			this->allow_all = true;
+			this->SetString("gui.style", css);
+			this->allow_all = false;
+		}
+
 
 		if ( lux::game_data->HasProjectDirectory() )
 		{

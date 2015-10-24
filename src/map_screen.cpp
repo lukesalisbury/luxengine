@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 
 #include "map_screen.h"
-#include "display.h"
+#include "display/display.h"
 
 namespace colour {
 	extern LuxColour white;
@@ -171,8 +171,8 @@ void MokoiMapScreen::DrawMask( fixed position[3] )
 
 	if ( this->_mask )
 	{
-		lux::display->debug_msg << "Mask Memory:" << this->_mask->length  << "bytes. Offset:" << this->_offset_x << "x" << this->_offset_y << std::endl;
-		lux::display->debug_msg << this->_mask->width << "x" << this->_mask->height << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "Mask Memory:" << this->_mask->length  << "bytes. Offset:" << this->_offset_x << "x" << this->_offset_y << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << this->_mask->width << "x" << this->_mask->height << std::endl;
 
 		for( uint32_t i = 0; i < this->_mask->length; i += 2 )
 		{

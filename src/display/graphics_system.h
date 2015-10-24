@@ -12,9 +12,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define GRAPHICS_SYSTEM_FAKE_H
 
 #include "stdheader.h"
-#include "display_types.h"
+#include "display/display_types.h"
 #include "map_object.h"
-#include "elix_png.hpp"
+#include "elix/elix_png.hpp"
 #ifndef LUX_DISPLAY_FUNCTION
 #define LUX_DISPLAY_FUNCTION
 #endif

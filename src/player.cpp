@@ -9,12 +9,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "engine.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "core.h"
 #include "game_config.h"
 
 #include "game_system.h"
-#include "display_functions.h"
+#include "display/display_functions.h"
 #include "platform_media.h"
 
 extern ObjectEffect default_fx;
@@ -167,7 +167,7 @@ void Player::CacheAxisValues( uint8_t n )
 			break;
 	}
 //	if ( this->_buttonConfig[n].device == CONTROLBUTTON || this->_buttonConfig[n].device == CONTROLAXIS )
-//		lux::display->debug_msg << "axis[" << +n << "] x:" << this->_controller[(n*3)+0] << " y:" << this->_controller[(n*3)+1] << " z:" << this->_controller[(n*3)+2] << std::endl;
+//		lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "axis[" << +n << "] x:" << this->_controller[(n*3)+0] << " y:" << this->_controller[(n*3)+1] << " z:" << this->_controller[(n*3)+2] << std::endl;
 }
 
 void Player::CacheButtonValues(uint8_t n)
@@ -181,7 +181,7 @@ void Player::CacheButtonValues(uint8_t n)
 		this->_button[n] = 0;
 
 //	if ( this->_buttonConfig[n].device == CONTROLBUTTON || this->_buttonConfig[n].device == CONTROLAXIS )
-//		lux::display->debug_msg << "button[" << +n << "] " << this->_button[n] << std::endl;
+//		lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "button[" << +n << "] " << this->_button[n] << std::endl;
 }
 
 void Player::Loop()
@@ -230,8 +230,6 @@ void Player::Loop()
 LuxSprite * Player::GetInputSprite( int8_t axis, int8_t key, int8_t pointer )
 {
 	LuxSprite * sprite = NULL;
-	if ( lux::media != NULL )
-	{
 		if ( axis >= 0 && axis < 12 )
 		{
 			uint8_t a = axis/6; // Axis (Either 1 or 2)
@@ -244,21 +242,20 @@ LuxSprite * Player::GetInputSprite( int8_t axis, int8_t key, int8_t pointer )
 				m = ( s % 2 ? 0 : 0x80000000 ); //If remainder, we want positive value
 			}
 
-			sprite = lux::media->GetInputImage(
+			sprite = lux::engine->media.GetInputImage(
 						this->_controllerConfig[a].device,
 						this->_controllerConfig[a].device_number,
 						this->_controllerConfig[a].sym[s] | m );
 		}
 		else if ( key >= 0 && key < 19 )
 		{
-			sprite = lux::media->GetInputImage(this->_buttonConfig[key].device, this->_buttonConfig[key].device_number, this->_buttonConfig[key].sym);
+			sprite = lux::engine->media.GetInputImage(this->_buttonConfig[key].device, this->_buttonConfig[key].device_number, this->_buttonConfig[key].sym);
 		}
 		else if ( pointer >= 0 )
 		{
-			sprite = lux::media->GetInputImage(this->_pointerConfig.device, this->_pointerConfig.device_number, this->_pointerConfig.sym[0]);
+			sprite = lux::engine->media.GetInputImage(this->_pointerConfig.device, this->_pointerConfig.device_number, this->_pointerConfig.sym[0]);
 		}
 
-	}
 	return sprite;
 }
 

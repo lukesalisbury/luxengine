@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "platform_media.h"
 #include "sprite_sheet.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "pc/keyboard.h"
 #include "pc/joystick_generic.h"
 #include "pc/joystick_xbox360.h"

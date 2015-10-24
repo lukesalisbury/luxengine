@@ -8,7 +8,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#include "display.h"
+#include "display/display.h"
 #include "engine.h"
 #include "entity_manager.h"
 
@@ -27,13 +27,13 @@ static int cons_putchar(void * dest, char ch)
 
 static int debugmsg_putstr(void * dest,const char * str)
 {
-	lux::display->debug_msg << str;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << str;
 	return 0;
 }
 
 static int debugmsg_putchar(void * dest, char ch)
 {
-	lux::display->debug_msg << ch;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << ch;
 	return 0;
 }
 
@@ -85,7 +85,7 @@ static cell pawnConsoleLog(AMX *amx,const cell *params)
 
 		amx_printstring(amx,cstr,&info);
 
-		MessagePush(msg.c_str() );
+		lux::core->SystemMessage( SYSTEM_MESSAGE_VISUAL_WARNING, msg );
 	}
 	else
 	{
@@ -130,9 +130,9 @@ static cell pawnConsoleOutput(AMX *amx, const cell *params)
 	info.f_putchar=debugmsg_putchar;
 
 	cstr = amx_Address(amx, params[1]);
-	lux::display->debug_msg << "> ";
+	lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "> ";
 	amx_printstring(amx,cstr,&info);
-	lux::display->debug_msg << '\n';
+	lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << std::endl;
 
 	return 0;
 }
@@ -146,10 +146,10 @@ static cell pawnConsoleOutput(AMX *amx, const cell *params)
 static cell pawnConsoleInfomation(AMX *amx, const cell *params)
 {
 	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	lux::display->debug_msg << "> ";
+	lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "> ";
 	if ( wanted )
 	{
-		lux::display->debug_msg << wanted->Infomation() <<std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << wanted->Infomation() <<std::endl;
 	}
 
 

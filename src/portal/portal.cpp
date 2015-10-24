@@ -13,14 +13,14 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "game_config.h"
 #include "engine.h"
-#include "elix_string.hpp"
-#include "elix_path.hpp"
+#include "elix/elix_string.hpp"
+#include "elix/elix_path.hpp"
 #include "mokoi_game.h"
 #include "tinyxml/tinyxml2ext.h"
 #include "worker.h"
 #include "game_info.h"
 #include "portal.h"
-#include "gui.h"
+#include "gui/gui.h"
 #include "downloader.h"
 #include "project_media.h"
 
@@ -49,7 +49,7 @@ namespace LuxPortal {
 	bool active = true;
 
 	int16_t mode = 1;
-	LuxRect region = {0, 0, 512, 384, 0};
+	LuxRect region = {0, 0, 960, 540, 0};
 	uint16_t page_padding = 0;
 
 	LuxSprite * logo = NULL;
@@ -179,7 +179,7 @@ void LuxPortal::page_refresh(LuxRect page_rect, uint32_t start, uint32_t length 
 		if ( info->type != GI_INVALID )
 		{
 			// Add Button to GUI
-			page_rect.y += info->SetGUI( i+1, page_rect.x, page_rect.y, page_rect.w, 32  );
+			page_rect.y += info->SetGUI( i+1, page_rect.x, page_rect.y, page_rect.w - (page_padding*2), 32  );
 			LuxPortal::visible_games_list.push_back( info );
 		}
 	}
@@ -448,6 +448,7 @@ bool LuxPortal::frame()
 	Widget * footer_area, * button_exit, * button_browse, * button_online, * button_demos, * button_recent, * text_header, * button_next, * button_prev;
 	Widget * logo_area, * page_area;
 
+
 	LuxRect footer_rect = { 0, 0, 512, 24, 0 };
 	LuxRect page_rect = { 64, 106, 384, 36, 0 };
 	LuxRect item_rect = { 64, 106, 384, 36, 0 };
@@ -456,13 +457,16 @@ bool LuxPortal::frame()
 
 	footer_rect.w = LuxPortal::region.w;
 	footer_rect.y = LuxPortal::region.h - 24;
-	page_rect.w = header_rect.w = LuxPortal::region.w - 128;
 
+	page_rect.w = LuxPortal::region.w - 128;
 	page_rect.y = lux_media::portal_title_height + 22;
-	page_rect.h = LuxPortal::region.h - (lux_media::portal_title_height + 48);
+	page_rect.h = LuxPortal::region.h - (lux_media::portal_title_height + 46) - LuxPortal::page_padding;
+
+	header_rect.w = page_rect.w;
 	header_rect.y = lux_media::portal_title_height;
 
 	image_rect.x = LuxPortal::page_padding;
+	image_rect.y = 10;
 	image_rect.w = lux_media::portal_title_width;
 	image_rect.h = lux_media::portal_title_height;
 
@@ -605,12 +609,13 @@ bool LuxPortal::run()
 	lux::config->SetString("gui.style", css);
 	lux::config->SetBoolean("portal.active", true);
 	lux::config->SetBoolean("debug.enable", false);
+	lux::config->SetString("window.title", PROGRAM_NAME" Game Portal");
 
 	LuxPortal::browse_path_default = elix::directory::Documents(false);
 	LuxPortal::browse_path = LuxPortal::browse_path_default;
 	LuxPortal::mode = GUI_PORTAL_DEMOS;
 
-	LuxPortal::interface = new UserInterface( new DisplaySystem( PROGRAM_NAME" Game Portal "PROGRAM_VERSION, 800, 600, 32, 0) );
+	LuxPortal::interface = new UserInterface( new DisplaySystem( LuxPortal::region.w, LuxPortal::region.h, 32 ) );
 
 	LuxPortal::region = LuxPortal::interface->ui_region;
 

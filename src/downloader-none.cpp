@@ -10,13 +10,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "luxengine.h"
 #include "misc_functions.h"
-#include "gui.h"
-#include "widget.h"
+#include "gui/gui.h"
+#include "gui/widget.h"
 #include "tinyxml/tinyxml2ext.h"
 #include "worker.h"
 #include "core.h"
 #include "config.h"
-#include "elix_path.hpp"
+#include "elix/elix_path.hpp"
 #ifdef NO_ZLIB
 	#define MINIZ_HEADER_FILE_ONLY
 	#include "miniz.c"

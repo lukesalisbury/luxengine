@@ -14,8 +14,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "gui.h"
 #include "misc_functions.h"
 #include "css.h"
-#include "elix_string.hpp"
-#include "display_functions.h"
+#include "elix/elix_string.hpp"
+#include "display/display_functions.h"
 #include "mokoi_game.h"
 
 ObjectEffect default_cursor_fx( colour::black, colour::white );
@@ -61,8 +61,7 @@ UserInterface::UserInterface(DisplaySystem * display )
 {
 	if ( display == NULL )
 	{
-		this->internal_display = new DisplaySystem( PROGRAM_NAME, 640, 480, 16, false );
-
+		this->internal_display = new DisplaySystem( 640, 480, 16 );
 	}
 	else
 	{
@@ -463,7 +462,7 @@ int32_t UserInterface::ReturnResult()
 	while ( !return_value )
 	{
 
-		this->internal_display->DrawGameStatic();
+		this->internal_display->Display(PAUSED);
 		return_value = this->Loop();
 	}
 	return return_value;

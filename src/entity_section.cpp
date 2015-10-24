@@ -159,12 +159,7 @@ bool EntitySection::Loop()
 
 	if ( this->parent )
 	{
-		if ( !this->parent->Loop() )
-			Lux_DisplayMessage("Section's Parent Entity not running");
-	}
-	else
-	{
-		Lux_DisplayMessage("Section's Parent Entity not running");
+		this->parent->Loop();
 	}
 
 	uint32_t count = this->children.size();
@@ -208,7 +203,7 @@ void EntitySection::Switch(fixed x, fixed y)
 {
 	if ( this->parent )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Section Entity Switch()" << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Section Entity Switch()" << std::endl;
 		this->parent->Update();
 	}
 
@@ -217,7 +212,7 @@ void EntitySection::Switch(fixed x, fixed y)
 		std::vector<Entity *>::iterator iter = this->children.begin();
 		while( iter != this->children.end() )
 		{
-			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Entity " << (*iter)->id << " Switch()" << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Entity " << (*iter)->id << " Switch()" << std::endl;
 			(*iter)->x += x;
 			(*iter)->y += y;
 			(*iter)->Update();
@@ -228,10 +223,10 @@ void EntitySection::Switch(fixed x, fixed y)
 
 void EntitySection::Close()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << " < EntitySection Close " << this->map_id << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << " < EntitySection Close " << this->map_id << std::endl;
 	if ( this->parent )
 	{
-		//lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Section Entity Close()" << std::endl;
+		//lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Section Entity Close()" << std::endl;
 		this->parent->Close();
 	}
 
@@ -241,7 +236,7 @@ void EntitySection::Close()
 		std::vector<Entity *>::iterator iter = this->children.begin();
 		while( iter !=  this->children.end() )
 		{
-			//lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Entity " << (*iter)->id << " Close()" << std::endl;
+			//lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Entity " << (*iter)->id << " Close()" << std::endl;
 			(*iter)->Close();
 			iter++;
 		}

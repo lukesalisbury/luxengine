@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "config.h"
 #include "game_config.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "audio.h"
 
 #define	VOLUME_MASTER 0
@@ -23,7 +23,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #define	COMMAND_EXIT 1
 #define	COMMAND_RESET 2
-#define	COMMAND_RESOLUTION 3
+#define	COMMAND_HARDPAUSE 3
+#define	COMMAND_SOFTPAUSE 4
+#define	COMMAND_RESOLUTION 6
+#define	COMMAND_RESOLUTION 6
 
 int8_t Lux_FFI_System_Audio_Volume( const uint8_t device, const int8_t level )
 {
@@ -52,13 +55,25 @@ int32_t Lux_FFI_System_Command( const uint8_t command, const int32_t value )
 	{
 		case COMMAND_EXIT:
 		{
-			lux::engine->SetState(EXITING);
+			lux::engine->next_state = EXITING;
 			results = 1;
 			break;
 		}
 		case COMMAND_RESET:
 		{
-			lux::engine->SetState(RESETGAME);
+			lux::engine->next_state = RESETGAME;
+			results = 1;
+			break;
+		}
+		case COMMAND_HARDPAUSE:
+		{
+			lux::engine->next_state = NOUPDATE;
+			results = 1;
+			break;
+		}
+		case COMMAND_SOFTPAUSE:
+		{
+			lux::engine->next_state = NOUPDATE;
 			results = 1;
 			break;
 		}

@@ -19,7 +19,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define GLES_DEFAULT_PRIMITIVE GL_TRIANGLE_STRIP
 #endif
 
-#include "display_types.h"
+#include "display/display_types.h"
 #include "lux_types.h"
 
 #define GLES_TEXTURE_32 GL_UNSIGNED_BYTE

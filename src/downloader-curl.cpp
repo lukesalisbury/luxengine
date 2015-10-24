@@ -10,16 +10,16 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "luxengine.h"
 #include "misc_functions.h"
-#include "gui.h"
-#include "widget.h"
+#include "gui/gui.h"
+#include "gui/widget.h"
 #include "tinyxml/tinyxml2ext.h"
 #include "worker.h"
 #include "core.h"
 #include "config.h"
 #include "entity.h"
-#include "elix_path.hpp"
-#include "elix_string.hpp"
-#include "elix_file.hpp"
+#include "elix/elix_path.hpp"
+#include "elix/elix_string.hpp"
+#include "elix/elix_file.hpp"
 #ifdef NO_ZLIB
 	#define MINIZ_HEADER_FILE_ONLY
 	#include "miniz.c"
@@ -102,7 +102,7 @@ CURLcode Lux_Util_FileDownloaderHandler( DownloadRequest * request )
 	CURLcode res = CURLE_UNSUPPORTED_PROTOCOL;
 	elix::File * output_file = NULL;
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Downloading " << request->url << " to " << request->file  << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Downloading " << request->url << " to " << request->file  << std::endl;
 
 
 	curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -127,7 +127,7 @@ CURLcode Lux_Util_FileDownloaderHandler( DownloadRequest * request )
 		/* Check for errors */
 		if ( res != CURLE_OK )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
 		}
 
 		/* always cleanup */
@@ -224,7 +224,7 @@ int32_t Lux_Util_FileDownloaderEntityCallback( void * data )
 		/* Check for errors */
 		if ( res != CURLE_OK )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
 		}
 
 		/* always cleanup */
@@ -257,10 +257,10 @@ int32_t Lux_Util_FileDownloaderEntityCallback( void * data )
 int32_t Lux_Util_FileDownloaderBackground( std::string urlArg, std::string origFile, UserInterface * ui )
 {
 	int32_t res = 0;
-	LuxRect region = {10, ui->ui_region.h, ui->ui_region.w, 50, 0 };
-	region.y = (ui->ui_region.h/2)-25;
-	region.w -= 20;
-
+	LuxRect region = {ui->ui_region.w, ui->ui_region.h, ui->ui_region.w, 50, 0 };
+	region.x /= 4;
+	region.y = (region.y / 2) - 25;
+	region.w /= 2;
 
 	DownloadRequest request;
 	request.dialog = ui->AddChild( region, THROBBER, "Downloading " + urlArg + "\n");

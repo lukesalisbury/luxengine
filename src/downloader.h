@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #ifndef _DOWNLOADER_H_
 	#define _DOWNLOADER_H_
-	#include "gui.h"
+	#include "gui/gui.h"
 
 	uint32_t Lux_Util_FileCheck( std::string file );
 	int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserInterface * ui );

@@ -11,15 +11,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "audio.h"
 #include "config.h"
 #include "core.h"
-#include "display.h"
+#include "display/display.h"
 #include "engine.h"
 #include "entity_manager.h"
 #include "pawn_helper.h"
 #include "game_system.h"
 #include "misc_functions.h"
-#include "display_functions.h"
-#include "elix_endian.hpp"
-#include "elix_string.hpp"
+#include "display/display_functions.h"
+#include "elix/elix_endian.hpp"
+#include "elix/elix_string.hpp"
 
 #include "ffi_object.h"
 #include "ffi_spritesheet.h"
@@ -42,9 +42,9 @@ MapObject * Lux_PawnEntity_GetObject(AMX * amx, uint32_t object_id )
 	if ( wanted == NULL )
 		return object;
 
-	if ( lux::gamesystem )
+	if ( lux::game_system )
 	{
-		object = lux::gamesystem->GetObject(object_id);
+		object = lux::game_system->GetObject(object_id);
 	}
 	return object;
 }
@@ -128,9 +128,11 @@ static cell pawnGraphicsDraw(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 8 );
 
-	MapObject * new_object = new MapObject();
+	uint8_t type = (uint8_t)params[2];
+	MapObject * new_object;
+
+	new_object = new MapObject(type);
 	new_object->sprite = Lux_PawnEntity_GetString(amx, params[1]);
-	new_object->type = (uint8_t)params[2];
 	new_object->position.x = params[3];
 	new_object->position.y = params[4];
 	new_object->SetZPos( (fixed)params[5] );
@@ -467,7 +469,7 @@ static cell pawnObjectDelete(AMX *amx, const cell *params)
 */
 static cell pawnCameraSetScroll(AMX *amx, const cell *params)
 {
-	lux::gamesystem->active_map->SetScrolling( (bool)params[1] );
+	lux::game_system->active_map->SetScrolling( (bool)params[1] );
 	return 0;
 }
 

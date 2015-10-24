@@ -11,79 +11,20 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "stdheader.h"
 #include "mokoi_game.h"
-#include "elix_png.hpp"
+#include "elix/elix_png.hpp"
 #include <string>
 #include <SDL.h>
 #include "core.h"
 #include "config.h"
-#include "bitfont.h"
+#include "display_bitfont.h"
 #include "misc_functions.h"
 
-/* Characters in SDL_Texture format
- * Use in Native and MessageWindow
- */
-
-SDL_Texture * debug_font[129];
-
 /* Debug Message */
+
 SDL_Window * debug_window = NULL;
 SDL_Renderer * debug_renderer = NULL;
 SDL_GLContext debug_context;
-
-/**
- * @brief Lux_SDL2_LoadFont
- * @param renderer
- */
-void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[129] )
-{
-	uint8_t * font_point = &gfxPrimitivesFontdata[0];
-	uint8_t i = 0, q;
-	for ( uint8_t c = 0; c < 128; c++)
-	{
-		uint16_t * charflip = new uint16_t[64];
-		for (i = 0; i < 8; i++)
-		{
-			for (q = 0; q < 8; q++)
-			{
-				charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFFFF : 0x000F) ;
-			}
-		}
-		font[c] = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB1555, SDL_TEXTUREACCESS_STATIC, 8, 8);
-		if ( !font[c] )
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Lux_SDL2_LoadFont: " << SDL_GetError() << std::endl;
-		SDL_SetTextureBlendMode( font[c],SDL_BLENDMODE_ADD);
-		SDL_UpdateTexture( font[c], NULL, charflip, 16);
-
-		font_point += 8;
-	}
-}
-
-/**
- * @brief Lux_SDL2_UnloadFont
- */
-void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[129] )
-{
-	for ( uint8_t c = 0; c < 128; c++)
-	{
-		SDL_DestroyTexture(font[c]);
-	}
-}
-
-/**
- * @brief Lux_SDL2_GetCharTexture
- * @param font
- * @param c
- * @return
- */
-SDL_Texture * Lux_SDL2_GetCharTexture( SDL_Texture * font[128], uint8_t c )
-{
-	SDL_Texture * texture = NULL;
-	if ( c > 31 && c < 128)
-	{
-		texture =  font[c];
-	}
-	return texture;
-}
+DisplayBitFont * debug_font = NULL;
 
 void SDL2_OuputRenderingInfo( SDL_RendererInfo * info );
 
@@ -116,15 +57,11 @@ void Lux_SDL2_OpenMessageWindow(  )
 
 		if ( !debug_renderer )
 		{
-			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		}
 		else
 		{
-//			SDL_RendererInfo info;
-//			SDL_GetRendererInfo(debug_renderer, &info);
-//			SDL2_OuputRenderingInfo( &info );
-
-			Lux_SDL2_LoadFont( debug_renderer, debug_font );
+			debug_font = new DisplayBitFont(debug_renderer);
 		}
 	}
 }
@@ -242,19 +179,13 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 			{
 				SDL_Texture * texture = NULL;
 
-				if ( cchar >= 32 && cchar <= 128 )
-				{
-					texture = Lux_SDL2_GetCharTexture(debug_font, cchar);
-				}
-				else
-				{
-					texture = Lux_SDL2_GetCharTexture(debug_font, '?');
-				}
+				texture = debug_font->GetTexture(cchar);
 
 				if ( texture )
 				{
 					SDL_SetTextureColorMod( texture, font_color.r, font_color.g, font_color.b);
 					SDL_SetTextureAlphaMod( texture, 255 );
+					SDL_SetTextureBlendMode( texture, SDL_BLENDMODE_NONE);
 					SDL_RenderCopy(debug_renderer, texture, NULL, &draw);
 				}
 				draw.x += 7;
@@ -287,10 +218,11 @@ void Lux_SDL2_CloseMessageWindow(  )
 {
 	if ( debug_renderer )
 	{
-		Lux_SDL2_UnloadFont( debug_font );
+		delete debug_font;
 		SDL_DestroyRenderer(debug_renderer);
 		debug_renderer = NULL;
 	}
+
 	if ( debug_window )
 	{
 		int x;

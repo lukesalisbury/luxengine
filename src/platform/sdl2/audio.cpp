@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "audio.h"
 #include "engine.h"
 #include "game_config.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "mokoi_game.h"
 #include "core.h"
 
@@ -48,7 +48,7 @@ AudioSystem::AudioSystem()
 		Mix_ReserveChannels(2); // Reserve channels for dialog
 
 		this->bits = this->outformat&0xFF;
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Audio System: " << this->frequency << "Hz " << this->bits << " bit " << ( this->channels > 1 ? "stereo" : "mono" ) << " - Buffer Size: " << this->buffers << " bytes." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Audio System: " << this->frequency << "Hz " << this->bits << " bit " << ( this->channels > 1 ? "stereo" : "mono" ) << " - Buffer Size: " << this->buffers << " bytes." << std::endl;
 
 
 		/* Preload Audio Files into memory */

@@ -24,7 +24,7 @@ endif
 
 #Compiler
 COMPILER_LIBS += $(OPTIMIZER) $(DEBUG) -L'lib' $(PLATFORM_LIBS)
-COMPILER_FLAGS += $(OPTIMIZER) $(DEBUG) -I'../elix/src' -I'src' -I'src/$(PLATFORM_DIRECTORY)' -I'include'  -DTIXML_USE_STL -D$(PLATFORM) -DPLATFORMBITS=$(PLATFORMBITS) $(PLATFORM_FLAGS)
+COMPILER_FLAGS += $(OPTIMIZER) $(DEBUG) -I'src/libs' -I'src' -I'src/$(PLATFORM_DIRECTORY)' -I'include'  -DTIXML_USE_STL -D$(PLATFORM) -DPLATFORMBITS=$(PLATFORMBITS) $(PLATFORM_FLAGS)
 COMPILER_FLAGSPP += -Wno-write-strings -fno-access-control -fno-exceptions -fno-rtti $(COMPILER_FLAGS)
 
 COMPILER_FLAGS += $(CFLAGS)
@@ -41,19 +41,23 @@ ifeq ($(PLATFORMBITS), 32)
 endif
 
 #Main code
-OBJ += $(OBJDIR)/config.o $(OBJDIR)/css.o $(OBJDIR)/dialog.o $(OBJDIR)/engine.o $(OBJDIR)/entity.o $(OBJDIR)/entity_manager.o $(OBJDIR)/entity_section.o $(OBJDIR)/gui_settings.o
-OBJ += $(OBJDIR)/gui_base.o $(OBJDIR)/gui_theme.o $(OBJDIR)/language.o $(OBJDIR)/map_object.o $(OBJDIR)/misc_functions.o $(OBJDIR)/mokoi_game.o $(OBJDIR)/player.o
-OBJ += $(OBJDIR)/save_system.o $(OBJDIR)/widget.o $(OBJDIR)/game_system.o $(OBJDIR)/object_effect.o $(OBJDIR)/sprite_sheet.o $(OBJDIR)/graphics_system.o $(OBJDIR)/lux_virtual_sprite.o
-OBJ += $(OBJDIR)/display.o $(OBJDIR)/display_functions.o $(OBJDIR)/layers.o $(OBJDIR)/lux_canvas.o $(OBJDIR)/lux_sprite.o $(OBJDIR)/map.o
+OBJ += $(OBJDIR)/config.o  $(OBJDIR)/engine.o $(OBJDIR)/entity.o $(OBJDIR)/entity_manager.o $(OBJDIR)/entity_section.o
+OBJ += $(OBJDIR)/language.o $(OBJDIR)/map_object.o $(OBJDIR)/misc_functions.o $(OBJDIR)/mokoi_game.o $(OBJDIR)/player.o
+OBJ += $(OBJDIR)/save_system.o  $(OBJDIR)/game_system.o $(OBJDIR)/object_effect.o $(OBJDIR)/sprite_sheet.o  $(OBJDIR)/lux_virtual_sprite.o
+OBJ += $(OBJDIR)/lux_canvas.o $(OBJDIR)/lux_sprite.o $(OBJDIR)/map.o
 OBJ += $(OBJDIR)/world_section.o $(OBJDIR)/map_screen.o $(OBJDIR)/masks.o $(OBJDIR)/lux_polygon.o $(OBJDIR)/map_xml_reader.o $(OBJDIR)/game_config.o
 OBJ += $(OBJDIR)/options.o $(OBJDIR)/global_objects.o
 
+OBJ += $(OBJDIR)/gui/css.o $(OBJDIR)/gui/dialog.o $(OBJDIR)/gui/gui_base.o $(OBJDIR)/gui/gui_settings.o $(OBJDIR)/gui/gui_theme.o $(OBJDIR)/gui/widget.o
 OBJ += $(OBJDIR)/portal/portal.o $(OBJDIR)/portal/game_info.o $(OBJDIR)/test/test_code.o
+OBJ += $(OBJDIR)/display/display.o $(OBJDIR)/display/display_functions.o $(OBJDIR)/display/layers.o $(OBJDIR)/display/graphics_system.o
+
+
 
 #Platform code
 OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/audio.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/core.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/graphics_native.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/worker.o
 OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_controls.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_functions.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_media.o
-OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_config.o
+OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_config.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/display_bitfont.o
 
 #FFI code
 OBJ += $(OBJDIR)/entity_systems/ffi_system.o $(OBJDIR)/entity_systems/ffi_object.o $(OBJDIR)/entity_systems/ffi_collisions.o
@@ -63,10 +67,10 @@ OBJ += $(OBJDIR)/entity_systems/ffi_spritesheet.o $(OBJDIR)/entity_systems/ffi_m
 OBJ += $(OBJDIR)/entity_systems/ffi_game.o $(OBJDIR)/entity_systems/ffi_input.o $(OBJDIR)/entity_systems/ffi_mask.o
 
 #Tinyxml code
-OBJ += $(OBJDIR)/tinyxml/tinyxml2.o $(OBJDIR)/tinyxml/tinyxml2ext.o
+OBJ += $(OBJDIR)/libs/tinyxml/tinyxml2.o $(OBJDIR)/libs/tinyxml/tinyxml2ext.o
 
 #elix code
-OBJ += $(OBJDIR)/elix/elix_directory.o $(OBJDIR)/elix/elix_endian.o  $(OBJDIR)/elix/elix_file.o $(OBJDIR)/elix/elix_string.o $(OBJDIR)/elix/elix_path.o $(OBJDIR)/elix/elix_png.o $(OBJDIR)/elix/elix_program.o
+OBJ += $(OBJDIR)/libs/elix/elix_directory.o $(OBJDIR)/libs/elix/elix_endian.o  $(OBJDIR)/libs/elix/elix_file.o $(OBJDIR)/libs/elix/elix_string.o $(OBJDIR)/libs/elix/elix_path.o $(OBJDIR)/libs/elix/elix_png.o $(OBJDIR)/libs/elix/elix_program.o
 
 #Download code
 OBJ += $(OBJDIR)/downloader-$(DOWNLOADER_MODE).o
@@ -108,6 +112,14 @@ ifeq ($(INCLUDE_PAWN), TRUE)
 
 endif
 
+#Squirrel code
+ifeq ($(INCLUDE_SQUIRREL), TRUE)
+	OBJ += $(OBJDIR)/scripting/squirrel/sqapi.o $(OBJDIR)/scripting/squirrel/sqbaselib.o $(OBJDIR)/scripting/squirrel/sqfuncstate.o
+	OBJ += $(OBJDIR)/scripting/squirrel/sqdebug.o $(OBJDIR)/scripting/squirrel/sqlexer.o $(OBJDIR)/scripting/squirrel/sqobject.o
+	OBJ += $(OBJDIR)/scripting/squirrel/sqcompiler.o $(OBJDIR)/scripting/squirrel/sqstate.o $(OBJDIR)/scripting/squirrel/sqtable.o
+	OBJ += $(OBJDIR)/scripting/squirrel/sqmem.o $(OBJDIR)/scripting/squirrel/sqvm.o $(OBJDIR)/scripting/squirrel/sqclass.o
+endif
+
 # OpenGL code
 ifeq ($(OPENGL), TRUE)
 	COMPILER_FLAGSPP += -DOPENGLENABLED
@@ -120,24 +132,24 @@ endif
 # Network code
 ifeq ($(NETWORK), TRUE)
 	COMPILER_FLAGS += -DNETWORKENABLED
-	OBJ += $(OBJDIR)/enet/callbacks.o $(OBJDIR)/enet/host.o  $(OBJDIR)/enet/packet.o $(OBJDIR)/enet/peer.o $(OBJDIR)/enet/protocol.o $(OBJDIR)/enet/list.o 
+	OBJ += $(OBJDIR)/libs/enet/callbacks.o $(OBJDIR)/libs/enet/host.o  $(OBJDIR)/libs/enet/packet.o $(OBJDIR)/libs/enet/peer.o $(OBJDIR)/libs/enet/protocol.o $(OBJDIR)/libs/enet/list.o
 	OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/core_network.o 
 	OBJ += $(OBJDIR)/map_network.o
 endif
 
 # Box2d code
-OBJ += $(OBJDIR)/Box2D/Collision/b2BroadPhase.o $(OBJDIR)/Box2D/Collision/b2CollideCircle.o $(OBJDIR)/Box2D/Collision/b2CollideEdge.o $(OBJDIR)/Box2D/Collision/b2CollidePolygon.o
-OBJ += $(OBJDIR)/Box2D/Collision/b2Collision.o $(OBJDIR)/Box2D/Collision/b2Distance.o $(OBJDIR)/Box2D/Collision/b2DynamicTree.o $(OBJDIR)/Box2D/Collision/b2TimeOfImpact.o
-OBJ += $(OBJDIR)/Box2D/Collision/Shapes/b2ChainShape.o $(OBJDIR)/Box2D/Collision/Shapes/b2CircleShape.o $(OBJDIR)/Box2D/Collision/Shapes/b2EdgeShape.o $(OBJDIR)/Box2D/Collision/Shapes/b2PolygonShape.o
-OBJ += $(OBJDIR)/Box2D/Common/b2BlockAllocator.o $(OBJDIR)/Box2D/Common/b2Draw.o $(OBJDIR)/Box2D/Common/b2Math.o $(OBJDIR)/Box2D/Common/b2Settings.o $(OBJDIR)/Box2D/Common/b2StackAllocator.o $(OBJDIR)/Box2D/Common/b2Timer.o
-OBJ += $(OBJDIR)/Box2D/Dynamics/b2Body.o $(OBJDIR)/Box2D/Dynamics/b2ContactManager.o $(OBJDIR)/Box2D/Dynamics/b2Fixture.o $(OBJDIR)/Box2D/Dynamics/b2Island.o $(OBJDIR)/Box2D/Dynamics/b2World.o $(OBJDIR)/Box2D/Dynamics/b2WorldCallbacks.o
-OBJ += $(OBJDIR)/Box2D/Dynamics/Contacts/b2ChainAndCircleContact.o $(OBJDIR)/Box2D/Dynamics/Contacts/b2ChainAndPolygonContact.o $(OBJDIR)/Box2D/Dynamics/Contacts/b2CircleContact.o $(OBJDIR)/Box2D/Dynamics/Contacts/b2Contact.o
-OBJ += $(OBJDIR)/Box2D/Dynamics/Contacts/b2ContactSolver.o $(OBJDIR)/Box2D/Dynamics/Contacts/b2EdgeAndCircleContact.o $(OBJDIR)/Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact.o $(OBJDIR)/Box2D/Dynamics/Contacts/b2PolygonAndCircleContact.o
-OBJ += $(OBJDIR)/Box2D/Dynamics/Contacts/b2PolygonContact.o
-OBJ += $(OBJDIR)/Box2D/Dynamics/Joints/b2DistanceJoint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2FrictionJoint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2GearJoint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2Joint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2MotorJoint.o
-OBJ += $(OBJDIR)/Box2D/Dynamics/Joints/b2MouseJoint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2PrismaticJoint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2PulleyJoint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2RevoluteJoint.o
-OBJ += $(OBJDIR)/Box2D/Dynamics/Joints/b2RopeJoint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2WeldJoint.o $(OBJDIR)/Box2D/Dynamics/Joints/b2WheelJoint.o
-OBJ += $(OBJDIR)/Box2D/Rope/b2Rope.o
+OBJ += $(OBJDIR)/libs/Box2D/Collision/b2BroadPhase.o $(OBJDIR)/libs/Box2D/Collision/b2CollideCircle.o $(OBJDIR)/libs/Box2D/Collision/b2CollideEdge.o $(OBJDIR)/libs/Box2D/Collision/b2CollidePolygon.o
+OBJ += $(OBJDIR)/libs/Box2D/Collision/b2Collision.o $(OBJDIR)/libs/Box2D/Collision/b2Distance.o $(OBJDIR)/libs/Box2D/Collision/b2DynamicTree.o $(OBJDIR)/libs/Box2D/Collision/b2TimeOfImpact.o
+OBJ += $(OBJDIR)/libs/Box2D/Collision/Shapes/b2ChainShape.o $(OBJDIR)/libs/Box2D/Collision/Shapes/b2CircleShape.o $(OBJDIR)/libs/Box2D/Collision/Shapes/b2EdgeShape.o $(OBJDIR)/libs/Box2D/Collision/Shapes/b2PolygonShape.o
+OBJ += $(OBJDIR)/libs/Box2D/Common/b2BlockAllocator.o $(OBJDIR)/libs/Box2D/Common/b2Draw.o $(OBJDIR)/libs/Box2D/Common/b2Math.o $(OBJDIR)/libs/Box2D/Common/b2Settings.o $(OBJDIR)/libs/Box2D/Common/b2StackAllocator.o $(OBJDIR)/libs/Box2D/Common/b2Timer.o
+OBJ += $(OBJDIR)/libs/Box2D/Dynamics/b2Body.o $(OBJDIR)/libs/Box2D/Dynamics/b2ContactManager.o $(OBJDIR)/libs/Box2D/Dynamics/b2Fixture.o $(OBJDIR)/libs/Box2D/Dynamics/b2Island.o $(OBJDIR)/libs/Box2D/Dynamics/b2World.o $(OBJDIR)/libs/Box2D/Dynamics/b2WorldCallbacks.o
+OBJ += $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2ChainAndCircleContact.o $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2ChainAndPolygonContact.o $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2CircleContact.o $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2Contact.o
+OBJ += $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2ContactSolver.o $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2EdgeAndCircleContact.o $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact.o $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2PolygonAndCircleContact.o
+OBJ += $(OBJDIR)/libs/Box2D/Dynamics/Contacts/b2PolygonContact.o
+OBJ += $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2DistanceJoint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2FrictionJoint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2GearJoint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2Joint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2MotorJoint.o
+OBJ += $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2MouseJoint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2PrismaticJoint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2PulleyJoint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2RevoluteJoint.o
+OBJ += $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2RopeJoint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2WeldJoint.o $(OBJDIR)/libs/Box2D/Dynamics/Joints/b2WheelJoint.o
+OBJ += $(OBJDIR)/libs/Box2D/Rope/b2Rope.o
 
 OBJ += $(PLATFORM_OBJECTS)
 
@@ -153,18 +165,12 @@ all: all-before $(BIN) $(FINALOUTPUT)
 	@echo --------------------------------
 
 all-before:
+	@-$(MKDIR) $(OBJDIR)
 	@echo --------------------------------
 	@echo Building $(BIN) $(PROGRAM_VERSION)
 	@echo Build Platform: $(BUILDPLATFORM)
 	@echo Target Platform: $(BUILDOS)/$(PLATFORMBITS)
-
-
-$(OBJDIR)/update_input_header.exe:
-	@-$(MKDIR) $(dir $@)
-#	@$(CPP) update_input_header.cpp -o $(OBJDIR)/update_input_header.exe  -s
-
-include/input/%.h: res/input/%.txt
-	$(OBJDIR)/update_input_header.exe $< $@
+	@echo Build Platform: $(CUSTOMPATH)
 
 clean:
 	@echo --------------------------------
@@ -172,22 +178,15 @@ clean:
 	@${RM} $(OBJ) $(BUILDDIR)/$(BIN)
 
 
+$(OBJDIR)/update_input_header.exe:
+	@-$(MKDIR) $(dir $@)
+	@$(CPP) update_input_header.cpp -o $(OBJDIR)/update_input_header.exe  -s
+
+include/input/%.h: res/input/%.txt
+	$(OBJDIR)/update_input_header.exe $< $@
+
+
 $(OBJDIR)/%.o : src/%.cpp
-	@echo Compiling $@ $(MESSAGE)
-	@-$(MKDIR) $(dir $@)
-	@$(CPP) -c $(COMPILER_FLAGSPP) -o $@ $<
-
-$(OBJDIR)/%.o : $(CUSTOMPATH)/%.cpp
-	@echo Compiling $@ $(MESSAGE)
-	@-$(MKDIR) $(dir $@)
-	@$(CPP) -c $(COMPILER_FLAGSPP) -o $@ $<
-
-$(OBJDIR)/elix/%.o : elix/src/%.cpp
-	@echo Compiling $@ $(MESSAGE)
-	@-$(MKDIR) $(dir $@)
-	@$(CPP) -c $(COMPILER_FLAGSPP) -o $@ $<
-
-$(OBJDIR)/elix/%.o : ../elix/src/%.cpp
 	@echo Compiling $@ $(MESSAGE)
 	@-$(MKDIR) $(dir $@)
 	@$(CPP) -c $(COMPILER_FLAGSPP) -o $@ $<
@@ -197,8 +196,15 @@ $(OBJDIR)/%.o : src/%.c
 	@-$(MKDIR) $(dir $@)
 	@$(CC) -c $(COMPILER_FLAGS) -o $@ $<
 
+$(OBJDIR)/%.o : $(CUSTOMPATH)/%.cpp
+	@echo Compiling $@ $(MESSAGE)
+	@-$(MKDIR) $(dir $@)
+	@$(CPP) -c $(COMPILER_FLAGSPP) -o $@ $<
+
+
 $(OBJDIR)/%.o : src/%.asm
 	@echo Compiling $@ $(MESSAGE) [ASM]
+	@-$(MKDIR) $(dir $@)
 	@$(ASM) -O1 -f $(ASMTYPE) -o $@ $< -I$(dir $<)
 
 $(BIN): $(OBJDIR)/update_input_header.exe $(UIH) $(OBJ) $(EXTRABINARIES)

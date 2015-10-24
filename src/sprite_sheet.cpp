@@ -11,8 +11,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "sprite_sheet.h"
 #include "xml_functions.h"
-#include "elix_string.hpp"
-#include "display.h"
+#include "elix/elix_string.hpp"
+#include "display/display.h"
 
 
 void Lux_Sprite_SetMask( LuxSprite * sprite, tinyxml2::XMLElement * element )
@@ -35,6 +35,11 @@ void Lux_Sprite_SetMask( LuxSprite * sprite, tinyxml2::XMLElement * element )
 	}
 }
 
+/**
+ * @brief Lux_Sprite_SetCollisions
+ * @param sprite
+ * @param element
+ */
 void Lux_Sprite_SetCollisions( LuxSprite * sprite, tinyxml2::XMLElement * element )
 {
 	/* Collisions */
@@ -57,12 +62,14 @@ void Lux_Sprite_SetCollisions( LuxSprite * sprite, tinyxml2::XMLElement * elemen
 				sprite->has_collision_areas = true;
 			}
 		}
-
 	}
-
 }
 
-
+/**
+ * @brief Lux_Sprite_SetBorderImages
+ * @param sprite
+ * @param element
+ */
 void Lux_Sprite_SetBorderImages( LuxSprite * sprite, tinyxml2::XMLElement * element )
 {
 	/* Border Children */
@@ -108,6 +115,7 @@ LuxSheet::~LuxSheet()
 	for( std::map<uint32_t, LuxSprite *>::iterator iter = this->children.begin(); iter != this->children.end(); ++iter )
 	{
 		delete (*iter).second;
+		(*iter).second = NULL;
 	}
 	this->children.clear();
 }
@@ -275,15 +283,15 @@ bool LuxSheet::ParseXML()
 
 void LuxSheet::Print()
 {
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "----------------------------" << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "-" << this->name << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "----------------------------" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "----------------------------" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "-" << this->name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "----------------------------" << std::endl;
 	for( std::map<uint32_t, LuxSprite *>::iterator iter = this->children.begin(); iter != this->children.end(); ++iter )
 	{
 		LuxSprite  * s = (*iter).second;
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "(" << (*iter).first << ")" << s->name << " [" << s->sheet_area.x << "x" << s->sheet_area.y << "] w:"<< s->sheet_area.w << " h:" << s->sheet_area.h << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "(" << (*iter).first << ")" << s->name << " [" << s->sheet_area.x << "x" << s->sheet_area.y << "] w:"<< s->sheet_area.w << " h:" << s->sheet_area.h << std::endl;
 	}
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "----------------------------" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "----------------------------" << std::endl;
 }
 
 bool LuxSheet::ParseSimpleText(const std::string content )
@@ -356,7 +364,7 @@ bool LuxSheet::Load()
 		}
 		if ( this->graphics.LoadSpriteSheet(this->name, &this->children) )
 		{
-			//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Loading Sheet '" << this->name << "'" << this->requested << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Loading Sheet '" << this->name << "'" << this->requested << std::endl;
 			this->loaded = true;
 
 			this->failed = false;
@@ -396,7 +404,7 @@ bool LuxSheet::Refresh(GraphicSystem graphics)
 
 bool LuxSheet::Unload()
 {
-	//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Freeing sheet '" << this->name << "' (" << this->requested << ")" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Freeing sheet '" << this->name << "' (" << this->requested << ")" << std::endl;
 	this->graphics.FreeSpriteSheet( &this->children );
 	this->loaded = false;
 	this->requested = 0;

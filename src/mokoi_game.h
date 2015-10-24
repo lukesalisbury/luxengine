@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <iostream>
 #include <vector>
 #include <map>
-#include "elix_file.hpp"
+#include "elix/elix_file.hpp"
 
 #ifndef DIRECTORY_FILE
 	#define DIRECTORY_FILE "game.mokoi"
@@ -82,6 +82,7 @@ class MokoiGame
 		bool HasFile(std::string file);
 		uint32_t GetFile(std::string file, uint8_t ** data, bool addnull);
 		uint32_t SetFile(std::string file, uint8_t * data);
+		std::string GetFileAsString( std::string file );
 		bool GetStream(std::string file, std::stringstream * stream);
 
 		bool FolderList(std::string folder, std::vector<std::string> * results);
@@ -96,7 +97,8 @@ class MokoiGame
 		uint32_t GetProjectIdent();
 
 		void Print();
-	private:
+
+private:
 		bool Scan( uint8_t type, std::string path, std::string dest );
 		bool ScanPackage( uint8_t type, std::string path, std::string dest );
 		bool ScanDirectory(uint8_t type, std::string path, std::string dest, bool overwrite = false);
@@ -104,6 +106,7 @@ class MokoiGame
 		bool HasProjectDirectory();
 		bool SetProjectDirectory();
 		uint8_t ReadType( std::string &path, bool read_info );
+		uint8_t PackageType(std::string &file_path);
 };
 
 

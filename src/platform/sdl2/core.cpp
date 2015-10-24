@@ -21,10 +21,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "core.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "entity_manager.h"
-#include "elix_path.hpp"
-#include "elix_string.hpp"
+#include "elix/elix_path.hpp"
+#include "elix/elix_string.hpp"
 #include "game_system.h"
 #include "platform_functions.h"
 
@@ -100,31 +100,8 @@ CoreSystem::CoreSystem( const void * window_ptr )
 	memset( this->controller, 0, sizeof(SDL_GameController*)*8);
 
 	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
+
 	this->native_window = SDL_CreateWindowFrom( window_ptr );
-
-
-
-	#ifdef __GNUWIN32__
-/*
-	SDL_SysWMinfo info;
-	SDL_GetWindowWMInfo(this->native_window, &info);
-
-
-	HDC    hdc = GetDC(info.info.win.window);
-	HGLRC  hglrc;
-
-	// create a rendering context
-	hglrc = wglCreateContext(hdc);
-
-	// make it the calling thread's current rendering context
-	wglMakeCurrent(hdc, hglrc);
-
-	this->native_window->flags |= SDL_WINDOW_OPENGL;
-*/
-	#endif
-
-
-
 	if ( !this->native_window )
 	{
 		std::cout << __FILE__ << ":" << __LINE__ << " | Couldn't create Window. " << SDL_GetError() << std::endl;
@@ -162,7 +139,13 @@ CoreSystem::CoreSystem()
 
 	memset( this->controller, 0, sizeof(SDL_GameController*)*8);
 
+#if PLATFORMBITS == RaspberryPI
+	this->native_window = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN_DESKTOP|SDL_WINDOW_MOUSE_CAPTURE );
+#else
 	this->native_window = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320, 240, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE );
+#endif
+
+
 	if ( !this->native_window )
 	{
 		std::cout << __FILE__ << ":" << __LINE__ << " | Couldn't create Window. " << SDL_GetError() << std::endl;
@@ -209,29 +192,39 @@ CoreSystem::~CoreSystem()
 
 std::ostream& CoreSystem::SystemMessage(const char *file, int line, uint8_t type  )
 {
-	if ( type == SYSTEM_MESSAGE_LOG )
+	switch ( type )
 	{
-		if ( file )
+		case SYSTEM_MESSAGE_VISUAL_WARNING:
 		{
-			std::cout << std::dec << "(" << file << ":" << line << ") ";
+			if ( lux::display )
+			{
+				return lux::display->static_text;
+			}
 		}
-		return std::cout;
-	}
-	else if ( type == SYSTEM_MESSAGE_ERROR || type == SYSTEM_MESSAGE_WARNING )
-	{
-		if ( file )
+		case SYSTEM_MESSAGE_ERROR:
+		case SYSTEM_MESSAGE_WARNING:
 		{
-			std::cerr << std::dec <<  "[" << file << ":" << line << "] ";
+			if ( file )
+			{
+				std::cerr << std::dec <<  "[" << file << ":" << line << "] ";
+			}
+			return std::cerr;
 		}
-		return std::cerr;
-	}
-	else
-	{
-		if ( file )
+		case SYSTEM_MESSAGE_DEBUG:
 		{
-			std::cout << std::dec <<  "[" << file << ":" << line << "] ";
+			if ( lux::display )
+			{
+				return lux::display->dynamic_text;
+			}
 		}
-		return std::cout;
+		default:
+		{
+			if ( file )
+			{
+				std::cout << std::dec << "(" << file << ":" << line << ") ";
+			}
+			return std::cout;
+		}
 	}
 }
 
@@ -339,12 +332,14 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	this->internal_ms = (this->GetTime() - this->time);
 	this->frame_ms = clamp( this->internal_ms, 0, 33);
 	//this->frame_ms = this->internal_ms;
-	this->animation_ms = this->frame_ms;
 
-	if ( this->state > PAUSED || old_state >= SAVING )
+
+	if ( this->state > PAUSED || old_state >= SAVING || old_state == NOUPDATE )
 	{
 		this->state = old_state;
 	}
+
+
 
 	while( SDL_PollEvent(&event) )
 	{
@@ -373,7 +368,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 							this->state = EXITING;
 							break;
 						case SDLK_PAUSE:
-							this->state = (this->state == PAUSED ? RUNNING : PAUSED);
+							this->state = (this->state == RUNNING ? NOUPDATE : RUNNING);
 							break;
 						case SDLK_F4: //
 						{
@@ -412,7 +407,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 						case SDLK_F12:
 						{
-							lux::engine->SettingDialog();
+
 							break;
 						}
 						case SDLK_F10:
@@ -623,10 +618,8 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 							lux::display->show_collisions = !lux::display->show_collisions;
 							break;
 						}
-
 						case SDLK_F12:
 						{
-							lux::engine->SettingDialog();
 							break;
 						}
 						case SDLK_F10:
@@ -674,15 +667,13 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	this->CheckTouch( lux::display, touch_events_count );
 
-	// Scale Mouse
-//	if ( lux::display->graphics.Display2Screen )
-//	{
-//		lux::display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
-//	}
-
 
 	this->time = this->GetTime();
 
+	if ( this->state == RUNNING )
+		this->animation_ms = this->frame_ms;
+	else
+		this->animation_ms = 0;
 	return this->state;
 }
 
@@ -1088,7 +1079,7 @@ void CoreSystem::VirtualGamepadRemoveItem( uint32_t ident )
 }
 
 /** Ugly Hack */
-#include "elix_program.hpp"
+#include "elix/elix_program.hpp"
 bool CoreSystem::RunExternalProgram( std::string program, std::string argument )
 {
 	std::string cmdline = elix::program::RootDirectory( ) + ELIX_DIR_SSEPARATOR + program + " " + argument;

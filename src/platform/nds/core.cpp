@@ -17,7 +17,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <sys/dir.h>
 #include "core.h"
 #include "config.h"
-#include "display.h"
+#include "display/display.h"
 
 /* Local variables */
 touchPosition touch_screen;
@@ -135,7 +135,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	{
 		struct mallinfo mi = mallinfo();
 		int usedMem = mi.uordblks;
-		lux::display->debug_msg << "Mem: Used " << usedMem << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "Mem: Used " << usedMem << std::endl;
 
 	}
 	if ( key_states & KEY_START && key_states & KEY_SELECT && key_states & KEY_L )
@@ -144,7 +144,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	}
 	if ( key_states & KEY_TOUCH )
 	{
-		lux::display->debug_msg << "Touch " << touch_screen.px << " " << touch_screen.py << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "Touch " << touch_screen.px << " " << touch_screen.py << std::endl;
 	}
 
 
@@ -157,7 +157,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 		fps = 0;
 	}
 	fps++;
-	lux::display->debug_msg << "FPS " << fps_last << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "FPS " << fps_last << std::endl;
 
 
 	int polygon_count;
@@ -165,7 +165,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	glGetInt(GL_GET_VERTEX_RAM_COUNT, &vertex_count);
 	glGetInt(GL_GET_POLYGON_RAM_COUNT, &polygon_count);
 
-	lux::display->debug_msg << "Vertex ram: " << vertex_count << " - Polygon ram: " << polygon_count << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "Vertex ram: " << vertex_count << " - Polygon ram: " << polygon_count << std::endl;
 
 
 
@@ -183,7 +183,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 	key_states =  keysHeld();
 
 
-	//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "touch_time" << "-" << this->touch_time << "-" << this->GetFrameDelta() << std::endl;
+	//lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "touch_time" << "-" << this->touch_time << "-" << this->GetFrameDelta() << std::endl;
 	this->last_press = this->touch_press;
 	this->touch_press = (key_states & KEY_TOUCH);
 }

@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <sstream>
 #include "core.h"
 #include "game_system.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 
 
 bool Lux_Util_RectCollide(LuxRect a, LuxRect b);
@@ -31,7 +31,7 @@ Entity::Entity(std::string base, std::string id, uint32_t mapid, LuxEntityCallba
 		this->_data = this->callbacks->Init( this->id.c_str(), this->_base.c_str(), this );
 		if ( !this->_data )
 		{
-			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_INFO) << "No data for " << this->id << "|" << this->_base << std::endl;
+			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_LOG) << "No data for " << this->id << "|" << this->_base << std::endl;
 		}
 		else
 		{
@@ -243,7 +243,7 @@ int32_t Entity::Call(std::string function, char * format, ...)
 			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR ) <<  "| Call from " << this->id << " Failed" << std::endl;
 		return return_value;
 	}
-	lux::core->SystemMessage( __FUNCTION__, __LINE__, SYSTEM_MESSAGE_INFO ) << "'" << this->id << "' Call Function Failed '" << function << "'" << std::endl;
+	lux::core->SystemMessage( __FUNCTION__, __LINE__, SYSTEM_MESSAGE_LOG ) << "'" << this->id << "' Call Function Failed '" << function << "'" << std::endl;
 	return -1;
 }
 
@@ -406,13 +406,13 @@ void Entity::SetCollisionCount(int32_t count)
 int32_t Entity::GetHits( int32_t type )
 {
 	this->_hits.clear();
-	if (lux::gamesystem != NULL)
+	if (lux::game_system != NULL)
 	{
 		for(int32_t n = 0; n < this->_used_collisions; n++)
 		{
 			if (this->_collisions[n].rect.w != 0 && this->_collisions[n].rect.h != 0)
 			{
-				lux::gamesystem->GetObjects()->ReturnCollisions(&this->_hits, this->hashid, n, this->_collisions[n].rect);
+				lux::game_system->GetObjects()->ReturnCollisions(&this->_hits, this->hashid, n, this->_collisions[n].rect);
 			}
 		}
 	}
@@ -424,7 +424,7 @@ int32_t Entity::GetHits( int32_t type )
  */
 void Entity::SetMapCollsion()
 {
-	if ( lux::gamesystem != NULL )
+	if ( lux::game_system != NULL )
 	{
 		if ( this->_used_collisions > -1 )
 		{
@@ -434,7 +434,7 @@ void Entity::SetMapCollsion()
 				{
 					if (this->_collisions[n].rect.w != 0 && this->_collisions[n].rect.h != 0)
 					{
-						lux::gamesystem->GetObjects()->AddCollision(this->hashid, &this->_collisions[n]);
+						lux::game_system->GetObjects()->AddCollision(this->hashid, &this->_collisions[n]);
 					}
 				}
 			}
@@ -447,14 +447,14 @@ void Entity::SetMapCollsion()
  */
 void Entity::ClearMapCollsion()
 {
-	if ( lux::gamesystem != NULL )
+	if ( lux::game_system != NULL )
 	{
 		for( int32_t n = 0; n < this->_used_collisions; n++)
 		{
 			this->_collisions[n].rect.w = this->_collisions[n].rect.h = 0;
 			this->_collisions[n].added = false;
 		}
-		lux::gamesystem->GetObjects()->RemoveCollisions(this->hashid);
+		lux::game_system->GetObjects()->RemoveCollisions(this->hashid);
 	}
 }
 
@@ -471,9 +471,9 @@ int32_t Entity::GetHitsCount()
  * @brief Entity::GetCurrentHit
  * @return
  */
-CollisionResult * Entity::GetCurrentHit()
+CollisionResult Entity::GetCurrentHit()
 {
-	CollisionResult * current_hit = this->_hits.back();
+	CollisionResult current_hit = this->_hits.back();
 	this->_hits.pop_back();
 	return current_hit;
 }

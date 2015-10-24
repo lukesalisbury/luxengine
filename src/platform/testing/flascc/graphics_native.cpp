@@ -13,15 +13,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "misc_functions.h"
 #include "mokoi_game.h"
 #include "map_object.h"
 #include "graphics_native.h"
 #include "graphics_system.h"
 
-#include "elix_png.hpp"
-#include "elix_string.hpp"
+#include "elix/elix_png.hpp"
+#include "elix/elix_string.hpp"
 
 #include <AS3/AS3.h>
 
@@ -130,7 +130,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 	sdlgraphics_screen = SDL_SetVideoMode(512, 384, 32, SDL_SWSURFACE );
 	if ( !sdlgraphics_screen )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Couldn't set " << width << "x" << height << " video mode. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Couldn't set " << width << "x" << height << " video mode. " << SDL_GetError() << std::endl;
 		return false;
 	}
 
@@ -139,7 +139,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 
 	char vd[15];
 	SDL_VideoDriverName(vd, 14);
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Video System: " << vd << " - " << sdlgraphics_screen->w << "x" << sdlgraphics_screen->h << "x" << (int)sdlgraphics_screen->format->BitsPerPixel << "bpp" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Video System: " << vd << " - " << sdlgraphics_screen->w << "x" << sdlgraphics_screen->h << "x" << (int)sdlgraphics_screen->format->BitsPerPixel << "bpp" << std::endl;
 	SDL_ShowCursor(false);
 
 
@@ -234,7 +234,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
 			sdlgraphics_fpstime = lux::core->GetTime();
 
 			AS3_SendMetricInt("engine.fps", sdlgraphics_fps);
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "sdlgraphics_fps" << sdlgraphics_fps << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "sdlgraphics_fps" << sdlgraphics_fps << std::endl;
 			sdlgraphics_fps = 0;
 		}
 		sdlgraphics_fps++;
@@ -633,7 +633,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect e
 {
 	if ( !sdlgraphics_screen )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
 		return;
 	}
 

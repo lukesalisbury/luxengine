@@ -12,8 +12,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "ffi_layer.h"
 #include "ffi_functions.h"
 
-#include "display.h"
-#include "elix_endian.hpp"
+#include "display/display.h"
+#include "elix/elix_endian.hpp"
 
 /**
  * @brief Lux_FFI_Layer_Rotation

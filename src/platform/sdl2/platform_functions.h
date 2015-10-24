@@ -28,8 +28,8 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window );
 void Lux_SDL2_SetRectFromText( SDL_Rect & area, std::string text, uint8_t text_width, uint8_t text_height );
 
 
-void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[129] );
-void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[129] );
+void Lux_SDL2_LoadFont( SDL_Renderer * renderer, SDL_Texture * (&font)[130] );
+void Lux_SDL2_UnloadFont( SDL_Texture * (&font)[130] );
 SDL_Texture * Lux_SDL2_GetCharTexture( uint8_t c );
 bool Lux_SDL2_CheckTextColour( uint32_t cchar, SDL_Color & font_color, bool & watch_for_color );
 

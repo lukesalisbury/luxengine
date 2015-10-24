@@ -9,7 +9,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 #include "global_objects.h"
-#include "display.h"
+#include "display/display.h"
 #include "game_system.h"
 #include "misc_functions.h"
 
@@ -260,14 +260,24 @@ void GlobalObjects::DrawCollisions()
 			{
 				screen_location = p->second->rect;
 				screen_location.z = 7000;
-				screen_location.x -= MAKE_FIXED_INT( lux::gamesystem->active_map->GetPosition('x') );
-				screen_location.y -= MAKE_FIXED_INT( lux::gamesystem->active_map->GetPosition('y') );
+				screen_location.x -= MAKE_FIXED_INT( lux::game_system->active_map->GetPosition('x') );
+				screen_location.y -= MAKE_FIXED_INT( lux::game_system->active_map->GetPosition('y') );
 				effects.primary_colour.r = (p->second->type %5) * 128;
 				effects.primary_colour.b = (p->second->type /5) * 64;
 				effects.primary_colour.g = p->second->type  * 25;
 				effects.primary_colour.a = 128;
 				lux::display->graphics.DrawRect(screen_location, effects);
-				//screen_location.y -= 16;
+
+				screen_location.z = 7001;
+				screen_location.x += (p->second->rect.w/2) - 1;
+				screen_location.y += (p->second->rect.h/2)- 1;
+				screen_location.w = screen_location.h = 2;
+				effects.primary_colour.r = 0;
+				effects.primary_colour.b = 0;
+				effects.primary_colour.g = 0;
+				effects.primary_colour.a = 255;
+				lux::display->graphics.DrawRect(screen_location, effects);
+
 			}
 		}
 	}
@@ -288,6 +298,36 @@ void GlobalObjects::ClearCollisions()
  * @param count
  * @param rect
  */
+void GlobalObjects::ReturnCollisions( std::vector<CollisionResult> * hits, uint32_t entity, int16_t count, LuxRect rect )
+{
+	if ( this->collision_list.size() )
+	{
+		std::multimap<uint32_t, CollisionObject*>::iterator p;
+		for ( p = this->collision_list.begin(); p != this->collision_list.end(); p++ )
+		{
+			if ( p->first != entity )
+			{
+				if ( p->second->rect.w != 0 && p->second->rect.h != 0 )
+				{
+					if ( Lux_Util_RectCollide(p->second->rect, rect) )
+					{
+						CollisionResult result;
+						result.rect = count;
+						result.rect_x = rect.x + (rect.w/2);
+						result.rect_y = rect.y + (rect.h/2);
+						result.type = p->second->type;
+						result.hit_rect = p->second->id;
+						result.hit_x = p->second->rect.x + (p->second->rect.w/2);
+						result.hit_y = p->second->rect.y + (p->second->rect.h/2);
+						result.entity_id = p->second->entity;
+						hits->push_back(result);
+					}
+				}
+			}
+		}
+	}
+}
+/*
 void GlobalObjects::ReturnCollisions( std::vector<CollisionResult*> * hits, uint32_t entity, int16_t count, LuxRect rect )
 {
 	if ( this->collision_list.size() )
@@ -317,7 +357,7 @@ void GlobalObjects::ReturnCollisions( std::vector<CollisionResult*> * hits, uint
 		}
 	}
 }
-
+*/
 /**
  * @brief GlobalObjects::RemoveCollisions
  * @param name

@@ -11,8 +11,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <sstream>
 #include "css.h"
 #include "core.h"
-#include "elix_string.hpp"
-#include "display_functions.h"
+#include "elix/elix_string.hpp"
+#include "display/display_functions.h"
 /*
 element:state
 	|  key:value;
@@ -25,9 +25,9 @@ CSSParser::CSSParser( std::string content )
 
 //	for ( std::vector<CSSElement*>::iterator it = this->elements.begin(); it != this->elements.end(); it++ )
 //	{
-//		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << (*it)->element << ":" << (*it)->state << "" << std::endl;
+//		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << (*it)->element << ":" << (*it)->state << "" << std::endl;
 //		for ( std::map<std::string, std::string>::iterator key = (*it)->key.begin(); key != (*it)->key.end(); key++ )
-//			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
+//			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
 //	}
 
 }
@@ -103,9 +103,9 @@ void CSSParser::AddContent( std::string content )
 
 //	for ( std::vector<CSSElement*>::iterator it = this->elements.begin(); it != this->elements.end(); it++ )
 //	{
-//		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << (*it)->element << ":" << (*it)->state << "" << std::endl;
+//		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << (*it)->element << ":" << (*it)->state << "" << std::endl;
 //		for ( std::map<std::string, std::string>::iterator key = (*it)->key.begin(); key != (*it)->key.end(); key++ )
-//			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
+//			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "\t - '" << (*key).first << "' : '" << (*key).second << "'" << std::endl;
 //	}
 
 }

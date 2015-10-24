@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "luxengine.h"
 #include "map_object.h"
 #include "mokoi_game.h"
-#include "elix_png.hpp"
+#include "elix/elix_png.hpp"
 #include "core.h"
 
 namespace colour {

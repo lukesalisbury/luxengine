@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "audio.h"
 #include "config.h"
 #include "core.h"
-#include "display.h"
+#include "display/display.h"
 #include "engine.h"
 #include "entity_manager.h"
 #include "pawn_helper.h"
@@ -21,7 +21,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "pawn.h"
 #include <cmath>
 #include <algorithm>
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "ffi_entities.h"
 #include "ffi_collisions.h"
 #include "ffi_path.h"
@@ -217,7 +217,6 @@ static cell pawnEntityGetNumber(AMX *amx, const cell *params)
 	entity = Lux_PawnEntity_GetEntity( amx, params[2] );
 	stf_key = Lux_PawnEntity_GetString( amx, params[1] );
 	response = Lux_FFI_Entity_Object_Get_Setting_Number( entity, stf_key.c_str() );
-
 
 	return response;
 }
@@ -492,7 +491,7 @@ static cell pawnEntityPublicFunction(AMX *amx, const cell *params)
 					}
 					else if ( *cptr == 'n' ) //Value, passed by value
 					{
-						//lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << num_param << ": " << *cptr  << " = " << *arg_ptr << std::endl;
+						//lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << num_param << ": " << *cptr  << " = " << *arg_ptr << std::endl;
 						int32_t value = (int32_t)*arg_ptr;
 						wanted_entity->callbacks->Push(wanted_entity->_data,(int32_t)*arg_ptr);
 					}

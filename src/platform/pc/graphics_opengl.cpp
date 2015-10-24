@@ -13,11 +13,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "luxengine.h"
 #include "map_object.h"
 #include "mokoi_game.h"
-#include "elix_png.hpp"
+#include "elix/elix_png.hpp"
 #include "game_config.h"
 #include "core.h"
 
-#include "display_types.h"
+#include "display/display_types.h"
 #include "graphics_opengl.h"
 #include "graphics_system.h"
 #include "gles/gles.hpp"
@@ -91,7 +91,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
  @ fullscreen:
  - Returns true if successfull
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t bpp )
 {
 	SDL_Surface * opengl_window_icon = NULL;
 	if ( lux::config->GetString("display.mode") != "OpenGL" )
@@ -127,7 +127,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 										  opengl_window_flags );
 	if ( !opengl_graphic_screen )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't set "
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Couldn't set "
 				  << scaled_width << "x" << scaled_height << " video mode. "
 				  << SDL_GetError() << std::endl;
 		return false;
@@ -142,7 +142,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 
 	if ( !opengl_window_icon )
 	{
-		lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "256x256 icon not found." << std::endl;
+		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "256x256 icon not found." << std::endl;
 		opengl_window_icon = SDL_Surface_LoadImage("./resources/icon32.png");
 	}
 	opengl_window_title = lux::config->GetString("project.title") + " (OpenGL Rendering)";
@@ -163,13 +163,13 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( std::string title,  uint16_t width, uint
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Video Driver: OpenGL " << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Vendor: " << glGetString(GL_VENDOR) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Renderer: " << glGetString(GL_RENDERER) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Version: " << glGetString(GL_VERSION) << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Format: " << opengl_graphic_screen->w << "x" << opengl_graphic_screen->h << "x" << (int)opengl_graphic_screen->format->BitsPerPixel << "bpp" << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | Pointer Offset: " << opengl_graphic_ratio_width << "x" << opengl_graphic_ratio_height << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << __FILE__ << ": | GL_ARB_texture_non_power_of_two: " << Lux_OGL_QueryExtension((char *)"GL_ARB_texture_non_power_of_two") << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ": | Video Driver: OpenGL " << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ": | Vendor: " << glGetString(GL_VENDOR) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ": | Renderer: " << glGetString(GL_RENDERER) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ": | Version: " << glGetString(GL_VERSION) << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ": | Format: " << opengl_graphic_screen->w << "x" << opengl_graphic_screen->h << "x" << (int)opengl_graphic_screen->format->BitsPerPixel << "bpp" << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ": | Pointer Offset: " << opengl_graphic_ratio_width << "x" << opengl_graphic_ratio_height << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ": | GL_ARB_texture_non_power_of_two: " << Lux_OGL_QueryExtension((char *)"GL_ARB_texture_non_power_of_two") << std::endl;
 
 
 	Lux_GLES_LoadFont();

@@ -18,8 +18,8 @@ class LuxSheet;
 
 #include "stdheader.h"
 #include "lux_sprite.h"
-#include "display_types.h"
-#include "elix_png.hpp"
+#include "display/display_types.h"
+#include "elix/elix_png.hpp"
 
 class LuxSheet
 {

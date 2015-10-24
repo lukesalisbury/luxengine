@@ -5,6 +5,11 @@ ifeq ($(OBJDIR), )
 	OBJDIR = ./objects
 endif
 
+ifeq ($(BUILDDEBUG), TRUE)
+	OBJDIR = ./objects-debug
+endif
+
+
 ifeq ($(BUILDDIR), )
 	BUILDDIR = ./bin
 endif

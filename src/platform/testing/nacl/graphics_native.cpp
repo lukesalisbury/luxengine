@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "misc_functions.h"
 #include "mokoi_game.h"
 #include "map_object.h"
@@ -568,7 +568,7 @@ SDL_Surface * SDL_Surface_LoadImage( std::string file )
 				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "SDL_Surface_LoadImage:" << w << "x" << h << std::endl;
 			}
 			else
-				lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << file << ": not a png image" << std::endl;
+				lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << file << ": not a png image" << std::endl;
 		}
 	}
 
@@ -636,8 +636,8 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint
 
 	const char *name = SDL_GetCurrentVideoDriver();
 	SDL_GetRendererInfo( &info);
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Video System: " << name << std::endl;
-	lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Render: " << info.name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Video System: " << name << std::endl;
+	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Render: " << info.name << std::endl;
 
 	return true;
 }

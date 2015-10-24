@@ -36,7 +36,7 @@ void Config::PlatformSettings()
 	this->SetString("project.title", "Lux Engine" );
 
 	this->SetString("project.id", "unknowngame" );
-
+	this->SetString("window.title", "Game" );
 
 
 	/* PC inputuse SDL_SCANCODE */

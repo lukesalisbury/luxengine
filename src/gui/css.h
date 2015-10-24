@@ -17,7 +17,7 @@ class CSSParser;
 #include "lux_types.h"
 #include "widget.h"
 #include "object_effect.h"
-#include "display_styles.h"
+#include "display/display_styles.h"
 /*
 element:state
 	|  key:value;

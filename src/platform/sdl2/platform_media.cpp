@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "platform_media.h"
 #include "sprite_sheet.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "input/keyboard.h"
 #include "input/joystick_generic.h"
 #include "input/joystick_xbox360.h"
@@ -88,7 +88,6 @@ void PlatformMedia::Init(GraphicSystem graphic)
 
 
 	/* Map LuxSheet to joystick */
-
 	for ( uint32_t c = 0; c < 8; c++)
 	{
 		this->controller[c] = this->joystick_generic_sheet;

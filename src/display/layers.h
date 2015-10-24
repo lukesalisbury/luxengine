@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define _LAYER_H_
 
 	#include "map_object.h"
-	#include "display_types.h"
+	#include "display/display_types.h"
 	#include <list>
 
 	class DisplaySystem;
@@ -44,7 +44,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			LuxRect display_dimension;
 			LuxRect wrap_dimension;
 
-
+			void DisplayList( std::list<MapObject*> & list );
 		public:
 			/* Object Management Functions */
 			bool AddObject( MapObject * new_object, bool static_object );
@@ -57,13 +57,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void SetRotation( int16_t roll, int16_t pitch, int16_t yaw);
 
 			/* Caching Functions */
-			void GetSurface();
+
 
 			/* Drawing Functions */
 			void Display();
 
 			void SetShader( uint8_t new_shader );
 
+
+			void RemoveDynamicObject();
 	private:
 			LuxRect GetObjectLocation( LuxRect map_location, uint8_t type );
 			bool ObjectOnScreen(LuxRect o, uint8_t flipmode, LuxRect s);

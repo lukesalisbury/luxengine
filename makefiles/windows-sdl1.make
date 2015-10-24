@@ -22,7 +22,6 @@ ASM =
 BIN  = luxengine-sdl.exe
 BINEXT = .exe
 BUILDDIR = ./bin
-OBJDIR = ./objects
 
 RES = $(OBJDIR)/lux.res
 RES_SOURCE = res/lux.rc

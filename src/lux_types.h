@@ -138,17 +138,17 @@ typedef struct {
 
 
 typedef struct {
-	int16_t id;
-	uint16_t type;
 	uint32_t entity;
+	uint16_t type;
+	int16_t id;
 	LuxRect rect;
 	bool added;
 } CollisionObject;
 
 typedef struct {
-	uint16_t rect, type, hit_rect, rect_x, rect_y, hit_x, hit_y;
 	uint32_t entity_id;
-	std::string entity_name;
+	uint16_t rect_x, rect_y, hit_x, hit_y;
+	uint8_t rect, type, hit_rect;
 } CollisionResult;
 
 typedef struct {

@@ -47,7 +47,7 @@ public:
 	void AddCollision( uint32_t hashname, CollisionObject * rect );
 	void CheckCollision( uint32_t hashname, CollisionObject * rect );
 	void ClearCollisions();
-	void ReturnCollisions( std::vector<CollisionResult *> * hits, uint32_t entity, int16_t count, LuxRect rect );
+	void ReturnCollisions( std::vector<CollisionResult> * hits, uint32_t entity, int16_t count, LuxRect rect );
 	void RemoveCollisions( uint32_t hashname );
 
 	void DrawCollisions();

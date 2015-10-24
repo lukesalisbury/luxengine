@@ -11,10 +11,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef _GAMEINFO_H_
 	#define _GAMEINFO_H_
 
-	#include "gui.h"
+	#include "gui/gui.h"
 	#include "lux_types.h"
 	#include "mokoi_game.h"
-	#include "display.h"
+	#include "display/display.h"
 	#include "tinyxml/tinyxml2.h"
 
 	#include "portal.h"

@@ -11,10 +11,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "core.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "entity_manager.h"
-#include "elix_path.hpp"
-#include "game_system.h"
+#include "elix/elix_path.hpp"
+#include "world.h"
 #include <algorithm>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -56,7 +56,7 @@ CoreSystem::CoreSystem()
 				this->joystick[i] = SDL_JoystickOpen(i);
 				if ( this->joystick[i] != NULL )
 				{
-					this->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ": Found Joystick (" << i << "): " << SDL_JoystickName(i) << " Axes:" << SDL_JoystickNumAxes(this->joystick[i]) << " Buttons:" << SDL_JoystickNumButtons(this->joystick[i]) << " Hats:" << SDL_JoystickNumHats(this->joystick[i]) << " Balls:" << SDL_JoystickNumBalls(this->joystick[i]) << std::endl;
+					this->SystemMessage(SYSTEM_MESSAGE_LOG) << __FUNCTION__ << ": Found Joystick (" << i << "): " << SDL_JoystickName(i) << " Axes:" << SDL_JoystickNumAxes(this->joystick[i]) << " Buttons:" << SDL_JoystickNumButtons(this->joystick[i]) << " Hats:" << SDL_JoystickNumHats(this->joystick[i]) << " Balls:" << SDL_JoystickNumBalls(this->joystick[i]) << std::endl;
 				}
 			}
 		}
@@ -69,7 +69,7 @@ CoreSystem::CoreSystem()
 	found = wiiuse_find(wiimotes, 4, 5);
 	connected = wiiuse_connect(wiimotes, 4);
 
-	this->SystemMessage(SYSTEM_MESSAGE_INFO) << __FUNCTION__ << ": Found '" << found << "' Wiimote(s). " << connected << " are conected." << std::endl;
+	this->SystemMessage(SYSTEM_MESSAGE_LOG) << __FUNCTION__ << ": Found '" << found << "' Wiimote(s). " << connected << " are conected." << std::endl;
 	wiiuse_set_leds(wiimotes[0], WIIMOTE_LED_1 | WIIMOTE_LED_4);
 	wiiuse_rumble(wiimotes[0], 1);
 	wiiuse_rumble(wiimotes[0], 0);
@@ -201,7 +201,7 @@ std::ostream& CoreSystem::SystemMessage(uint8_t type, const char * file, int lin
 	{
 		return std::cerr;
 	}
-	else if ( type == SYSTEM_MESSAGE_INFO )
+	else if ( type == SYSTEM_MESSAGE_LOG )
 	{
 		std::cout << "[INFO] ";
 		return std::cout;

@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "audio.h"
 #include "engine.h"
 #include "config.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "mokoi_game.h"
 
 AudioSystem::AudioSystem( )
@@ -56,7 +56,7 @@ int32_t AudioSystem::SetEffectsVolume(int32_t volume)
 	return 0;
 }
 
-void AudioSystem::PauseAll()
+void AudioSystem::Pause()
 {
 
 }

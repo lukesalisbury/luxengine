@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 /* Required Headers */
 #include "../luxengine.h"
 #include "../functions.h"
-#include "display_functions.h"
+#include "display/display_functions.h"
 
 #include <windows.h>
 #include <SDL/SDL_getenv.h>
@@ -94,7 +94,7 @@ bool Lux_D3D_Init(int width, int height, int bpp, bool fullscreen)
 	d3dGraphics_screen = SDL_SetVideoMode(scaled_width, scaled_height, bpp, d3dGraphics_flags );
 	if ( !d3dGraphics_screen )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Couldn't set " << scaled_width << "x" << scaled_height << " video mode. " << SDL_GetError() << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Couldn't set " << scaled_width << "x" << scaled_height << " video mode. " << SDL_GetError() << std::endl;
 		return false;
 	}
 	d3dGraphics_dimension.w = width;
@@ -124,7 +124,7 @@ bool Lux_D3D_Init(int width, int height, int bpp, bool fullscreen)
 	HRESULT hr = d3dGraphics_object->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,pInfo.window, D3DCREATE_SOFTWARE_VERTEXPROCESSING,&d3dpp,&d3d_device);
 	if (FAILED(hr))
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " " << DXGetErrorString9(hr) << "\t" << DXGetErrorDescription9(hr) << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " " << DXGetErrorString9(hr) << "\t" << DXGetErrorDescription9(hr) << std::endl;
 		return false;
 	}
 	D3DCAPS9 d3dCaps;
@@ -132,11 +132,11 @@ bool Lux_D3D_Init(int width, int height, int bpp, bool fullscreen)
 
 	D3DADAPTER_IDENTIFIER9 d3dAdapterID;
 	d3dGraphics_object->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &d3dAdapterID);
-	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Video Driver: Direct3D" << std::endl;
-	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Description: " <<  d3dAdapterID.Description<< std::endl;
-	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Version: " << LOWORD(d3dAdapterID.DriverVersion.HighPart) << "." << HIWORD(d3dAdapterID.DriverVersion.LowPart) << std::endl;
-	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Acceleration: HAL" << std::endl;
-	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Max Texture Size: " << d3dCaps.MaxTextureWidth << "x" << d3dCaps.MaxTextureHeight << std::endl;
+	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Video Driver: Direct3D" << std::endl;
+	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Description: " <<  d3dAdapterID.Description<< std::endl;
+	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Version: " << LOWORD(d3dAdapterID.DriverVersion.HighPart) << "." << HIWORD(d3dAdapterID.DriverVersion.LowPart) << std::endl;
+	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Acceleration: HAL" << std::endl;
+	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Max Texture Size: " << d3dCaps.MaxTextureWidth << "x" << d3dCaps.MaxTextureHeight << std::endl;
 
 	SDL_WM_SetCaption("Lux Engine", NULL);
 
@@ -266,7 +266,7 @@ void Lux_D3D_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effe
 
 	if (!d3dGraphics_screen)
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Not a valid surface." << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Not a valid surface." << std::endl;
 	}
 	float l = (float)(dest_rect.x);
 	float t = (float)(dest_rect.y);
@@ -289,7 +289,7 @@ void Lux_D3D_DrawRect( LuxRect dest_rect, ObjectEffect effects)
 
 	if (!d3dGraphics_screen)
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Not a valid surface." << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Not a valid surface." << std::endl;
 	}
 	float l = (float)(dest_rect.x);
 	float t = (float)(dest_rect.y);

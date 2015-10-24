@@ -15,13 +15,13 @@ Some Code taken from Easy GL2D http://rel.betterwebber.com
 #include "luxengine.h"
 #include "map_object.h"
 #include "mokoi_game.h"
-#include "display.h"
+#include "display/display.h"
 #include "graphics_native.h"
 #include "graphics_system.h"
 
 #include "bitfont.h"
-#include "elix_png.hpp"
-#include "elix_string.hpp"
+#include "elix/elix_png.hpp"
+#include "elix/elix_string.hpp"
 
 #include <nds.h>
 #include <nds/arm9/trig_lut.h>

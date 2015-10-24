@@ -16,11 +16,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "stdheader.h"
 #include "lux_types.h"
 #include "sprite_types.h"
-#include "display_styles.h"
+#include "display/display_styles.h"
 #include "sprite_types.h"
 #include "map_object.h"
 #include "object_effect.h"
-#include "elix_png.hpp"
+#include "elix/elix_png.hpp"
 #include "lux_polygon.h"
 
 extern ObjectEffect default_fx;
@@ -28,7 +28,7 @@ extern ObjectEffect default_fx;
 
 typedef struct {
 	/* Plugin Graphics */
-	bool (* InitGraphics) ( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+	bool (* InitGraphics) ( uint16_t width, uint16_t height, uint8_t bpp );
 	void (* DestoryGraphics) ();
 	void (* Display2Screen) ( int32_t * x, int32_t * y);
 	void (* TextSprites) ( bool able );

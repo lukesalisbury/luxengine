@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #ifndef _DISPLAYNDS_H_
 #define _DISPLAYNDS_H_
-#include "display_types.h"
+#include "display/display_types.h"
 
 #ifndef LUX_DISPLAY_FUNCTION
 #define LUX_DISPLAY_FUNCTION

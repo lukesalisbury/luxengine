@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define OBJECT_EFFECT_H
 
 #include "lux_types.h"
-#include "display_styles.h"
+#include "display/display_styles.h"
 
 namespace colour {
 	extern LuxColour white;

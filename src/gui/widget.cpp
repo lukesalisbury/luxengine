@@ -12,11 +12,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "widget.h"
 #include <cstdlib>
 
-
-
-
-
-
+/**
+ * @brief Widget::Widget
+ * @param region
+ * @param type
+ * @param style
+ */
 Widget::Widget( LuxRect region, LuxWidget type, CSSParser * style )
 {
 	this->background_object = this->border_object[0] = this->border_object[1] = this->border_object[2] = this->border_object[3] = this->text_object = NULL;
@@ -31,6 +32,9 @@ Widget::Widget( LuxRect region, LuxWidget type, CSSParser * style )
 	this->Generate(style);
 }
 
+/**
+ * @brief Widget::~Widget
+ */
 Widget::~Widget()
 {
 	while ( this->objects.begin() != this->objects.end() )
@@ -38,10 +42,12 @@ Widget::~Widget()
 		delete (*this->objects.begin());
 		this->objects.erase( this->objects.begin() );
 	}
-
 }
 
-
+/**
+ * @brief Widget::Generate
+ * @param style
+ */
 void Widget::Generate( CSSParser * style )
 {
 	switch ( this->_type )
@@ -49,15 +55,19 @@ void Widget::Generate( CSSParser * style )
 		case GUIBACKGROUND:
 		{
 			this->background_object = this->InsertWidgetObject( OBJECT_RECTANGLE, 0, 0, this->_region.w, this->_region.h );
+
 			break;
 		}
 		case EMPTYWINDOW:
+		{
 			break;
+		}
 		case DIALOG:
 		{
 			this->GenerateBox( style );
 			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 2, 2, 0, 0 );
-			this->GenerateColours(style, this->text_object, false);
+			this->GenerateColours( style, this->text_object, false );
+
 			break;
 		}
 		case THROBBER:
@@ -125,16 +135,13 @@ void Widget::Generate( CSSParser * style )
 		case LIST:
 		{
 			/* TODO */
-
 			break;
 		}
 		case IMAGEBUTTON:
 		{
 			this->GenerateBox(style);
-
 			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 40, 4, this->_region.w, this->_region.h ); /* Text */
 			this->GenerateColours(style, this->text_object, false);
-
 			this->InsertWidgetObject( OBJECT_SPRITE, 2, 2, 32, 32 );
 
 			break;
@@ -157,6 +164,17 @@ void Widget::Generate( CSSParser * style )
 
 }
 
+/**
+ * @brief Widget::InsertTextObject
+ * @param type
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param t
+ * @param alignment
+ * @return
+ */
 WidgetObject * Widget::InsertTextObject(uint8_t type, int16_t x, int16_t y, int16_t w, int16_t h, std::string t , uint8_t alignment)
 {
 	WidgetObject * object = new WidgetObject;
@@ -177,6 +195,16 @@ WidgetObject * Widget::InsertTextObject(uint8_t type, int16_t x, int16_t y, int1
 	return object;
 }
 
+/**
+ * @brief Widget::InsertWidgetObject
+ * @param type
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param alignment
+ * @return
+ */
 WidgetObject * Widget::InsertWidgetObject(uint8_t type, int16_t x, int16_t y, int16_t w, int16_t h , uint8_t alignment)
 {
 	WidgetObject * object = new WidgetObject;
@@ -197,6 +225,12 @@ WidgetObject * Widget::InsertWidgetObject(uint8_t type, int16_t x, int16_t y, in
 	return object;
 }
 
+/**
+ * @brief Widget::GenerateColours
+ * @param style
+ * @param object
+ * @param background
+ */
 void Widget::GenerateColours( CSSParser * style, WidgetObject * object, bool background )
 {
 	if ( !object || !style )
@@ -206,24 +240,30 @@ void Widget::GenerateColours( CSSParser * style, WidgetObject * object, bool bac
 	for ( _WidgetStates q = ENABLED; q < WIDGET_STATES_SIZE; q++)
 	{
 		object->colours[q].style = STYLE_NORMAL;
-		if ( style->HasKey(this->_type, q, (background ? "background-color" : "colour")) )
-			object->colours[q].primary_colour = style->GetColour(this->_type, q, (background ? "background-color" : "color") );
+		if ( style->HasKey(this->_type, q, (background ? "background-color" : "color")) )
+			object->colours[q].primary_colour = style->GetColour( this->_type, q, (background ? "background-color" : "color") );
 		else
 			object->colours[q].primary_colour = default_colour;
 
 		if ( style->HasKey(this->_type, q, (background ? "background-color-secondary" : "color-secondary")) )
-			object->colours[q].secondary_colour = style->GetColour(this->_type, q, (background ? "background-color-secondary" : "color-secondary") );
+			object->colours[q].secondary_colour = style->GetColour( this->_type, q, (background ? "background-color-secondary" : "color-secondary") );
 		else
 			object->colours[q].secondary_colour = object->colours[q].primary_colour;
 
 		if ( style->HasKey(this->_type, q, (background ? "background-style" : "style")) )
-			object->colours[q].style = style->GetStyle(this->_type, q, (background ? "background-style" : "style") );
+			object->colours[q].style = style->GetStyle( this->_type, q, (background ? "background-style" : "style") );
 	}
 
 	object->alignment = style->GetAlign( this->_type, ENABLED, "text-align" );
 
 }
 
+/**
+ * @brief Widget::GenerateBorderColours
+ * @param style
+ * @param object
+ * @param position
+ */
 void Widget::GenerateBorderColours( CSSParser * style, WidgetObject * object, uint8_t position )
 {
 	if ( !object || !style )
@@ -254,6 +294,10 @@ void Widget::GenerateBorderColours( CSSParser * style, WidgetObject * object, ui
 	}
 }
 
+/**
+ * @brief Widget::GenerateBox
+ * @param style
+ */
 void Widget::GenerateBox( CSSParser * style )
 {
 	if ( style == NULL )
@@ -287,8 +331,6 @@ void Widget::GenerateBox( CSSParser * style )
 			/* To have an even repeat, divide by border width and round up */
 			boxregion.w = ((boxregion.w/border_width) + (boxregion.w%border_width ? 1 : 0)) * border_width;
 			boxregion.h = ((boxregion.h/border_width) + (boxregion.h%border_width ? 1 : 0)) * border_width;
-
-
 		}
 
 		this->background_object = this->InsertTextObject( OBJECT_IMAGE, 0, 0, 0, 0, image + ":4", 0); /* box background  */
@@ -331,6 +373,10 @@ void Widget::GenerateBox( CSSParser * style )
 	this->_region = boxregion;
 }
 
+/**
+ * @brief Widget::GetText
+ * @return
+ */
 std::string Widget::GetText()
 {
 	if ( this->text_object )
@@ -340,6 +386,12 @@ std::string Widget::GetText()
 	return "";
 }
 
+/**
+ * @brief Widget::SetText
+ * @param text
+ * @param length
+ * @return
+ */
 std::string Widget::SetText( std::string text, uint32_t length )
 {
 	if ( this->text_object )
@@ -359,6 +411,11 @@ std::string Widget::SetText( std::string text, uint32_t length )
 	return this->GetText();
 }
 
+/**
+ * @brief Widget::SendEvent
+ * @param event_code
+ * @return
+ */
 bool Widget::SendEvent( int32_t event_code )
 {
 	if ( this->_type == DIALOG )
@@ -429,6 +486,9 @@ bool Widget::SendEvent( int32_t event_code )
 	return true;
 }
 
+/**
+ * @brief Widget::Refresh
+ */
 void Widget::Refresh()
 {
 

@@ -12,10 +12,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "entity_manager.h"
-#include "game_system.h"
-#include "elix_endian.hpp"
+#include "world.h"
+#include "elix/elix_endian.hpp"
 #include "network_types.h"
 
 /* Network Thread */

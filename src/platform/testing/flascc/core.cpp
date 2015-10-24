@@ -11,9 +11,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "core.h"
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "entity_manager.h"
-#include "elix_path.hpp"
+#include "elix/elix_path.hpp"
 #include "world.h"
 #include <algorithm>
 #include <sys/stat.h>

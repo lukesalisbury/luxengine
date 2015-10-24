@@ -12,16 +12,16 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "mokoi_game.h"
-#include "elix_file.hpp"
-#include "elix_string.hpp"
-#include "elix_program.hpp"
+#include "elix/elix_file.hpp"
+#include "elix/elix_string.hpp"
+#include "elix/elix_program.hpp"
 
 void ConfigResource::Print()
 {
 	std::map<std::string, std::string>::iterator iter;
 	for ( iter = this->values.begin(); iter != this->values.end(); iter++ )
 	{
-		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << iter->first << "=" << iter->second << std::endl;
+		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << iter->first << "=" << iter->second << std::endl;
 	}
 
 }

@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 
 #include "engine.h"
-#include "display.h"
+#include "display/display.h"
 #include "map_object.h"
 #include "map_xml_reader.h"
 

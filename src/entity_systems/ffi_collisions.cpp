@@ -98,7 +98,7 @@ int32_t Lux_FFI_Entity_Object_Collision_Calculate( Entity * wanted )
  */
 int32_t Lux_FFI_Entity_Object_Collision_Calculate_Current(Entity * wanted, uint32_t * entity_hit, int32_t * angle, int32_t * dist, int32_t * rect, int32_t * type )
 {
-	CollisionResult * collision_value = NULL;
+	CollisionResult collision_value;
 	int16_t y_dist;
 	int16_t x_dist;
 	int32_t hit_count = -1;
@@ -110,35 +110,33 @@ int32_t Lux_FFI_Entity_Object_Collision_Calculate_Current(Entity * wanted, uint3
 		{
 			collision_value = wanted->GetCurrentHit();
 
-			if ( collision_value )
+			x_dist = collision_value.rect_x - collision_value.hit_x;
+			y_dist = collision_value.rect_y - collision_value.hit_y;
+
+			if ( entity_hit )
 			{
-				x_dist = collision_value->rect_x - collision_value->hit_x;
-				y_dist = collision_value->rect_y - collision_value->hit_y;
-
-				if ( entity_hit )
-				{
-					*entity_hit = collision_value->entity_id;
-				}
-
-				if ( angle )
-				{
-					*angle = (int32_t)(atan2((float)y_dist, (float)x_dist) * 57.29578);
-					*angle += 90;
-				}
-
-				if ( dist )
-				{
-					x_dist *= x_dist;
-					y_dist *= y_dist;
-					*dist = (int32_t)sqrt( (float)(x_dist + y_dist));
-				}
-
-				if ( rect )
-					*rect = collision_value->hit_rect;
-
-				if ( type )
-					*type = collision_value->type;
+				*entity_hit = collision_value.entity_id;
 			}
+
+			if ( angle )
+			{
+				*angle = (int32_t)(atan2((float)y_dist, (float)x_dist) * 57.29578);
+				*angle += 90;
+			}
+
+			if ( dist )
+			{
+				x_dist *= x_dist;
+				y_dist *= y_dist;
+				*dist = (int32_t)sqrt( (float)(x_dist + y_dist));
+			}
+
+			if ( rect )
+				*rect = collision_value.hit_rect;
+
+			if ( type )
+				*type = collision_value.type;
+
 		}
 
 	}
@@ -302,7 +300,7 @@ int32_t Lux_FFI_Collision_Calculate( uint32_t hash_entity )
 int32_t Lux_FFI_Collision_Calculate_Current( uint32_t hash_entity, uint32_t * entity_hit, int32_t * angle, int32_t * dist, int32_t * rect, int32_t * type )
 {
 	Entity * wanted_entity = lux::entities->GetEntity(hash_entity);
-	CollisionResult * collision_value = NULL;
+	CollisionResult collision_value;
 	int16_t y_dist;
 	int16_t x_dist;
 	int32_t hit_count = -1;
@@ -314,35 +312,33 @@ int32_t Lux_FFI_Collision_Calculate_Current( uint32_t hash_entity, uint32_t * en
 		{
 			collision_value = wanted_entity->GetCurrentHit();
 
-			if ( collision_value )
+			x_dist = collision_value.hit_x - collision_value.rect_x;
+			y_dist = collision_value.hit_y - collision_value.rect_y;
+
+			if ( entity_hit )
 			{
-				x_dist = collision_value->rect_x - collision_value->hit_x;
-				y_dist = collision_value->rect_y - collision_value->hit_y;
-
-				if ( entity_hit )
-				{
-					*entity_hit = collision_value->entity_id;
-				}
-
-				if ( angle )
-				{
-					*angle = (int32_t)(atan2((float)y_dist, (float)x_dist) * 57.29578);
-					*angle += 90;
-				}
-
-				if ( dist )
-				{
-					x_dist *= x_dist;
-					y_dist *= y_dist;
-					*dist = (int32_t)sqrt( (float)(x_dist + y_dist));
-				}
-
-				if ( rect )
-					*rect = collision_value->hit_rect;
-
-				if ( type )
-					*type = collision_value->type;
+				*entity_hit = collision_value.entity_id;
 			}
+
+			if ( angle )
+			{
+				*angle = (int32_t)(atan2((float)y_dist, (float)x_dist) * 57.29578);
+				*angle += 90;
+			}
+
+			if ( dist )
+			{
+				x_dist *= x_dist;
+				y_dist *= y_dist;
+				*dist = (int32_t)sqrt( (float)(x_dist + y_dist));
+			}
+
+			if ( rect )
+				*rect = collision_value.hit_rect;
+
+			if ( type )
+				*type = collision_value.type;
+
 		}
 
 	}

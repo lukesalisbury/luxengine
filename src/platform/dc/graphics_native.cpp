@@ -13,13 +13,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "luxengine.h"
 #include "map_object.h"
 #include "mokoi_game.h"
-#include "display.h"
+#include "display/display.h"
 #include "graphics_native.h"
 #include "graphics_system.h"
 
 
 #include "bitfont.h"
-#include "elix_png.hpp"
+#include "elix/elix_png.hpp"
 
 
 #include <kos.h>
@@ -445,7 +445,7 @@ LUX_DISPLAY_FUNCTION LuxSprite * LuxGraphics_DC_PNGtoSprite( uint8_t * data, uin
 		tex->pot = ((tex->w == tex->tw) && (tex->h == tex->th));
 		tex->loaded = false;
 		if ( !tex->pot )
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << tex->w << "(" << tex->tw << ")x" << tex->h << "(" << tex->th << ")"  << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << tex->w << "(" << tex->tw << ")x" << tex->h << "(" << tex->th << ")"  << std::endl;
 
 		uint16_t * pixels = new uint16_t[tex->tw*tex->th];
 		if ( pixels )

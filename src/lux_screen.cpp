@@ -10,9 +10,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "engine.h"
 #include "core.h"
-#include "gui.h"
+#include "gui/gui.h"
 #include "config.h"
-#include "display.h"
+#include "display/display.h"
 
 
 namespace lux {

@@ -11,7 +11,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "platform_media.h"
 #include "sprite_sheet.h"
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "pc/keyboard.h"
 #include "pc/joystick_generic.h"
 #include "dc/joystick_dreamcast.h"
@@ -81,7 +81,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 			}
 
 			key_name.append(elix::string::FromInt(symbol));
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << key_name <<std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << key_name <<std::endl;
 			if ( this->joystick_dreamcast_sheet )
 			{
 				return this->joystick_dreamcast_sheet->GetSprite(key_name);
@@ -92,7 +92,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 		{
 			std::string key_name = "button";
 			key_name.append(elix::string::FromInt(symbol));
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << key_name <<std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << key_name <<std::endl;
 			if ( this->joystick_dreamcast_sheet )
 			{
 				return this->joystick_dreamcast_sheet->GetSprite(key_name);

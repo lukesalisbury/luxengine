@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <sstream>
 #include <ctype.h>
 
-#include "elix_string.hpp"
+#include "elix/elix_string.hpp"
 #include "object_effect.h"
 
 namespace colour {

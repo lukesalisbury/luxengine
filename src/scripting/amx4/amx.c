@@ -567,8 +567,9 @@ int AMXAPI amx_Callback(AMX *amx, cell index, cell *result, const cell *params)
     assert(sizeof(f)<=sizeof(cell)); /* function pointer must fit in a cell */
     assert(*(cell*)code==index);
     #if defined AMX_TOKENTHREADING || !(defined __GNUC__ || defined __ICC || defined AMX_ASM || defined AMX_JIT)
-      assert(!(amx->flags & AMX_FLAG_SYSREQN) && *(cell*)(code-sizeof(cell))==OP_SYSREQ
-             || (amx->flags & AMX_FLAG_SYSREQN) && *(cell*)(code-sizeof(cell))==OP_SYSREQ_N);
+	  assert( ( !(amx->flags & AMX_FLAG_SYSREQN) && *(cell*)(code-sizeof(cell))==OP_SYSREQ)
+			 ||
+			  ( (amx->flags & AMX_FLAG_SYSREQN) && *(cell*)(code-sizeof(cell))==OP_SYSREQ_N) );
     #endif
     *(cell*)(code-sizeof(cell))=amx->sysreq_d;
     *(cell*)code=(cell)(intptr_t)f;
@@ -3666,19 +3667,19 @@ static const long utf8_lowmark[5] = { 0x80, 0x800, 0x10000L, 0x200000L, 0x400000
     switch (followup) {
     case 4:
       if (((c=*string++) & 0xc0) != 0x80) goto error;
-      result = (result << 6) | c & 0x3f;
+	  result = (result << 6) | (c & 0x3f);
     case 3:
       if (((c=*string++) & 0xc0) != 0x80) goto error;
-      result = (result << 6) | c & 0x3f;
+	  result = (result << 6) | (c & 0x3f);
     case 2:
       if (((c=*string++) & 0xc0) != 0x80) goto error;
-      result = (result << 6) | c & 0x3f;
+	  result = (result << 6) | (c & 0x3f);
     case 1:
       if (((c=*string++) & 0xc0) != 0x80) goto error;
-      result = (result << 6) | c & 0x3f;
+	  result = (result << 6) | (c & 0x3f);
     case 0:
       if (((c=*string++) & 0xc0) != 0x80) goto error;
-      result = (result << 6) | c & 0x3f;
+	  result = (result << 6) | (c & 0x3f);
     } /* switch */
     /* Do additional checks: shortest encoding & reserved positions. The
      * lowmark limits also depends on the code length; it can be read from
@@ -3686,7 +3687,7 @@ static const long utf8_lowmark[5] = { 0x80, 0x800, 0x10000L, 0x200000L, 0x400000
      */
     if (result<utf8_lowmark[followup])
       goto error;
-    if (result>=0xd800 && result<=0xdfff || result==0xfffe || result==0xffff)
+	if ((result>=0xd800 && result<=0xdfff) || result==0xfffe || result==0xffff)
       goto error;
   } /* if */
 
@@ -3721,40 +3722,40 @@ int AMXAPI amx_UTF8Put(char *string, char **endptr, int maxchars, cell value)
   } else if (value<0x800) {
     /* 110xxxxx 10xxxxxx */
     if (maxchars < 2) goto error;
-    *string++ = (char)((value>>6) & 0x1f | 0xc0);
-    *string++ = (char)(value & 0x3f | 0x80);
+	*string++ = (char)(((value>>6) & 0x1f) | 0xc0);
+	*string++ = (char)((value & 0x3f) | 0x80);
   } else if (value<0x10000) {
     /* 1110xxxx 10xxxxxx 10xxxxxx (16 bits, BMP plane) */
     if (maxchars < 3) goto error;
-    if (value>=0xd800 && value<=0xdfff || value==0xfffe || value==0xffff)
+	if ((value>=0xd800 && value<=0xdfff) || value==0xfffe || value==0xffff)
       goto error;       /* surrogate pairs and invalid characters */
-    *string++ = (char)((value>>12) & 0x0f | 0xe0);
-    *string++ = (char)((value>>6) & 0x3f | 0x80);
-    *string++ = (char)(value & 0x3f | 0x80);
+	*string++ = (char)(((value>>12) & 0x0f) | 0xe0);
+	*string++ = (char)(((value>>6) & 0x3f) | 0x80);
+	*string++ = (char)((value & 0x3f) | 0x80);
   } else if (value<0x200000) {
     /* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
     if (maxchars < 4) goto error;
-    *string++ = (char)((value>>18) & 0x07 | 0xf0);
-    *string++ = (char)((value>>12) & 0x3f | 0x80);
-    *string++ = (char)((value>>6) & 0x3f | 0x80);
-    *string++ = (char)(value & 0x3f | 0x80);
+	*string++ = (char)(((value>>18) & 0x07) | 0xf0);
+	*string++ = (char)(((value>>12) & 0x3f) | 0x80);
+	*string++ = (char)(((value>>6) & 0x3f) | 0x80);
+	*string++ = (char)((value & 0x3f) | 0x80);
   } else if (value<0x4000000) {
     /* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
     if (maxchars < 5) goto error;
-    *string++ = (char)((value>>24) & 0x03 | 0xf8);
-    *string++ = (char)((value>>18) & 0x3f | 0x80);
-    *string++ = (char)((value>>12) & 0x3f | 0x80);
-    *string++ = (char)((value>>6) & 0x3f | 0x80);
-    *string++ = (char)(value & 0x3f | 0x80);
+	*string++ = (char)(((value>>24) & 0x03) | 0xf8);
+	*string++ = (char)(((value>>18) & 0x3f) | 0x80);
+	*string++ = (char)(((value>>12) & 0x3f) | 0x80);
+	*string++ = (char)(((value>>6) & 0x3f) | 0x80);
+	*string++ = (char)((value & 0x3f) | 0x80);
   } else {
     /* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx (31 bits) */
     if (maxchars < 6) goto error;
-    *string++ = (char)((value>>30) & 0x01 | 0xfc);
-    *string++ = (char)((value>>24) & 0x3f | 0x80);
-    *string++ = (char)((value>>18) & 0x3f | 0x80);
-    *string++ = (char)((value>>12) & 0x3f | 0x80);
-    *string++ = (char)((value>>6) & 0x3f | 0x80);
-    *string++ = (char)(value & 0x3f | 0x80);
+	*string++ = (char)(((value>>30) & 0x01) | 0xfc);
+	*string++ = (char)(((value>>24) & 0x3f) | 0x80);
+	*string++ = (char)(((value>>18) & 0x3f) | 0x80);
+	*string++ = (char)(((value>>12) & 0x3f) | 0x80);
+	*string++ = (char)(((value>>6) & 0x3f) | 0x80);
+	*string++ = (char)((value & 0x3f) | 0x80);
   } /* if */
 
   if (endptr!=NULL)

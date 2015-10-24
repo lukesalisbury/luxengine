@@ -23,8 +23,8 @@
   #include <malloc.h>
 #endif
 #include "pawn_helper.h"
-#include "display.h"
-#include "elix_string.hpp"
+#include "display/display.h"
+#include "elix/elix_string.hpp"
 #include "engine.h"
 
 #if defined __WIN32__ || defined _WIN32 || defined WIN32 || defined _Windows
@@ -72,7 +72,7 @@ static int amx_StrPack(cell *dest,cell *source,int len,int offs)
 	  i=(len/sizeof(cell))*sizeof(cell);
 	  pdest+=i;
 	  len=(len==i) ? sizeof(cell) : sizeof(cell)-(len-i);
-	  assert(len>0 && len<=sizeof(cell));
+	  assert(len>0 && (size_t)len<=sizeof(cell));
 	  for (i=0; i<len; i++)
 		*pdest++='\0';
 	#endif
@@ -106,7 +106,7 @@ static int amx_StrPack(cell *dest,cell *source,int len,int offs)
 	/* for proper alignement, add the offset to both the starting and the ending
 	 * criterion (so that the number of iterations stays the same)
 	 */
-    assert(offs>=0 && offs<sizeof(cell));
+	assert(offs>=0 && (size_t)offs<sizeof(cell));
 	for (i=offs; i<len+offs; i++) {
 	  c=(c<<CHARBITS) | (*source++ & 0xff);
 	  if (i%sizeof(cell)==sizeof(cell)-1) {
@@ -617,7 +617,7 @@ static cell n_valstr(AMX *amx,const cell *params)
   } /* if */
   for (temp=value; temp>=10; temp/=10)
 	len++;
-  assert(len<=sizearray(str));
+  assert((size_t)len<=sizearray(str));
 
   /* put in the string */
   result=len;

@@ -35,10 +35,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define SHADER_IMPL_NONE 1
 	#define USING_GLES 1
 	#include <GLES/gl.h>
-#elif defined(EMSCRIPTEN)
+#elif defined(RASPBERRYPI)
 	#define SHADER_IMPL_NONE 1
 	#define USING_GLES 1
 	#include <GLES/gl.h>
+	#include <SDL.h>
 #elif defined(USE_SDL1)
 	#define USING_GLDESKTOP 2
 	#include <SDL/SDL.h>

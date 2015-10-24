@@ -12,8 +12,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "entity_manager.h"
 #include "pawn_helper.h"
 #include "mokoi_game.h"
-#include "elix_string.hpp"
-#include "display.h"
+#include "elix/elix_string.hpp"
+#include "display/display.h"
 
 //TODO: Fix Memory leaks
 
@@ -104,7 +104,7 @@ int Lux_PawnEntity_Monitor(AMX * amx)
 		Entity * p = Lux_PawnEntity_GetParent(amx);
 		if ( t > p->starting_run_time + 120 )
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Script '" << p->_base << "' running to long (" << (amx->function_name ? amx->function_name : "main")  << "). Force Sleep" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Script '" << p->_base << "' running to long (" << (amx->function_name ? amx->function_name : "main")  << "). Force Sleep" << std::endl;
 			p->sleeping = true;
 			return AMX_ERR_SLEEP;
 		}
@@ -192,7 +192,7 @@ AMX * Lux_PawnEntity_LoadFile( const char * entity_name )
 		}
 		else
 		{
-			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << "Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << "Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
 			goto function_exit;
 		}
 
@@ -202,7 +202,7 @@ AMX * Lux_PawnEntity_LoadFile( const char * entity_name )
 
 		if ( hdr.magic != AMX_MAGIC )
 		{
-			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << "Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << "Error " << entity_name << ": " << Lux_PawnEntity_StrError(AMX_ERR_FORMAT) << std::endl;
 			goto function_exit;
 		}
 
@@ -216,13 +216,13 @@ AMX * Lux_PawnEntity_LoadFile( const char * entity_name )
 
 		if ( result )
 		{
-			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
 		}
 
 		result = Lux_PawnEntity_Register( temp_amx );
 		if ( result  )
 		{
-			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_INFO) << " Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
+			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Error " << entity_name << ": " << Lux_PawnEntity_StrError(result) << std::endl;
 		}
 		else
 		{
@@ -313,7 +313,7 @@ AMX * Lux_PawnEntity_GetBaseAMX( const char * entity_base )
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity not found '" << entity_base << "'" << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Entity not found '" << entity_base << "'" << std::endl;
 		}
 
 	}
@@ -635,10 +635,9 @@ bool Lux_PawnEntity_Run(mem_pointer entity_data, bool & scriptcontinue )
 		}
 		else
 		{
-			MessagePush( (char*)"%s:%d [ID:%s] %s [%s] ", p->_base.c_str(), 0, p->id.c_str(), Lux_PawnEntity_StrError(error), amx->function_name );
-
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity:" << p->_base << "[ID:" << p->id << "]";
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Main Runtime Error - " << Lux_PawnEntity_StrError(error) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_VISUAL_WARNING) << p->_base << ":0" << " [ID:" << p->id << "] " << Lux_PawnEntity_StrError(error) <<  " [" << amx->function_name<< "] " << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Entity:" << p->_base << "[ID:" << p->id << "]";
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Main Runtime Error - " << Lux_PawnEntity_StrError(error) << std::endl;
 			return false;
 		}
 	}
@@ -799,10 +798,9 @@ int32_t Lux_PawnEntity_Call( mem_pointer entity_data, char * function, native_po
 		error = amx_Exec(amx, &return_type, index);
 		if ( error )
 		{
-			MessagePush( (char*)"%s:%d [ID:%s] %s [%s] ", p->_base.c_str(), 0, p->id.c_str(), Lux_PawnEntity_StrError(error), amx->function_name );
-
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Entity:" << p->_base << "[ID:" << p->id << "] ";
-			lux::core->SystemMessage(SYSTEM_MESSAGE_INFO) << "Public Runtime Error  [" << function << "]" << Lux_PawnEntity_StrError(error) << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_VISUAL_WARNING) << p->_base << ":0" << " [ID:" << p->id << "] " << Lux_PawnEntity_StrError(error) <<  " [" << amx->function_name<< "] " << std::endl;
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Entity:" << p->_base << "[ID:" << p->id << "] ";
+			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Public Runtime Error  [" << function << "]" << Lux_PawnEntity_StrError(error) << std::endl;
 		}
 
 	}

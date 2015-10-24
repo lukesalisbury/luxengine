@@ -10,7 +10,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "camera_opengl.h"
 #include "core.h"
-#include "display.h"
+#include "display/display.h"
 
 
 #include <math.h>

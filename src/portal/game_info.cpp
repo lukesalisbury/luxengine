@@ -10,8 +10,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 
 #include "game_info.h"
-#include "elix_path.hpp"
-#include "elix_string.hpp"
+#include "elix/elix_path.hpp"
+#include "elix/elix_string.hpp"
 #include "tinyxml/tinyxml2ext.h"
 
 #include "portal.h"
@@ -31,7 +31,6 @@ GameInfo::GameInfo( UserInterface * gui, std::string game_path )
 	this->url = game_path;
 
 	this->DetermitedType();
-
 }
 
 /**
@@ -110,11 +109,15 @@ uint32_t GameInfo::SetGUI( int32_t value, int32_t x, int32_t y, uint16_t width, 
 
 		button_text = this->information;
 
-		elix::string::TruncateLines( button_text, width / 10 );
+		if ( width > 8 )
+		{
+			elix::string::TruncateLines( button_text, (width-32) / 8 );
+			//elix::string::TruncateLines( button_text, 20 );
+		}
 
-		this->button = this->gui->AddChild( buttonArea, (this->icon ? IMAGEBUTTON : BUTTON), button_text );
+		this->button = this->gui->AddChild( buttonArea, IMAGEBUTTON, button_text );
 
-		this->button->SetData( this->icon );
+		this->button->SetIcon( this->icon );
 		this->button->SetValue( value );
 
 		return this->button->GetAreaHeight() + 4;
