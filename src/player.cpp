@@ -158,7 +158,7 @@ void Player::CacheAxisValues( uint8_t n )
 		}
 		case CONTROLAXIS:
 		{
-			this->_controller[(n*3)+0] = lux::core->GetInput(CONTROLAXIS, this->_controllerConfig[n].device_number,this->_controllerConfig[n].sym[0]);
+			this->_controller[(n*3)+0] = lux::core->GetInput(CONTROLAXIS, this->_controllerConfig[n].device_number, this->_controllerConfig[n].sym[0]);
 			this->_controller[(n*3)+1] = lux::core->GetInput(CONTROLAXIS, this->_controllerConfig[n].device_number,this->_controllerConfig[n].sym[2]);
 			this->_controller[(n*3)+2] = lux::core->GetInput(CONTROLAXIS, this->_controllerConfig[n].device_number,this->_controllerConfig[n].sym[4]);
 			break;

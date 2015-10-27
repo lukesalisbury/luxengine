@@ -58,6 +58,7 @@ GraphicSystem GraphicsNative = {
 	&LuxGraphics_NDS_Destory,
 	&Lux_GRAPHICS_Display2Screen,
 	&Lux_GRAPHICS_TextSprites,
+	&Lux_GRAPHICS_PreShow,
 	&Lux_GRAPHICS_UpdateRect,
 	&LuxGraphics_NDS_Show,
 
@@ -278,7 +279,7 @@ void ndsInitSubSprites()
 
 
 
-bool LuxGraphics_NDS_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+bool LuxGraphics_NDS_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	videoSetMode(MODE_5_3D);
 	vramSetBankA( VRAM_A_TEXTURE );
@@ -341,12 +342,12 @@ void LuxGraphics_NDS_BackgroundObject( MapObject background )
 	glClearColor(background.effects.primary_colour.r/8,background.effects.primary_colour.g/8,background.effects.primary_colour.b/8, 31);
 }
 
-void LuxGraphics_NDS_Update(LuxRect rect)
+void LuxGraphics_NDS_Update( uint8_t screen, LuxRect rect)
 {
 
 }
 
-void LuxGraphics_NDS_Show()
+void LuxGraphics_NDS_Show( uint8_t screen )
 {
 	ndsDrawEnd();
 

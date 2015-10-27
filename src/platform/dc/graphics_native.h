@@ -17,10 +17,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_DISPLAY_FUNCTION
 #endif
 
-bool LuxGraphics_DC_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+bool LuxGraphics_DC_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen );
 void LuxGraphics_DC_Destory();
-void LuxGraphics_DC_UpdateRect(LuxRect rect);
-void LuxGraphics_DC_Show();
+void LuxGraphics_DC_UpdateRect(uint8_t screen,LuxRect rect);
+void LuxGraphics_DC_Show( uint8_t screen );
 
 void LuxGraphics_DC_Display2Screen( int32_t * x, int32_t * y);
 void LuxGraphics_DC_Background(LuxColour fillcolor);

@@ -175,7 +175,7 @@ SDL_Surface * Lux_OGL_LoadSpriteImage(std::string file)
 }
 
 /* Functions */
-bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	if ( lux::config->GetString("display.mode") != "OpenGL" )
 		return false;
@@ -292,12 +292,12 @@ void Lux_OGL_BackgroundObject( MapObject background )
 	glClearColor((float)oglGraphics_colour.r / 255.0f, (float)oglGraphics_colour.g / 255.0f, (float)oglGraphics_colour.b / 255.0f, 1.0f);
 }
 
-void Lux_OGL_Update(LuxRect rect)
+void Lux_OGL_Update( uint8_t screen, LuxRect rect)
 {
 
 }
 
-void Lux_OGL_Show()
+void Lux_OGL_Show( uint8_t screen )
 {
 	SDL_GL_SwapBuffers();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

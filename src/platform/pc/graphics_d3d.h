@@ -11,11 +11,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef _DISPLAYD3D_H_
 	#define _DISPLAYD3D_H_
 
-	bool Lux_D3D_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+	bool Lux_D3D_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen );
 	void Lux_D3D_Destory();
 	void Lux_D3D_Background(LuxColour fillcolor);
-	void Lux_D3D_Update(LuxRect rect);
-	void Lux_D3D_Show();
+	void Lux_D3D_Update( uint8_t screen, LuxRect rect);
+	void Lux_D3D_Show( uint8_t screen );
 
 	LuxSprite * Lux_D3D_PNGtoSprite( uint8_t * data, int32_t size );
 	void Lux_D3D_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects );

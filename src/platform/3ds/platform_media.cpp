@@ -28,7 +28,6 @@ PlatformMedia::~PlatformMedia()
 
 void PlatformMedia::Init(GraphicSystem graphic)
 {
-
 	/* Load Generic JoyStick */
 	elix::Image * image_3ds_joystick = new elix::Image(joystick_3ds_image_data, joystick_3ds_image_size);
 	this->joystick_3ds_sheet = new LuxSheet(graphic);

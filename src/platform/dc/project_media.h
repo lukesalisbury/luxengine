@@ -8,13 +8,18 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef _DISPLAY_FUNCTION_H_
-#define _DISPLAY_FUNCTION_H_
 
-	#include "lux_types.h"
-	LuxColour Lux_Hex2Colour(std::string colour);
-	uint32_t Lux_Hex2Int(std::string color);
-	uint32_t Lux_DetermineObjectType( std::string obj_type );
-	uint32_t Lux_Colour2Int(LuxColour color);
-#endif
-/* _DISPLAY_FUNCTION_H_ */
+
+namespace lux_media {
+	extern uint32_t portal_title_size;
+	extern uint16_t portal_title_width;
+	extern uint16_t portal_title_height;
+	extern uint8_t portal_title[];
+
+	extern uint16_t testimage_width;
+	extern uint16_t testimage_height;
+	extern uint32_t testimage_size;
+	extern uint8_t testimage[];
+
+}
+

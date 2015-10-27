@@ -1,4 +1,4 @@
-#include <default>
+
 #include <graphics>
 #include <string>
 

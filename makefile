@@ -79,7 +79,7 @@ OBJ += $(OBJDIR)/downloader-$(DOWNLOADER_MODE).o
 ifeq ($(CUSTOMOBJECTS), TRUE)
 	OBJ += $(OBJDIR)/custom_platform_main.o $(OBJDIR)/custom_lux_screen.o $(OBJDIR)/custom_project_media.o
 else
-	OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_main.o $(OBJDIR)/lux_screen.o $(OBJDIR)/project_media.o
+	OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/platform_main.o $(OBJDIR)/lux_screen.o $(OBJDIR)/$(PLATFORM_DIRECTORY)/project_media.o
 endif
 
 #Pawn code

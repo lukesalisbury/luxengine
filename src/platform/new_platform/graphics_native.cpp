@@ -26,7 +26,7 @@ struct Texture {
 };
 
 
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( std::string title, uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	return true;
 }
@@ -41,12 +41,12 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_BackgroundObject( MapObject background  )
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
 {
 }
 

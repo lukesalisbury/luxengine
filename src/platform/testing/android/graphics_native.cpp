@@ -65,7 +65,7 @@ EGLContext android_context = EGL_NO_SURFACE;
  @ fullscreen:
  - Returns true if successfull
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 
 
@@ -156,13 +156,13 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_BackgroundObject( MapObject background  )
 	glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
 {
 
 }
 
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
 {
 	if ( android_display != EGL_NO_DISPLAY )
 	{

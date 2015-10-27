@@ -39,6 +39,7 @@ GraphicSystem GraphicsOpenGL = {
 	&Lux_OGL_Destory,
 	&Lux_OGL_Display2Screen,
 	&Lux_GLES_TextSprites,
+	&Lux_GRAPHICS_PreShow,
 	&Lux_OGL_Update,
 	&Lux_OGL_Show,
 
@@ -91,7 +92,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
  @ fullscreen:
  - Returns true if successfull
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t bpp )
+LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
 {
 	SDL_Surface * opengl_window_icon = NULL;
 	if ( lux::config->GetString("display.mode") != "OpenGL" )
@@ -234,7 +235,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_BackgroundObject( MapObject background )
  * Adds an area of the screen that needs to be updated.
  @ rect: area to updates
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Update(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_OGL_Update( uint8_t screen, LuxRect rect)
 {
 
 }
@@ -242,7 +243,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Update(LuxRect rect)
 /* Lux_OGL_Show
  * Refreshs the display
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Show()
+LUX_DISPLAY_FUNCTION void Lux_OGL_Show( uint8_t screen )
 {
 	SDL_GL_SwapBuffers();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

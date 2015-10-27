@@ -1,7 +1,7 @@
 #ifndef _ELIX_PATH_H_
 #define _ELIX_PATH_H_
 
-#ifdef __GNUWIN32__
+#if defined __GNUWIN32__
 	#define ELIX_DIR_SEPARATOR '\\'
 	#define ELIX_DIR_SSEPARATOR "\\"
 #else

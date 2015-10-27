@@ -28,14 +28,12 @@ Some Code taken from Easy GL2D http://rel.betterwebber.com
 
 #include "elix/elix_string.hpp"
 #include "elix/elix_png.hpp"
-#include "bitfont.h"
-
 
 #include <3ds.h>
 
 /* Global Variables */
 struct NativeTexture {
-	int32_t texnum;
+	sf2d_texture * texture;
 	int32_t address;
 	uint32_t w, h, tw, th;
 	bool pot, loaded;
@@ -47,6 +45,7 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_Destory,
 	&Lux_GRAPHICS_Display2Screen,
 	&Lux_GRAPHICS_TextSprites,
+	&Lux_NATIVE_PreShow,
 	&Lux_GRAPHICS_UpdateRect,
 	&Lux_NATIVE_Show,
 
@@ -70,212 +69,377 @@ GraphicSystem GraphicsNative = {
 	&Lux_GRAPHICS_DrawPolygon,
 	&Lux_NATIVE_DrawLine,
 	&Lux_NATIVE_DrawText,
-	&Lux_GRAPHICS_DrawMessage,
+	&Lux_NATIVE_DrawMessage,
 
 	NULL,
 	NULL
 
 };
 
-
+DisplayBitFont * dsgraphics_bitfont = NULL;
 /* Local Functions */
 
 
 /* Public Function */
 
 /* Creation,destruction and loop Functions */
-bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint8_t bpp )
+/**
+ * @brief Lux_NATIVE_Init
+ * @param width
+ * @param height
+ * @param bpp
+ * @param actual_width
+ * @param actual_height
+ * @return
+ */
+bool Lux_NATIVE_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
 {
+	if ( actual_width )
+		*actual_width = 400;
 
+	if ( actual_height )
+		*actual_height = 240;
 
+	dsgraphics_bitfont = new DisplayBitFont( );
+	sf2d_start_frame(lux::core->primary_screen, GFX_LEFT);
 	return true;
 }
-
+/**
+ * @brief Lux_NATIVE_Destory
+ */
 void Lux_NATIVE_Destory()
 {
 
-
+	delete dsgraphics_bitfont;
 
 }
-
+/**
+ * @brief Lux_NATIVE_Display2Screen
+ * @param x
+ * @param y
+ */
 void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y )
 {
 	*x = (int32_t)((float)*x * 1.0);
 	*y = (int32_t)((float)*y * 1.0);
 }
-
+/**
+ * @brief Lux_NATIVE_Background
+ * @param fillcolor
+ */
 void Lux_NATIVE_Background(LuxColour fillcolor)
 {
-
-
+	sf2d_set_clear_color( RGBA8(fillcolor.r, fillcolor.g, fillcolor.b, fillcolor.a) );
 }
 
+/**
+ * @brief Lux_NATIVE_BackgroundObject
+ * @param background
+ */
 void Lux_NATIVE_BackgroundObject( MapObject background )
 {
-
+	sf2d_set_clear_color( RGBA8(background.effects.primary_colour.r, background.effects.primary_colour.g, background.effects.primary_colour.b, background.effects.primary_colour.a) );
 }
-
-void Lux_NATIVE_Update(LuxRect rect)
+/**
+* @brief Lux_NATIVE_PreShow
+*/
+void Lux_NATIVE_PreShow( uint8_t screen )
 {
 
+   sf2d_start_frame( screen ? lux::core->secondary_screen : lux::core->primary_screen, GFX_LEFT);
 }
 
-void Lux_NATIVE_Show()
-{
-	// Flush and swap framebuffers
-	gfxFlushBuffers();
-	gfxSwapBuffers();
-
-	//Wait for VBlank
-	gspWaitForVBlank();
-}
-
-/* Resource Functions */
-
-/* Lux_NATIVE_FreeSprite
- *
- @ sprite:
- -
+/**
+ * @brief Lux_NATIVE_Update
+ * @param rect
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite ( LuxSprite * sprite )
+void Lux_NATIVE_Update( uint8_t screen, LuxRect rect)
 {
 
-	return false;
 }
 
-
-
-/* Lux_NATIVE_CreateSprite
- *
- @ sprite:
- @ rect:
- @ png:
- -
+/**
+ * @brief Lux_NATIVE_Show
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+void Lux_NATIVE_Show( uint8_t screen )
 {
-	return false;
-}
+	sf2d_end_frame();
 
-/* Lux_NATIVE_LoadTexture
- *
- @ sprite:
- @ sprite_filename:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadTexture( LuxSprite * sprite, std::string sprite_filename )
-{
-	if ( sprite->data )
-		return false;
-
-	return false;
+	if ( !screen )
+		sf2d_swapbuffers();
 
 }
 
-/* Lux_NATIVE_LoadSpriteSheet
- *
- @ name:
- @ children:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> * children)
-{
-
-	return false;
-}
-
-/* Lux_NATIVE_LoadSpriteSheetImage
- *
- @ image:
- @ children:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
-{
-	if ( !image  )
-	{
-		return false;
-	}
-
-	if (  !children )
-	{
-		return false;
-	}
-
-
-	if ( image->HasContent() )
-	{
-		std::map<uint32_t, LuxSprite *>::iterator p = children->begin();
-		for( ; p != children->end(); p++ )
-		{
-			if ( !p->second->animated )
-			{
-				Lux_NATIVE_CreateSprite( p->second, p->second->sheet_area, image );
-			}
-		}
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-
-}
-
-/* Lux_NATIVE_FreeSpriteSheet
- *
- @ children:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children)
-{
-	std::map<uint32_t, LuxSprite *>::iterator p;
-	for( p = children->begin(); p != children->end(); p++ )
-	{
-		Lux_NATIVE_FreeSprite( p->second );
-	}
-	return true;
-}
-
-/* Lux_NATIVE_RefreshSpriteSheet
- *
- @ name:
- @ children:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
-{
-	if ( Lux_NATIVE_FreeSpriteSheet( children ) )
-		Lux_NATIVE_LoadSpriteSheet( name, children );
-	return true;
-}
-
-LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
-{
-	return NULL;
-}
 
 /* Drawing Functions */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
+/**
+ * @brief Lux_NATIVE_DrawSprite
+ * @param sprite
+ * @param dest_rect
+ * @param effects
+ */
+void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect )
 {
 	if ( !sprite->data )
 		return;
+
+	NativeTexture * surface = (NativeTexture*) sprite->GetData(effect);
+
+	double angle = (double)effect.rotation;
+	uint8_t flipmode = 0;
+
+	LuxRect draw;
+	LuxPath point;
+	LuxRect repeat;
+
+	draw.x = dest_rect.x;
+	draw.y = dest_rect.y;
+	draw.w = surface->w;
+	draw.h = surface->h;
+
+//	point.x = draw.w/2;
+//	point.y = draw.h/2;
+
+	point.x = 0;
+	point.y = 0;
+	/* Flip image, rotates image either 90, 180, 270 and/or mirrors. */
+	if ( effect.flip_image&16 ) // Mirror Sprite.
+	{
+		effect.flip_image -= 16;
+		flipmode = 1;
+	}
+
+	if ( effect.flip_image == 1 || effect.flip_image == 3 )
+	{
+		repeat.y = dest_rect.w / surface->w;
+		repeat.x = dest_rect.h / surface->h;
+
+		repeat.w = surface->h;
+		repeat.h = surface->w;
+	}
+	else
+	{
+		repeat.x = dest_rect.w / surface->w;
+		repeat.y = dest_rect.h / surface->h;
+
+		repeat.w = surface->w;
+		repeat.h = surface->h;
+	}
+
+
+	if ( effect.flip_image == 1 )// Switch Axis
+	{
+		angle += 90.0;
+
+	}
+	else if ( effect.flip_image == 2 )// Switch Axis
+	{
+		angle += 180.0;
+	}
+	else if ( effect.flip_image == 3 )// Switch Axis
+	{
+		angle += 270.0;
+	}
+
+	if ( repeat.x > 1 || repeat.y > 1 )
+	{
+		for( int32_t rx = 0; rx < repeat.x; rx++ )
+		{
+			for( int32_t ry = 0; ry < repeat.y; ry++ )
+			{
+				draw.x = dest_rect.x + (repeat.w*rx);
+				draw.y = dest_rect.y + (repeat.h*ry);
+				draw.w = repeat.w;
+				draw.h = repeat.h;
+
+				if ( effect.flip_image == 1 )// Switch Axis
+				{
+					draw.x += surface->h;
+				}
+				else if ( effect.flip_image == 2 )// Switch Axis
+				{
+					draw.y += surface->h;
+					draw.x += surface->w;
+				}
+				else if ( effect.flip_image == 3 )// Switch Axis
+				{
+					draw.y += surface->w;
+				}
+
+
+				draw.w = surface->w;
+				draw.h = surface->h;
+
+
+				sf2d_draw_texture_blend( surface->texture,draw.x, draw.y, RGBA8(effect.primary_colour.r, effect.primary_colour.g, effect.primary_colour.b, effect.primary_colour.a));
+
+			}
+		}
+	}
+	else
+	{
+		if ( effect.flip_image == 1 )// Switch Axis
+		{
+			draw.x += surface->h;
+		}
+		else if ( effect.flip_image == 2 )// Switch Axis
+		{
+			draw.y += surface->h;
+			draw.x += surface->w;
+		}
+		else if ( effect.flip_image == 3 )// Switch Axis
+		{
+			draw.y += surface->w;
+		}
+		sf2d_draw_texture_blend( surface->texture,draw.x, draw.y, RGBA8(effect.primary_colour.r, effect.primary_colour.g, effect.primary_colour.b, effect.primary_colour.a));
+	}
 
 }
 
 void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect effects)
 {
+	sf2d_draw_rectangle(dest_rect.x, dest_rect.y, dest_rect.w, dest_rect.h, RGBA8(effects.primary_colour.r, effects.primary_colour.g, effects.primary_colour.b, effects.primary_colour.a)  );
 
 }
 
 void Lux_NATIVE_DrawLine( LuxRect points, ObjectEffect effects )
 {
+	sf2d_draw_line(points.x, points.y, points.w, points.h, RGBA8(effects.primary_colour.r, effects.primary_colour.g, effects.primary_colour.b, effects.primary_colour.a) );
+}
 
+int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, ObjectEffect effects, bool allow_custom )
+{
+	sf2d_texture * 	texture = NULL;
+	LuxColour c = effects.primary_colour;
+	LuxRect area;
+	NativeTexture * ntexture = NULL;
+	LuxSprite * sprite_data = NULL;
+	int32_t offset = 7;
+
+	int8_t axis;
+	int8_t button;
+	int8_t pointer;
+
+	area.x = x;
+	area.y = y;
+
+	UnicodeToInput( cchar, &axis, &button, &pointer );
+
+	if ( axis >= 0 || button >= 0 || pointer >= 0 )
+	{
+		c.r = c.g = c.b = 255;
+		sprite_data = lux::display->GetInputSprite( 0, axis, button, pointer );
+	}
+
+
+	if ( sprite_data )
+	{
+		ntexture = (NativeTexture*)sprite_data->GetData();
+
+		texture = ntexture->texture;
+
+		area.w = ntexture->tw;
+		area.h = ntexture->th;
+
+		offset = ntexture->w;
+
+	}
+	else
+	{
+		texture = dsgraphics_bitfont->GetTexture(cchar);
+
+		offset = 8;
+		area.w = 8;
+		area.h = 8;
+	}
+
+
+	if ( texture )
+	{
+		sf2d_draw_texture_blend(texture, area.x, area.y, RGBA8(effects.primary_colour.r, effects.primary_colour.g, effects.primary_colour.b, effects.primary_colour.a) 	);
+	}
+	return offset;
 }
 
 void Lux_NATIVE_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom )
 {
+	int32_t x, y;
+	std::string::iterator object;
+	bool watch_for_color = false;
+	ObjectEffect current_effects = effects;
 
+	x = dest_rect.x;
+	y = dest_rect.y;
+
+	for ( object = text.begin(); object != text.end(); object++ )
+	{
+		uint8_t utfchar = *object;
+		uint32_t cchar = utfchar;
+
+
+		if (cchar == '\n' || cchar == '\r')
+		{
+			y += 10;
+			x = dest_rect.x;
+			cchar = 0;
+			current_effects.primary_colour = effects.primary_colour; // reset effects
+		}
+		else if ( cchar <= 32 )
+		{
+			x += 7;
+			cchar = 0;
+			current_effects.primary_colour = effects.primary_colour; // reset effects
+		}
+		else if ( cchar <= 128 )
+		{
+
+		}
+		else if ( cchar < 224 )
+		{
+			object++;
+			uint32_t next = *object;
+
+			cchar = ((cchar << 6) & 0x7ff) + (next & 0x3f);
+		}
+		else if ( cchar < 240 )
+		{
+			uint32_t next;
+
+			object++;
+			next = (*object) & 0xff;
+			cchar = ((cchar << 12) & 0xffff) + ((next << 6) & 0xfff);
+
+			object++;
+			next = (*object) & 0x3f;
+			cchar += next;
+
+		}
+		else if ( cchar < 245 )
+		{
+			uint32_t next;
+
+			object++;
+			next = (*object) & 0xff;
+			cchar = ((cchar << 18) & 0xffff) + ((next << 12) & 0x3ffff);
+
+			object++;
+			next = (*object) & 0xff;
+			cchar += (next << 6) & 0xfff;
+
+			object++;
+			next = (*object) & 0x3f;
+			cchar += next;
+		}
+
+		if ( cchar != 0 )
+		{
+			if ( !Lux_Util_CheckTextColour( cchar, current_effects.primary_colour, watch_for_color ) )
+			{
+				x += Lux_NATIVE_DrawChar( cchar, x, y, current_effects, allow_custom );
+			}
+		}
+
+	}
 }
 
 void Lux_NATIVE_TextSprites( bool able )
@@ -293,5 +457,193 @@ void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
 
 }
 
+void Lux_NATIVE_DrawMessage( std::string message, uint8_t alignment )
+{
+	std::string::iterator object;
+	LuxRect rect, area, draw;
+	int16_t w = 400, h = 240;
+
+	bool watch_for_color = false;
+	bool is_whitspace = false;
+	LuxColour font_color = { 255, 255,255, 255 };
+
+	rect.x = rect.y = 0;
+
+	Lux_Util_SetRectFromText( rect, message, 7, 10, 240 );
+
+	area = rect;
+
+	if ( alignment == 3 )
+	{
+		area.y = h - area.h;
+	}
+	else if ( alignment == 2 )
+	{
+		area.y = h - area.h;
+		area.x = w - area.w;
+	}
+	else if ( alignment == 1 )
+	{
+		area.x = w - area.w;
+	}
 
 
+	draw = area;
+	draw.w = draw.h = 8;
+
+	for ( object = message.begin(); object != message.end(); object++ )
+	{
+		uint8_t utfchar = *object;
+		uint32_t cchar = utfchar;
+
+		is_whitspace = false;
+
+		if (cchar == '\n' || cchar == '\r')
+		{
+			draw.y += 10;
+			draw.x = area.x;
+			cchar = 0;
+			is_whitspace = true;
+		}
+		else if ( cchar <= 32 )
+		{
+			draw.x += 7;
+			cchar = 0;
+			is_whitspace = true;
+		}
+		else if ( cchar <= 128 )
+		{
+
+		}
+		else if ( cchar < 224 )
+		{
+			object++;
+			uint32_t next = *object;
+
+			cchar = ((cchar << 6) & 0x7ff) + (next & 0x3f);
+		}
+		else if ( cchar < 240 )
+		{
+			uint32_t next;
+
+			object++;
+			next = (*object) & 0xff;
+			cchar = ((cchar << 12) & 0xffff) + ((next << 6) & 0xfff);
+
+			object++;
+			next = (*object) & 0x3f;
+			cchar += next;
+
+		}
+		else if ( cchar < 245 )
+		{
+			uint32_t next;
+
+			object++;
+			next = (*object) & 0xff;
+			cchar = ((cchar << 18) & 0xffff) + ((next << 12) & 0x3ffff);
+
+			object++;
+			next = (*object) & 0xff;
+			cchar += (next << 6) & 0xfff;
+
+			object++;
+			next = (*object) & 0x3f;
+			cchar += next;
+		}
+
+		if ( cchar != 0 )
+		{
+			if ( !Lux_Util_CheckTextColour( cchar, font_color, watch_for_color ) )
+			{
+				sf2d_texture * texture = dsgraphics_bitfont->GetTexture(cchar);
+
+				if ( texture )
+				{
+					sf2d_draw_texture_blend(texture, draw.x, draw.y, RGBA8(font_color.r, font_color.g, font_color.b, font_color.a) 	);
+				}
+				else
+				{
+					sf2d_draw_rectangle(draw.x, draw.y, draw.w, draw.h, RGBA8(font_color.r, font_color.g, font_color.b, font_color.a)  );
+				}
+				draw.x += 7;
+			}
+		}
+
+		if ( is_whitspace )
+		{
+			/* Reset Colour if a whitespace occurs */
+			font_color.r = font_color.g = font_color.b = 255;
+		}
+	}
+}
+
+/* Resource Functions */
+
+/**
+ * @brief Lux_NATIVE_FreeSprite
+ * @param sprite
+ * @return
+ */
+bool Lux_NATIVE_FreeSprite ( LuxSprite * sprite )
+{
+	if ( sprite == NULL )
+		return false;
+	if ( sprite->data )
+	{
+		NativeTexture * texture = (NativeTexture*)sprite->data;
+		sf2d_free_texture(texture->texture);
+		delete texture;
+	}
+	sprite->data = NULL;
+	return true;
+}
+
+/**
+ * @brief Lux_NATIVE_CreateSprite
+ * @param sprite
+ * @param rect
+ * @param png
+ * @return
+ */
+bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+{
+	if ( !png->HasContent() )
+	{
+		return false;
+	}
+
+	NativeTexture * texture = new NativeTexture;
+
+	texture->texture = sf2d_create_texture( rect.w, rect.h, TEXFMT_RGBA8, SF2D_PLACE_RAM );
+	texture->w = texture->tw = rect.w;
+	texture->h = texture->th = rect.h;
+	sprite->data = texture;
+
+	texture->tw = texture->texture->pow2_w;
+	texture->th = texture->texture->pow2_h;
+
+	uint32_t size = texture->tw*texture->th;
+	/* PNG image */
+	uint32_t * pixels = new uint32_t[size]();
+	if ( pixels )
+	{
+		for( uint16_t y = 0; y < texture->h; y++ )
+		{
+			for( uint16_t x = 0; x < texture->w; x++ )
+			{
+				uint32_t q = (texture->tw * y) + x;
+				pixels[q] = png->GetPixel(rect.x + x, rect.y + y);
+			}
+		}
+		//sf2d_fill_texture_from_RGBA8(texture->texture, pixels, texture->tw, texture->th);
+		memcpy(texture->texture->data, pixels, size*4);
+		sf2d_texture_tile32(texture->texture);
+	}
+	delete pixels;
+	/*  ^ PNG Image */
+
+	return true;
+}
+
+#include "display/reusable_graphics_system.cpp"

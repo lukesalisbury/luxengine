@@ -13,21 +13,42 @@ Permission is granted to anyone to use this software for any purpose, including 
 void Config::PlatformSettings()
 {
 
-	this->platform = "nds";
+	this->platform = "3ds";
 
+
+	this->SetNumber("display.bpp", 0);
+	this->SetBoolean("display.fullscreen", true);
+	this->SetNumber("display.scale", 1);
 	this->SetNumber("display.limit", 60);
-	this->SetNumber("display.width", 256);
-	this->SetNumber("display.height", 384);
-	this->SetNumber("display.autoscale", 1);
-	this->SetNumber("map.width", 256);
-	this->SetNumber("map.height", 192);
-	this->SetNumber("screen.width", 256);
-	this->SetNumber("screen.height", 384);
-	this->SetBoolean("debug.enable", false);
-	this->SetBoolean("audio.able", false);
-	this->SetString("player.controller1", "arrows|mouse|mouse|k0|k1|k10|k11|k8|k9|k2|k4|k5|k6|k7|m1|k3|k13|k12|k12" );
-	this->SetString("controller.buttons1", "k2|k3|m1" );
-	this->SetString("player.controller2", "arrows|mouse|mouse|k0|k1|k10|k11|k8|k9|k2|k4|k5|k6|k7|m1|k3|k13|k12|k12" );
-	this->SetNumber("portal.width", 256);
-	this->SetNumber("portal.height", 384);
+	this->SetNumber("display.width", 320);
+	this->SetNumber("display.height", 240);
+	this->SetNumber("map.width", 512);
+	this->SetNumber("map.height", 384);
+	this->SetNumber("screen.width", 320);
+	this->SetNumber("screen.height", 240);
+	this->SetBoolean("debug.enable", true);
+	this->SetBoolean("audio.able", true);
+	this->SetBoolean("entities.rebuild", false);
+	this->SetString("project.title", "Lux Engine" );
+
+	this->SetString("project.id", "unknowngame" );
+	this->SetString("window.title", "Game" );
+
+	/* axis-1|axis-2|pointer|BUTTON_ACTION1|ACTION2|ACTION3|ACTION4|ACTION5|ACTION6|MENU|ARROWRIGHT|ARROWLEFT|ARROWDOWN|ARROWUP|MOUSELEFT|MOUSEMIDDLE|MOUSERIGHT|MOUSEUP|MOUSEDOWN|CONFIRM|CANCEL|POINTER_PRESS|shutdown*/
+	this->SetString("controller.keyboard1", "arrows|mouse|mouse|k04|k022|k07|k020|k026|k08|k040|k079|k080|k081|k082|m01|m02|m03|m04|k041|k040|k041|m01|k061" );
+	this->SetString("controller.virtual1", "arrows|n|mouse|nA1|nA2|nA3|nA4|nA5|nA6|m01|r,50x-40,30x30|r,10x-40,30x30|n|r,-50x-50,40x40|nML|nMM|nMR|nMU|nMD|k040|k041|m01|k061" );
+
+	this->SetString("player.controller1", "default0" );
+	this->SetString("player.controller2", "default0" );
+	this->SetString("player.controller3", "default0" );
+	this->SetString("player.controller4", "default0" );
+
+	this->SetBoolean("save.allowed", true );
+	this->SetString("server.ip", "127.0.0.1" );
+	this->SetBoolean("server.able", false);
+	this->SetString("client.entity", "client");
+	this->SetBoolean("shader.able", true);
+
+	this->SetBoolean("layer.static6", true);
+
 }

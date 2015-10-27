@@ -14,8 +14,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 	bool Lux_NATIVE_Init(int width, int height, int bpp, bool fullscreen);
 	void Lux_NATIVE_Destory();
 	void Lux_NATIVE_Background(LuxColour fillcolor);
-	void Lux_NATIVE_Update(LuxRect rect);
-	void Lux_NATIVE_Show();
+	void Lux_NATIVE_Update( uint8_t screen, LuxRect rect);
+	void Lux_NATIVE_Show( uint8_t screen );
 
 	void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, Effects image_effects );
 	void Lux_NATIVE_DrawRect( LuxRect dest_rect, Effects image_effects );

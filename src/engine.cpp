@@ -207,8 +207,9 @@ bool LuxEngine::Start( std::string project_file )
 	if ( lux::game_data->valid )
 	{
 		lux::display = new DisplaySystem();
+		lux::display->graphics.PreShow(0);
 		lux::display->SetBackgroundColour( colour::grey );
-		lux::display->graphics.Show();
+		lux::display->graphics.Show(0);
 
 
 //		lux::engine->ShowDialog("DIALOGOK", DIALOGOK, NULL );

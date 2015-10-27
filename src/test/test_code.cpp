@@ -215,6 +215,7 @@ void luxtest::loop()
 	}
 
 
+	luxtest::display->graphics.PreShow(0);
 	switch ( luxtest::mode )
 	{
 		case 2:
@@ -229,10 +230,7 @@ void luxtest::loop()
 			break;
 		}
 	}
-
-
-
-	luxtest::display->graphics.Show();
+	luxtest::display->graphics.Show(0);
 	lux::core->Idle( );
 }
 

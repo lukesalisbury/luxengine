@@ -11,13 +11,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef _DISPLAYNDS_H_
 	#define _DISPLAYNDS_H_
 
-	bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+	bool Lux_NATIVE_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen );
 	void Lux_NATIVE_Destory();
 	void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y);
 	void Lux_NATIVE_Background(LuxColour fillcolor);
 	void Lux_NATIVE_BackgroundObject( MapObject background );
-	void Lux_NATIVE_UpdateRect(LuxRect rect);
-	void Lux_NATIVE_Show();
+	void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect);
+	void Lux_NATIVE_Show( uint8_t screen );
 	void Lux_NATIVE_TextSprites( bool able );
 
 	LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size );

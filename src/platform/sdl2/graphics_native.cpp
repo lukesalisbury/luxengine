@@ -42,7 +42,8 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_Destory,
 	&Lux_NATIVE_Display2Screen,
 	&Lux_NATIVE_TextSprites,
-	&Lux_NATIVE_UpdateRect,
+	&Lux_GRAPHICS_PreShow,
+	&Lux_GRAPHICS_UpdateRect,
 	&Lux_NATIVE_Show,
 
 	&Lux_GRAPHICS_SetRotation,
@@ -132,7 +133,7 @@ int32_t SDL2_AcceratedRendering()
  * @param bpp
  * @return Returns true if successful
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t width, uint16_t height, uint8_t bpp )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
 {
 	int window_width = width;
 	int window_height = height;
@@ -182,6 +183,12 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t width, uint16_t height, uin
 	native_graphics_dimension.w = width;
 	native_graphics_dimension.h = height;
 
+	if ( actual_width )
+		*actual_width = native_graphics_dimension.w;
+
+	if ( actual_height )
+		*actual_height = native_graphics_dimension.h;
+
 	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
 	SDL_RenderSetLogicalSize(native_renderer, width, height);
 
@@ -211,7 +218,15 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
  * Adds an area of the screen that needs to be updated.
  @ rect: area to updates
  */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
+{
+
+}
+
+/* Lux_NATIVE_PreShow
+ * Refreshs the display
+ */
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_PreShow( uint8_t screen )
 {
 
 }
@@ -219,9 +234,9 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(LuxRect rect)
 /* Lux_NATIVE_Show
  * Refreshs the display
  */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
 {
-	if ( native_renderer )
+	if ( native_renderer && !screen )
 	{
 		SDL_RenderPresent(native_renderer);
 
@@ -374,207 +389,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_TextSprites( bool able )
 		sdlgraphics_customtext = false;
 }
 
-
-
-/* Resource Functions */
-
-
-/* Lux_NATIVE_FreeSprite
- *
- @ sprite:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
-{
-	if ( sprite == NULL )
-		return false;
-	if ( sprite->data )
-	{
-		NativeTexture * texture = (NativeTexture*)sprite->data;
-		SDL_DestroyTexture(texture->texnum);
-		delete texture;
-	}
-	sprite->data = NULL;
-	return true;
-}
-
-/* Lux_NATIVE_CreateSprite
- *
- @ sprite:
- @ rect:
- @ parent:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
-{
-	if ( !png->HasContent() )
-	{
-		return false;
-	}
-
-	NativeTexture * texture = new NativeTexture;
-
-	texture->texnum = SDL_CreateTexture( native_renderer, sdlgraphics_texture_format, SDL_TEXTUREACCESS_STATIC, rect.w, rect.h );
-	texture->w = texture->tw = rect.w;
-	texture->h = texture->th = rect.h;
-	sprite->data = texture;
-	/* PNG image */
-	uint32_t * pixels = new uint32_t[texture->tw*texture->th]();
-	if ( pixels )
-	{
-		for( uint16_t y = 0; y < texture->h; y++ )
-		{
-			for( uint16_t x = 0; x < texture->w; x++ )
-			{
-				uint32_t q = (texture->tw * y) + x;
-				pixels[q] = png->GetPixel(rect.x + x, rect.y + y);
-			}
-		}
-
-		SDL_SetTextureBlendMode(texture->texnum, sdlgraphics_blend_mode);
-		SDL_UpdateTexture(texture->texnum, NULL, pixels, texture->tw * 4);
-	}
-	delete pixels;
-	/*  ^ PNG Image */
-
-	return true;
-}
-
-/* Lux_NATIVE_LoadSpriteSheet
- *
- @ name:
- @ children:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
-{
-	/* PNG Image */
-	uint8_t * data = NULL;
-	uint32_t size;
-	elix::Image * png = new elix::Image;
-	if ( lux::game_data )
-	{
-		size = lux::game_data->GetFile("./sprites/" + name, &data, false);
-		if ( size )
-		{
-			png->LoadFile(data, size);
-		}
-	}
-	delete data;
-	/*  ^ PNG Image */
-
-	if ( png->HasContent() )
-	{
-		std::map<uint32_t, LuxSprite *>::iterator p = children->begin();
-		for( ; p != children->end(); p++ )
-		{
-			if ( !p->second->animated )
-			{
-				Lux_NATIVE_CreateSprite( p->second, p->second->sheet_area, png );
-			}
-		}
-		delete png;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-/* Lux_NATIVE_LoadSpriteSheetImage
- *
- @ image:
- @ children:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheetImage(  elix::Image * image, std::map<uint32_t, LuxSprite *> * children )
-{
-	if ( !image  )
-	{
-		return false;
-	}
-
-	if (  !children )
-	{
-		return false;
-	}
-
-
-	if ( image->HasContent() )
-	{
-		std::map<uint32_t, LuxSprite *>::iterator p = children->begin();
-		for( ; p != children->end(); p++ )
-		{
-			if ( !p->second->animated )
-			{
-				Lux_NATIVE_CreateSprite( p->second, p->second->sheet_area, image );
-			}
-		}
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-
-/* Lux_NATIVE_FreeSpriteSheet
- *
- @ children:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children )
-{
-	std::map<uint32_t, LuxSprite *>::iterator p;
-	for( p = children->begin(); p != children->end(); p++ )
-	{
-		if ( !p->second->animated )
-		{
-			Lux_NATIVE_FreeSprite( p->second );
-		}
-	}
-	return true;
-}
-
-/* Lux_NATIVE_RefreshSpriteSheet
- *
- @ name:
- @ children:
- -
- */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
-{
-	if ( Lux_NATIVE_FreeSpriteSheet( children ) )
-		Lux_NATIVE_LoadSpriteSheet( name, children );
-	return true;
-}
-
-/* Lux_NATIVE_PNGtoSprite
- *
- @ data:
- @ size:
- -
- */
-LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
-{
-	LuxSprite * sprite = NULL;
-	elix::Image * png = new elix::Image(data, size);
-
-	if ( png->HasContent() )
-	{
-		sprite = new LuxSprite( GraphicsNative );
-		sprite->sheet_area.x = sprite->sheet_area.y = 0;
-		sprite->sheet_area.w = png->Width();
-		sprite->sheet_area.h = png->Height();
-
-		Lux_NATIVE_CreateSprite( sprite, sprite->sheet_area, png );
-	}
-	delete png;
-	return sprite;
-
-}
 
 
 
@@ -980,3 +794,69 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 
 
 
+/* Resource Functions */
+
+
+/* Lux_NATIVE_FreeSprite
+ *
+ @ sprite:
+ -
+ */
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
+{
+	if ( sprite == NULL )
+		return false;
+	if ( sprite->data )
+	{
+		NativeTexture * texture = (NativeTexture*)sprite->data;
+		SDL_DestroyTexture(texture->texnum);
+		delete texture;
+	}
+	sprite->data = NULL;
+	return true;
+}
+
+/* Lux_NATIVE_CreateSprite
+ *
+ @ sprite:
+ @ rect:
+ @ parent:
+ -
+ */
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+{
+	if ( !png->HasContent() )
+	{
+		return false;
+	}
+
+	NativeTexture * texture = new NativeTexture;
+
+	texture->texnum = SDL_CreateTexture( native_renderer, sdlgraphics_texture_format, SDL_TEXTUREACCESS_STATIC, rect.w, rect.h );
+	texture->w = texture->tw = rect.w;
+	texture->h = texture->th = rect.h;
+	sprite->data = texture;
+	/* PNG image */
+	uint32_t * pixels = new uint32_t[texture->tw*texture->th]();
+	if ( pixels )
+	{
+		for( uint16_t y = 0; y < texture->h; y++ )
+		{
+			for( uint16_t x = 0; x < texture->w; x++ )
+			{
+				uint32_t q = (texture->tw * y) + x;
+				pixels[q] = png->GetPixel(rect.x + x, rect.y + y);
+			}
+		}
+
+		SDL_SetTextureBlendMode(texture->texnum, sdlgraphics_blend_mode);
+		SDL_UpdateTexture(texture->texnum, NULL, pixels, texture->tw * 4);
+	}
+	delete pixels;
+	/*  ^ PNG Image */
+
+	return true;
+}
+
+
+#include "display/reusable_graphics_system.cpp"

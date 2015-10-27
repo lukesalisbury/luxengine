@@ -11,11 +11,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef _DISPLAYNATIVE_H_
 	#define _DISPLAYNATIVE_H_
 
-	bool Lux_NATIVE_Init( std::string title, uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+	bool Lux_NATIVE_Init( std::string title, uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen );
 	void Lux_NATIVE_Destory();
 	void Lux_NATIVE_BackgroundObject( MapObject background );
-	void Lux_NATIVE_UpdateRect(LuxRect rect);
-	void Lux_NATIVE_Show();
+	void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect);
+	void Lux_NATIVE_Show( uint8_t screen );
 
 	void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects );
 	void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect effects );

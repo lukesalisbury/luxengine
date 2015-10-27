@@ -483,6 +483,7 @@ int32_t UserInterface::Show()
 	std::list<Widget *>::iterator wid_iter;
 
 	this->ui_region.z = z;
+	this->internal_display->graphics.PreShow(0);
 	this->internal_display->graphics.DrawRect(this->ui_region, this->background);
 	if ( this->children_widget.size() )
 	{
@@ -491,7 +492,7 @@ int32_t UserInterface::Show()
 			this->DrawWidget((*wid_iter), ++z);
 		}
 	}
-	this->internal_display->graphics.Show();
+	this->internal_display->graphics.Show(0);
 	return 1;
 }
 
@@ -612,8 +613,6 @@ int32_t UserInterface::Loop()
 		}
 	}
 
-
-
 	// Button Events
 	if ( this->active_child && !return_value )
 	{
@@ -655,6 +654,7 @@ int32_t UserInterface::Loop()
 
 	/* Start Drawing */
 	this->ui_region.z = z;
+	this->internal_display->graphics.PreShow(0);
 	this->internal_display->graphics.DrawRect(this->ui_region, this->background);
 
 	if (this->children_widget.size())
@@ -668,9 +668,9 @@ int32_t UserInterface::Loop()
 	last_mouse = mouse_button;
 
 	this->internal_display->DisplayOverlay();
-
 	this->internal_display->graphics.DisplayPointer(1, mouse_x, mouse_y, this->controller->PlayerColour );
-	this->internal_display->graphics.Show();
+	this->internal_display->graphics.Show(0);
+
 	lux::core->Idle( );
 
 	return return_value;

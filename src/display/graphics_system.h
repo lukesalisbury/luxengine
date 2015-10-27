@@ -19,10 +19,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_DISPLAY_FUNCTION
 #endif
 
-bool Lux_GRAPHICS_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+bool Lux_GRAPHICS_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen );
 void Lux_GRAPHICS_Destory();
-void Lux_GRAPHICS_UpdateRect(LuxRect rect);
-void Lux_GRAPHICS_Show();
+void Lux_GRAPHICS_UpdateRect(uint8_t screen,LuxRect rect);
+void Lux_GRAPHICS_Show( uint8_t screen );
+void Lux_GRAPHICS_PreShow( uint8_t screen );
 
 void Lux_GRAPHICS_Display2Screen( int32_t * x, int32_t * y);
 void Lux_GRAPHICS_BackgroundObject( MapObject background );

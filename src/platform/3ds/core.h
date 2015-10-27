@@ -13,7 +13,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 	#include <stdarg.h>
 	#include <3ds.h>
+	#include <sf2d.h>
 	#include "base_core.h"
+
+	typedef struct {
+		uint8_t * buffer;
+		uint16_t width, height;
+	} screen_buffer;
 
 	class CoreSystem: public BaseCoreSystem
 	{
@@ -24,8 +30,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 			bool lockfps;
 			int32_t touch_time;
 			bool touch_press, last_press;
-
-
+			uint32_t fps, fps_time, fps_last, frame_length;
+			screen_buffer frame_buffer[2];
 		public:
 			void SystemMessage(uint8_t type, std::string message);
 			std::ostream& SystemMessage( const char *file, int line, uint8_t type );
@@ -51,6 +57,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 			bool InputLoopGet(DisplaySystem * display, uint16_t & key);
 			bool TextListen(bool able) { return false; }
 
+	public:
+			gfxScreen_t primary_screen;
+			gfxScreen_t secondary_screen;
 	};
 
 namespace lux

@@ -85,23 +85,25 @@ bool LuxEngine::LoadLanguage(std::string lang)
 {
 	std::string buffer;
 
-	if ( lux::game_data->HasFile("./dialog/" + lang + ".txt") && lux::game_data->HasFile("./lang/" + lang + ".txt"))
+	if ( lux::game_data->HasFile("./lang/" + lang + ".txt"))
 	{
-		std::stringstream dialog_file("");
-		if ( lux::game_data->GetStream("./dialog/" + lang + ".txt", &dialog_file) )
+		if ( lux::game_data->HasFile("./dialog/" + lang + ".txt") )
 		{
-			this->_dialog.clear();
-			while ( dialog_file.good() )
+			std::stringstream dialog_file("");
+			if ( lux::game_data->GetStream("./dialog/" + lang + ".txt", &dialog_file) )
 			{
-				std::getline(dialog_file, buffer);
-				elix::string::Trim(&buffer);
-				elix::string::Replace(buffer, "\\n", "\n");
-				this->_dialog.push_back(buffer);
+				this->_dialog.clear();
+				while ( dialog_file.good() )
+				{
+					std::getline(dialog_file, buffer);
+					elix::string::Trim(&buffer);
+					elix::string::Replace(buffer, "\\n", "\n");
+					this->_dialog.push_back(buffer);
+				}
+
 			}
-
+			dialog_file.str("");
 		}
-		dialog_file.str("");
-
 		std::stringstream file("");
 		if ( lux::game_data->GetStream("./lang/" + lang + ".txt", &file) )
 		{

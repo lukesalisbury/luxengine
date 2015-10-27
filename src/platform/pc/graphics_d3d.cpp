@@ -177,12 +177,12 @@ void Lux_D3D_Background(LuxColour fillcolor)
 	d3dGraphics_colour = fillcolor;
 }
 
-void Lux_D3D_Update(LuxRect rect)
+void Lux_D3D_Update( uint8_t screen, LuxRect rect)
 {
 
 }
 
-void Lux_D3D_Show()
+void Lux_D3D_Show( uint8_t screen )
 {
 	d3d_device->EndScene();
 	d3d_device->Present(NULL,NULL,NULL,NULL);

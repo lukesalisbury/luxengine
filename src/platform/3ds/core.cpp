@@ -16,42 +16,51 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 /* Local variables */
 touchPosition touch_screen;
-uint32 key_states;
-uint32_t fps = 0, fps_time = 0, fps_last = 0;
+circlePosition circle_pos;
+uint32 key_states, key_held;
 uint32 timer_ticks = 0;
+u16 width, height;
 
-
+bool top_screen = false;
 u32 kDownOld = 0, kHeldOld = 0, kUpOld = 0;
-	char keysNames[32][32] = {
-			"KEY_A", "KEY_B", "KEY_SELECT", "KEY_START",
-			"KEY_DRIGHT", "KEY_DLEFT", "KEY_DUP", "KEY_DDOWN",
-			"KEY_R", "KEY_L", "KEY_X", "KEY_Y",
-			"", "", "KEY_ZL", "KEY_ZR",
-			"", "", "", "",
-			"KEY_TOUCH", "", "", "",
-			"KEY_CSTICK_RIGHT", "KEY_CSTICK_LEFT", "KEY_CSTICK_UP", "KEY_CSTICK_DOWN",
-			"KEY_CPAD_RIGHT", "KEY_CPAD_LEFT", "KEY_CPAD_UP", "KEY_CPAD_DOWN"
-		};
-
-/* Local functions */
-void nds_TimerInterrupt()
-{
-	timer_ticks++;
-}
+char keysNames[32][32] = {
+	"KEY_A", "KEY_B", "KEY_SELECT", "KEY_START",
+	"KEY_DRIGHT", "KEY_DLEFT", "KEY_DUP", "KEY_DDOWN",
+	"KEY_R", "KEY_L", "KEY_X", "KEY_Y",
+	"", "", "KEY_ZL", "KEY_ZR",
+	"", "", "", "",
+	"KEY_TOUCH", "", "", "",
+	"KEY_CSTICK_RIGHT", "KEY_CSTICK_LEFT", "KEY_CSTICK_UP", "KEY_CSTICK_DOWN",
+	"KEY_CPAD_RIGHT", "KEY_CPAD_LEFT", "KEY_CPAD_UP", "KEY_CPAD_DOWN"
+};
 
 CoreSystem::CoreSystem()
 {
-	gfxInitDefault();
-	consoleInit(GFX_BOTTOM, NULL);
-
 	this->touch_time = 0;
 	this->state = RUNNING;
 
+	this->primary_screen = GFX_TOP;
+	this->secondary_screen = GFX_BOTTOM;
+
+
+	/*
+	aptInit();
+	hidInit(NULL);
+	gfxInit(GSP_BGR8_OES,GSP_BGR8_OES,false);
+	*/
+	sf2d_init();
+	//consoleInit(this->secondary_screen, NULL);
+
+
+	this->good = true;
 }
 
 CoreSystem::~CoreSystem()
 {
+
 	gfxExit();
+	hidExit();
+	aptExit();
 }
 
 uint32_t CoreSystem::WasInit(uint32_t flag)
@@ -138,12 +147,7 @@ bool CoreSystem::DelayIf(uint32_t diff)
 
 void CoreSystem::Idle()
 {
-	uint32_t start = this->GetTime();
-	while (1)
-	{
-		if ((this->GetTime() - start) >= 30)
-			break;
-	}
+	aptMainLoop();
 }
 
 
@@ -155,73 +159,45 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 		this->state = old_state;
 	}
 
-
-	//Scan all the inputs. This should be done once for each frame
 	hidScanInput();
 
-	//hidKeysDown returns information about which buttons have been just pressed (and they weren't in the previous frame)
-	u32 kDown = hidKeysDown();
-	//hidKeysHeld returns information about which buttons have are held down in this frame
-	u32 kHeld = hidKeysHeld();
-	//hidKeysUp returns information about which buttons have been just released
-	u32 kUp = hidKeysUp();
+	hidCircleRead(&circle_pos);
+	hidTouchRead(&touch_screen);
 
-	if (kDown & KEY_START) this->state = EXITING; // break in order to return to hbmenu
-
-	//Do the keys printing only if keys have changed
-	if (kDown != kDownOld || kHeld != kHeldOld || kUp != kUpOld)
-	{
-		//Clear console
-		consoleClear();
-
-		//These two lines must be rewritten because we cleared the whole console
-		printf("\x1b[0;0HPress Start to exit.");
-		printf("\x1b[1;0HCirclePad position:");
-
-		printf("\x1b[3;0H"); //Move the cursor to the fourth row because on the third one we'll write the circle pad position
-
-		//Check if some of the keys are down, held or up
-		int i;
-		for (i = 0; i < 32; i++)
-		{
-			if (kDown & BIT(i)) printf("%s down\n", keysNames[i]);
-			if (kHeld & BIT(i)) printf("%s held\n", keysNames[i]);
-			if (kUp & BIT(i)) printf("%s up\n", keysNames[i]);
-		}
-	}
-
-	//Set keys old values for the next frame
-	kDownOld = kDown;
-	kHeldOld = kHeld;
-	kUpOld = kUp;
-
-	circlePosition pos;
-
-	//Read the CirclePad position
-	hidCircleRead(&pos);
-
-	//Print the CirclePad position
-	printf("\x1b[2;0H%04d; %04d", pos.dx, pos.dy);
+	key_states = hidKeysDown();
 
 
+	if ( !aptMainLoop() )
+		this->state = EXITING;
 	this->time = this->GetTime();
-	this->state = RUNNING;
 
 	return this->state;
 }
 
 void CoreSystem::RefreshInput( DisplaySystem * display )
 {
+	hidScanInput();
 
+	hidCircleRead(&circle_pos);
+	hidTouchRead(&touch_screen);
+
+	key_states = hidKeysDown();
+	key_held = hidKeysHeld();
+	printf("%f X:%04d, Y:%04d\n", sf2d_get_fps (), circle_pos.dx, circle_pos.dy);
 }
 
-bool CoreSystem::InputLoopGet(  DisplaySystem * display, uint16_t & key)
+bool CoreSystem::InputLoopGet(  DisplaySystem * display, uint16_t & key )
 {
+	if ( key_states & KEY_SELECT ) { key = 27; }
+	if ( !aptMainLoop() ) { key = 27; }
 	return 0;
 }
 
 int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t symbol)
 {
+	uint32_t bitsymbol = BIT(symbol);
+
+
 	if (device == NOINPUT)
 	{
 		return 0;
@@ -232,9 +208,31 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 		{
 			return ( key_states & KEY_TOUCH );
 		}
+		case CONTROLBUTTON:
+		{
+			return ( key_states & bitsymbol ) || ( key_held & bitsymbol );
+		}
+		case CONTROLAXIS:
+		{
+
+
+			if ( bitsymbol == KEY_CPAD_RIGHT || bitsymbol == KEY_CPAD_LEFT )
+				return circle_pos.dx;
+			if ( bitsymbol == KEY_CPAD_UP || bitsymbol == KEY_CPAD_DOWN )
+				return circle_pos.dy;
+
+			if ( bitsymbol == KEY_CSTICK_RIGHT || bitsymbol == KEY_CSTICK_LEFT )
+				return circle_pos.dx / 128;
+			if ( bitsymbol == KEY_CSTICK_UP || bitsymbol == KEY_CSTICK_DOWN )
+				return circle_pos.dy / 128;
+
+
+
+			return 0;
+		}
 		case KEYBOARD:
 		{
-			return ( key_states & symbol );
+			return ( key_states & bitsymbol );
 		}
 		case MOUSEAXIS:
 		{

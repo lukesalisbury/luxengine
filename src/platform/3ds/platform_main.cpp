@@ -13,10 +13,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 
-std::string project_file = "";
+std::string project_file = "/mokoi/Input_Demo.game";
 
 extern "C" int main( int argc, char *argv[] )
 {
+	LuxPortal::use = false;
 	std::string base_executable = (argc ? argv[0] : "/luxengine" );
 	lux::engine = new LuxEngine( base_executable );
 	LuxPortal::open();

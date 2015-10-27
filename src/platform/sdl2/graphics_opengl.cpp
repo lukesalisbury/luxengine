@@ -33,6 +33,7 @@ GraphicSystem GraphicsOpenGL = {
 	&Lux_OGL_Destory,
 	&Lux_OGL_Display2Screen,
 	&Lux_GLES_TextSprites,
+	&Lux_GRAPHICS_PreShow,
 	&Lux_OGL_Update,
 	&Lux_OGL_Show,
 
@@ -133,7 +134,7 @@ void opengl_graphic_create_fbotexture( Texture & fbo )
  @ fullscreen:
  - Returns true if successfull
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t bpp )
+LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
 {
 	int window_width = width;
 	int window_height = height;
@@ -255,9 +256,6 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t width, uint16_t height, uint8_t
 		lux::core->SystemMessage( SYSTEM_MESSAGE_LOG ) << "No Framebuffer Support" << std::endl;
 	}
 
-
-
-
 	return true;
 }
 
@@ -285,7 +283,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
  * Adds an area of the screen that needs to be updated.
  @ rect: area to updates
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Update(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_OGL_Update( uint8_t screen, LuxRect rect)
 {
 
 }
@@ -293,22 +291,23 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Update(LuxRect rect)
 /* Lux_OGL_Show
  * Refreshs the display
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Show()
+LUX_DISPLAY_FUNCTION void Lux_OGL_Show( uint8_t screen )
 {
 
+	if (!screen)
+	{
+		glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
 
-	glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
 
+		SDL_GL_MakeCurrent(native_window, native_context);
+		SDL_GL_SwapWindow(native_window);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	SDL_GL_MakeCurrent(native_window, native_context);
-	SDL_GL_SwapWindow(native_window);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	/* Debug Messages */
-	if ( lux::display && lux::display->show_debug )
-		Lux_SDL2_OpenMessageWindow();
-	Lux_SDL2_PresentMessageWindow();
-
+		/* Debug Messages */
+		if ( lux::display && lux::display->show_debug )
+			Lux_SDL2_OpenMessageWindow();
+		Lux_SDL2_PresentMessageWindow();
+	}
 }
 
 /* Lux_OGL_Display2Screen

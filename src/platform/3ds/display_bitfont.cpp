@@ -8,26 +8,25 @@
 DisplayBitFont::DisplayBitFont( )
 {
 	uint8_t * font_point = &gfxPrimitivesFontdata[0];
-	uint8_t i = 0, q;
+	uint8_t l = 0, q;
 	for ( uint8_t c = 0; c < 130; c++)
 	{
-		uint16_t * charflip = new uint16_t[64];
-		for (i = 0; i < 8; i++)
+		uint32_t * charflip = new uint32_t[64];
+		//uint16_t * charflip = new uint16_t[64];
+		for (l = 0; l < 8; l++)
 		{
 			for (q = 0; q < 8; q++)
 			{
-				charflip[(i*8) + q] =  (!!(font_point[i] & (1 << (8-q))) ? 0xFFFF : 0x000F) ;
+				uint8_t y = (l)*8;
+				charflip[y + (7-q)] = !!(font_point[l] & (1 << q)) ? 0xFFFFFFFF : 0x00000000 ;
 			}
 		}
-		//this->textures[c] = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB1555, SDL_TEXTUREACCESS_STATIC, 8, 8);
-		//if ( !this->textures[c] )
-		//	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "DisplayFont: " << SDL_GetError() << std::endl;
-		//SDL_SetTextureBlendMode( this->textures[c], SDL_BLENDMODE_BLEND);
-		//SDL_SetTextureBlendMode( this->textures[c], SDL_BLENDMODE_NONE);
-
-		//SDL_UpdateTexture( this->textures[c], NULL, charflip, 16);
-
+		this->textures[c] = sf2d_create_texture( 8, 8, TEXFMT_RGBA8, SF2D_PLACE_RAM );
+		memcpy(this->textures[c]->data, charflip, 256);
+		sf2d_texture_tile32(this->textures[c]);
 		font_point += 8;
+
+		delete charflip;
 	}
 
 }
@@ -40,7 +39,7 @@ DisplayBitFont::~DisplayBitFont()
 {
 	for ( uint8_t c = 0; c < 130; c++)
 	{
-		//SDL_DestroyTexture(this->textures[c]);
+		sf2d_free_texture(this->textures[c]);
 	}
 }
 
@@ -49,10 +48,10 @@ DisplayBitFont::~DisplayBitFont()
  * @param character
  * @return
  */
-void *DisplayBitFont::GetTexture(uint32_t character)
+sf2d_texture *DisplayBitFont::GetTexture(uint32_t character)
 {
-	/*
-	SDL_Texture * texture = NULL;
+
+	sf2d_texture * texture = NULL;
 	if ( character >= 32 && character <= 128 )
 	{
 		texture = this->textures[character];
@@ -65,6 +64,5 @@ void *DisplayBitFont::GetTexture(uint32_t character)
 	{
 		texture = this->textures[128];
 	}
-	*/
-	return NULL;
+	return texture;
 }

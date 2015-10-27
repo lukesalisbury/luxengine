@@ -14,34 +14,5 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <nds.h>
 #include <sstream>
 
-void parse_pointer_settings(Player_Pointer * pointer, std::string config)
-{
-	pointer->device = MOUSEAXIS;
-}
-
-void parse_button_settings(Player_Button * button, std::string config)
-{
-	if (config.at(0) == 't')
-		button->device = TOUCHSCREEN;
-	else if (config.at(0) == 'm')
-		button->device = MOUSEBUTTON;
-	else
-		button->device = KEYBOARD;
-	std::stringstream stream(config.substr(1));
-	int key = 0;
-	stream >> key;
-	button->sym = BIT(key);
-}
-
-void parse_axis_settings(Player_Axis * axis, std::string config)
-{
-	axis->device = KEYBOARD;
-	axis->sym[0] = KEY_LEFT;
-	axis->sym[1] = KEY_RIGHT;
-	axis->sym[2] = KEY_UP;
-	axis->sym[3] = KEY_DOWN;
-	axis->sym[4] = KEY_L;
-	axis->sym[5] = KEY_R;
-}
 
 #endif

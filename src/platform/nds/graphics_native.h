@@ -16,13 +16,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LUX_DISPLAY_FUNCTION
 #endif
 
-bool LuxGraphics_NDS_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen );
+bool LuxGraphics_NDS_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen );
 void LuxGraphics_NDS_Destory();
 void LuxGraphics_NDS_Display2Screen( int32_t * x, int32_t * y);
 void LuxGraphics_NDS_Background(LuxColour fillcolor);
 void LuxGraphics_NDS_BackgroundObject( MapObject background );
-void LuxGraphics_NDS_Update(LuxRect rect);
-void LuxGraphics_NDS_Show();
+void LuxGraphics_NDS_Update( uint8_t screen, LuxRect rect);
+void LuxGraphics_NDS_Show( uint8_t screen );
 void LuxGraphics_NDS_TextSprites( bool able );
 
 LuxSprite * LuxGraphics_NDS_PNGtoSprite( uint8_t * data, uint32_t size );

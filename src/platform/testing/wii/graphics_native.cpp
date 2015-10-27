@@ -91,7 +91,7 @@ void wii_initialise_video( bool console_only )
 
 }
 
-bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+bool Lux_NATIVE_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	Lux_NATIVE_CreateFont();
 	return true;
@@ -114,12 +114,12 @@ void Lux_NATIVE_BackgroundObject( MapObject background )
 	GX_SetCopyClear((GXColor) { background.effects.primary_colour.r, background.effects.primary_colour.g, background.effects.primary_colour.b, background.effects.primary_colour.a}, 0x00ffffff);
 }
 
-void Lux_NATIVE_UpdateRect(LuxRect rect)
+void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
 {
 
 }
 
-void Lux_NATIVE_Show()
+void Lux_NATIVE_Show( uint8_t screen )
 {
 	gwd.Flush();
 }

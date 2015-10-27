@@ -25,13 +25,32 @@ namespace elix {
 	{
 		this->error = "";
 		this->path = filename;
-		this->handle = fopen(this->path.c_str(), (write ? "wb" : "rb") );
 		this->_length = 0;
 		this->ErrorCallback = NULL;
+		this->writable = false;
+		this->handle = NULL;
+
+		if ( write )
+		{
+			this->handle = fopen(this->path.c_str(), "wb");
+		}
+		else
+		{
+			struct stat buffer;
+			if ( stat(this->path.c_str(), &buffer) == 0 )
+			{
+				if ( S_ISREG(buffer.st_mode) )
+				{
+					this->handle = fopen(this->path.c_str(), "rb" );
+				}
+			}
+
+		}
+
 		if ( !this->handle )
 		{
 			this->error = "Can't open '" + this->path + "'";
-			this->writable = false;
+
 		}
 		else
 		{

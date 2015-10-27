@@ -31,13 +31,13 @@ void Lux_NATIVE_Background(LuxColour fillcolor)
 
 }
 
-void Lux_NATIVE_Update(LuxRect rect)
+void Lux_NATIVE_Update( uint8_t screen, LuxRect rect)
 {
 
 }
 
 
-void Lux_NATIVE_Show()
+void Lux_NATIVE_Show( uint8_t screen )
 {
 }
 

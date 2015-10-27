@@ -37,7 +37,7 @@ DisplaySystem::DisplaySystem()
 	this->Init();
 
 	#if DISPLAYMODE_OPENGL
-	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp ) )
+	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, NULL, NULL ) )
 	{
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
@@ -46,7 +46,7 @@ DisplaySystem::DisplaySystem()
 
 	if ( !is_display_setup )
 	{
-		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp ) )
+		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, NULL, NULL ) )
 		{
 			this->graphics = GraphicsNative;
 			is_display_setup = true;
@@ -77,12 +77,10 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp  )
 	this->InitialSetup();
 	this->Init();
 
-	this->screen_dimension.w = width;
-	this->screen_dimension.h = height;
 	this->bpp = bpp;
 
 	#if DISPLAYMODE_OPENGL
-	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp ) )
+	if ( GraphicsOpenGL.InitGraphics( width, height, this->bpp, &this->screen_dimension.w, &this->screen_dimension.h ) )
 	{
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
@@ -90,7 +88,7 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp  )
 	#endif
 	if ( !is_display_setup )
 	{
-		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp ) )
+		if ( GraphicsNative.InitGraphics( width, height, this->bpp, &this->screen_dimension.w, &this->screen_dimension.h ) )
 		{
 			this->graphics = GraphicsNative;
 			is_display_setup = true;
@@ -240,7 +238,7 @@ void DisplaySystem::Display( LuxState engine_state )
 		i++;
 	}
 	this->DisplayOverlay();
-	this->ShowMessages();
+
 }
 
 /**
@@ -249,8 +247,10 @@ void DisplaySystem::Display( LuxState engine_state )
  */
 void DisplaySystem::Loop(LuxState engine_state)
 {
+	this->graphics.PreShow(0);
 	this->Display(engine_state);
-	this->graphics.Show();
+	this->graphics.Show(0);
+	this->ShowMessages();
 }
 
 
@@ -340,9 +340,11 @@ void DisplaySystem::ShowMessages()
 
 	if ( this->show_debug )
 	{
+
+		this->graphics.PreShow(1);
 		this->graphics.DrawMessage( this->dynamic_text.str(), 0 );
 		this->graphics.DrawMessage( this->static_text.str(), 3 );
-
+		this->graphics.Show(1);
 		this->static_text.str("");
 
 	}

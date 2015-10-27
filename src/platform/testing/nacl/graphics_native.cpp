@@ -584,7 +584,7 @@ SDL_Texture * SDL_Texture_LoadImage( std::string file )
 }
 
 /* Display Functions */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	if ( SDL_WasInit(SDL_INIT_VIDEO) == SDL_INIT_VIDEO )
 	{
@@ -647,12 +647,12 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Update(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_Update( uint8_t screen, LuxRect rect)
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
 {
 	if ( sdlgraphics_window )
 	{

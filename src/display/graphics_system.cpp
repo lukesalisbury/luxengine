@@ -25,6 +25,7 @@ GraphicSystem GraphicsNone = {
 	NULL,
 	&Lux_GRAPHICS_Display2Screen,
 	&Lux_GRAPHICS_TextSprites,
+	&Lux_GRAPHICS_PreShow,
 	&Lux_GRAPHICS_UpdateRect,
 	&Lux_GRAPHICS_Show,
 
@@ -55,7 +56,7 @@ GraphicSystem GraphicsNone = {
 };
 
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	return false;
 }
@@ -65,12 +66,17 @@ LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_Destory()
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_UpdateRect(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_UpdateRect(uint8_t screen, LuxRect rect)
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_Show()
+LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_Show( uint8_t screen )
+{
+
+}
+
+LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_PreShow( uint8_t screen )
 {
 
 }

@@ -123,7 +123,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 }
 
 /* Creation,destruction and loop Functions */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	sdlgraphics_scale = false;
 
@@ -157,7 +157,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
 {
 	SDL_Flip(sdlgraphics_screen);
 }
@@ -194,7 +194,7 @@ uint32_t GetPixel(SDL_Surface *surface, uint32_t x, uint32_t y)
 	}
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
 {
 
 	if ( sdlgraphics_screen )

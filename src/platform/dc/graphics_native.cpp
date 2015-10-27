@@ -47,6 +47,7 @@ GraphicSystem GraphicsNative = {
 	&LuxGraphics_DC_Destory,
 	&Lux_GRAPHICS_Display2Screen,
 	&Lux_GRAPHICS_TextSprites,
+	&Lux_GRAPHICS_PreShow,
 	&LuxGraphics_DC_UpdateRect,
 	&LuxGraphics_DC_Show,
 
@@ -168,7 +169,7 @@ void dreamcastCreateFont()
 /* Creation,destruction and loop Functions */
 
 
-LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_Init(uint16_t width, uint16_t height, uint8_t bpp, bool fullscreen )
+LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_Init(uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	pvr_set_bg_color(1.0f, 0.0f, 0.0f);
 	dreamcastCreateFont();
@@ -201,13 +202,13 @@ LUX_DISPLAY_FUNCTION void LuxGraphics_DC_BackgroundObject( MapObject background 
 }
 
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_UpdateRect(LuxRect rect)
+LUX_DISPLAY_FUNCTION void LuxGraphics_DC_UpdateRect(uint8_t screen,LuxRect rect)
 {
 
 }
 
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_Show()
+LUX_DISPLAY_FUNCTION void LuxGraphics_DC_Show( uint8_t screen )
 {
 	dreamcastEndFrame();
 	dreamcastStartFrame();

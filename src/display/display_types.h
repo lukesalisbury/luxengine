@@ -28,12 +28,13 @@ extern ObjectEffect default_fx;
 
 typedef struct {
 	/* Plugin Graphics */
-	bool (* InitGraphics) ( uint16_t width, uint16_t height, uint8_t bpp );
+	bool (* InitGraphics) ( uint16_t requested_width, uint16_t requested_height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height);
 	void (* DestoryGraphics) ();
 	void (* Display2Screen) ( int32_t * x, int32_t * y);
 	void (* TextSprites) ( bool able );
-	void (* UpdateRect) ( LuxRect rect );
-	void (* Show) ( );
+	void (* PreShow) (  uint8_t screen );
+	void (* UpdateRect) (  uint8_t screen, LuxRect rect );
+	void (* Show) ( uint8_t screen );
 	void (* SetRotation) ( int16_t roll, int16_t pitch, int16_t yaw );
 	void (* SetBackground) ( MapObject background );
 	bool (* SetFullscreen) ( bool able );

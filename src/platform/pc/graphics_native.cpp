@@ -35,6 +35,7 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_Destory,
 	&Lux_NATIVE_Display2Screen,
 	&Lux_NATIVE_TextSprites,
+	&Lux_GRAPHICS_PreShow,
 	&Lux_NATIVE_UpdateRect,
 	&Lux_NATIVE_Show,
 
@@ -572,7 +573,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 }
 
 /* Creation,destruction and loop Functions */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t width, uint16_t height, uint8_t bpp )
+LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
 {
 	/* Set Init Flags */
 	if ( lux::config->GetString("display.surface") == "hardware" )
@@ -664,7 +665,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
 	delete sdlgraphics_cursor;
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(LuxRect rect)
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
 {
 	if (!sdlgraphics_dirty)
 	{
@@ -680,7 +681,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(LuxRect rect)
 	}
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show()
+LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
 {
 	if ( sdlgraphics_screen )
 	{

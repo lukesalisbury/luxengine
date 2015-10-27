@@ -1,9 +1,9 @@
-#define DIALOG_DIALOG-0 0
-#define DIALOG_DIALOG-1 1
-#define DIALOG_DIALOG-2 2
-#define DIALOG_DIALOG-3 3
-#define DIALOG_DIALOG-4 4
-#define DIALOG_DIALOG-5 5
+#define DIALOG_DIALOG_0 0
+#define DIALOG_DIALOG_1 1
+#define DIALOG_DIALOG_2 2
+#define DIALOG_DIALOG_3 3
+#define DIALOG_DIALOG_4 4
+#define DIALOG_DIALOG_5 5
 #define LANG_TITLE 0
 #define LANG_FUNCTION 1
 #define LANG_BUTTON 2
@@ -12,5 +12,5 @@
 #define LANG_PLAYER1 5
 #define LANG_PLAYER2 6
 #define LANG_PLAYER3 7
-#define LANG_LANG-8 8
-#define LANG_LANG-9 9
+#define LANG_LANG_8 8
+#define LANG_LANG_9 9

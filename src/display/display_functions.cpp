@@ -71,6 +71,13 @@ uint32_t Lux_Hex2Int(std::string color)
 	return colour.hex;
 }
 
+uint32_t Lux_Colour2Int(LuxColour color)
+{
+	cell_colour colour;
+	colour.rgba = color;
+	return colour.hex;
+}
+
 
 /**
  * @brief Lux_Hex2Colour

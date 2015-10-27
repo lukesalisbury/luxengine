@@ -125,7 +125,7 @@ void LuxEngine::FatalError(std::string reason)
 
 		if ( lux::display == NULL )
 		{
-			lux::display = new DisplaySystem( 640, 480, 16 );
+			lux::display = new DisplaySystem( );
 		}
 		this->ShowDialog(reason, DIALOGOK);
 	}
