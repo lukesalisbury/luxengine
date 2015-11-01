@@ -40,6 +40,8 @@ struct NativeTexture {
 	std::string file;
 };
 
+gfxScreen_t current_screen;
+
 GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_Init,
 	&Lux_NATIVE_Destory,
@@ -77,8 +79,40 @@ GraphicSystem GraphicsNative = {
 };
 
 DisplayBitFont * dsgraphics_bitfont = NULL;
-/* Local Functions */
 
+/* Local Functions */
+void Lux_NATIVE_SetFrame(LuxRect & rect, bool line)
+{
+	return;
+	if ( current_screen == GFX_TOP )
+	{
+		if ( rect.y >= 240 )
+		{
+			//sf2d_end_frame();
+			//current_screen = GFX_BOTTOM;
+			//sf2d_start_frame( current_screen, GFX_LEFT);
+			rect.y -= 240;
+			rect.x -= 40;
+			if (line)
+			{
+				rect.h -= 240;
+				rect.w -= 40;
+			}
+		}
+
+	}
+	else
+	{
+		if ( rect.y < 240 )
+		{
+			//sf2d_end_frame();
+			//current_screen = GFX_TOP;
+			//sf2d_start_frame( current_screen, GFX_LEFT);
+		}
+	}
+
+
+}
 
 /* Public Function */
 
@@ -101,18 +135,20 @@ bool Lux_NATIVE_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * 
 		*actual_height = 240;
 
 	dsgraphics_bitfont = new DisplayBitFont( );
-	sf2d_start_frame(lux::core->primary_screen, GFX_LEFT);
+
+
+	current_screen = GFX_TOP;
 	return true;
 }
+
 /**
  * @brief Lux_NATIVE_Destory
  */
 void Lux_NATIVE_Destory()
 {
-
 	delete dsgraphics_bitfont;
-
 }
+
 /**
  * @brief Lux_NATIVE_Display2Screen
  * @param x
@@ -123,6 +159,7 @@ void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y )
 	*x = (int32_t)((float)*x * 1.0);
 	*y = (int32_t)((float)*y * 1.0);
 }
+
 /**
  * @brief Lux_NATIVE_Background
  * @param fillcolor
@@ -145,8 +182,7 @@ void Lux_NATIVE_BackgroundObject( MapObject background )
 */
 void Lux_NATIVE_PreShow( uint8_t screen )
 {
-
-   sf2d_start_frame( screen ? lux::core->secondary_screen : lux::core->primary_screen, GFX_LEFT);
+	sf2d_start_frame( ( !screen ) ? GFX_TOP : GFX_BOTTOM, GFX_LEFT);
 }
 
 /**
@@ -164,8 +200,7 @@ void Lux_NATIVE_Update( uint8_t screen, LuxRect rect)
 void Lux_NATIVE_Show( uint8_t screen )
 {
 	sf2d_end_frame();
-
-	if ( !screen )
+	if ( screen == 0)
 		sf2d_swapbuffers();
 
 }
@@ -182,6 +217,8 @@ void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect 
 {
 	if ( !sprite->data )
 		return;
+
+	Lux_NATIVE_SetFrame(dest_rect, false);
 
 	NativeTexture * surface = (NativeTexture*) sprite->GetData(effect);
 
@@ -298,12 +335,14 @@ void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect 
 
 void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect effects)
 {
+	Lux_NATIVE_SetFrame(dest_rect, false);
 	sf2d_draw_rectangle(dest_rect.x, dest_rect.y, dest_rect.w, dest_rect.h, RGBA8(effects.primary_colour.r, effects.primary_colour.g, effects.primary_colour.b, effects.primary_colour.a)  );
 
 }
 
 void Lux_NATIVE_DrawLine( LuxRect points, ObjectEffect effects )
 {
+	Lux_NATIVE_SetFrame(points, true);
 	sf2d_draw_line(points.x, points.y, points.w, points.h, RGBA8(effects.primary_colour.r, effects.primary_colour.g, effects.primary_colour.b, effects.primary_colour.a) );
 }
 
@@ -363,6 +402,7 @@ int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, ObjectEffect e
 
 void Lux_NATIVE_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom )
 {
+	Lux_NATIVE_SetFrame(dest_rect, false);
 	int32_t x, y;
 	std::string::iterator object;
 	bool watch_for_color = false;

@@ -132,7 +132,7 @@ bool CoreSystem::Good()
 
 uint32_t CoreSystem::GetTime()
 {
-	return timer_ticks;
+	return svcGetSystemTick();
 }
 
 uint32_t CoreSystem::GetFrameDelta()
@@ -147,7 +147,7 @@ bool CoreSystem::DelayIf(uint32_t diff)
 
 void CoreSystem::Idle()
 {
-	aptMainLoop();
+	//aptMainLoop();
 }
 
 
@@ -158,6 +158,8 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	{
 		this->state = old_state;
 	}
+	this->internal_ms = (this->GetTime() - this->time);
+	this->frame_ms = clamp( this->internal_ms, 0, 33);
 
 	hidScanInput();
 
@@ -169,6 +171,11 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 	if ( !aptMainLoop() )
 		this->state = EXITING;
+
+
+	if ( key_held & KEY_START && key_held & KEY_SELECT )
+		this->state = EXITING;
+
 	this->time = this->GetTime();
 
 	return this->state;
@@ -176,6 +183,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 
 void CoreSystem::RefreshInput( DisplaySystem * display )
 {
+
 	hidScanInput();
 
 	hidCircleRead(&circle_pos);
@@ -183,7 +191,6 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 
 	key_states = hidKeysDown();
 	key_held = hidKeysHeld();
-	printf("%f X:%04d, Y:%04d\n", sf2d_get_fps (), circle_pos.dx, circle_pos.dy);
 }
 
 bool CoreSystem::InputLoopGet(  DisplaySystem * display, uint16_t & key )
@@ -197,6 +204,11 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 {
 	uint32_t bitsymbol = BIT(symbol);
 
+	hidCircleRead(&circle_pos);
+	hidTouchRead(&touch_screen);
+
+	key_states = hidKeysDown();
+	key_held = hidKeysHeld();
 
 	if (device == NOINPUT)
 	{
@@ -210,16 +222,16 @@ int16_t CoreSystem::GetInput(InputDevice device, uint32_t device_number, int32_t
 		}
 		case CONTROLBUTTON:
 		{
-			return ( key_states & bitsymbol ) || ( key_held & bitsymbol );
+			return ( key_held & bitsymbol );
 		}
 		case CONTROLAXIS:
 		{
 
 
 			if ( bitsymbol == KEY_CPAD_RIGHT || bitsymbol == KEY_CPAD_LEFT )
-				return circle_pos.dx;
+				return (circle_pos.dx * 2) - (circle_pos.dx / 2);
 			if ( bitsymbol == KEY_CPAD_UP || bitsymbol == KEY_CPAD_DOWN )
-				return circle_pos.dy;
+				return -(circle_pos.dy * 2) - (circle_pos.dy / 2);
 
 			if ( bitsymbol == KEY_CSTICK_RIGHT || bitsymbol == KEY_CSTICK_LEFT )
 				return circle_pos.dx / 128;

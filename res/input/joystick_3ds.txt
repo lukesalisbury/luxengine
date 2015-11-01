@@ -18,5 +18,5 @@ axisA-5	96	14	12	14
 axisA+5	108	14	12	14
 button10	0	28	12	14
 button11	12	28	12	14
-button12	24	28	12	14
-button13	36	28	12	14
+button14	24	28	12	14
+button15	36	28	12	14

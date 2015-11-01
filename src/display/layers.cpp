@@ -271,7 +271,7 @@ void Layer::DisplayList(std::list<MapObject*> & list )
 						obj_position.y = initial_y;
 						for ( int32_t y = this->wrap_dimension.y; y < this->wrap_dimension.y + this->wrap_dimension.h; y += this->_maph  )
 						{
-							if ( this->ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->screen_dimension ) )
+							if ( this->ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->display_dimension ) )
 							{
 								this->_parent->DrawMapObject( object, obj_position, Lux_Util_MergeEffects(this->colour, object->effects) );
 							}
@@ -280,7 +280,7 @@ void Layer::DisplayList(std::list<MapObject*> & list )
 						obj_position.x += this->_mapw;
 					}
 				}
-				else if ( this->ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->screen_dimension ) )
+				else if ( this->ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->display_dimension ) )
 				{
 					if ( !object->has_data )
 					{

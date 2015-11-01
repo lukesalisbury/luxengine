@@ -37,7 +37,7 @@ DisplaySystem::DisplaySystem()
 	this->Init();
 
 	#if DISPLAYMODE_OPENGL
-	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, NULL, NULL ) )
+	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, &this->screen_dimension.w, &this->screen_dimension.h ) )
 	{
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
@@ -46,13 +46,15 @@ DisplaySystem::DisplaySystem()
 
 	if ( !is_display_setup )
 	{
-		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, NULL, NULL ) )
+		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, &this->screen_dimension.w, &this->screen_dimension.h ) )
 		{
 			this->graphics = GraphicsNative;
 			is_display_setup = true;
 		}
 	}
 
+	this->display_dimension = this->screen_dimension;
+	this->display_dimension.h *= 2; // Temp hack for 3DS
 	if ( !is_display_setup )
 	{
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << "Graphic System Failed" << std::endl;
@@ -94,8 +96,8 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp  )
 			is_display_setup = true;
 		}
 	}
-
-
+	this->display_dimension = this->screen_dimension;
+	this->display_dimension.h *= 2; // Temp hack for 3DS
 	if ( !is_display_setup )
 	{
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << "Graphic System Failed" << std::endl;
@@ -224,6 +226,7 @@ void DisplaySystem::Draw(Layer * current_layer)
  */
 void DisplaySystem::Display( LuxState engine_state )
 {
+	this->graphics.PreShow(0);
 	int i = 0;
 	std::vector<Layer *>::iterator p;
 	for ( p = this->_layers.begin(); p != this->_layers.end(); p++ )
@@ -238,7 +241,7 @@ void DisplaySystem::Display( LuxState engine_state )
 		i++;
 	}
 	this->DisplayOverlay();
-
+	this->graphics.Show(0);
 }
 
 /**
@@ -247,9 +250,7 @@ void DisplaySystem::Display( LuxState engine_state )
  */
 void DisplaySystem::Loop(LuxState engine_state)
 {
-	this->graphics.PreShow(0);
 	this->Display(engine_state);
-	this->graphics.Show(0);
 	this->ShowMessages();
 }
 
@@ -263,6 +264,17 @@ void DisplaySystem::DisplayOverlay()
 	{
 		this->overlay_layer->Display();
 	}
+
+	if ( this->show_collisions )
+	{
+		lux::game_system->GetObjects()->DrawCollisions();
+	}
+
+	if ( this->show_mask )
+	{
+		lux::game_system->active_map->DrawMask();
+	}
+
 }
 
 /**
@@ -321,33 +333,21 @@ void DisplaySystem::DrawCursor()
  */
 void DisplaySystem::ShowMessages()
 {
-	ObjectEffect text_effects;
-	ObjectEffect rect_effects;
-
-	text_effects.primary_colour = colour::yellow;
-	rect_effects.primary_colour = colour::black;
-	rect_effects.primary_colour.a = 128;
-
-	if ( this->show_collisions )
-	{
-		lux::game_system->GetObjects()->DrawCollisions();
-	}
-
-	if ( this->show_mask )
-	{
-		lux::game_system->active_map->DrawMask();
-	}
 
 	if ( this->show_debug )
 	{
-
 		this->graphics.PreShow(1);
 		this->graphics.DrawMessage( this->dynamic_text.str(), 0 );
+		lux::game_system->OutputInformation();
 		this->graphics.DrawMessage( this->static_text.str(), 3 );
 		this->graphics.Show(1);
-		this->static_text.str("");
+
+		size_t n = std::count(this->static_text.str().begin(), this->static_text.str().end(), '\n');
+		if ( n > 10 )
+			this->static_text.str("");
 
 	}
+
 	this->dynamic_text.str("");
 
 }

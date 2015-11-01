@@ -120,8 +120,7 @@ void GameSystem::Loop( LuxState engine_state )
 	this->global_entities->Loop();
 	this->active_map->Loop();
 
-	/* Debug Message */
-	OutputInformation();
+
 
 }
 
