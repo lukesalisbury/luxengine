@@ -573,7 +573,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 }
 
 /* Creation,destruction and loop Functions */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
+ bool Lux_NATIVE_Init(  uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
 {
 	/* Set Init Flags */
 	if ( lux::config->GetString("display.surface") == "hardware" )
@@ -655,7 +655,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t  width, uint16_t height, ui
 	return true;
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
+ void Lux_NATIVE_Destory()
 {
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -665,7 +665,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
 	delete sdlgraphics_cursor;
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
+ void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
 {
 	if (!sdlgraphics_dirty)
 	{
@@ -681,7 +681,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
 	}
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
+ void Lux_NATIVE_Show( uint8_t screen )
 {
 	if ( sdlgraphics_screen )
 	{
@@ -725,7 +725,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
 /*
  - Converts display location to screen location
 */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y)
+ void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y)
 {
 	if ( sdlgraphics_scale )
 	{
@@ -734,7 +734,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y)
 	}
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_BackgroundObject( MapObject background )
+ void Lux_NATIVE_BackgroundObject( MapObject background )
 {
 	/* TODO
 	- Draw background object
@@ -742,7 +742,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_BackgroundObject( MapObject background )
 	sdlgraphics_colour = background.effects.primary_colour;
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_SetFullscreen( bool able )
+ bool Lux_NATIVE_SetFullscreen( bool able )
 {
 	lux::config->SetBoolean("display.fullscreen", able);
 	Lux_NATIVE_ChangeOutput(NULL);
@@ -758,7 +758,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_SetFullscreen( bool able )
 	return true;
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
+ void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
 {
 	LuxRect position;
 
@@ -771,7 +771,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, 
 
 
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_TextSprites( bool able )
+ void Lux_NATIVE_TextSprites( bool able )
 {
 	if ( lux::display->sprite_font.length() )
 	{
@@ -796,7 +796,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_TextSprites( bool able )
  @ sprite:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
+ bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 {
 	if ( sprite == NULL )
 		return false;
@@ -827,7 +827,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
  @ parent:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+ bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
 {
 	if ( !png->HasContent() )
 	{
@@ -871,7 +871,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect r
  @ Effects:
  -
  */
-LUX_DISPLAY_FUNCTION void * Lux_NATIVE_CacheSprite( LuxSprite * sprite, ObjectEffect fx )
+ void * Lux_NATIVE_CacheSprite( LuxSprite * sprite, ObjectEffect fx )
 {
 	uint32_t hex = fx.Hex();
 
@@ -896,7 +896,7 @@ LUX_DISPLAY_FUNCTION void * Lux_NATIVE_CacheSprite( LuxSprite * sprite, ObjectEf
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	SDL_Surface * parent_sheet = SDL_Surface_LoadImage("./sprites/" + name);
 	if ( !parent_sheet )
@@ -935,7 +935,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
+ bool Lux_NATIVE_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
 {
 	if ( !image  )
 	{
@@ -973,7 +973,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheetImage( elix::Image * image, 
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_NATIVE_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children )
 {
 	std::map<uint32_t, LuxSprite *>::iterator p;
 	for( p = children->begin(); p != children->end(); p++ )
@@ -992,7 +992,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSpriteSheet( std::map<uint32_t, LuxSpri
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_NATIVE_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	if ( Lux_NATIVE_FreeSpriteSheet( children ) )
 		Lux_NATIVE_LoadSpriteSheet( name, children );
@@ -1005,7 +1005,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_RefreshSpriteSheet( std::string name, std::
  @ size:
  -
  */
-LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
+ LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
 {
 	LuxSprite * sprite = NULL;
 	elix::Image * png = new elix::Image(data, size);
@@ -1034,7 +1034,7 @@ LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_
 
 
 /* Drawing Functions */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
+ void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
 {
 	if ( sprite == NULL )
 		return;
@@ -1112,7 +1112,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 
 
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect effects)
+ void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect effects)
 {
 	if ( !sdlgraphics_screen )
 	{
@@ -1144,7 +1144,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect e
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
+ void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
 {
 	if ( !sdlgraphics_screen )
 	{
@@ -1186,7 +1186,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
+ void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
 {
 	if ( !sdlgraphics_screen )
 	{
@@ -1196,12 +1196,12 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect
 	filledEllipseRGBA(sdlgraphics_screen, dest_rect.x +(dest_rect.w/2), dest_rect.y+(dest_rect.h/2), (dest_rect.w/2), (dest_rect.h/2), effects.primary_colour.r, effects.primary_colour.g, effects.primary_colour.b,effects.primary_colour.a);
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawLine( LuxRect points, ObjectEffect effects )
+ void Lux_NATIVE_DrawLine( LuxRect points, ObjectEffect effects )
 {
 	lineRGBA(sdlgraphics_screen, points.x, points.y, points.w, points.h, effects.primary_colour.r, effects.primary_colour.g, effects.primary_colour.b,effects.primary_colour.a);
 }
 
-LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z, ObjectEffect effects, bool allow_custom )
+ int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z, ObjectEffect effects, bool allow_custom )
 {
 	SDL_Rect area;
 	SDL_Surface * surface = NULL;
@@ -1253,7 +1253,7 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 }
 
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
+ void Lux_NATIVE_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
 {
 	uint16_t x = dest_rect.x;
 	uint16_t y = dest_rect.y;

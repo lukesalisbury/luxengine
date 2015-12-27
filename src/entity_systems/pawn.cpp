@@ -321,6 +321,16 @@ AMX * Lux_PawnEntity_GetBaseAMX( const char * entity_base )
 	return base_amx;
 }
 
+
+inline void Lux_PawnEntity_UpdatePublicVariable( AMX * entity_data,  const char * variable_name, int32_t value)
+{
+	cell * cell_pointer = NULL;
+	if ( amx_FindPubVar( entity_data, variable_name, &cell_pointer) == AMX_ERR_NONE )
+	{
+		*cell_pointer = value;
+	}
+}
+
 /**
  * @brief Creates New Entity from a Pawn Script
  * @param entity_id
@@ -370,11 +380,13 @@ mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_bas
 			else
 			{
 				entity_data->parent = entity;
-				cell * internal_ident = NULL;
-				if ( amx_FindPubVar( entity_data, "internal_ident", &internal_ident) == AMX_ERR_NONE )
+				Lux_PawnEntity_UpdatePublicVariable( entity_data, "internal_ident", entity->hashid);
+				if ( lux::display )
 				{
-					*internal_ident = entity->hashid;
+					Lux_PawnEntity_UpdatePublicVariable( entity_data, "internal_screen_width", lux::display->screen_dimension.w);
+					Lux_PawnEntity_UpdatePublicVariable( entity_data, "internal_screen_height", lux::display->screen_dimension.h);
 				}
+
 			}
 		}
 	}
@@ -385,11 +397,14 @@ mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_bas
 	{
 		entity_data->parent = entity;
 
-		cell * internal_ident = NULL;
-		if ( amx_FindPubVar( entity_data, "internal_ident", &internal_ident) == AMX_ERR_NONE )
+		Lux_PawnEntity_UpdatePublicVariable( entity_data, "internal_ident", entity->hashid);
+		if ( lux::display )
 		{
-			*internal_ident = entity->hashid;
+			Lux_PawnEntity_UpdatePublicVariable( entity_data, "internal_screen_width", lux::display->screen_dimension.w);
+			Lux_PawnEntity_UpdatePublicVariable( entity_data, "internal_screen_height", lux::display->screen_dimension.h);
 		}
+
+
 	}
 
 #endif

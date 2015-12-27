@@ -27,19 +27,19 @@ namespace colour {
 
 uint8_t Lux_HexCharToUint8( char a, char b );
 
-ObjectEffect::ObjectEffect(LuxColour c1, LuxColour c2) : rotation(0), scale_xaxis(1000), scale_yaxis(1000), flip_image(0), tile_object(1), style(STYLE_NORMAL)
+ObjectEffect::ObjectEffect(LuxColour c1, LuxColour c2) : rotation(0), scale_xaxis(1000), scale_yaxis(1000), flip_image(0), tile_object(1), style(STYLE_NORMAL), rotation_point(5)
 {
 	this->primary_colour = c1;
 	this->secondary_colour = c2;
 }
 
-ObjectEffect::ObjectEffect() : rotation(0), scale_xaxis(1000), scale_yaxis(1000),  flip_image(0), tile_object(0), style(STYLE_NORMAL)
+ObjectEffect::ObjectEffect() : rotation(0), scale_xaxis(1000), scale_yaxis(1000),  flip_image(0), tile_object(0), style(STYLE_NORMAL), rotation_point(5)
 {
 	this->primary_colour = colour::white;
 	this->secondary_colour = colour::white;
 }
 
-ObjectEffect::ObjectEffect(LuxColour c1, LuxColour c2, uint8_t style) : rotation(0),  scale_xaxis(1000), scale_yaxis(1000), flip_image(1), tile_object(0)
+ObjectEffect::ObjectEffect(LuxColour c1, LuxColour c2, uint8_t style) : rotation(0),  scale_xaxis(1000), scale_yaxis(1000), flip_image(1), tile_object(0), rotation_point(5)
 {
 	this->primary_colour = c1;
 	this->secondary_colour = c2;
@@ -60,7 +60,7 @@ uint32_t ObjectEffect::Hex()
 	code << primary_colour.r << primary_colour.b << primary_colour.g << primary_colour.a << "|";
 	code << secondary_colour.r << secondary_colour.b << secondary_colour.g << secondary_colour.a << "|";
 	code << rotation << scale_xaxis << scale_yaxis << "|";
-	code << flip_image << style;
+	code << flip_image << style  << rotation_point;
 
 	hex = elix::string::Hash(code.str());
 	code.str("");
@@ -84,6 +84,8 @@ bool ObjectEffect::operator == (const ObjectEffect &b) const
 	if ( this->flip_image !=  b.flip_image )
 		return false;
 	if ( this->style !=  b.style )
+		return false;
+	if ( this->rotation_point !=  b.rotation_point )
 		return false;
 	return true;
 }

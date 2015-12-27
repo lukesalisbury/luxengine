@@ -56,140 +56,140 @@ GraphicSystem GraphicsNone = {
 };
 
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
+ bool Lux_GRAPHICS_Init( LuxRect * screen_dimension, LuxRect *display_dimension )
 {
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_Destory()
+ void Lux_GRAPHICS_Destory()
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_UpdateRect(uint8_t screen, LuxRect rect)
+ void Lux_GRAPHICS_UpdateRect(uint8_t screen, LuxRect rect)
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_Show( uint8_t screen )
+ void Lux_GRAPHICS_Show( uint8_t screen )
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_PreShow( uint8_t screen )
+ void Lux_GRAPHICS_PreShow( uint8_t screen )
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_Display2Screen( int32_t * x, int32_t * y)
+ void Lux_GRAPHICS_Display2Screen( int32_t * x, int32_t * y)
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_BackgroundObject( MapObject background )
+ void Lux_GRAPHICS_BackgroundObject( MapObject background )
 {
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_SetRotation( int16_t roll, int16_t pitch, int16_t yaw )
+ void Lux_GRAPHICS_SetRotation( int16_t roll, int16_t pitch, int16_t yaw )
 {
 
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_SetFullscreen( bool able )
-{
-	return false;
-}
-
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_Resize( uint16_t width, uint16_t height)
+ bool Lux_GRAPHICS_SetFullscreen( bool able )
 {
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
-{
-
-}
-
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_TextSprites( bool able )
-{
-
-}
-
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
-{
-}
-
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawRect( LuxRect dest_rect, ObjectEffect effects )
-{
-}
-
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
-{
-
-}
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawPolygon( int16_t * x_point, int16_t * y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
-{
-
-}
-
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawLine( LuxRect points, ObjectEffect effects )
-{
-}
-
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
-{
-}
-
-LUX_DISPLAY_FUNCTION void Lux_GRAPHICS_DrawMessage( std::string message, uint8_t alignment )
-{
-
-}
-
-
-
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children)
+ bool Lux_GRAPHICS_Resize( uint16_t width, uint16_t height)
 {
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children)
+ void Lux_GRAPHICS_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
+{
+
+}
+
+ void Lux_GRAPHICS_TextSprites( bool able )
+{
+
+}
+
+ void Lux_GRAPHICS_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
+{
+}
+
+ void Lux_GRAPHICS_DrawRect( LuxRect dest_rect, ObjectEffect effects )
+{
+}
+
+ void Lux_GRAPHICS_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
+{
+
+}
+ void Lux_GRAPHICS_DrawPolygon( int16_t * x_point, int16_t * y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
+{
+
+}
+
+ void Lux_GRAPHICS_DrawLine( LuxRect points, ObjectEffect effects )
+{
+}
+
+ void Lux_GRAPHICS_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
+{
+}
+
+ void Lux_GRAPHICS_DrawMessage( std::string message, uint8_t alignment )
+{
+
+}
+
+
+
+ bool Lux_GRAPHICS_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children)
 {
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_LoadSpriteSheetImage(elix::Image *image, std::map<uint32_t, LuxSprite *> * children)
+ bool Lux_GRAPHICS_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children)
 {
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children)
+ bool Lux_GRAPHICS_LoadSpriteSheetImage(elix::Image *image, std::map<uint32_t, LuxSprite *> * children)
 {
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_FreeSprite ( LuxSprite * sprite )
+ bool Lux_GRAPHICS_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children)
 {
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION void * Lux_GRAPHICS_CacheSprite ( LuxSprite * sprite, ObjectEffect fx )
+ bool Lux_GRAPHICS_FreeSprite ( LuxSprite * sprite )
+{
+	return false;
+}
+
+ void * Lux_GRAPHICS_CacheSprite ( LuxSprite * sprite, ObjectEffect fx )
 {
 	return NULL;
 }
 
 
-LUX_DISPLAY_FUNCTION LuxSprite * Lux_GRAPHICS_PNGtoSprite( uint8_t * data, uint32_t size )
+ LuxSprite * Lux_GRAPHICS_PNGtoSprite( uint8_t * data, uint32_t size )
 {
 	return NULL;
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_CacheDisplay(uint8_t layer)
+ bool Lux_GRAPHICS_CacheDisplay(uint8_t layer)
 {
 	return false;
 }
 
-LUX_DISPLAY_FUNCTION bool Lux_GRAPHICS_DrawCacheDisplay( uint8_t layer, uint8_t shader )
+ bool Lux_GRAPHICS_DrawCacheDisplay( uint8_t layer, uint8_t shader )
 {
 	return false;
 }

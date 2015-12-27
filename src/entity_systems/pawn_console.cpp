@@ -80,12 +80,15 @@ static cell pawnConsoleLog(AMX *amx,const cell *params)
 		info.user = &msg;
 
 		cstr = amx_Address(amx, params[1]);
+		if ( cstr )
+		{
 		info.f_putstr = debugcons_putstr;
 		info.f_putchar = debugcons_putchar;
 
 		amx_printstring(amx,cstr,&info);
 
 		lux::core->SystemMessage( SYSTEM_MESSAGE_VISUAL_WARNING, msg );
+		}
 	}
 	else
 	{

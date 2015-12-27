@@ -46,4 +46,4 @@ makefiles
 src/platform/3ds
 C:\dev\devkitpro\libctru\include
 C:\dev\devkitpro\ports\libsf2d\include
-../meg/res/ui
+

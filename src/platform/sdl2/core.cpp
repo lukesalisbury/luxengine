@@ -43,51 +43,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 #endif
 
 
-void SDL2_OuputRenderingInfo( SDL_RendererInfo * info )
-{
-	std::cout << "Driver:" << info->name << " - ";
-	std::cout << (info->flags & SDL_RENDERER_ACCELERATED ? "SDL_RENDERER_ACCELERATED" :"");
-	std::cout << (info->flags & SDL_RENDERER_SOFTWARE ? " SDL_RENDERER_SOFTWARE" :"");
-	std::cout << " [" << info->max_texture_width << "x" << info->max_texture_width << "]" << std::endl;
-
-
-}
-
-void SDL2_SystemInfo()
-{
-	int n = SDL_GetNumRenderDrivers();
-	int c = 0;
-	SDL_RendererInfo info;
-
-	if ( n > 0 )
-	{
-		while (c < n)
-		{
-			if ( !SDL_GetRenderDriverInfo( c, &info) )
-			{
-				SDL2_OuputRenderingInfo( &info );
-			}
-			c++;
-		}
-
-	}
-
-	std::cout << "CPU: " << SDL_GetCPUCount() << std::endl;
-	/*
-	std::cout << "CPU Features" << (SDL_HasRDTSC()? " RDTSC" : "");
-	std::cout << (SDL_HasAltiVec()? " AltiVec" : "");
-	std::cout << (SDL_HasMMX()? " MMX" : "");
-	std::cout << (SDL_Has3DNow()? " 3DNow" : "");
-	std::cout << (SDL_HasSSE()? " SSE" : "");
-	std::cout << (SDL_HasSSE2()? " SSE2" : "");
-	std::cout << (SDL_HasSSE3()? " SSE3" : "");
-	std::cout << (SDL_HasSSE41()? " SSE4.1" : "");
-	std::cout << (SDL_HasSSE42()? " SSE4.2" : "");
-	std::cout << (SDL_HasAVX()? " AVX" : "") << std::endl;
-	*/
-	std::cout << "System RAM " << SDL_GetSystemRAM() << "MB" << std::endl;
-
-}
 
 /* Local functions */
 CoreSystem::CoreSystem( const void * window_ptr )
@@ -98,6 +53,7 @@ CoreSystem::CoreSystem( const void * window_ptr )
 	this->mouse_focus = false;
 
 	memset( this->controller, 0, sizeof(SDL_GameController*)*8);
+	memset( this->timer, 0, sizeof(function_time)*32);
 
 	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
 
@@ -138,11 +94,11 @@ CoreSystem::CoreSystem()
 	this->mouse_focus = false;
 
 	memset( this->controller, 0, sizeof(SDL_GameController*)*8);
-
+	memset( this->timer, 0, sizeof(function_time)*32);
 #if PLATFORMBITS == RaspberryPI
-	this->native_window = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN_DESKTOP|SDL_WINDOW_MOUSE_CAPTURE );
+	this->native_window = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_HIDDEN|SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN_DESKTOP|SDL_WINDOW_MOUSE_CAPTURE );
 #else
-	this->native_window = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320, 240, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE );
+	this->native_window = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_HIDDEN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE );
 #endif
 
 
@@ -329,8 +285,10 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 	SDL_Event event;
 	uint8_t touch_events_count = 0;
 
+	this->DelayIf(10);
+
 	this->internal_ms = (this->GetTime() - this->time);
-	this->frame_ms = clamp( this->internal_ms, 0, 33);
+	this->frame_ms = clamp( this->internal_ms, 0, 33); // Make sure timestep is 30FPS, it will slow down game
 	//this->frame_ms = this->internal_ms;
 
 
@@ -1088,3 +1046,29 @@ bool CoreSystem::RunExternalProgram( std::string program, std::string argument )
 	return true;
 }
 
+
+void CoreSystem::OutputInformation()
+{
+	std::stringstream buffer;
+	for( uint8_t q; q < 32; q++ )
+	{
+		if ( this->timer[q].calls != 0 )
+		{
+			buffer << this->timer[q].function << "\t§7" << this->timer[q].calls << "\t§c" << ((double)this->timer[q].msec / (double)this->timer[q].calls) /1000.0  << "ms" << std::endl;
+		}
+
+	}
+	lux::display->graphics.DrawMessage( buffer.str(), 2 );
+}
+void CoreSystem::RecordFunctionTimer( uint8_t timer, const char * name, uint64_t length_msec )
+{
+	if ( timer < 32 )
+	{
+		if ( this->timer[timer].calls == 0 )
+		{
+			this->timer[timer].function.assign(name);
+		}
+		this->timer[timer].calls++;
+		this->timer[timer].msec += length_msec;
+	}
+}

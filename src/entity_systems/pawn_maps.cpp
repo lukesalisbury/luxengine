@@ -92,7 +92,7 @@ static cell pawnMapSetOffset(AMX *amx, const cell *params)
 static cell pawnMapGetOffset(AMX *amx, const cell *params)
 {
 	ASSERT_PAWN_PARAM( amx, params, 1 );
-	int32_t result = Lux_FFI_Map_Offset_Get( (uint8_t) params[1] );
+	int32_t result = (cell)Lux_FFI_Map_Offset_Get( (uint8_t) params[1] );
 
 	return result;
 }
@@ -213,7 +213,7 @@ static cell pawnMapGetIdent(AMX *amx, const cell *params)
  */
 static cell pawnMapReset(AMX *amx, const cell *params)
 {
-	int32_t result = Lux_FFI_Map_Reset( );
+	int32_t result = (cell)Lux_FFI_Map_Reset( );
 
 	return result;
 }
@@ -226,7 +226,7 @@ static cell pawnMapReset(AMX *amx, const cell *params)
  */
 static cell pawnMapSnapshot(AMX *amx, const cell *params)
 {
-	int32_t result = Lux_FFI_Map_Snapshot( );
+	int32_t result = (cell)Lux_FFI_Map_Snapshot( );
 
 	return result;
 }
@@ -461,7 +461,7 @@ static cell pawnWorldSet(AMX *amx, const cell *params)
 	uint8_t grid_x = (uint8_t)params[2];
 	uint8_t grid_y = (uint8_t)params[3];
 
-	result = Lux_FFI_World_Set( section_hash, grid_x, grid_y );
+	result = (cell)Lux_FFI_World_Set( section_hash, grid_x, grid_y );
 
 	return result;
 }
@@ -481,7 +481,7 @@ static cell pawnWorldGetIdent(AMX *amx, const cell *params)
 	uint8_t grid_x = (uint8_t)params[2];
 	uint8_t grid_y = (uint8_t)params[3];
 
-	result = Lux_FFI_World_Get( section_hash, grid_x, grid_y );
+	result = (cell)Lux_FFI_World_Get( section_hash, grid_x, grid_y );
 
 	return result;
 }
@@ -499,7 +499,7 @@ static cell pawnWorldExist(AMX *amx, const cell *params)
 	cell result = 0;
 	std::string section_name = Lux_PawnEntity_GetString( amx, params[1] );
 
-	result = Lux_FFI_World_Exist( section_name.c_str(), false );
+	result = (cell)Lux_FFI_World_Exist( section_name.c_str(), false );
 
 	return result;
 }
@@ -517,7 +517,7 @@ static cell pawnWorldLoad(AMX *amx, const cell *params)
 	cell result = 0;
 	std::string section_name = Lux_PawnEntity_GetString( amx, params[1] );
 
-	result = Lux_FFI_World_Exist( section_name.c_str(), true );
+	result = (cell)Lux_FFI_World_Exist( section_name.c_str(), true );
 
 	return result;
 }
@@ -538,7 +538,7 @@ static cell pawnWorldEditNew(AMX *amx, const cell *params)
 	uint8_t width = (uint8_t)params[2];
 	uint8_t height = (uint8_t)params[3];
 
-	result = Lux_FFI_World_Edit_New( section_name, width, height );
+	result = (cell)Lux_FFI_World_Edit_New( section_name, width, height );
 
 	return result;
 }
@@ -559,7 +559,7 @@ static cell pawnWorldEditSet(AMX *amx, const cell *params)
 	uint8_t grid_x = (uint8_t)params[3];
 	uint8_t grid_y = (uint8_t)params[4];
 
-	result = Lux_FFI_World_Edit_Set( section_hash, map_ident, grid_x, grid_y );
+	result = (cell)Lux_FFI_World_Edit_Set( section_hash, map_ident, grid_x, grid_y );
 
 	return result;
 }
@@ -577,7 +577,7 @@ static cell pawnWorldEditSave(AMX *amx, const cell *params)
 	cell result = 0;
 	uint32_t section_hash = (uint32_t)params[1];
 
-	result = Lux_FFI_World_Edit_Save( section_hash );
+	result = (cell)Lux_FFI_World_Edit_Save( section_hash );
 
 	return result;
 }

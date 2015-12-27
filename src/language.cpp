@@ -42,7 +42,7 @@ bool LuxEngine::LoadDefaultLanguage()
 
 
 
-			button_height = lux::gui->GetCSSParser()->GetSize(BUTTON, ENABLED, "min-height") ? lux::gui->GetCSSParser()->GetSize(BUTTON, ENABLED, "min-height") : 20;
+			button_height = lux::gui->css->GetSize(BUTTON, ENABLED, "min-height") ? lux::gui->css->GetSize(BUTTON, ENABLED, "min-height") : 20;
 
 			list_height = ( 1 + langlist.size() ) * (button_height + 6);
 

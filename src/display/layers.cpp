@@ -59,9 +59,7 @@ Layer::Layer(DisplaySystem * parent, uint8_t layer_value, bool static_layer )
 	this->_parent = parent;
 	this->_roll = this->_pitch = this->_yaw = 0;
 	this->colour = colour::white;
-	this->display_dimension = parent->screen_dimension;
-	this->display_dimension.x -= 16;
-	this->display_dimension.y -= 16;
+
 	this->refreshz = true;
 	this->display_layer = layer_value;
 	this->static_layer = static_layer;
@@ -271,7 +269,7 @@ void Layer::DisplayList(std::list<MapObject*> & list )
 						obj_position.y = initial_y;
 						for ( int32_t y = this->wrap_dimension.y; y < this->wrap_dimension.y + this->wrap_dimension.h; y += this->_maph  )
 						{
-							if ( this->ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->display_dimension ) )
+							if ( this->ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->screen_dimension ) )
 							{
 								this->_parent->DrawMapObject( object, obj_position, Lux_Util_MergeEffects(this->colour, object->effects) );
 							}
@@ -280,7 +278,7 @@ void Layer::DisplayList(std::list<MapObject*> & list )
 						obj_position.x += this->_mapw;
 					}
 				}
-				else if ( this->ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->display_dimension ) )
+				else if ( this->ObjectOnScreen( obj_position, object->effects.flip_image, this->_parent->screen_dimension ) )
 				{
 					if ( !object->has_data )
 					{

@@ -159,6 +159,56 @@ static cell pawnGraphicsDraw(AMX *amx, const cell *params)
 	return 0;
 }
 
+/**
+ * @brief native AnimationDraw(string{}, &timer, x, y, Fixed:layerz, w, h, c = WHITE, rotation );
+ * @param amx
+ * @param params
+ * @return
+ */
+static cell pawnAnimationDraw(AMX *amx, const cell *params)
+{
+	ASSERT_PAWN_PARAM( amx, params, 8 );
+
+	MapObject * new_object;
+
+	cell * xptr = amx_Address(amx, params[2]);
+
+	new_object = new MapObject('s');
+	new_object->sprite = Lux_PawnEntity_GetString(amx, params[1]);
+	if ( xptr )
+		new_object->timer = (uint32_t)*xptr;
+	new_object->position.x = params[3];
+	new_object->position.y = params[4];
+	new_object->SetZPos( (fixed)params[5] );
+	new_object->position.w = params[6];
+	new_object->position.h = params[7];
+
+
+	cell_colour colour;
+	colour.hex = elix::endian::host32(params[8]);
+	new_object->effects.primary_colour = colour.rgba;
+
+	if (  params[0] / sizeof(cell) == 9 )
+	{
+		int16_t r = (int16_t)params[9];
+		new_object->effects.rotation = r;
+	}
+
+	if ( lux::display->AddObjectToLayer(new_object->layer, new_object, false) )
+	{
+		LuxSprite * sprite = new_object->GetAnimation();
+		if ( xptr && sprite)
+			*xptr = new_object->PeekAnimationTimer(sprite);
+		return 1;
+	}
+	else
+	{
+		delete new_object;
+	}
+
+	return 0;
+}
+
 /** Animation */
 
 /** pawnAnimationGetLength
@@ -318,7 +368,7 @@ static cell pawnObjectCreate(AMX *amx, const cell *p )
 {
 	ASSERT_PAWN_PARAM( amx, p, 9 );
 
-	uint8_t global = p[9];
+	uint8_t global = 0;
 	uint32_t results = 0;
 	std::string sprite;
 
@@ -326,8 +376,11 @@ static cell pawnObjectCreate(AMX *amx, const cell *p )
 
 	if ( p[9] == -1 )
 	{
-		global = Lux_PawnEntity_GetParent( amx )->_mapid == 0;
-
+		global = (Lux_PawnEntity_GetParent( amx )->_mapid == 0);
+	}
+	else if ( p[9] == 1 )
+	{
+		global = 1;
 	}
 
 
@@ -525,6 +578,8 @@ const AMX_NATIVE_INFO Graphics_Natives[] = {
 	{ "SheetSpriteDimension", pawnSheetSpriteDimension }, ///native SheetSpriteDimension(sprite[], &w, &h);
 
 	/** Animation */
+
+	{ "AnimationDraw", pawnAnimationDraw },
 	{ "AnimationGetLength", pawnAnimationGetLength }, ///native AnimationGetLength(sheet[], anim[]);
 	{ "AnimationCreate", pawnAnimationCreate }, ///native AnimationCreate(string[]);
 	{ "AnimationAddFrame", pawnAnimationAddFrame }, ///native AnimationAddFrame(string[], sprite[], string_size = sizeof string, sprite_size = sizeof sprite);

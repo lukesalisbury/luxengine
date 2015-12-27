@@ -26,6 +26,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <string>
 #include <iostream>
 
+struct function_time {
+	uint32_t calls;
+	uint64_t msec;
+	std::string function;
+
+};
+
 class BaseCoreSystem
 {
 public:
@@ -40,7 +47,7 @@ protected:
 	uint32_t animation_ms;
 	uint32_t internal_ms;
 	LuxState state;
-
+	function_time timer[32];
 
 public:
 	virtual void SystemMessage(uint8_t type, std::string message) = 0;
@@ -52,9 +59,14 @@ public:
 	virtual bool InitSubSystem(uint32_t flag) = 0;
 	virtual bool Good() = 0;
 	virtual uint32_t GetTime() = 0;
-	virtual uint32_t GetFrameDelta() = 0;
+	uint32_t GetFrameDelta() { return this->frame_ms; }
 	uint32_t GetAnimationDelta() { return this->animation_ms; }
 	uint32_t GetInternalDelta() { return this->internal_ms; }
+	void UpdateDelta() {
+		this->internal_ms = (this->GetTime() - this->time);
+		this->frame_ms = clamp( this->internal_ms, 0, 33);
+		this->animation_ms = this->frame_ms;
+	}
 	virtual bool DelayIf(uint32_t diff = 5) = 0;
 	virtual void Idle() = 0;
 	virtual LuxState HandleFrame(LuxState old_state) = 0;
@@ -67,6 +79,9 @@ public:
 
 	void NetworkLock() {  }
 	void NetworkUnlock() {  }
+
+	virtual void RecordFunctionTimer( uint8_t timer, const char * name, uint64_t length_msec ) = 0;
+	virtual void OutputInformation() = 0;
 
 };
 

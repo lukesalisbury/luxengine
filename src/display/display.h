@@ -29,7 +29,7 @@ class DisplaySystem
 {
 public:
 	DisplaySystem();
-	DisplaySystem(uint16_t width, uint16_t height, uint8_t bpp);
+	DisplaySystem(uint16_t width, uint16_t height);
 	~DisplaySystem();
 
 private:
@@ -69,13 +69,13 @@ public:
 	bool show_spriteinfo;
 	bool show_3d;
 	bool show_cursor;
-	bool show_layers[7];
+	uint8_t show_layers;
 
 	bool SetCursor( bool able );
 	void InitialSetup();
 	void DrawCursor();
 	void SetRectFromText(LuxRect & area, std::string text, uint8_t text_width, uint8_t text_height );
-	void ShowMessages();
+	void DisplayMessage();
 
 	void UpdateResolution();
 

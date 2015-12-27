@@ -36,7 +36,7 @@ namespace lux {
 			uint16_t width = lux::display->screen_dimension.w / 2;
 			uint16_t height = (lux::display->screen_dimension.h / 2)+70;
 
-			lux::display->graphics.PreShow(0);
+			lux::display->graphics.PreShow(GRAPHICS_SCREEN_FRAME);
 			lux::display->graphics.DrawRect( lux::display->screen_dimension, background );
 
 			int8_t i = 0;
@@ -57,7 +57,7 @@ namespace lux {
 			rect1.x = width - (last_message.length() * 4);
 
 			lux::display->graphics.DrawText( last_message, rect1, text, false );
-			lux::display->graphics.Show(0);
+			lux::display->graphics.PostShow(GRAPHICS_SCREEN_FRAME);
 
 			lux::screen::count %= 5;
 		}

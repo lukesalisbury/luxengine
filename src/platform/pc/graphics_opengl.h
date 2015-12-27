@@ -12,8 +12,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define _DISPLAYOPENGL_H_
 
 #include "display/display_types.h"
-#ifndef LUX_DISPLAY_FUNCTION
-#define LUX_DISPLAY_FUNCTION
+#ifndef 
+#define 
 #endif
 
 bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height );

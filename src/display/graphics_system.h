@@ -15,11 +15,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "display/display_types.h"
 #include "map_object.h"
 #include "elix/elix_png.hpp"
-#ifndef LUX_DISPLAY_FUNCTION
-#define LUX_DISPLAY_FUNCTION
-#endif
 
-bool Lux_GRAPHICS_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen );
+bool Lux_GRAPHICS_Init( LuxRect * screen_dimension, LuxRect *display_dimension );
 void Lux_GRAPHICS_Destory();
 void Lux_GRAPHICS_UpdateRect(uint8_t screen,LuxRect rect);
 void Lux_GRAPHICS_Show( uint8_t screen );

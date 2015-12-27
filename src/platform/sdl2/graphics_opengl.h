@@ -12,11 +12,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define _DISPLAYOPENGL_H_
 
 #include "display/display_types.h"
-#ifndef LUX_DISPLAY_FUNCTION
-#define LUX_DISPLAY_FUNCTION
-#endif
 
-bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height );
+
+bool Lux_OGL_Init( LuxRect * screen_dimension, LuxRect *display_dimension );
 void Lux_OGL_Destory();
 void Lux_OGL_Display2Screen( int32_t * x, int32_t * y);
 void Lux_OGL_BackgroundObject( MapObject background );

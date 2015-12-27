@@ -28,8 +28,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "elix/elix_png.hpp"
 #include "bitfont.h"
 
-uint32_t Lux_Effect_Hex( ObjectEffect fx);
-void SaveBMPFile(SDL_Surface *surface, std::string file);
+#ifndef M_PI_2
+#define M_PI_2 1.5707963268
+#endif
+
 
 struct NativeTexture {
 	SDL_Texture * texnum;
@@ -42,7 +44,7 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_Destory,
 	&Lux_NATIVE_Display2Screen,
 	&Lux_NATIVE_TextSprites,
-	&Lux_GRAPHICS_PreShow,
+	&Lux_NATIVE_PreShow,
 	&Lux_GRAPHICS_UpdateRect,
 	&Lux_NATIVE_Show,
 
@@ -73,6 +75,11 @@ GraphicSystem GraphicsNative = {
 
 };
 
+/* */
+void SDL2_SystemInfo();
+void SDL2_OuputRenderingInfo( SDL_RendererInfo * info );
+int32_t SDL2_AcceratedRendering();
+
 /* Shared */
 Uint32 native_render_flags = 0;
 Uint32 native_window_flags = 0;
@@ -80,6 +87,9 @@ SDL_Window * native_window = NULL;
 SDL_Renderer * native_renderer = NULL;
 std::string native_window_title;
 SDL_Rect native_graphics_dimension = {0, 0, 320,240};
+uint32_t native_screen_assignment = 0xC0000040; // 1100 0000 0000 0000 0000 0000 0100 0000
+bool native_current_screen = true;
+
 
 /* Global Variables */
 DisplayBitFont * sdlgraphics_bitfont = NULL;
@@ -90,42 +100,15 @@ SDL_Rect * sdlgraphics_dirty = 0;
 float sdlgraphics_ratio[2] = {1.0, 1.0};
 int32_t sdlgraphics_scale = 0;
 
-int sdlgraphics_dirtycount = 0;
-SDL_Surface * sdlgraphics_screen = NULL;
-SDL_Surface * sdlgraphics_realscreen = NULL;
-
-uint32_t native_graphics_fps = 0, native_graphics_fpstime = 0;
 bool sdlgraphics_customtext = false;
 int32_t sdlgraphics_customtext_height = 32;
 
 uint32_t sdlgraphics_texture_format = SDL_PIXELFORMAT_ABGR8888;
 SDL_BlendMode sdlgraphics_blend_mode = SDL_BLENDMODE_BLEND;
 
-void SDL2_SystemInfo();
-void SDL2_OuputRenderingInfo( SDL_RendererInfo * info );
+
 /* Local Functions */
 
-int32_t SDL2_AcceratedRendering()
-{
-	int32_t n = SDL_GetNumRenderDrivers();
-	int32_t c = 0;
-	SDL_RendererInfo info;
-
-	if ( n > 0 )
-	{
-		while (c < n)
-		{
-			if ( !SDL_GetRenderDriverInfo( c, &info) )
-			{
-				if (info.flags & SDL_RENDERER_ACCELERATED);
-					return c;
-			}
-			c++;
-		}
-
-	}
-	return -1;
-}
 /**
  * @brief Init video mode
  * @param width
@@ -133,36 +116,62 @@ int32_t SDL2_AcceratedRendering()
  * @param bpp
  * @return Returns true if successful
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
+bool Lux_NATIVE_Init(LuxRect * screen_dimension, LuxRect * display_dimension )
 {
-	int window_width = width;
-	int window_height = height;
-
-	/* Set Init Flags */
-	native_window_flags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
-
-	if ( lux::config->GetBoolean("display.fullscreen") )
-		native_window_flags |= SDL_WINDOW_FULLSCREEN;
-
+	int window_width, window_height, width, height;
+	int32_t preferred_render = SDL2_AcceratedRendering();
+	bool fullscreen = false;
 	native_render_flags = SDL_RENDERER_ACCELERATED;
+	native_window = lux::core->GetWindow();
 
-	if ( width > height )
+	if ( screen_dimension == NULL || screen_dimension->w == 0 || screen_dimension->h == 0 )
 	{
-		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
+		SDL_DisplayMode dm;
+		if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
+			return false;
+		}
+		fullscreen = lux::config->GetBoolean("display.fullscreen");
+		if ( fullscreen )
+		{
+			window_width = width = dm.w;
+			window_height = height = dm.h;
+
+		}
+		else
+		{
+			window_width = width = dm.w/2;
+			window_height = height = dm.h/2;
+		}
+
 	}
 	else
 	{
-		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
+		window_width = width = screen_dimension->w;
+		window_height = height = screen_dimension->h;
 	}
 
+	if ( display_dimension != NULL && screen_dimension->w != 0 && screen_dimension->h != 0 )
+	{
+		window_width = display_dimension->w;
+		window_height = display_dimension->h;
+	}
+	else
+	{
+		window_width = width;
+		window_height = height;
+	}
+
+
+	SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, ( window_width > window_height  ? "LandscapeLeft" : "Portrait"), SDL_HINT_OVERRIDE );
+	SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
 	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "0", SDL_HINT_OVERRIDE );
 
-	native_window = lux::core->GetWindow();
-
-	SDL_SetWindowSize(native_window, width, height );
+	SDL_SetWindowSize(native_window, window_width, window_height );
+	SDL_SetWindowPosition(native_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_GetWindowSize(native_window, &window_width, &window_height);
-
-	int32_t preferred_render = SDL2_AcceratedRendering();
+	SDL_SetWindowFullscreen(native_window, fullscreen ? SDL_TRUE : SDL_FALSE );
+	SDL_ShowWindow(native_window);
+	//Lux_NATIVE_SetFullscreen(true);
 
 	native_renderer = SDL_CreateRenderer(native_window, preferred_render, native_render_flags);
 	if ( !native_renderer )
@@ -170,102 +179,130 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(  uint16_t  width, uint16_t height, ui
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Couldn't create Renderer. " << SDL_GetError() << std::endl;
 		return false;
 	}
+	SDL_SetRenderDrawColor(native_renderer, 0, 0, 0, 255);
 
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(native_renderer, &info);
-	SDL2_SystemInfo();
 	SDL2_OuputRenderingInfo( &info );
 
 	native_window_title = lux::config->GetString("window.title") + " [" + info.name + "]";
+	SDL_SetWindowTitle( native_window, native_window_title.c_str() );
+	Lux_SDL2_SetWindowIcon( native_window );
+
 
 	native_graphics_dimension.x = 0;
 	native_graphics_dimension.y = 0;
 	native_graphics_dimension.w = width;
 	native_graphics_dimension.h = height;
 
-	if ( actual_width )
-		*actual_width = native_graphics_dimension.w;
-
-	if ( actual_height )
-		*actual_height = native_graphics_dimension.h;
-
 	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
 	SDL_RenderSetLogicalSize(native_renderer, width, height);
 
 	sdlgraphics_bitfont = new DisplayBitFont( native_renderer );
-
-	SDL_SetWindowTitle( native_window, native_window_title.c_str() );
-	Lux_SDL2_SetWindowIcon( native_window );
-
 	SDL_DisableScreenSaver();
+
+	if ( display_dimension != NULL )
+	{
+		display_dimension->w = window_width;
+		display_dimension->h = window_height;
+	}
+
+	if ( screen_dimension != NULL )
+	{
+		screen_dimension->w = width;
+		screen_dimension->h = height;
+	}
+
+	std::cout << "Screen Dimension:" << width << "x" << height << std::endl;
+	std::cout << "Display Dimension:" << window_width << "x" << window_height << std::endl;
 
 	return true;
 }
 
-/* Lux_NATIVE_Destory
- * Closes down the video mode.
- */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Destory()
+
+/**
+  * @brief Closes down the video mode.
+  */
+void Lux_NATIVE_Destory()
 {
+	SDL_SetRenderDrawColor(native_renderer, 0, 0, 0, 255);
+	SDL_RenderClear(native_renderer);
+
 	delete sdlgraphics_bitfont;
+
 	SDL_DestroyRenderer(native_renderer);
 	SDL_EnableScreenSaver();
 
-	Lux_SDL2_CloseMessageWindow(  );
+	Lux_SDL2_CloseMessageWindow( );
 }
 
-/* Lux_NATIVE_UpdateRect
- * Adds an area of the screen that needs to be updated.
- @ rect: area to updates
- */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
+/**
+  * @brief Adds an area of the screen that needs to be updated.
+  * @param screen
+  * @param rect area to updates
+  */
+void Lux_NATIVE_UpdateRect(uint8_t screen, LuxRect rect)
 {
 
 }
 
-/* Lux_NATIVE_PreShow
- * Refreshs the display
+/**
+ * @brief switches the display based on screen
+ * @param screen
  */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_PreShow( uint8_t screen )
+void Lux_NATIVE_PreShow( uint8_t screen )
 {
-
-}
-
-/* Lux_NATIVE_Show
- * Refreshs the display
- */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
-{
-	if ( native_renderer && !screen )
+	if ( screen == GRAPHICS_SCREEN_MESSAGE )
 	{
-		SDL_RenderPresent(native_renderer);
-
-		SDL_SetRenderDrawColor(native_renderer, sdlgraphics_colour.r, sdlgraphics_colour.g, sdlgraphics_colour.b, 255);
-
-
-		#ifndef EMSCRIPTEN
-		SDL_RenderClear(native_renderer);
-		#endif
-
-
-		/* Debug Messages */
 		if ( lux::display && lux::display->show_debug )
 			Lux_SDL2_OpenMessageWindow();
-		Lux_SDL2_PresentMessageWindow();
+	}
+	else if ( screen <= GRAPHICS_SCREEN_GUI)
+	{
+		bool next_screen = IS_BIT_SET(native_screen_assignment, screen);
+		if ( native_current_screen != next_screen )
+		{
+
+		}
+	}
+	else if ( screen == GRAPHICS_SCREEN_FRAME )
+	{
+		SDL_SetRenderDrawColor(native_renderer, sdlgraphics_colour.r, sdlgraphics_colour.g, sdlgraphics_colour.b, 255);
+		SDL_RenderClear(native_renderer);
+
 	}
 }
 
+/**
+  * @brief Refreshs the display
+  * @param screen
+  */
+void Lux_NATIVE_Show( uint8_t screen )
+{
+	if ( screen == GRAPHICS_SCREEN_MESSAGE )
+	{
+		Lux_SDL2_PresentMessageWindow();
+	}
+	else if ( screen <= GRAPHICS_SCREEN_GUI)
+	{
+		bool next_screen = IS_BIT_SET(native_screen_assignment, screen+1);
+		if ( native_current_screen != next_screen )
+		{
 
-/*
- *
- */
+		}
+	}
+	else if ( screen == GRAPHICS_SCREEN_FRAME )
+	{
+		SDL_RenderPresent(native_renderer);
+	}
+}
 
-/* Lux_NATIVE_Display2Screen
- * Converts display location to screen location
- @ x:
- @ y:
- */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y)
+/**
+  * @brief Converts display location to screen location
+  * @param x
+  * @param y
+  */
+void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y)
 {
 	if ( sdlgraphics_scale )
 	{
@@ -274,24 +311,25 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Display2Screen( int32_t * x, int32_t * y)
 	}
 }
 
-/* Lux_NATIVE_BackgroundObject
- * Set the background objects
- @ background:
+/**
+ * @brief Set the background objects
+ * @param background
  */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_BackgroundObject( MapObject background )
+void Lux_NATIVE_BackgroundObject( MapObject background )
 {
 	/* TODO
 	- Draw background object
 	*/
 	sdlgraphics_colour = background.effects.primary_colour;
-
+	SDL_SetRenderDrawColor(native_renderer, sdlgraphics_colour.r, sdlgraphics_colour.g, sdlgraphics_colour.b, 255);
 }
 
-/* Lux_NATIVE_SetFullscreen
- * Set the background objects
- @ background:
+/**
+ * @brief Lux_NATIVE_SetFullscreen
+ * @param able
+ * @return
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_SetFullscreen( bool able )
+bool Lux_NATIVE_SetFullscreen( bool able )
 {
 	lux::config->SetBoolean("display.fullscreen", able);
 	if ( !SDL_SetWindowFullscreen(native_window, able ? SDL_TRUE : SDL_FALSE ) )
@@ -303,34 +341,31 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_SetFullscreen( bool able )
 	}
 }
 
-/* Lux_OGL_Resize
- *
- @ width:
- @ height:
+/**
+ * @brief Lux_NATIVE_Resize
+ * @param width
+ * @param height
+ * @return
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Resize( uint16_t width, uint16_t height)
+bool Lux_NATIVE_Resize( uint16_t width, uint16_t height)
 {
 	SDL_RenderSetViewport(native_renderer, &native_graphics_dimension);
 	SDL_RenderSetLogicalSize(native_renderer, width, height);
 
-	if ( width > height )
-	{
-		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
-	}
-	else
-	{
-		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
-	}
+	SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, ( width > height ? "LandscapeLeft" : "Portrait"), SDL_HINT_OVERRIDE );
 
 	return false;
 }
-/* Lux_NATIVE_DisplayPointer
- *
- @ able:
- */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
-{
 
+/**
+ * @brief Lux_NATIVE_DisplayPointer
+ * @param player
+ * @param x
+ * @param y
+ * @param effect
+ */
+void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
+{
 	LuxRect position;
 
 	effect.primary_colour = colour::black;
@@ -340,7 +375,6 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, 
 	position.w = 4;
 	position.h = 5;
 	Lux_NATIVE_DrawRect( position, effect );
-
 
 	position.x = x-3;
 	position.y = y-3;
@@ -361,17 +395,13 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, 
 	position.w = 3;
 	position.h = 2;
 	Lux_NATIVE_DrawRect( position, effect );
-
-
 }
 
-
-
-/* Lux_NATIVE_TextSprites
- * Allow the text system to use sprites instead of bitmap font
- @ able:
+/**
+ * @brief Lux_NATIVE_TextSprites
+ * @param able
  */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_TextSprites( bool able )
+void Lux_NATIVE_TextSprites( bool able )
 {
 	if ( lux::display->sprite_font.length() )
 	{
@@ -389,20 +419,15 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_TextSprites( bool able )
 		sdlgraphics_customtext = false;
 }
 
-
-
-
 /* Drawing Functions */
 
-
-/* Lux_NATIVE_DrawSprite
- *
- @ sprite:
- @ dest_rect:
- @ effects:
- -
+/**
+ * @brief Lux_NATIVE_DrawSprite
+ * @param sprite
+ * @param dest_rect
+ * @param effect
  */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect )
+void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect )
 {
 	if ( sprite == NULL )
 		return;
@@ -415,23 +440,22 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 
 	NativeTexture * surface = (NativeTexture*) sprite->GetData(effect);
 
+	if ( surface == NULL )
+	{
+		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | Not a valid surface." << std::endl;
+		return;
+	}
+
 	double angle = (double)effect.rotation;
-	SDL_RendererFlip flipmode = SDL_FLIP_NONE;
+	int flipmode = SDL_FLIP_NONE;
 
 	SDL_Rect draw;
 	SDL_Point point;
 	SDL_Rect repeat;
 
-	draw.x = dest_rect.x;
-	draw.y = dest_rect.y;
-	draw.w = surface->w;
-	draw.h = surface->h;
+	point.x = surface->w/2;
+	point.y = surface->h/2;
 
-//	point.x = draw.w/2;
-//	point.y = draw.h/2;
-
-	point.x = 0;
-	point.y = 0;
 	/* Flip image, rotates image either 90, 180, 270 and/or mirrors. */
 	if ( effect.flip_image&16 ) // Mirror Sprite.
 	{
@@ -457,22 +481,36 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 	}
 
 
-	if ( effect.flip_image == 1 )// Switch Axis
-	{
-		angle += 90.0;
 
-	}
-	else if ( effect.flip_image == 2 )// Switch Axis
-	{
-		angle += 180.0;
-	}
-	else if ( effect.flip_image == 3 )// Switch Axis
-	{
-		angle += 270.0;
-	}
 
 	SDL_SetTextureColorMod(surface->texnum,effect.primary_colour.r,effect.primary_colour.g,effect.primary_colour.b);
 	SDL_SetTextureAlphaMod(surface->texnum,effect.primary_colour.a);
+	if ( effect.flip_image == 1 )// Switch Axis
+	{
+		//SDL_SetTextureColorMod(surface->texnum,255,0,0);
+		dest_rect.x -= (point.x-point.y) + 1;
+		dest_rect.y -= (point.y-point.x);
+		angle += 90.0;
+	}
+	else if ( effect.flip_image == 2 )// Switch Axis
+	{
+		//SDL_SetTextureColorMod(surface->texnum,0,255,0);
+		flipmode = flipmode ^ SDL_FLIP_VERTICAL;
+		flipmode = flipmode ^ SDL_FLIP_HORIZONTAL;
+
+	}
+	else if ( effect.flip_image == 3 )// Switch Axis
+	{
+		//SDL_SetTextureColorMod(surface->texnum,0,0,255);
+		angle -= 90.0;
+		dest_rect.x -= (point.x-point.y);
+		dest_rect.y -= (point.y-point.x) + 1;
+	}
+
+	draw.x = dest_rect.x;
+	draw.y = dest_rect.y;
+	draw.w = surface->w;
+	draw.h = surface->h;
 
 	if ( repeat.x > 1 || repeat.y > 1 )
 	{
@@ -482,9 +520,9 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 			{
 				draw.x = dest_rect.x + (repeat.w*rx);
 				draw.y = dest_rect.y + (repeat.h*ry);
-				draw.w = repeat.w;
-				draw.h = repeat.h;
-
+				draw.w = surface->w;
+				draw.h = surface->h;
+/*
 				if ( effect.flip_image == 1 )// Switch Axis
 				{
 					draw.x += surface->h;
@@ -498,17 +536,17 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 				{
 					draw.y += surface->w;
 				}
+*/
 
 
-				draw.w = surface->w;
-				draw.h = surface->h;
 
-				SDL_RenderCopyEx( native_renderer, surface->texnum, NULL, &draw, angle, &point, flipmode );
+				SDL_RenderCopyEx( native_renderer, surface->texnum, NULL, &draw, angle, &point, (SDL_RendererFlip)flipmode );
 			}
 		}
 	}
 	else
 	{
+		/*
 		if ( effect.flip_image == 1 )// Switch Axis
 		{
 			draw.x += surface->h;
@@ -521,13 +559,18 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 		else if ( effect.flip_image == 3 )// Switch Axis
 		{
 			draw.y += surface->w;
-		}
-		SDL_RenderCopyEx( native_renderer, surface->texnum, NULL, &draw, angle, &point, flipmode );
+		}*/
+		SDL_RenderCopyEx( native_renderer, surface->texnum, NULL, &draw, angle, &point, (SDL_RendererFlip)flipmode );
 	}
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect effects)
+/**
+ * @brief Lux_NATIVE_DrawRect
+ * @param dest_rect
+ * @param effects
+ */
+void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect effects)
 {
 	if ( !native_renderer )
 	{
@@ -557,7 +600,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect e
  * @param effects
  * @param texture
  */
-  LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
+void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
 {
 	if ( !native_renderer )
 	{
@@ -578,12 +621,15 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, ObjectEffect e
 
 }
 
+
+
+
 /**
  * @brief Lux_NATIVE_DrawCircle
  * @param dest_rect
  * @param effects
  */
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
+ void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
 {
 	if ( !native_renderer )
 	{
@@ -602,54 +648,47 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect
 	int cx = dest_rect.x + xradius;
 	int cy = dest_rect.y + yradius;
 	int x1,x2,y1,y2;
-	for(uint8_t i = 0; i < yradius; i++)
+	if ( yradius > 1 )
 	{
-		angle = (i/yradius) * (M_PI/2);
-		cos = SDL_cos(angle) * xradius;
+		for(uint8_t i = 0; i < (yradius-1); i++)
+		{
+			angle = (M_PI_2) * i/yradius;
+			cos = SDL_cos(angle) * (xradius);
 
-		x1 = cx + cos;
-		x2 = cx - cos;
-		y1 = cy + i;
-		y2 = cy - i;
+			x1 = cx + cos;
+			x2 = cx - cos;
+			y1 = cy + i;
+			y2 = cy - i;
 
-		SDL_RenderDrawLine( native_renderer, x1, y1, x2, y1);
-		SDL_RenderDrawLine( native_renderer, x1, y2, x2, y2);
-
+			SDL_RenderDrawLine( native_renderer, x1, y1, x2, y1);
+			SDL_RenderDrawLine( native_renderer, x1, y2, x2, y2);
+		}
 	}
 
-
-//	float angle;
-//	float xradius = (dest_rect.w / 2);
-//	float yradius = (dest_rect.h / 2);
-
-//	int cx = dest_rect.x + xradius;
-//	int cy = dest_rect.y + yradius;
-
-//	int x1,x2,y1,y2;
-//	for(float angle = 0; angle < 360; angle += 0.2)
-//	{
-//		float cos = SDL_cos(angle) * xradius;
-//		float sin = SDL_sin(angle) * yradius;
-//		x1 = cx + cos;
-//		x2 = cx - cos;
-//		y1 = cy + sin;
-//		y2 = cy - sin;
-
-
-//		SDL_SetRenderDrawColor(native_renderer,effects.primary_colour.r,effects.primary_colour.g,effects.primary_colour.b,effects.primary_colour.a);
-//		SDL_RenderDrawLine( native_renderer, x1,y1, x2,y2);
-//	}
 }
 
 
-
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawLine( LuxRect points, ObjectEffect effects)
+/**
+ * @brief Lux_NATIVE_DrawLine
+ * @param points
+ * @param effects
+ */
+void Lux_NATIVE_DrawLine( LuxRect points, ObjectEffect effects)
 {
 	SDL_SetRenderDrawColor(native_renderer,effects.primary_colour.r,effects.primary_colour.g,effects.primary_colour.b,effects.primary_colour.a);
 	SDL_RenderDrawLine(native_renderer,points.x, points.y, points.w, points.h);
 }
 
-LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, ObjectEffect effects, bool allow_custom )
+/**
+ * @brief Lux_NATIVE_DrawChar
+ * @param cchar
+ * @param x
+ * @param y
+ * @param effects
+ * @param allow_custom
+ * @return
+ */
+int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, ObjectEffect effects, bool allow_custom )
 {
 	LuxColour c = effects.primary_colour;
 	SDL_Rect area;
@@ -704,15 +743,23 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 	if ( texture )
 	{
 		SDL_SetTextureColorMod(texture, c.r, c.g, c.b);
-		//SDL_SetTextureAlphaMod(texture, c.a);
+		SDL_SetTextureAlphaMod(texture, c.a);
 		SDL_SetTextureBlendMode( texture, sdlgraphics_blend_mode);// sdlgraphics_blend_mode
 		SDL_RenderCopy(native_renderer, texture, NULL, &area);
 	}
 	return offset;
 }
 
-LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
+/**
+ * @brief Lux_NATIVE_DrawText
+ * @param text
+ * @param dest_rect
+ * @param effects
+ * @param allow_custom
+ */
+void Lux_NATIVE_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
 {
+
 	int32_t x, y;
 	std::string::iterator object;
 	bool watch_for_color = false;
@@ -790,6 +837,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 		}
 
 	}
+
 }
 
 
@@ -797,12 +845,12 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawText( std::string text, LuxRect dest_re
 /* Resource Functions */
 
 
-/* Lux_NATIVE_FreeSprite
- *
- @ sprite:
- -
+/**
+ * @brief Lux_NATIVE_FreeSprite
+ * @param sprite
+ * @return
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
+bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 {
 	if ( sprite == NULL )
 		return false;
@@ -816,14 +864,14 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 	return true;
 }
 
-/* Lux_NATIVE_CreateSprite
- *
- @ sprite:
- @ rect:
- @ parent:
- -
+/**
+ * @brief Lux_NATIVE_CreateSprite
+ * @param sprite
+ * @param rect
+ * @param png
+ * @return
  */
-LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
 {
 	if ( !png->HasContent() )
 	{
@@ -836,6 +884,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect r
 	texture->w = texture->tw = rect.w;
 	texture->h = texture->th = rect.h;
 	sprite->data = texture;
+
 	/* PNG image */
 	uint32_t * pixels = new uint32_t[texture->tw*texture->th]();
 	if ( pixels )
@@ -860,3 +909,5 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect r
 
 
 #include "display/reusable_graphics_system.cpp"
+
+

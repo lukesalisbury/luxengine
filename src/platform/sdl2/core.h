@@ -90,7 +90,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 			bool RunExternalProgram( std::string program, std::string argument );
 
-
+			void RecordFunctionTimer( uint8_t timer, const char * name, uint64_t length_msec );
+			void OutputInformation();
 	};
 
 namespace lux

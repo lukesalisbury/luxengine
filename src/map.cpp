@@ -230,7 +230,7 @@ bool MokoiMap::Init()
 {
 	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << " > MokoiMap Init " << this->map_name << std::endl;
 
-	//lux::screen::display("Loading Map: " + this->map_name);
+	lux::screen::display("Loading Map: " + this->map_name);
 	if ( this->LoadFile() )
 	{
 		lux::display->SetBackgroundObject( this->background_object );
@@ -261,6 +261,7 @@ bool MokoiMap::Loop()
 		return false;
 	}
 
+	lux::display->SetBackgroundObject( this->background_object );
 	/* Cheats way of reseting map */
 	if ( this->reset_map )
 	{
@@ -271,7 +272,7 @@ bool MokoiMap::Loop()
 
 	this->NetworkMapLoop();
 
-	lux::display->SetBackgroundObject( this->background_object );
+
 
 	this->entities->Loop();
 

@@ -59,14 +59,7 @@ void LuxWidget_MergeRect(LuxRect & a, WidgetObjectPosition& b)
 
 UserInterface::UserInterface(DisplaySystem * display )
 {
-	if ( display == NULL )
-	{
-		this->internal_display = new DisplaySystem( 640, 480, 16 );
-	}
-	else
-	{
-		this->internal_display = display;
-	}
+	this->internal_display = ( display == NULL ? new DisplaySystem( 0, 0 ) : display);
 	this->ui_region = this->internal_display->screen_dimension;
 
 	this->controller = NULL;
@@ -103,10 +96,6 @@ UserInterface::~UserInterface()
 }
 
 
-CSSParser * UserInterface::GetCSSParser()
-{
-	return this->css;
-}
 
 LuxSheet * UserInterface::GetSheet( std::string file, uint16_t width, uint16_t height )
 {
@@ -483,7 +472,7 @@ int32_t UserInterface::Show()
 	std::list<Widget *>::iterator wid_iter;
 
 	this->ui_region.z = z;
-	this->internal_display->graphics.PreShow(0);
+	this->internal_display->graphics.PreShow(GRAPHICS_SCREEN_FRAME);
 	this->internal_display->graphics.DrawRect(this->ui_region, this->background);
 	if ( this->children_widget.size() )
 	{
@@ -492,7 +481,7 @@ int32_t UserInterface::Show()
 			this->DrawWidget((*wid_iter), ++z);
 		}
 	}
-	this->internal_display->graphics.Show(0);
+	this->internal_display->graphics.PostShow(GRAPHICS_SCREEN_FRAME);
 	return 1;
 }
 
@@ -654,7 +643,7 @@ int32_t UserInterface::Loop()
 
 	/* Start Drawing */
 	this->ui_region.z = z;
-	this->internal_display->graphics.PreShow(0);
+	this->internal_display->graphics.PreShow(GRAPHICS_SCREEN_FRAME);
 	this->internal_display->graphics.DrawRect(this->ui_region, this->background);
 
 	if (this->children_widget.size())
@@ -669,7 +658,7 @@ int32_t UserInterface::Loop()
 
 	this->internal_display->DisplayOverlay();
 	this->internal_display->graphics.DisplayPointer(1, mouse_x, mouse_y, this->controller->PlayerColour );
-	this->internal_display->graphics.Show(0);
+	this->internal_display->graphics.PostShow(GRAPHICS_SCREEN_FRAME);
 
 	lux::core->Idle( );
 

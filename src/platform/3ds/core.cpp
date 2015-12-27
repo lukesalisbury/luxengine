@@ -177,7 +177,10 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 		this->state = EXITING;
 
 	this->time = this->GetTime();
-
+	if ( this->state == RUNNING )
+		this->animation_ms = this->frame_ms;
+	else
+		this->animation_ms = 0;
 	return this->state;
 }
 

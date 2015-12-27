@@ -340,14 +340,13 @@ SpriteFrame MapObject::RetieveAnimationFrame( LuxSprite * sprite, uint32_t timer
 	return current_frame;
 }
 
-LuxSprite * MapObject::PeekAnimationFrame( LuxSprite * sprite )
+uint32_t MapObject::PeekAnimationTimer( LuxSprite * sprite )
 {
 	if ( !sprite->animated || !sprite->animation_length )
 	{
-		return sprite;
+		return 0;
 	}
 
-	SpriteFrame current_frame;
 	uint32_t timer = this->timer;
 
 	timer += lux::core->animation_ms * this->speed;
@@ -359,6 +358,18 @@ LuxSprite * MapObject::PeekAnimationFrame( LuxSprite * sprite )
 		else
 			timer = sprite->animation_length-1;
 	}
+	return timer;
+}
+
+LuxSprite * MapObject::PeekAnimationFrame( LuxSprite * sprite )
+{
+	if ( !sprite->animated || !sprite->animation_length )
+	{
+		return sprite;
+	}
+
+	SpriteFrame current_frame;
+	uint32_t timer =  this->PeekAnimationTimer( sprite );
 
 	current_frame = this->RetieveAnimationFrame( sprite, timer );
 
@@ -478,6 +489,22 @@ LuxSprite * MapObject::GetSprite( bool no_increment )
 		else
 		{
 			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR) << "data type error" << std::endl;
+		}
+	}
+	return NULL;
+}
+
+LuxSprite * MapObject::GetAnimation( )
+{
+	if ( this->data )
+	{
+		if ( this->data_type == OBJECT_SPRITE )
+		{
+			LuxSprite * orig = (LuxSprite*)this->data;
+
+			if ( !orig )
+				return NULL;
+			return orig;
 		}
 	}
 	return NULL;

@@ -615,7 +615,7 @@ bool LuxPortal::run()
 	LuxPortal::browse_path = LuxPortal::browse_path_default;
 	LuxPortal::mode = GUI_PORTAL_DEMOS;
 
-	LuxPortal::interface = new UserInterface( new DisplaySystem( LuxPortal::region.w, LuxPortal::region.h, 32 ) );
+	LuxPortal::interface = new UserInterface( NULL );
 
 	LuxPortal::region = LuxPortal::interface->ui_region;
 
@@ -625,8 +625,8 @@ bool LuxPortal::run()
 	LuxPortal::previous.unique();
 
 
-	uint16_t button_height = LuxPortal::interface->GetCSSParser()->GetSize(IMAGEBUTTON, ENABLED, "min-height")+5;
-	LuxPortal::page_padding = LuxPortal::interface->GetCSSParser()->GetSize(BOX, ENABLED, "padding");
+	uint16_t button_height = LuxPortal::interface->css->GetSize(IMAGEBUTTON, ENABLED, "min-height")+5;
+	LuxPortal::page_padding = LuxPortal::interface->css->GetSize(BOX, ENABLED, "padding");
 
 	LuxPortal::max_page_item = (LuxPortal::region.h - ( (lux_media::portal_title_height + 22 + LuxPortal::page_padding )*2))  / button_height;
 

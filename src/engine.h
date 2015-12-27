@@ -113,6 +113,7 @@ class LuxEngine
 		bool EndDialog( LuxWidget dialog = DIALOGYESNO );
 
 
+		void UpdateFPS();
 };
 
 namespace lux

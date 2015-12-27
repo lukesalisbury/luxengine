@@ -92,7 +92,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
  @ fullscreen:
  - Returns true if successfull
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
+ bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
 {
 	SDL_Surface * opengl_window_icon = NULL;
 	if ( lux::config->GetString("display.mode") != "OpenGL" )
@@ -191,7 +191,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_
 /* Lux_OGL_Destory
  * Closes down the video mode.
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
+ void Lux_OGL_Destory()
 {
 	/* TODO
 	-
@@ -212,7 +212,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
  @ x:
  @ y:
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Display2Screen( int32_t * x, int32_t * y )
+ void Lux_OGL_Display2Screen( int32_t * x, int32_t * y )
 {
 	*x = (int32_t)((float)*x * opengl_graphic_ratio_width);
 	*y = (int32_t)((float)*y * opengl_graphic_ratio_height);
@@ -222,7 +222,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Display2Screen( int32_t * x, int32_t * y )
  * Set the background objects
  @ background:
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_BackgroundObject( MapObject background )
+ void Lux_OGL_BackgroundObject( MapObject background )
 {
 	/* TODO
 	- Draw background colour
@@ -235,7 +235,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_BackgroundObject( MapObject background )
  * Adds an area of the screen that needs to be updated.
  @ rect: area to updates
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Update( uint8_t screen, LuxRect rect)
+ void Lux_OGL_Update( uint8_t screen, LuxRect rect)
 {
 
 }
@@ -243,7 +243,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Update( uint8_t screen, LuxRect rect)
 /* Lux_OGL_Show
  * Refreshs the display
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Show( uint8_t screen )
+ void Lux_OGL_Show( uint8_t screen )
 {
 	SDL_GL_SwapBuffers();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -266,7 +266,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Show( uint8_t screen )
 /* Lux_OGL_DisplayPointer
  *
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
+ void Lux_OGL_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
 {
 	LuxRect position;
 
@@ -282,7 +282,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DisplayPointer( uint8_t player, int16_t x, int
  @ sprite:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_FreeSprite( LuxSprite * sprite )
+ bool Lux_OGL_FreeSprite( LuxSprite * sprite )
 {
 	if ( sprite == NULL )
 		return false;
@@ -304,7 +304,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_FreeSprite( LuxSprite * sprite )
  @ parent:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+ bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
 {
 	if ( !png->HasContent() )
 	{
@@ -364,7 +364,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	/* PNG Image */
 	uint8_t * data = NULL;
@@ -406,7 +406,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<ui
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
+ bool Lux_OGL_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
 {
 	if ( !image  )
 	{
@@ -443,7 +443,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheetImage( elix::Image * image, std
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_OGL_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children )
 {
 	std::map<uint32_t, LuxSprite *>::iterator p;
 	for( p = children->begin(); p != children->end(); p++ )
@@ -462,7 +462,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_FreeSpriteSheet( std::map<uint32_t, LuxSprite 
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_OGL_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	if ( Lux_OGL_FreeSpriteSheet( children ) )
 		Lux_OGL_LoadSpriteSheet( name, children );
@@ -476,7 +476,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_RefreshSpriteSheet( std::string name, std::map
  @ size:
  -
  */
-LUX_DISPLAY_FUNCTION LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
+ LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
 {
 	LuxSprite * sprite = NULL;
 	elix::Image * png = new elix::Image(data, size);
@@ -503,7 +503,7 @@ LUX_DISPLAY_FUNCTION LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t s
  -
  */
 
-LUX_DISPLAY_FUNCTION void Lux_OGL_SetRotation( int16_t roll, int16_t pitch, int16_t yaw )
+ void Lux_OGL_SetRotation( int16_t roll, int16_t pitch, int16_t yaw )
 {
 	if ( roll || pitch || yaw )
 	{

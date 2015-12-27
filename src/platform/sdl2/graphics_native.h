@@ -11,12 +11,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #ifndef _DISPLAYSDL_H_
 #define _DISPLAYSDL_H_
 #include "display/display_types.h"
-#ifndef LUX_DISPLAY_FUNCTION
-#define LUX_DISPLAY_FUNCTION
-#endif
 
-bool Lux_NATIVE_Init(  uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height );
+
+bool Lux_NATIVE_Init(LuxRect * screen_dimension, LuxRect *display_dimension);
 void Lux_NATIVE_Destory();
+void Lux_NATIVE_PreShow( uint8_t screen );
 void Lux_NATIVE_UpdateRect(uint8_t screen, LuxRect rect );
 void Lux_NATIVE_Show( uint8_t screen );
 

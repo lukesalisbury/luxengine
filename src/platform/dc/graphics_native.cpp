@@ -169,7 +169,7 @@ void dreamcastCreateFont()
 /* Creation,destruction and loop Functions */
 
 
-LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_Init(uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
+ bool LuxGraphics_DC_Init(uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height, bool fullscreen )
 {
 	pvr_set_bg_color(1.0f, 0.0f, 0.0f);
 	dreamcastCreateFont();
@@ -190,31 +190,31 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_Init(uint16_t  width, uint16_t height, 
 	return true;
 }
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_Destory()
+ void LuxGraphics_DC_Destory()
 {
 	dreamcastEndFrame();
 }
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_BackgroundObject( MapObject background  )
+ void LuxGraphics_DC_BackgroundObject( MapObject background  )
 {
 	dreamcastbackground = background;
 	pvr_set_bg_color((float)background.effects.primary_colour.r / 255.0, (float)background.effects.primary_colour.g / 255.0, (float)background.effects.primary_colour.b / 255.0);
 }
 
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_UpdateRect(uint8_t screen,LuxRect rect)
+ void LuxGraphics_DC_UpdateRect(uint8_t screen,LuxRect rect)
 {
 
 }
 
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_Show( uint8_t screen )
+ void LuxGraphics_DC_Show( uint8_t screen )
 {
 	dreamcastEndFrame();
 	dreamcastStartFrame();
 }
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
+ void LuxGraphics_DC_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
 {
 	LuxRect position;
 
@@ -233,7 +233,7 @@ LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DisplayPointer( uint8_t player, int16_t
  @ sprite:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_FreeSprite( LuxSprite * sprite )
+ bool LuxGraphics_DC_FreeSprite( LuxSprite * sprite )
 {
 	if ( sprite == NULL )
 		return false;
@@ -255,7 +255,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_FreeSprite( LuxSprite * sprite )
  @ parent:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+ bool LuxGraphics_DC_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
 {
 	if ( !png->HasContent() )
 	{
@@ -320,7 +320,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_CreateSprite( LuxSprite * sprite, LuxRe
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> * children)
+ bool LuxGraphics_DC_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> * children)
 {
 	/* PNG Image */
 	uint8_t * data = NULL;
@@ -361,7 +361,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_LoadSpriteSheet(std::string name, std::
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
+ bool LuxGraphics_DC_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
 {
 	if ( !image  )
 	{
@@ -398,7 +398,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_LoadSpriteSheetImage( elix::Image * ima
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children)
+ bool LuxGraphics_DC_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children)
 {
 	std::map<uint32_t, LuxSprite *>::iterator p;
 	for( p = children->begin(); p != children->end(); p++ )
@@ -415,7 +415,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_FreeSpriteSheet( std::map<uint32_t, Lux
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
+ bool LuxGraphics_DC_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	if ( LuxGraphics_DC_FreeSpriteSheet( children ) )
 		LuxGraphics_DC_LoadSpriteSheet( name, children );
@@ -428,7 +428,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_DC_RefreshSpriteSheet( std::string name, s
  @ size:
  -
  */
-LUX_DISPLAY_FUNCTION LuxSprite * LuxGraphics_DC_PNGtoSprite( uint8_t * data, uint32_t size )
+ LuxSprite * LuxGraphics_DC_PNGtoSprite( uint8_t * data, uint32_t size )
 {
 	LuxSprite * sprite = NULL;
 	elix::Image * src = new elix::Image(data, size);
@@ -481,7 +481,7 @@ LUX_DISPLAY_FUNCTION LuxSprite * LuxGraphics_DC_PNGtoSprite( uint8_t * data, uin
 
 /* Drawing Functions */
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects)
+ void LuxGraphics_DC_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects)
 {
 	if ( sprite == NULL )
 		return;
@@ -538,7 +538,7 @@ LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawSprite(LuxSprite * sprite, LuxRect 
 	pvr_prim(&vert, sizeof(vert));
 }
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawRect( LuxRect dest_rect, ObjectEffect effects)
+ void LuxGraphics_DC_DrawRect( LuxRect dest_rect, ObjectEffect effects)
 {
 
 	float z = (float)dest_rect.z/1000.0;
@@ -574,7 +574,7 @@ LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawRect( LuxRect dest_rect, ObjectEffe
 }
 
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawLine( LuxRect points, ObjectEffect effects)
+ void LuxGraphics_DC_DrawLine( LuxRect points, ObjectEffect effects)
 {
 	float z = (float)points.z/1000.0;
 	pvr_poly_hdr_t hdr;
@@ -696,7 +696,7 @@ int32_t LuxGraphics_DC_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z,
 }
 
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
+ void LuxGraphics_DC_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
 {
 
 	uint16_t x = dest_rect.x;
@@ -776,7 +776,7 @@ LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawText( std::string text, LuxRect des
 }
 
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawPolygon( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
+ void LuxGraphics_DC_DrawPolygon( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
 {
 
 	pvr_poly_hdr_t hdr;
@@ -808,7 +808,7 @@ LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawPolygon( int16_t * x_point, int16_t
 
 }
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_DC_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
+ void LuxGraphics_DC_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
 {
 
 }

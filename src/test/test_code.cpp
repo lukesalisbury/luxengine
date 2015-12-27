@@ -123,7 +123,7 @@ void luxtest::start()
 	lux::config = new GameConfig();
 	lux::config->SetString("window.title", "Test Mode");
 
-	luxtest::display = new DisplaySystem( 320, 240, 8 );
+	luxtest::display = new DisplaySystem( );
 	luxtest::region = luxtest::display->screen_dimension;
 
 	logo = luxtest::display->graphics.PNGtoSprite(lux_media::testimage, lux_media::testimage_size);
@@ -215,7 +215,7 @@ void luxtest::loop()
 	}
 
 
-	luxtest::display->graphics.PreShow(0);
+	luxtest::display->graphics.PreShow(GRAPHICS_SCREEN_FRAME);
 	switch ( luxtest::mode )
 	{
 		case 2:
@@ -230,7 +230,7 @@ void luxtest::loop()
 			break;
 		}
 	}
-	luxtest::display->graphics.Show(0);
+	luxtest::display->graphics.PostShow(GRAPHICS_SCREEN_FRAME);
 	lux::core->Idle( );
 }
 
@@ -250,7 +250,6 @@ void luxtest::end()
 bool luxtest::run()
 {
 	luxtest::start();
-
 
 	while ( luxtest::mode )
 	{

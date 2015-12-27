@@ -131,7 +131,7 @@ void MapXMLReader::ReadPolygon( MapObject * object, tinyxml2::XMLElement * objec
 void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapObject * object, MokoiMap * map )
 {
 	/* <entity value="%s" language="%s" global="%s"/> */
-
+	int32_t global_value = 0;
 	tinyxml2::XMLElement * entity_element = object_element->FirstChildElement("entity");
 	if ( entity_element )
 	{
@@ -140,10 +140,11 @@ void MapXMLReader::ReadLocalEntity( tinyxml2::XMLElement * object_element, MapOb
 
 		if ( entity_file_name.length() )
 		{
+
 			Entity * current_entity = lux::entities->NewEntity(object->ident, entity_file_name, ( map ? map->Ident() : 0 ) );
 			if ( current_entity )
 			{
-				current_entity->AddSetting("global", (int32_t)0 );
+				current_entity->AddSetting("global", global_value );
 
 				cell_colour temporary_colour_value;
 

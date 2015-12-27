@@ -15,9 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "misc_functions.h"
 #include "elix/elix_string.hpp"
 #include <math.h>
-#ifndef LUX_DISPLAY_FUNCTION
-#define LUX_DISPLAY_FUNCTION
-#endif
+
 
 /*
 #if USING_GLES == 2 || USING_GLDESKTOP == 4
@@ -142,7 +140,7 @@ void Lux_GLES_LoadFont()
 }
 
 /* Disply Functions */
-LUX_DISPLAY_FUNCTION void Lux_GLES_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
+ void Lux_GLES_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
 {
 
 	LuxVertex dest;
@@ -167,7 +165,7 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawCircle( LuxRect dest_rect, ObjectEffect e
 	gles::render( GL_TRIANGLE_FAN, coords, 64, NULL, dest, colors, 0, gles::scale, gles::rotation, using_shader );
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GLES_DrawLine( LuxRect points, ObjectEffect effects )
+ void Lux_GLES_DrawLine( LuxRect points, ObjectEffect effects )
 {
 	LuxVertex dest;
 	LuxVertex coords[4];
@@ -185,7 +183,7 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawLine( LuxRect points, ObjectEffect effect
 	gles::render( GL_LINES, coords, 2, NULL, dest, colors, 0, gles::scale, gles::rotation, using_shader );
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GLES_DrawPolygon( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
+ void Lux_GLES_DrawPolygon( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
 {
 	// Make sure the point count isn't to high
 	if ( point_count > 32 || point_count == 0 )
@@ -211,7 +209,7 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawPolygon( int16_t * x_point, int16_t *y_po
 
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GLES_DrawRect( LuxRect dest_rect, ObjectEffect effect)
+ void Lux_GLES_DrawRect( LuxRect dest_rect, ObjectEffect effect)
 {
 	LuxVertex dest;
 	LuxVertex scale = { 1, 1, 1 };
@@ -244,7 +242,7 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawRect( LuxRect dest_rect, ObjectEffect eff
 }
 
 
-LUX_DISPLAY_FUNCTION void Lux_GLES_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect )
+ void Lux_GLES_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect )
 {
 	if ( sprite == NULL )
 		return;
@@ -448,7 +446,7 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawSprite(LuxSprite * sprite, LuxRect dest_r
 }
 
 
-LUX_DISPLAY_FUNCTION int32_t Lux_GLES_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z, ObjectEffect effects, bool allow_custom )
+ int32_t Lux_GLES_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z, ObjectEffect effects, bool allow_custom )
 {
 	LuxSprite * sprite_data = NULL;
 	Texture * texture = NULL;
@@ -522,7 +520,7 @@ LUX_DISPLAY_FUNCTION int32_t Lux_GLES_DrawChar( int32_t cchar, int32_t x, int32_
 
 
 
-LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
+ void Lux_GLES_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effects, bool allow_custom)
 {
 	bool watch_for_color = false;
 	ObjectEffect current_effects = effects;
@@ -715,7 +713,7 @@ LUX_DISPLAY_FUNCTION void Lux_GLES_DrawText( std::string text, LuxRect dest_rect
 	}
 }
 
-LUX_DISPLAY_FUNCTION void Lux_GLES_TextSprites( bool able )
+ void Lux_GLES_TextSprites( bool able )
 {
 	if ( lux::display->sprite_font.length() )
 	{

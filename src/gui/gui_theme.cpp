@@ -60,7 +60,8 @@ inputtext { border-width:1px; background-color: #223333FF; border-color: #444444
 	{
 		if ( lux::config->Has("gui.style") )
 		{
-			this->css->AddContent( lux::config->GetString("gui.style") );
+			std::string css = lux::config->GetString("gui.style");
+			this->css->AddContent( css );
 		}
 	}
 

@@ -207,9 +207,9 @@ bool LuxEngine::Start( std::string project_file )
 	if ( lux::game_data->valid )
 	{
 		lux::display = new DisplaySystem();
-		lux::display->graphics.PreShow(0);
+		lux::display->graphics.PreShow(GRAPHICS_SCREEN_FRAME);
 		lux::display->SetBackgroundColour( colour::grey );
-		lux::display->graphics.Show(0);
+		lux::display->graphics.PostShow(GRAPHICS_SCREEN_FRAME);
 
 
 //		lux::engine->ShowDialog("DIALOGOK", DIALOGOK, NULL );
@@ -343,6 +343,17 @@ bool LuxEngine::Start( std::string project_file )
 	return (this->state == GAMEERROR ? false : true);
 }
 
+void LuxEngine::UpdateFPS()
+{
+	if ( lux::core->GetTime() > (this->game_fps_time + 1000) )
+	{
+		this->game_fps_last = this->game_fps;
+		this->game_fps_time = lux::core->GetTime();
+		this->game_fps = 0;
+	}
+	this->game_fps++;
+}
+
 /**
  * @brief LuxEngine::Refresh
  */
@@ -354,27 +365,23 @@ void LuxEngine::Refresh()
 
 		if ( this->state == RUNNING )
 		{
-			if ( lux::core->GetTime() > (this->game_fps_time + 1000) )
-			{
-				this->game_fps_last = this->game_fps;
-				this->game_fps_time = lux::core->GetTime();
-				this->game_fps = 0;
-			}
-			this->game_fps++;
+			this->UpdateFPS();
 			lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "FPS: " << (this->game_fps_last < 30 ? "§c" : "§a") << this->game_fps_last << std::endl;
 		}
 		else
 		{
-			lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "State: §a" << this->state << " §c" << lux::core->GetTime() << std::endl;
+			//lux::core->SystemMessage(SYSTEM_MESSAGE_DEBUG) << "State: §a" << this->state << " §c" << lux::core->GetTime() << std::endl;
 		}
 
 		if ( this->state == PAUSED )
 		{
+			this->UpdateFPS();
 			lux::display->Display(this->state);
 			lux::core->Idle();
 		}
 		else if ( this->state == NOUPDATE )
 		{
+			this->UpdateFPS();
 			lux::display->Display(this->state);
 			lux::core->Idle();
 		}
@@ -490,6 +497,7 @@ void LuxEngine::RunState()
 		Display ()
 	*/
 
+
 	lux::core->NetworkLock();
 	std::vector<Player *>::iterator iter = _players.begin();
 	while( iter !=  _players.end() )
@@ -498,11 +506,11 @@ void LuxEngine::RunState()
 		iter++;
 	}
 	lux::core->NetworkUnlock();
-
+	TIMER_START("game_system->Loop");
 	lux::game_system->Loop( this->state );
+	TIMER_END("game_system->Loop");
 	lux::audio->Loop( this->state );
 	lux::display->Loop( this->state );
-
 
 
 }

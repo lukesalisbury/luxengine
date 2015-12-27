@@ -34,7 +34,7 @@ class UserInterface
 		~UserInterface();
 
 		LuxRect ui_region;
-
+		CSSParser * css;
 	private:
 		ObjectEffect background;
 		DisplaySystem * internal_display;
@@ -44,7 +44,7 @@ class UserInterface
 		Widget * active_child, * main_widget;
 		int16_t last_mouse;
 		Player * controller;
-		CSSParser * css;
+
 		LuxPolygon * cursor;
 
 		std::map<uint32_t, LuxSprite *> sprites;

@@ -44,6 +44,7 @@ public:
 	uint8_t flip_image;
 	uint8_t tile_object;
 	uint8_t style;
+	uint8_t rotation_point;
 
 	bool operator == (const ObjectEffect &b) const;
 

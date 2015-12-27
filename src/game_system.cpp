@@ -82,6 +82,8 @@ bool GameSystem::Init( )
 	this->next_section = this->NewSection( "map/" + starting, 1, 1 );
 	this->next_section->AddMap( starting, 0, 0 );
 
+
+
 	this->SwitchActive();
 
 	if ( !this->active_map || !this->active_map->Valid() )
@@ -259,6 +261,7 @@ void GameSystem::SwitchActive()
 		if ( this->next_map == NULL )
 		{
 			this->next_map = this->next_section->GetMap( this->next_grid_position[0], this->next_grid_position[1] );
+			lux::display->SetBackgroundObject( this->next_map->background_object );
 		}
 
 		if ( this->SwitchMap( this->next_map ) )
@@ -967,7 +970,7 @@ void GameSystem::OutputInformation()
 	{
 		WorldSection * section = iter->second;
 
-		buffer << section->Name() << std::endl;
+		buffer << section->Name() << " §c" << section->SectionIdent()  << std::endl;
 		for( std::map<uint32_t, MokoiMap *>::iterator iter2 = this->map_list.begin(); iter2 != map_list.end(); ++iter2 )
 		{
 			MokoiMap * map = iter2->second;

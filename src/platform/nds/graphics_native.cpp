@@ -391,7 +391,7 @@ void LuxGraphics_NDS_Show( uint8_t screen )
  @ sprite:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_FreeSprite ( LuxSprite * sprite )
+ bool LuxGraphics_NDS_FreeSprite ( LuxSprite * sprite )
 {
 	glDeleteTextures(1, &((Texture*)sprite->data)->texnum);
 	/*
@@ -411,7 +411,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_FreeSprite ( LuxSprite * sprite )
  @ png:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+ bool LuxGraphics_NDS_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
 {
 	return false;
 }
@@ -422,7 +422,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_CreateSprite( LuxSprite * sprite, LuxR
  @ sprite_filename:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_LoadTexture( LuxSprite * sprite, std::string sprite_filename )
+ bool LuxGraphics_NDS_LoadTexture( LuxSprite * sprite, std::string sprite_filename )
 {
 	if ( sprite->data )
 		return false;
@@ -465,7 +465,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_LoadTexture( LuxSprite * sprite, std::
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> * children)
+ bool LuxGraphics_NDS_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> * children)
 {
 	std::string filename;
 	std::map<uint32_t, LuxSprite *>::iterator p;
@@ -486,7 +486,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_LoadSpriteSheet(std::string name, std:
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
+ bool LuxGraphics_NDS_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
 {
 	if ( !image  )
 	{
@@ -523,7 +523,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_LoadSpriteSheetImage( elix::Image * im
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children)
+ bool LuxGraphics_NDS_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children)
 {
 	std::map<uint32_t, LuxSprite *>::iterator p;
 	for( p = children->begin(); p != children->end(); p++ )
@@ -539,7 +539,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_FreeSpriteSheet( std::map<uint32_t, Lu
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
+ bool LuxGraphics_NDS_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	if ( LuxGraphics_NDS_FreeSpriteSheet( children ) )
 		LuxGraphics_NDS_LoadSpriteSheet( name, children );
@@ -547,7 +547,7 @@ LUX_DISPLAY_FUNCTION bool LuxGraphics_NDS_RefreshSpriteSheet( std::string name, 
 }
 
 
-LUX_DISPLAY_FUNCTION LuxSprite * LuxGraphics_NDS_PNGtoSprite( uint8_t * data, uint32_t size )
+ LuxSprite * LuxGraphics_NDS_PNGtoSprite( uint8_t * data, uint32_t size )
 {
 	LuxSprite * sprite = NULL;
 	elix::Image * src = new elix::Image(data, size);
@@ -597,7 +597,7 @@ LUX_DISPLAY_FUNCTION LuxSprite * LuxGraphics_NDS_PNGtoSprite( uint8_t * data, ui
 
 
 
-LUX_DISPLAY_FUNCTION void LuxGraphics_NDS_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
+ void LuxGraphics_NDS_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
 {
 	int16_t z = dest_rect.z/1000;
 	if ( !sprite->data )

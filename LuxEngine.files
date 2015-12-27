@@ -544,3 +544,5 @@ src/libs/elix/elix_directory_android.cpp
 src/libs/elix/elix_directory_windows.cpp
 src/display/reusable_graphics_system.hpp
 src/display/reusable_graphics_system.cpp
+include/bitfont.h
+include/get_cpu_time.hpp

@@ -120,6 +120,8 @@ class MapObject
 
 
 
+		uint32_t PeekAnimationTimer(LuxSprite *sprite);
+		LuxSprite *GetAnimation();
 private:
 		void InitialSetup();
 

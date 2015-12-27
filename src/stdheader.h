@@ -48,6 +48,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <string>
 #include <cstring>
 #include <cstdarg>
+#include <ctime>
 #include "libs/elix/elix_intdef.h"
 
 typedef intptr_t native_type;
@@ -58,9 +59,13 @@ typedef uint32_t int_hash;
 
 #include "libs/elix/elix_file.hpp"
 
+#define TIMER_START(function) static uint8_t timer = __COUNTER__; uint64_t start_time = get_cpu_time();
+#define TIMER_END(function) lux::core->RecordFunctionTimer(timer, function, (get_cpu_time() - start_time));
 
 #define NULLIFY(x) if (x != NULL) { delete(x); x = NULL; }
 #define NULLIFY_ARRAY(x) if (x != NULL) { delete [] x; x = NULL; }
+
+#define IS_BIT_SET(value, bit) (value) & ((1<<(bit)))
 
 #define FRACT_BITS 1000
 
@@ -77,5 +82,5 @@ inline int32_t clamp(int32_t x, int32_t a, int32_t b)
 {
 	return (x < a ? a : (x > b ? b : x));
 }
-
+#include "get_cpu_time.hpp"
 #endif

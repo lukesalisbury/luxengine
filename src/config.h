@@ -27,11 +27,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 		private:
 			std::map<std::string, std::string> values;
 			std::list<std::string> modified_values;
-			std::string platform;
+
 			char spliter;
 			bool watch_modified;
 
 		public:
+			std::string platform;
+
 			void Set( std::string key, std::string value );
 			void MarkModified(std::string key);
 

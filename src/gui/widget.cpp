@@ -126,7 +126,7 @@ void Widget::Generate( CSSParser * style )
 		case BUTTON:
 		{
 			this->GenerateBox(style);
-			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 2, 2, 0, 0 );
+			this->text_object = this->InsertWidgetObject( OBJECT_TEXT, 2, 6, 0, 0 );
 
 			this->GenerateColours(style, this->text_object, false);
 

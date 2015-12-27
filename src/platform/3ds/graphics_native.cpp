@@ -42,6 +42,8 @@ struct NativeTexture {
 
 gfxScreen_t current_screen;
 
+uint32_t native_screen_assignment = 0xC0000040; // 1100 0000 0000 0000 0000 0000 0100 0000
+
 GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_Init,
 	&Lux_NATIVE_Destory,
@@ -126,7 +128,7 @@ void Lux_NATIVE_SetFrame(LuxRect & rect, bool line)
  * @param actual_height
  * @return
  */
-bool Lux_NATIVE_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
+bool Lux_NATIVE_Init(LuxRect screen_dimension, LuxRect *display_dimension )
 {
 	if ( actual_width )
 		*actual_width = 400;
@@ -182,7 +184,16 @@ void Lux_NATIVE_BackgroundObject( MapObject background )
 */
 void Lux_NATIVE_PreShow( uint8_t screen )
 {
-	sf2d_start_frame( ( !screen ) ? GFX_TOP : GFX_BOTTOM, GFX_LEFT);
+	if ( screen < 32 )
+	{
+		gfxScreen_t next_screen = IS_BIT_SET(native_screen_assignment, screen) ?  GFX_BOTTOM : GFX_TOP;
+		if ( current_screen != next_screen )
+		{
+			sf2d_start_frame( next_screen, GFX_LEFT);
+		}
+		current_screen = next_screen;
+	}
+
 }
 
 /**
@@ -199,9 +210,20 @@ void Lux_NATIVE_Update( uint8_t screen, LuxRect rect)
  */
 void Lux_NATIVE_Show( uint8_t screen )
 {
-	sf2d_end_frame();
-	if ( screen == 0)
+	if ( screen > 30 )
+	{
 		sf2d_swapbuffers();
+	}
+	else
+	{
+
+		gfxScreen_t next_screen = IS_BIT_SET(native_screen_assignment, screen+1) ?  GFX_BOTTOM : GFX_TOP;
+		if ( current_screen != next_screen )
+		{
+			sf2d_end_frame();
+		}
+	}
+
 
 }
 

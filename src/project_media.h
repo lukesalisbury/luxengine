@@ -8,56 +8,18 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#include "engine.h"
-#include "portal/portal.h"
-#include "core.h"
-#include "config.h"
 
-std::string project_file = "/mokoi/examples/Input/game.mokoi";
 
-extern "C" int main( int argc, char *argv[] )
-{
-	LuxPortal::use = false;
-	std::string base_executable = (argc ? argv[0] : "/mokoi/luxengine" );
-	lux::engine = new LuxEngine( base_executable );
-	LuxPortal::open();
-	if ( LuxPortal::use )
-	{
-		while ( LuxPortal::active )
-		{
-			if ( LuxPortal::run() )
-			{
-				GameInfoValues selected_game = LuxPortal::get_selected();
+namespace lux_media {
+	extern uint32_t portal_title_size;
+	extern uint16_t portal_title_width;
+	extern uint16_t portal_title_height;
+	extern uint8_t portal_title[];
 
-				if ( selected_game.type == GI_FILE  )
-				{
-					if ( lux::engine->Start(selected_game.url) )
-					{
-						lux::engine->Loop();
-					}
-					lux::engine->Close();
-				}
-			}
-		}
-	}
-	else
-	{
-		if ( lux::engine->Start(project_file) )
-		{
-			lux::engine->Loop();
-		}
-		lux::engine->Close();
-	}
-	LuxPortal::close();
-	delete lux::engine;
-	
+	extern uint16_t testimage_width;
+	extern uint16_t testimage_height;
+	extern uint32_t testimage_size;
+	extern uint8_t testimage[];
 
-	return 0;
 }
-
-
-
-
-
-
 

@@ -45,9 +45,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 			uint32_t GetTime();
 			uint32_t GetFrameDelta();
 
-			uint32_t GetAnimationDelta() { return this->animation_ms; }
-			uint32_t GetInternalDelta() { return this->internal_ms; }
-
 			bool DelayIf(uint32_t diff = 5);
 
 			void Idle();

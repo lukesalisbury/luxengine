@@ -23,18 +23,25 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "elix/elix_png.hpp"
 #include "lux_polygon.h"
 
+
+#define GRAPHICS_SCREEN_FRAME  0xff
+#define GRAPHICS_SCREEN_GUI  30
+#define GRAPHICS_SCREEN_MESSAGE  31
+
+
+
 extern ObjectEffect default_fx;
 
 
 typedef struct {
 	/* Plugin Graphics */
-	bool (* InitGraphics) ( uint16_t requested_width, uint16_t requested_height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height);
+	bool (* InitGraphics) ( LuxRect * screen_dimension, LuxRect * display_dimension );
 	void (* DestoryGraphics) ();
 	void (* Display2Screen) ( int32_t * x, int32_t * y);
 	void (* TextSprites) ( bool able );
 	void (* PreShow) (  uint8_t screen );
 	void (* UpdateRect) (  uint8_t screen, LuxRect rect );
-	void (* Show) ( uint8_t screen );
+	void (* PostShow) ( uint8_t screen );
 	void (* SetRotation) ( int16_t roll, int16_t pitch, int16_t yaw );
 	void (* SetBackground) ( MapObject background );
 	bool (* SetFullscreen) ( bool able );

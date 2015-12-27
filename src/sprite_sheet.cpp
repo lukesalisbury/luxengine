@@ -356,6 +356,10 @@ bool LuxSheet::Unref()
 
 bool LuxSheet::Load()
 {
+	if ( !this->name.length() )
+	{
+		int q =0;
+	}
 	if ( !this->loaded || !this->failed )
 	{
 		if ( !this->parsed )
@@ -404,6 +408,10 @@ bool LuxSheet::Refresh(GraphicSystem graphics)
 
 bool LuxSheet::Unload()
 {
+	if ( !this->name.length() )
+	{
+		int q =0;
+	}
 	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Freeing sheet '" << this->name << "' (" << this->requested << ")" << std::endl;
 	this->graphics.FreeSpriteSheet( &this->children );
 	this->loaded = false;

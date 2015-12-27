@@ -134,39 +134,58 @@ void opengl_graphic_create_fbotexture( Texture & fbo )
  @ fullscreen:
  - Returns true if successfull
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
+bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
 {
-	int window_width = width;
-	int window_height = height;
-
 	#if DISPLAYMODE_NATIVE
 	if ( lux::config->GetString("display.mode") != "OpenGL" )
 		return false;
 	#endif
 
-	/* Set Init Flags */
-	native_window_flags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL;
+	int window_width, window_height, width, height;
 
-	if ( lux::config->GetBoolean("display.fullscreen") )
-		native_window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-
-	native_render_flags = SDL_RENDERER_ACCELERATED;
-	native_window_title = lux::config->GetString("window.title") + " [NativeOpenGL]";
-	//native_screen_match = lux::config->GetBoolean("screen.matchdisplay");
-
-	if ( width > height )
+	if ( display_dimension != NULL )
 	{
-		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "LandscapeLeft", SDL_HINT_OVERRIDE );
+		window_width = display_dimension->w;
+		window_height = display_dimension->h;
+		width = screen_dimension->w;
+		height = screen_dimension->h;
+	}
+	else if ( screen_dimension != NULL )
+	{
+		SDL_DisplayMode dm;
+		if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
+			return false;
+		}
+		window_width = width = dm.w;
+		window_height = height = dm.h;
 	}
 	else
 	{
-		SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
+		window_width = width = screen_dimension->w;
+		window_height = height = screen_dimension->h;
 	}
+
+	/* Set Init Flags */
+	native_window_flags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
+
+	if ( lux::config->GetBoolean("display.fullscreen") )
+		native_window_flags |= SDL_WINDOW_FULLSCREEN;
+
+	native_render_flags = SDL_RENDERER_ACCELERATED;
+
+	SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, ( window_width > window_height  ? "LandscapeLeft" : "Portrait"), SDL_HINT_OVERRIDE );
+	SDL_SetHintWithPriority( SDL_HINT_ORIENTATIONS, "Portrait", SDL_HINT_OVERRIDE );
+	SDL_SetHintWithPriority( SDL_HINT_RENDER_VSYNC, "0", SDL_HINT_OVERRIDE );
 
 	native_window = lux::core->GetWindow();
 
-	SDL_SetWindowSize( native_window, width, height );
-	SDL_GetWindowSize( native_window, &window_width, &window_height );
+	SDL_SetWindowSize(native_window, window_width, window_height );
+	if ( display_dimension != NULL )
+	{
+		SDL_GetWindowSize(native_window, &window_width, &window_height);
+		display_dimension->w = window_width;
+		display_dimension->h = window_height;
+	}
 
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
 	SDL_SetHintWithPriority( SDL_HINT_RENDER_DRIVER, "opengl", SDL_HINT_OVERRIDE );
@@ -192,10 +211,11 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_
 	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << ( SDL_GL_ExtensionSupported((char *)"GL_EXT_framebuffer_object") ? " FBO" : "") << std::endl;
 
 
-	native_graphics_dimension.w = width;
-	native_graphics_dimension.h = height;
-	opengl_graphic_ratio = (float)height / (float)width;
-
+	native_graphics_dimension.w = screen_dimension->w;
+	native_graphics_dimension.h = screen_dimension->h;
+/*
+	opengl_graphic_ratio = (float)display_dimension / (float)screen_dimension;
+*/
 	Lux_OGL_Resize( window_width, window_height );
 
 	gles::setOrtho( 0.0f, (float)native_graphics_dimension.w, (float)native_graphics_dimension.h, 0.0f, -10.0f, 10.0f );
@@ -264,7 +284,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_
 /* Lux_OGL_Destory
  * Closes down the video mode.
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
+ void Lux_OGL_Destory()
 {
 	Lux_GLES_UnloadFont();
 	SDL_GL_DeleteContext(native_context);
@@ -283,7 +303,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Destory()
  * Adds an area of the screen that needs to be updated.
  @ rect: area to updates
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Update( uint8_t screen, LuxRect rect)
+ void Lux_OGL_Update( uint8_t screen, LuxRect rect)
 {
 
 }
@@ -291,13 +311,11 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Update( uint8_t screen, LuxRect rect)
 /* Lux_OGL_Show
  * Refreshs the display
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Show( uint8_t screen )
+ void Lux_OGL_Show( uint8_t screen )
 {
-
 	if (!screen)
 	{
 		glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
-
 
 		SDL_GL_MakeCurrent(native_window, native_context);
 		SDL_GL_SwapWindow(native_window);
@@ -315,7 +333,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Show( uint8_t screen )
  @ x:
  @ y:
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_Display2Screen( int32_t * x, int32_t * y)
+ void Lux_OGL_Display2Screen( int32_t * x, int32_t * y)
 {
 	*x = (int32_t)((float)*x * opengl_graphic_ratio_width);
 	*y = (int32_t)((float)*y * opengl_graphic_ratio_height);
@@ -326,7 +344,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_Display2Screen( int32_t * x, int32_t * y)
  @ width:
  @ height:
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t window_width, uint16_t window_height)
+ bool Lux_OGL_Resize( uint16_t window_width, uint16_t window_height)
 {
 	native_screen_position.w = window_width;
 	native_screen_position.h = window_height;
@@ -391,7 +409,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_Resize( uint16_t window_width, uint16_t window
  @ width:
  @ height:
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_SetFullscreen( bool able )
+ bool Lux_OGL_SetFullscreen( bool able )
 {
 
 	SDL_SetWindowFullscreen( native_window, ( able ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0 ) );
@@ -404,7 +422,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_SetFullscreen( bool able )
  * Set the background objects
  @ background:
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_BackgroundObject( MapObject background  )
+ void Lux_OGL_BackgroundObject( MapObject background  )
 {
 	gles_graphics_colour = background.effects.primary_colour;
 	glClearColor((float)gles_graphics_colour.r / 255.0f, (float)gles_graphics_colour.g / 255.0f, (float)gles_graphics_colour.b / 255.0f, 1.0f);
@@ -414,7 +432,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_BackgroundObject( MapObject background  )
 /* Lux_OGL_DisplayPointer
  *
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
+ void Lux_OGL_DisplayPointer( uint8_t player, int16_t x, int16_t y, ObjectEffect effect )
 {
 	LuxRect position;
 
@@ -432,7 +450,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_DisplayPointer( uint8_t player, int16_t x, int
  @ sprite:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_FreeSprite( LuxSprite * sprite )
+ bool Lux_OGL_FreeSprite( LuxSprite * sprite )
 {
 	if ( sprite == NULL )
 		return false;
@@ -453,7 +471,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_FreeSprite( LuxSprite * sprite )
  @ parent:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
+ bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * png )
 {
 	if ( !png->HasContent() )
 	{
@@ -510,7 +528,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CreateSprite( LuxSprite * sprite, LuxRect rect
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	bool results = false;
 
@@ -552,7 +570,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<ui
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
+ bool Lux_OGL_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children)
 {
 	if ( !image  )
 	{
@@ -589,7 +607,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_LoadSpriteSheetImage( elix::Image * image, std
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_OGL_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children )
 {
 	std::map<uint32_t, LuxSprite *>::iterator p;
 	for( p = children->begin(); p != children->end(); p++ )
@@ -608,7 +626,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_FreeSpriteSheet( std::map<uint32_t, LuxSprite 
  @ children:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
+ bool Lux_OGL_RefreshSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	if ( Lux_OGL_FreeSpriteSheet( children ) )
 		Lux_OGL_LoadSpriteSheet( name, children );
@@ -621,7 +639,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_RefreshSpriteSheet( std::string name, std::map
  @ size:
  -
  */
-LUX_DISPLAY_FUNCTION LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
+ LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
 {
 	LuxSprite * sprite = NULL;
 	elix::Image * png = new elix::Image(data, size);
@@ -648,7 +666,7 @@ LUX_DISPLAY_FUNCTION LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t s
  @ yaw:
  -
  */
-LUX_DISPLAY_FUNCTION void Lux_OGL_SetRotation( int16_t roll, int16_t pitch, int16_t yaw )
+ void Lux_OGL_SetRotation( int16_t roll, int16_t pitch, int16_t yaw )
 {
 
 }
@@ -658,7 +676,7 @@ LUX_DISPLAY_FUNCTION void Lux_OGL_SetRotation( int16_t roll, int16_t pitch, int1
  @ layer:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
+ bool Lux_OGL_CacheDisplay( uint8_t layer )
 {
 	if ( fbo_supported )
 	{
@@ -689,7 +707,7 @@ LUX_DISPLAY_FUNCTION bool Lux_OGL_CacheDisplay( uint8_t layer )
  @ shader:
  -
  */
-LUX_DISPLAY_FUNCTION bool Lux_OGL_DrawCacheDisplay( uint8_t layer, uint8_t shader )
+ bool Lux_OGL_DrawCacheDisplay( uint8_t layer, uint8_t shader )
 {
 	if ( fbo_supported )
 	{

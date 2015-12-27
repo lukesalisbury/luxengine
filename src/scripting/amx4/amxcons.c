@@ -351,7 +351,8 @@ static int dochar(AMX *amx,TCHAR ch,cell param,TCHAR sign,TCHAR decpoint,int wid
 	info.f_putchar=f_putchar;
 	info.user=user;
 	cptr=amx_Address(amx,param);
-	amx_printstring(amx,cptr,&info);
+	if (cptr)
+		amx_printstring(amx,cptr,&info);
 	return 1;
   } /* case */
 

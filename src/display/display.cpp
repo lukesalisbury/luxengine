@@ -37,24 +37,21 @@ DisplaySystem::DisplaySystem()
 	this->Init();
 
 	#if DISPLAYMODE_OPENGL
-	if ( GraphicsOpenGL.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, &this->screen_dimension.w, &this->screen_dimension.h ) )
+	if ( GraphicsOpenGL.InitGraphics( &this->screen_dimension, &this->display_dimension ) )
 	{
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
 	}
 	#endif
-
 	if ( !is_display_setup )
 	{
-		if ( GraphicsNative.InitGraphics( this->screen_dimension.w, this->screen_dimension.h, this->bpp, &this->screen_dimension.w, &this->screen_dimension.h ) )
+		if ( GraphicsNative.InitGraphics( &this->screen_dimension, &this->display_dimension ) )
 		{
 			this->graphics = GraphicsNative;
 			is_display_setup = true;
 		}
 	}
 
-	this->display_dimension = this->screen_dimension;
-	this->display_dimension.h *= 2; // Temp hack for 3DS
 	if ( !is_display_setup )
 	{
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << "Graphic System Failed" << std::endl;
@@ -72,17 +69,19 @@ DisplaySystem::DisplaySystem()
  * @param height
  * @param bpp
  */
-DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp  )
+DisplaySystem::DisplaySystem( uint16_t width, uint16_t height  )
 {
 	bool is_display_setup = false;
 
 	this->InitialSetup();
 	this->Init();
 
-	this->bpp = bpp;
-
+	this->screen_dimension.w = width;
+	this->screen_dimension.h = height;
+	this->display_dimension.w = 0;
+	this->display_dimension.h = 0;
 	#if DISPLAYMODE_OPENGL
-	if ( GraphicsOpenGL.InitGraphics( width, height, this->bpp, &this->screen_dimension.w, &this->screen_dimension.h ) )
+	if ( GraphicsOpenGL.InitGraphics( &this->screen_dimension, &this->display_dimension ) )
 	{
 		this->graphics = GraphicsOpenGL;
 		is_display_setup = true;
@@ -90,14 +89,13 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp  )
 	#endif
 	if ( !is_display_setup )
 	{
-		if ( GraphicsNative.InitGraphics( width, height, this->bpp, &this->screen_dimension.w, &this->screen_dimension.h ) )
+		if ( GraphicsNative.InitGraphics( &this->screen_dimension, &this->display_dimension ) )
 		{
 			this->graphics = GraphicsNative;
 			is_display_setup = true;
 		}
 	}
-	this->display_dimension = this->screen_dimension;
-	this->display_dimension.h *= 2; // Temp hack for 3DS
+
 	if ( !is_display_setup )
 	{
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << "Graphic System Failed" << std::endl;
@@ -113,7 +111,7 @@ DisplaySystem::DisplaySystem( uint16_t width, uint16_t height, uint8_t bpp  )
  */
 DisplaySystem::~DisplaySystem()
 {
-	delete this->overlay_layer;
+	NULLIFY(this->overlay_layer);
 
 	lux::engine->media.Free();
 	this->Close();
@@ -139,7 +137,7 @@ void DisplaySystem::InitialSetup()
 
 	this->graphics = GraphicsNone;
 	this->overlay_layer = new Layer(this, 7, true);
-
+	this->graphics.TextSprites( false );
 }
 
 /**
@@ -148,12 +146,15 @@ void DisplaySystem::InitialSetup()
  */
 bool DisplaySystem::Init()
 {
-	this->graphics.TextSprites( false );
+
 
 	if ( lux::config )
 	{
 		this->screen_dimension.w = lux::config->GetNumber("screen.width");
 		this->screen_dimension.h = lux::config->GetNumber("screen.height");
+		this->display_dimension.w = lux::config->GetNumber("display.width");
+		this->display_dimension.h = lux::config->GetNumber("display.height");
+
 		this->bpp = (uint8_t)lux::config->GetNumber("display.bpp") * 8;
 		this->fullscreen = lux::config->GetBoolean("display.fullscreen");
 		this->sprite_quick_access = lux::config->GetBoolean("sprite.shortname");
@@ -165,13 +166,12 @@ bool DisplaySystem::Init()
 	}
 
 	/* Create Layers */
+	this->show_layers = 0x7f;
+
 	for (uint8_t i = 0; i < 7; i++)
 	{
 		std::string layername = "layer.static";
 		layername.append( 1, i + 48 );
-
-		this->show_layers[i] = true;
-
 		this->_layers.push_back( new Layer( this, i, lux::config->GetBoolean(layername) ) );
 	}
 
@@ -197,7 +197,10 @@ bool DisplaySystem::Init()
 	}
 	return true;
 }
-
+/**
+ * @brief DisplaySystem::Draw
+ * @param current_layer
+ */
 void DisplaySystem::Draw(Layer * current_layer)
 {
 	if ( current_layer->shader )
@@ -226,22 +229,24 @@ void DisplaySystem::Draw(Layer * current_layer)
  */
 void DisplaySystem::Display( LuxState engine_state )
 {
-	this->graphics.PreShow(0);
-	int i = 0;
+
+	uint8_t i = 0;
 	std::vector<Layer *>::iterator p;
 	for ( p = this->_layers.begin(); p != this->_layers.end(); p++ )
 	{
+		this->graphics.PreShow(i);
 		Layer * current_layer = (*p);
-		if ( this->show_layers[i] )
+		if ( IS_BIT_SET(this->show_layers, i) )
 		{
 			this->Draw(current_layer);
 		}
 		if ( engine_state == RUNNING )
 			current_layer->RemoveDynamicObject();
+
+		this->graphics.PostShow(i);
+
 		i++;
 	}
-	this->DisplayOverlay();
-	this->graphics.Show(0);
 }
 
 /**
@@ -250,8 +255,11 @@ void DisplaySystem::Display( LuxState engine_state )
  */
 void DisplaySystem::Loop(LuxState engine_state)
 {
+	this->graphics.PreShow(GRAPHICS_SCREEN_FRAME);
 	this->Display(engine_state);
-	this->ShowMessages();
+	this->DisplayOverlay();
+	this->DisplayMessage();
+	this->graphics.PostShow(GRAPHICS_SCREEN_FRAME);
 }
 
 
@@ -260,6 +268,7 @@ void DisplaySystem::Loop(LuxState engine_state)
  */
 void DisplaySystem::DisplayOverlay()
 {
+	this->graphics.PreShow(GRAPHICS_SCREEN_GUI);
 	if ( this->overlay_layer )
 	{
 		this->overlay_layer->Display();
@@ -274,7 +283,7 @@ void DisplaySystem::DisplayOverlay()
 	{
 		lux::game_system->active_map->DrawMask();
 	}
-
+	this->graphics.PostShow(GRAPHICS_SCREEN_GUI);
 }
 
 /**
@@ -283,6 +292,7 @@ void DisplaySystem::DisplayOverlay()
  */
 bool DisplaySystem::Close()
 {
+	/* Clear Layer */
 	this->ClearLayers(false);
 
 	while ( this->_layers.begin() != this->_layers.end())
@@ -292,6 +302,7 @@ bool DisplaySystem::Close()
 	}
 	this->_layers.clear();
 
+	/* Clear Spritesheet */
 	if ( this->_sheets.size() )
 	{
 		for ( LuxSheetIter iter_sheet = this->_sheets.begin(); iter_sheet != this->_sheets.end(); iter_sheet++ )
@@ -331,21 +342,25 @@ void DisplaySystem::DrawCursor()
 /**
  * @brief DisplaySystem::ShowMessages
  */
-void DisplaySystem::ShowMessages()
+void DisplaySystem::DisplayMessage()
 {
 
 	if ( this->show_debug )
 	{
-		this->graphics.PreShow(1);
+		this->graphics.PreShow(GRAPHICS_SCREEN_MESSAGE);
 		this->graphics.DrawMessage( this->dynamic_text.str(), 0 );
 		lux::game_system->OutputInformation();
+		lux::core->OutputInformation();
 		this->graphics.DrawMessage( this->static_text.str(), 3 );
-		this->graphics.Show(1);
+		this->graphics.PostShow(GRAPHICS_SCREEN_MESSAGE);
 
-		size_t n = std::count(this->static_text.str().begin(), this->static_text.str().end(), '\n');
-		if ( n > 10 )
-			this->static_text.str("");
-
+		std::string static_text =  this->static_text.str();
+		if ( static_text.length() )
+		{
+			size_t n = std::count(static_text.begin(), static_text.end(), '\n');
+			if ( n > 10 )
+				this->static_text.str("");
+		}
 	}
 
 	this->dynamic_text.str("");
@@ -354,20 +369,30 @@ void DisplaySystem::ShowMessages()
 /**
  * @brief DisplaySystem::UpdateResolution
  */
-void DisplaySystem::UpdateResolution() {}
+void DisplaySystem::UpdateResolution()
+{
+
+}
 
 
 
 
-
+/**
+ * @brief DisplaySystem::SetTextFont
+ * @param enable
+ * @param font_sheet
+ */
 void DisplaySystem::SetTextFont(bool enable, std::string font_sheet )
 {
 	if ( this->sprite_font.length() )
 	{
 		this->UnrefSheet(lux::display->sprite_font);
 	}
-	this->RefSheet( font_sheet );
 
+	if ( font_sheet.length() )
+	{
+		this->RefSheet( font_sheet );
+	}
 	this->sprite_font = font_sheet;
 
 	this->graphics.TextSprites( enable );
@@ -414,6 +439,10 @@ LuxSheet * DisplaySystem::GetSheet( std::string name )
 
 void DisplaySystem::LoadSheet( std::string name, bool preload )
 {
+	if ( !name.length() )
+	{
+		int q =0;
+	}
 	LuxSheet * sheet = this->GetSheet( name );
 	if ( sheet )
 	{
@@ -442,6 +471,10 @@ void DisplaySystem::RefSheet(std::string name)
 
 }
 
+/**
+ * @brief DisplaySystem::UnrefSheet
+ * @param name
+ */
 void DisplaySystem::UnrefSheet(std::string name)
 {
 	LuxSheetIter iter_sheet = this->_sheets.find(name);
@@ -619,7 +652,12 @@ void DisplaySystem::DrawMapObjectBorder( uint8_t position, SpriteBorder sprite_b
 	this->graphics.DrawSprite( sprite_border.sprite, rect, new_effects );
 }
 
-
+/**
+ * @brief DisplaySystem::DrawMapObject
+ * @param object
+ * @param new_position
+ * @param new_effects
+ */
 void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, ObjectEffect new_effects )
 {
 	if ( !object )
@@ -631,6 +669,7 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 	{
 		case OBJECT_SPRITE:
 		{
+			TIMER_START("DrawSprite");
 			LuxSprite * sprite = object->GetCurrentSprite();
 			if ( sprite )
 			{
@@ -644,19 +683,30 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 					{
 						if ( sprite->border[p].sprite )
 						{
+
 							this->DrawMapObjectBorder( p, sprite->border[p], new_position, new_effects );
+
 						}
 					}
 				}
 			}
+			TIMER_END("DrawSprite");
 			break;
 		}
 		case OBJECT_RECTANGLE:
+		{
+			TIMER_START("DrawRect");
 			this->graphics.DrawRect(new_position, new_effects);
+			TIMER_END("DrawRect");
 			break;
+		}
 		case OBJECT_CIRCLE:
+		{
+			TIMER_START("DrawCircle");
 			this->graphics.DrawCircle(new_position, new_effects);
+			TIMER_END("DrawCircle");
 			break;
+		}
 		case OBJECT_CANVAS:
 		{
 			LuxCanvas * canvas = object->GetCanvas();
@@ -666,28 +716,35 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 		}
 		case OBJECT_POLYGON:
 		{
+			TIMER_START("DrawPolygon");
 			LuxPolygon * poly = object->GetPolygon();
 			if ( poly )
 				this->graphics.DrawPolygon(poly->x, poly->y, poly->count, new_position, new_effects, poly->texture);
+			TIMER_END("DrawPolygon");
 			break;
 		}
 		case OBJECT_LINE:
+		{
+			TIMER_START("DrawLine");
 			this->graphics.DrawLine(new_position, new_effects);
+			TIMER_END("DrawLine");
 			break;
+		}
 		case OBJECT_TEXT:
+		{
+			TIMER_START("DrawText");
 			this->graphics.DrawText(object->sprite, new_position, new_effects, true);
+			TIMER_END("DrawText");
 			break;
+		}
 		default:
 			break;
 	}
 
-	if ( this->show_spriteinfo )
-	{
-		this->graphics.DrawText( object->GetInfo(), new_position, default_fx, false );
-	}
+
 	if ( this->show_collisions )
 	{
-
+		TIMER_START("DrawCollisions");
 		if ( object->_path.size() )
 		{
 			LuxPath points = { 0, 0, 0 };
@@ -701,10 +758,19 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 				this->graphics.DrawRect(new_position, new_effects);
 			}
 		}
+		TIMER_END("DrawCollisions");
 	}
 
 }
 
+/**
+ * @brief DisplaySystem::GetInputSprite
+ * @param player_id
+ * @param axis
+ * @param key
+ * @param pointer
+ * @return
+ */
 LuxSprite * DisplaySystem::GetInputSprite(uint32_t player_id, int8_t axis, int8_t key, int8_t pointer )
 {
 	if ( !lux::engine )
@@ -723,6 +789,11 @@ LuxSprite * DisplaySystem::GetInputSprite(uint32_t player_id, int8_t axis, int8_
 
 
 /* Layer System */
+/**
+ * @brief DisplaySystem::GetLayer
+ * @param layer
+ * @return
+ */
 Layer * DisplaySystem::GetLayer( uint32_t layer )
 {
 	Layer * requested_layer = NULL;
@@ -736,6 +807,11 @@ Layer * DisplaySystem::GetLayer( uint32_t layer )
 	return requested_layer;
 }
 
+/**
+ * @brief DisplaySystem::AddObjects
+ * @param objects
+ * @return
+ */
 bool DisplaySystem::AddObjects(std::list<MapObject*> * objects)
 {
 	std::list<MapObject*>::iterator object;
@@ -746,7 +822,15 @@ bool DisplaySystem::AddObjects(std::list<MapObject*> * objects)
 	}
 	return false;
 }
+
 Layer * last_layer = NULL;
+/**
+ * @brief DisplaySystem::AddObjectToLayer
+ * @param layer
+ * @param new_object
+ * @param static_objects
+ * @return
+ */
 bool DisplaySystem::AddObjectToLayer(uint32_t layer, MapObject * new_object, bool static_objects)
 {
 	if ( layer == 0xFFFFFFFF )
@@ -766,6 +850,12 @@ bool DisplaySystem::AddObjectToLayer(uint32_t layer, MapObject * new_object, boo
 	return false;
 }
 
+/**
+ * @brief DisplaySystem::RemoveObject
+ * @param layer
+ * @param new_object
+ * @return
+ */
 bool DisplaySystem::RemoveObject(uint32_t layer, MapObject * new_object)
 {
 	if ( layer < this->_layers.size() )

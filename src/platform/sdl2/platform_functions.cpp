@@ -29,6 +29,74 @@ DisplayBitFont * debug_font = NULL;
 void SDL2_OuputRenderingInfo( SDL_RendererInfo * info );
 
 /**
+ * @brief SDL2_AcceratedRendering
+ * @return
+ */
+int32_t SDL2_AcceratedRendering()
+{
+	int32_t n = SDL_GetNumRenderDrivers();
+	int32_t c = 0;
+	SDL_RendererInfo info;
+
+	if ( n > 0 )
+	{
+		while (c < n)
+		{
+			if ( !SDL_GetRenderDriverInfo( c, &info) )
+			{
+				if (info.flags & SDL_RENDERER_ACCELERATED);
+					return c;
+			}
+			c++;
+		}
+
+	}
+	return -1;
+}
+
+
+/**
+ * @brief SDL2_OuputRenderingInfo
+ * @param info
+ */
+void SDL2_OuputRenderingInfo( SDL_RendererInfo * info )
+{
+	std::cout << "Driver:" << info->name << " - ";
+	std::cout << (info->flags & SDL_RENDERER_ACCELERATED ? "SDL_RENDERER_ACCELERATED" :"");
+	std::cout << (info->flags & SDL_RENDERER_SOFTWARE ? " SDL_RENDERER_SOFTWARE" :"");
+	std::cout << " [" << info->max_texture_width << "x" << info->max_texture_width << "]" << std::endl;
+
+
+}
+
+/**
+ * @brief SDL2_SystemInfo
+ */
+void SDL2_SystemInfo()
+{
+	int n = SDL_GetNumRenderDrivers();
+	int c = 0;
+	SDL_RendererInfo info;
+
+	if ( n > 0 )
+	{
+		while (c < n)
+		{
+			if ( !SDL_GetRenderDriverInfo( c, &info) )
+			{
+				SDL2_OuputRenderingInfo( &info );
+			}
+			c++;
+		}
+
+	}
+
+	std::cout << "CPU: " << SDL_GetCPUCount() << std::endl;
+	std::cout << "System RAM " << SDL_GetSystemRAM() << "MB" << std::endl;
+
+}
+
+/**
  * @brief Creates a new window to display messages.
  */
 void Lux_SDL2_OpenMessageWindow(  )
@@ -204,9 +272,11 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 void Lux_SDL2_PresentMessageWindow()
 {
 	//SDL_GL_MakeCurrent(native_window, native_context);
-
-	SDL_RenderPresent(debug_renderer);
-	SDL_RenderClear(debug_renderer);
+	if ( debug_renderer )
+	{
+		SDL_RenderPresent(debug_renderer);
+		SDL_RenderClear(debug_renderer);
+	}
 }
 
 
