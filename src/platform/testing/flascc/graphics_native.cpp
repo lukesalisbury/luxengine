@@ -44,7 +44,7 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_LoadSpriteSheet,
 	&Lux_NATIVE_LoadSpriteSheetImage,
 	&Lux_NATIVE_FreeSpriteSheet,
-	NULL,
+	nullptr,
 	&Lux_NATIVE_FreeSprite,
 	&Lux_NATIVE_PNGtoSprite,
 
@@ -78,23 +78,23 @@ float sdlgraphics_ratio[2] = {1.0, 1.0};
 int32_t sdlgraphics_scale = 0;
 
 int sdlgraphics_dirtycount = 0;
-SDL_Surface * sdlgraphics_screen = NULL;
-SDL_Surface * sdlgraphics_realscreen = NULL;
+SDL_Surface * sdlgraphics_screen = nullptr;
+SDL_Surface * sdlgraphics_realscreen = nullptr;
 std::string sdlgraphics_title;
 uint32_t sdlgraphics_fps = 0, sdlgraphics_fpstime = 0;
 bool sdlgraphics_customtext = false;
 int32_t sdlgraphics_customtext_height = 32;
 
-LuxPolygon * sdlgraphics_cursor = NULL;
+LuxPolygon * sdlgraphics_cursor = nullptr;
 
 /* Local Functions */
 
 // Loaded a file from the game file.
 SDL_Surface * SDL_Surface_LoadImage( std::string file )
 {
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
-	SDL_Surface * temp_surface = NULL;
+	SDL_Surface * temp_surface = nullptr;
 	if ( lux::game )
 	{
 		size = lux::game->GetFile(file, &data, false);
@@ -113,7 +113,7 @@ SDL_Surface * SDL_Surface_LoadImage( std::string file )
 
 // Switches 'sdlgraphics_screen' value
 // Can be use to redirect drawing functions to another SDL_Surface
-// Passing NULL will set back to the default.
+// Passing nullptr will set back to the default.
 bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 {
 	if ( output )
@@ -164,7 +164,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_UpdateRect(uint8_t screen,LuxRect rect)
 
 uint32_t GetPixel(SDL_Surface *surface, uint32_t x, uint32_t y)
 {
-	if ( surface == NULL )
+	if ( surface == nullptr )
 		return 0;
 
 	if ( x > surface->w || y > surface->h )
@@ -248,7 +248,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DisplayPointer( uint8_t player, int16_t x, 
 	position.x = x;
 	position.y = y;
 
-	Lux_NATIVE_DrawPolygon(sdlgraphics_cursor->x, sdlgraphics_cursor->y, sdlgraphics_cursor->count, position, effect, NULL);
+	Lux_NATIVE_DrawPolygon(sdlgraphics_cursor->x, sdlgraphics_cursor->y, sdlgraphics_cursor->count, position, effect, nullptr);
 
 }
 
@@ -305,7 +305,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_TextSprites( bool able )
  */
 LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return false;
 	if ( !sprite->_cache.empty() )
 	{
@@ -320,7 +320,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 	{
 		SDL_FreeSurface((SDL_Surface *)sprite->data);
 	}
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return false;
 }
 
@@ -392,7 +392,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map
 			tmp_rect.h = p->second->sheet_area.h;
 
 			SDL_Surface * temp_sheet = SDL_CreateRGBSurface( sdlgraphics_flags, tmp_rect.w, tmp_rect.h, 16, RMASK, GMASK, BMASK, AMASK );
-			SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, NULL);
+			SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, nullptr);
 			SDL_SetAlpha(temp_sheet, 0, 0);
 
 			if ( temp_sheet )
@@ -483,7 +483,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_RefreshSpriteSheet( std::string name, std::
  */
 LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	elix::Image * png = new elix::Image(data, size);
 
 	if ( png->HasContent() )
@@ -513,8 +513,8 @@ LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_
 LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z, ObjectEffect effects, bool allow_custom )
 {
 	SDL_Rect area;
-	SDL_Surface * surface = NULL;
-	LuxSprite * sprite_data = NULL;
+	SDL_Surface * surface = nullptr;
+	LuxSprite * sprite_data = nullptr;
 	int32_t offset = 7;
 
 	int8_t axis;
@@ -541,7 +541,7 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 		area.w = surface->w;
 		area.h = surface->h;
 
-		SDL_BlitSurface(surface, NULL, sdlgraphics_screen, &area);
+		SDL_BlitSurface(surface, nullptr, sdlgraphics_screen, &area);
 
 		offset = surface->w + 2;
 	}
@@ -564,7 +564,7 @@ LUX_DISPLAY_FUNCTION int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int3
 
 LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return;
 
 	if ( !sdlgraphics_screen )
@@ -614,7 +614,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 			{
 				draw.x = dest_rect.x + area.x;
 				draw.y = dest_rect.y + area.y;
-				SDL_BlitSurface(surface, NULL, sdlgraphics_screen, &draw);
+				SDL_BlitSurface(surface, nullptr, sdlgraphics_screen, &draw);
 			}
 		}
 	}
@@ -625,7 +625,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 			draw.x -= (surface->w/2) - (dest_rect.w/2);
 			draw.y -= (surface->h/2) - (dest_rect.h/2);
 		}
-		SDL_BlitSurface(surface, NULL, sdlgraphics_screen, &draw);
+		SDL_BlitSurface(surface, nullptr, sdlgraphics_screen, &draw);
 	}
 }
 

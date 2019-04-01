@@ -22,7 +22,7 @@ extern const AMX_NATIVE_INFO Player_Natives[];
 */
 static cell pawnPlayerUpdateControl(AMX *amx, const cell *params)
 {
-	Player * player = NULL;
+	Player * player = nullptr;
 	uint32_t p = (uint32_t)params[1];
 	uint8_t control_set = (uint8_t)params[2];
 
@@ -43,7 +43,7 @@ static cell pawnPlayerUpdateControl(AMX *amx, const cell *params)
 */
 static cell pawnPlayerSetColour(AMX *amx, const cell *params)
 {
-	Player * player = NULL;
+	Player * player = nullptr;
 	uint32_t p = (uint32_t)params[1];
 	player = lux::engine->GetPlayer( p );
 	if ( player )
@@ -63,10 +63,10 @@ static cell pawnPlayerSetColour(AMX *amx, const cell *params)
 */
 static cell pawnPlayerSetEntity(AMX *amx, const cell *params)
 {
-	Player * player = NULL;
-	Entity * wanted = NULL;
+	Player * player = nullptr;
+	Entity * wanted = nullptr;
 	wanted = Lux_PawnEntity_GetEntity(amx, params[2]);
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		uint32_t p = (uint32_t)params[1];
 		player = lux::engine->GetPlayer( p );
@@ -86,7 +86,7 @@ static cell pawnPlayerSetEntity(AMX *amx, const cell *params)
 static cell pawnPlayerSetName(AMX *amx, const cell *params)
 {
 	std::string player_new_name;
-	Player * player = NULL;
+	Player * player = nullptr;
 	uint32_t p = (uint32_t)params[1];
 
 	player = lux::engine->GetPlayer( p );
@@ -105,7 +105,7 @@ static cell pawnPlayerSetName(AMX *amx, const cell *params)
 */
 static cell pawnPlayerGetName(AMX *amx, const cell *params)
 {
-	Player * player = NULL;
+	Player * player = nullptr;
 	uint32_t p = (uint32_t)params[1];
 
 	player = lux::engine->GetPlayer( p );

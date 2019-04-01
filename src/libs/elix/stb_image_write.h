@@ -162,7 +162,7 @@ static int outfile(char const *filename, int rgb_dir, int vdir, int x, int y, in
       write_pixels(f,rgb_dir,vdir,x,y,comp,data,alpha,pad);
       fclose(f);
    }
-   return f != NULL;
+   return f != nullptr;
 }
 
 int stbi_write_bmp(char const *filename, int x, int y, int comp, const void *data)
@@ -269,7 +269,7 @@ unsigned char * stbi_zlib_compress(unsigned char *data, int data_len, int *out_l
    static unsigned char  disteb[]  = { 0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13 };
    unsigned int bitbuf=0;
    int i,j, bitcount=0;
-   unsigned char *out = NULL;
+   unsigned char *out = nullptr;
    unsigned char **hash_table[stbi__ZHASH]; // 64KB on the stack!
    if (quality < 5) quality = 5;
 
@@ -279,7 +279,7 @@ unsigned char * stbi_zlib_compress(unsigned char *data, int data_len, int *out_l
    stbi__zlib_add(1,2);  // BTYPE = 1 -- fixed huffman
 
    for (i=0; i < stbi__ZHASH; ++i)
-      hash_table[i] = NULL;
+      hash_table[i] = nullptr;
 
    i=0;
    while (i < data_len-3) {
@@ -310,7 +310,7 @@ unsigned char * stbi_zlib_compress(unsigned char *data, int data_len, int *out_l
             if (hlist[j]-data > i-32767) {
                int e = stbi__zlib_countm(hlist[j], data+i+1, data_len-i-1);
                if (e > best) { // if next match is better, bail on current match
-                  bestloc = NULL;
+                  bestloc = nullptr;
                   break;
                }
             }

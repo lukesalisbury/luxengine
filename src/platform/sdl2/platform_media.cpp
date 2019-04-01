@@ -22,14 +22,14 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 PlatformMedia::PlatformMedia()
 {
-	this->joystick_generic_sheet = NULL;
-	this->joystick_xbox360_sheet = NULL;
-	this->keyboard_sheet = NULL;
-	this->mouse_sheet = NULL;
+	this->joystick_generic_sheet = nullptr;
+	this->joystick_xbox360_sheet = nullptr;
+	this->keyboard_sheet = nullptr;
+	this->mouse_sheet = nullptr;
 
 	for ( uint32_t c = 0; c < 8; c++)
 	{
-		this->controller[c] = NULL;
+		this->controller[c] = nullptr;
 	}
 
 }
@@ -94,7 +94,7 @@ void PlatformMedia::Init(GraphicSystem graphic)
 
 		const char * gamepad_type = lux::core->GamepadName( c );
 
-		if ( gamepad_type != NULL)
+		if ( gamepad_type != nullptr)
 		{
 			if ( strcmp(gamepad_type, "X360 Controller") == 0)
 			{
@@ -120,7 +120,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 {
 	if (device == NOINPUT )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	switch (device)
@@ -134,7 +134,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 				std::string key_name = elix::string::FromInt(kecode);
 				return this->keyboard_sheet->GetSprite(key_name);
 			}
-			return NULL;
+			return nullptr;
 		}
 		case MOUSEAXIS:
 		{
@@ -143,7 +143,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 				std::string key_name = elix::string::FromInt(symbol);
 				return this->mouse_sheet->GetSprite(key_name);
 			}
-			return NULL;
+			return nullptr;
 		}
 
 		case MOUSEBUTTON:
@@ -154,7 +154,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 				key_name.append(elix::string::FromInt(symbol));
 				return this->mouse_sheet->GetSprite(key_name);
 			}
-			return NULL;
+			return nullptr;
 		}
 		case CONTROLAXIS:
 		{
@@ -179,7 +179,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 					return this->controller[device_number]->GetSprite(key_name);
 				}
 			}
-			return NULL;
+			return nullptr;
 		}
 		case CONTROLBUTTON:
 		{
@@ -193,10 +193,10 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 					return this->controller[device_number]->GetSprite(key_name);
 				}
 			}
-			return NULL;
+			return nullptr;
 		}
 		case NOINPUT:
 		default:
-			return NULL;
+			return nullptr;
 	}
 }

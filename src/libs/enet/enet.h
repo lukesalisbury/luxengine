@@ -419,7 +419,7 @@ ENET_API int enet_address_set_host (ENetAddress * address, const char * hostName
 
 /** Gives the printable form of the ip address specified in the address parameter.
     @param address    address printed
-    @param hostName   destination for name, must not be NULL
+    @param hostName   destination for name, must not be nullptr
     @param nameLength maximum length of hostName.
     @returns the null-terminated name of the host in hostName on success
     @retval 0 on success
@@ -429,7 +429,7 @@ ENET_API int enet_address_get_host_ip (const ENetAddress * address, char * hostN
 
 /** Attempts to do a reverse lookup of the host field in the address parameter.
     @param address    address used for reverse lookup
-    @param hostName   destination for name, must not be NULL
+    @param hostName   destination for name, must not be nullptr
     @param nameLength maximum length of hostName.
     @returns the null-terminated name of the host in hostName on success
     @retval 0 on success

@@ -12,7 +12,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 bool shaders_supported = false;
 
-char * shadertext = NULL;
+char * shadertext = nullptr;
 
 
 GLuint gvPositionHandle;
@@ -148,17 +148,17 @@ static bool CompileShaderCode(GLenum shader, const char *source)
 {
 	GLint status;
 
-	glShaderSource(shader, 1, &source, NULL);
+	glShaderSource(shader, 1, &source, nullptr);
 	glCompileShader(shader);
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if (status == 0)
 	{
 		GLint length;
-		char *info = NULL;
+		char *info = nullptr;
 
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 		info = new char(length+1);
-		glGetShaderInfoLog(shader, length, NULL, info);
+		glGetShaderInfoLog(shader, length, nullptr, info);
 		std::cerr << "Failed to compile shader (" << source << "):" << info << std::endl;
 		delete info;
 	

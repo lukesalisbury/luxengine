@@ -159,7 +159,7 @@
     int val,i;
     char str[10];
 
-    assert(x!=NULL && y!=NULL);
+    assert(x!=nullptr && y!=nullptr);
     amx_putstr("\033[6n");
     amx_fflush();
     while (amx_getch()!='\033')
@@ -297,9 +297,9 @@
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     amx_fflush();       /* make sure all output is written */
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-    if (x!=NULL)
+    if (x!=nullptr)
       *x=csbi.dwCursorPosition.X+1;
-    if (y!=NULL)
+    if (y!=nullptr)
       *y=csbi.dwCursorPosition.Y+1;
   }
   unsigned int amx_setattr(int foregr,int backgr,int highlight)
@@ -573,8 +573,8 @@ static int dochar(AMX *amx,TCHAR ch,cell param,TCHAR sign,TCHAR decpoint,int wid
   #if !defined FIXEDPOINT && !defined FLOATPOINT
     (void)decpoint;
   #endif
-  assert(f_putstr!=NULL);
-  assert(f_putchar!=NULL);
+  assert(f_putstr!=nullptr);
+  assert(f_putchar!=nullptr);
 
   switch (ch) {
   case __T('c'):
@@ -632,7 +632,7 @@ static int dochar(AMX *amx,TCHAR ch,cell param,TCHAR sign,TCHAR decpoint,int wid
     _stprintf(buffer,formatstring,*(float*)cptr);
     if (decpoint==__T(',')) {
       TCHAR *ptr=_tcschr(buffer,__T('.'));
-      if (ptr!=NULL)
+      if (ptr!=nullptr)
         *ptr=__T(',');
     } /* if */
     f_putstr(user,buffer);
@@ -712,7 +712,7 @@ enum {
 
 static int formatstate(TCHAR c,int *state,TCHAR *sign,TCHAR *decpoint,int *width,int *digits,TCHAR *filler)
 {
-  assert(state!=NULL && sign!=NULL && decpoint!=NULL && width!=NULL && digits!=NULL && filler!=NULL);
+  assert(state!=nullptr && sign!=nullptr && decpoint!=nullptr && width!=nullptr && digits!=nullptr && filler!=nullptr);
   switch (*state) {
   case FMT_NONE:
     if (c==__T('%')) {
@@ -778,30 +778,30 @@ int amx_printstring(AMX *amx,cell *cstr,AMX_FMTINFO *info)
   void *user;
   int skip,length;
 
-  if (info!=NULL) {
+  if (info!=nullptr) {
     f_putstr=info->f_putstr;
     f_putchar=info->f_putchar;
     user=info->user;
     skip=info->skip;
     length=info->length;
   } else {
-    f_putstr=NULL;
-    f_putchar=NULL;
-    user=NULL;
+    f_putstr=nullptr;
+    f_putchar=nullptr;
+    user=nullptr;
     skip=0;
     length=INT_MAX;
   } /* if */
   #if !defined AMX_STRING_LIB
-    if (f_putstr==NULL)
+    if (f_putstr==nullptr)
       f_putstr=cons_putstr;
-    if (f_putchar==NULL)
+    if (f_putchar==nullptr)
       f_putchar=cons_putchar;
   #else
-    assert(f_putstr!=NULL && f_putchar!=NULL);
+    assert(f_putstr!=nullptr && f_putchar!=nullptr);
   #endif
 
   /* if no placeholders appear, we can use a quicker routine */
-  if (info==NULL || info->params==NULL) {
+  if (info==nullptr || info->params==nullptr) {
 
     TCHAR cache[100];
     int idx=0;
@@ -870,7 +870,7 @@ int amx_printstring(AMX *amx,cell *cstr,AMX_FMTINFO *info)
         case 0:
           break;
         case 1:
-          assert(info!=NULL && info->params!=NULL);
+          assert(info!=nullptr && info->params!=nullptr);
           if (paramidx>=info->numparams)  /* insufficient parameters passed */
             amx_RaiseError(amx, AMX_ERR_NATIVE);
           else
@@ -895,7 +895,7 @@ int amx_printstring(AMX *amx,cell *cstr,AMX_FMTINFO *info)
         case 0:
           break;
         case 1:
-          assert(info!=NULL && info->params!=NULL);
+          assert(info!=nullptr && info->params!=nullptr);
           if (paramidx>=info->numparams)  /* insufficient parameters passed */
             amx_RaiseError(amx, AMX_ERR_NATIVE);
           else
@@ -909,7 +909,7 @@ int amx_printstring(AMX *amx,cell *cstr,AMX_FMTINFO *info)
       } /* for */
     } /* if */
 
-  } /* if (info==NULL || info->params==NULL) */
+  } /* if (info==nullptr || info->params==nullptr) */
 
   return paramidx;
 }
@@ -946,7 +946,7 @@ static cell AMX_NATIVE_CALL n_print(AMX *amx,const cell *params)
   oldcolours=amx_setattr((int)params[2],(int)params[3],(int)params[4]);
 
   cstr=amx_Address(amx,params[1]);
-  amx_printstring(amx,cstr,NULL);
+  amx_printstring(amx,cstr,nullptr);
 
   /* reset the colours */
   (void)amx_setattr(oldcolours & 0xff,(oldcolours >> 8) & 0x7f,(oldcolours >> 15) & 0x01);
@@ -1007,7 +1007,7 @@ static cell AMX_NATIVE_CALL n_getstring(AMX *amx,const cell *params)
   chars=0;
 
   str=(TCHAR *)alloca(max*sizeof(TCHAR));
-  if (str!=NULL) {
+  if (str!=nullptr) {
 
     c=amx_getch();
     while (c!=EOF && c!=EOL_CHAR && chars<max-1) {
@@ -1179,8 +1179,8 @@ static cell AMX_NATIVE_CALL n_wherexy(AMX *amx,const cell *params)
   amx_wherexy(&x,&y);
   px=amx_Address(amx,params[1]);
   py=amx_Address(amx,params[2]);
-  if (px!=NULL) *px=x;
-  if (py!=NULL) *py=y;
+  if (px!=nullptr) *px=x;
+  if (py!=nullptr) *py=y;
   return 0;
 }
 
@@ -1210,7 +1210,7 @@ static cell AMX_NATIVE_CALL n_console(AMX *amx,const cell *params)
 
 
 #if !defined AMXCONSOLE_NOIDLE
-static AMX_IDLE PrevIdle = NULL;
+static AMX_IDLE PrevIdle = nullptr;
 static int idxKeyPressed = -1;
 
 static int AMXAPI amx_ConsoleIdle(AMX *amx, int AMXAPI Exec(AMX *, cell *, int))
@@ -1219,15 +1219,15 @@ static int AMXAPI amx_ConsoleIdle(AMX *amx, int AMXAPI Exec(AMX *, cell *, int))
 
   assert(idxKeyPressed >= 0);
 
-  if (PrevIdle != NULL)
+  if (PrevIdle != nullptr)
     PrevIdle(amx, Exec);
 
   if (amx_kbhit()) {
     key = amx_getch();
     amx_Push(amx, key);
-    err = Exec(amx, NULL, idxKeyPressed);
+    err = Exec(amx, nullptr, idxKeyPressed);
     while (err == AMX_ERR_SLEEP)
-      err = Exec(amx, NULL, AMX_EXEC_CONT);
+      err = Exec(amx, nullptr, AMX_EXEC_CONT);
   } /* if */
 
   return err;
@@ -1250,7 +1250,7 @@ const AMX_NATIVE_INFO console_Natives[] = {
   { "setattr",   n_setattr },
   { "console",   n_console },
   { "consctrl",  n_consctrl },
-  { NULL, NULL }        /* terminator */
+  { nullptr, nullptr }        /* terminator */
 };
 
 int AMXEXPORT AMXAPI amx_ConsoleInit(AMX *amx)
@@ -1259,7 +1259,7 @@ int AMXEXPORT AMXAPI amx_ConsoleInit(AMX *amx)
     /* see whether there is an @keypressed() function */
     if (amx_FindPublic(amx, "@keypressed", &idxKeyPressed) == AMX_ERR_NONE) {
       if (amx_GetUserData(amx, AMX_USERTAG('I','d','l','e'), (void**)&PrevIdle) != AMX_ERR_NONE)
-        PrevIdle = NULL;
+        PrevIdle = nullptr;
       amx_SetUserData(amx, AMX_USERTAG('I','d','l','e'), (void*)amx_ConsoleIdle);
     } /* if */
   #endif
@@ -1271,7 +1271,7 @@ int AMXEXPORT AMXAPI amx_ConsoleCleanup(AMX *amx)
 {
   (void)amx;
   #if !defined AMXCONSOLE_NOIDLE
-    PrevIdle = NULL;
+    PrevIdle = nullptr;
   #endif
   return AMX_ERR_NONE;
 }

@@ -18,28 +18,28 @@ Permission is granted to anyone to use this software for any purpose, including 
 /* Desktop OpenGL */
 bool Lux_OGL_QueryExtension(char *extName);
 
-static PFNGLCOMPILESHADERARBPROC glCompileShader = NULL;
-static PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocation = NULL;
-static PFNGLLINKPROGRAMARBPROC glLinkProgram = NULL;
-static PFNGLSHADERSOURCEARBPROC glShaderSource = NULL;
-static PFNGLUNIFORM4FARBPROC glUniform4f = NULL;
-static PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv = NULL;
-static PFNGLUNIFORM1IPROC glUniform1i = NULL;
+static PFNGLCOMPILESHADERARBPROC glCompileShader = nullptr;
+static PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocation = nullptr;
+static PFNGLLINKPROGRAMARBPROC glLinkProgram = nullptr;
+static PFNGLSHADERSOURCEARBPROC glShaderSource = nullptr;
+static PFNGLUNIFORM4FARBPROC glUniform4f = nullptr;
+static PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv = nullptr;
+static PFNGLUNIFORM1IPROC glUniform1i = nullptr;
 
-static PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObject = NULL;
-static PFNGLATTACHOBJECTARBPROC glAttachObjectARB = NULL;
+static PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObject = nullptr;
+static PFNGLATTACHOBJECTARBPROC glAttachObjectARB = nullptr;
 
-static PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObject = NULL;
-static PFNGLCREATESHADEROBJECTARBPROC glCreateShaderObject = NULL;
-static PFNGLDELETEOBJECTARBPROC glDeleteObject = NULL;
-static PFNGLGETINFOLOGARBPROC glGetInfoLogARB = NULL;
-static PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB = NULL;
+static PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObject = nullptr;
+static PFNGLCREATESHADEROBJECTARBPROC glCreateShaderObject = nullptr;
+static PFNGLDELETEOBJECTARBPROC glDeleteObject = nullptr;
+static PFNGLGETINFOLOGARBPROC glGetInfoLogARB = nullptr;
+static PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB = nullptr;
 
 #if USING_GLDESKTOP >= 4
-static PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation = NULL;
-static PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer = NULL;
-static PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = NULL;
-static PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray = NULL;
+static PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation = nullptr;
+static PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer = nullptr;
+static PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = nullptr;
+static PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray = nullptr;
 #endif
 
 namespace OpenGLShaderImpl

@@ -8,8 +8,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef _BASECORE_H_
-	#define _BASECORE_H_
+#ifndef BASE_CORE_H
+	#define BASE_CORE_H
 
 #define SYSTEM_MESSAGE_ERROR 1
 #define SYSTEM_MESSAGE_WARNING 2
@@ -50,9 +50,9 @@ protected:
 	function_time timer[32];
 
 public:
+	virtual std::ostream& SystemMessage(uint8_t type) = 0;
 	virtual void SystemMessage(uint8_t type, std::string message) = 0;
 	virtual std::ostream& SystemMessage(const char *file, int line, uint8_t type ) = 0;
-	virtual std::ostream& SystemMessage(uint8_t type) = 0;
 	virtual void AbleOutput(bool able) = 0;
 	virtual uint32_t WasInit(uint32_t flag) = 0;
 	virtual void QuitSubSystem(uint32_t flag) = 0;

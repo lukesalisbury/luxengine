@@ -158,7 +158,7 @@ void CoreSystem::Idle()
 LuxState CoreSystem::HandleFrame(LuxState old_state)
 {
 	time_t gc_time;
-	gc_time = ::time(NULL);
+	gc_time = ::time(nullptr);
 
 	this->RefreshInput(lux::display);
 }

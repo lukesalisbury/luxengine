@@ -19,7 +19,7 @@ Permission is granted to anyone to use this software for any purpose, including 
  */
 uint8_t Lux_FFI_Mask_Refresh()
 {
-	if ( lux::game_system->active_map != NULL )
+	if ( lux::game_system->active_map != nullptr )
 	{
 		lux::game_system->active_map->BuildMask();
 		return 1;
@@ -36,7 +36,7 @@ uint8_t Lux_FFI_Mask_Refresh()
  */
 int32_t Lux_FFI_Mask_Value_Get( uint16_t x, uint16_t y, uint8_t layer )
 {
-	if ( lux::game_system->active_map != NULL )
+	if ( lux::game_system->active_map != nullptr )
 	{
 		return (int32_t)lux::game_system->active_map->GetMaskValue(x, y);
 	}
@@ -54,7 +54,7 @@ int32_t Lux_FFI_Mask_Value_Get( uint16_t x, uint16_t y, uint8_t layer )
  */
 int32_t Lux_FFI_Mask_Value_Fill( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t value )
 {
-	if ( lux::game_system->active_map != NULL )
+	if ( lux::game_system->active_map != nullptr )
 	{
 		lux::game_system->active_map->FillMask(x, y, w, h, value);
 		return 1;

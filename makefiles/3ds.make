@@ -27,10 +27,10 @@ PLATFORMBITS = other
 
 PLATFORM_LIBS := -L"$(DEVKITPRO)\devkitARM\lib" -L"$(DEVKITPRO)\libctru\lib" -L"$(DEVKITPRO)\ports\libsf2d\lib"
 PLATFORM_LIBS += -march=armv6k -mtune=mpcore -mfloat-abi=hard -specs=3dsx.specs
-PLATFORM_LIBS += -lsf2d -lctru -lm
+PLATFORM_LIBS += -lctru -lm
 PLATFORM_FLAGS :=  -I"include" -I"$(DEVKITPRO)\devkitARM\arm-eabi\include" -I"$(DEVKITPRO)\libctru\include" -I"$(DEVKITPRO)\ports\libsf2d\include"
 PLATFORM_FLAGS += -DNO_ZLIB -DMINIZ_NO_TIME -DHAVE_STDINT_H -DHAVE_ALLOCA_H -DAMX_ANSIONLY -DNOCONSOLE -DARM11 -D_3DS
-PLATFORM_FLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard -Wall
+PLATFORM_FLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard -Wall -Wno-literal-suffix -Wno-unused-variable
 
 PLATFORM_OBJECTS = 
 

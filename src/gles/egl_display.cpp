@@ -46,9 +46,9 @@ namespace egl_display {
 		};
 		EGLNativeDisplayType native_display = 0;
 		EGLNativeWindowType native_window = 0;
-		Display *x11Display = NULL;
+		Display *x11Display = nullptr;
 
-		x11Display = XOpenDisplay(NULL);
+		x11Display = XOpenDisplay(nullptr);
 		if (!x11Display)
 		{
 			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "ERROR: unable to get display!" << std::endl;
@@ -65,7 +65,7 @@ namespace egl_display {
 
 
 		// Initialise egl
-		if ( !eglInitialize(egl_display, NULL, NULL ))
+		if ( !eglInitialize(egl_display, nullptr, nullptr ))
 		{
 			TestEGLError( );
 			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Unable to initialise EGL display." << std::endl;
@@ -73,7 +73,7 @@ namespace egl_display {
 		}
 		/*
 		EGLint numConfigs = 0;
-		if ( !eglGetConfigs(egl_display, NULL, 0, &numConfigs) )
+		if ( !eglGetConfigs(egl_display, nullptr, 0, &numConfigs) )
 		{
 			TestEGLError( );
 			lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Unable to get a config for EGL " << numConfigs << std::endl;
@@ -117,7 +117,7 @@ namespace egl_display {
 		}
 		*/
 
-		egl_surface = eglCreateWindowSurface(egl_display, egl_config, native_window, NULL);
+		egl_surface = eglCreateWindowSurface(egl_display, egl_config, native_window, nullptr);
 		if ( egl_surface == EGL_NO_SURFACE )
 		{
 			TestEGLError( );

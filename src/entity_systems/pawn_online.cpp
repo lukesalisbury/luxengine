@@ -32,7 +32,7 @@ static cell pawnOnline(AMX *amx, const cell *params)
 */
 static cell pawnOnlineData(AMX *amx, const cell *params)
 {
-	char * url = NULL;
+	char * url = nullptr;
 
 	amx_StrParam_Type(amx, params[2], url, char*);
 

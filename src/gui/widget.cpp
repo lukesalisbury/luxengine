@@ -20,13 +20,13 @@ Permission is granted to anyone to use this software for any purpose, including 
  */
 Widget::Widget( LuxRect region, LuxWidget type, CSSParser * style )
 {
-	this->background_object = this->border_object[0] = this->border_object[1] = this->border_object[2] = this->border_object[3] = this->text_object = NULL;
-	this->data = NULL;
+	this->background_object = this->border_object[0] = this->border_object[1] = this->border_object[2] = this->border_object[3] = this->text_object = nullptr;
+	this->data = nullptr;
 	this->_value = 0;
 	this->original_state = this->state = ENABLED;
 	this->_type = type;
 	this->_region = region;
-	this->parent = NULL;
+	this->parent = nullptr;
 	this->state = ENABLED;
 
 	this->Generate(style);
@@ -300,7 +300,7 @@ void Widget::GenerateBorderColours( CSSParser * style, WidgetObject * object, ui
  */
 void Widget::GenerateBox( CSSParser * style )
 {
-	if ( style == NULL )
+	if ( style == nullptr )
 		return;
 
 	LuxRect boxregion = this->_region;

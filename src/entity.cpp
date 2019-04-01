@@ -61,7 +61,7 @@ Entity::~Entity()
 
 void Entity::DefaultSetup( uint32_t mapid )
 {
-	this->_data = NULL;
+	this->_data = nullptr;
 	this->loaded = false;
 	this->firstran = false;
 	this->active = true;
@@ -96,9 +96,9 @@ void Entity::Init()
 	if ( !this->firstran )
 	{
 		this->SetMapCollsion();
-		this->callbacks->Call(this->_data, (char*)"@AutoPreInit", NULL);
-		this->callbacks->Call(this->_data, (char*)"Init", NULL);
-		this->callbacks->Call(this->_data, (char*)"@AutoPostInit", NULL);
+		this->callbacks->Call(this->_data, (char*)"@AutoPreInit", nullptr);
+		this->callbacks->Call(this->_data, (char*)"Init", nullptr);
+		this->callbacks->Call(this->_data, (char*)"@AutoPostInit", nullptr);
 		this->firstran = true;
 		this->closing = false;
 	}
@@ -108,7 +108,7 @@ bool Entity::Loop()
 {
 	if ( id.compare("player") == 0 )
 	{
-		int q =0;
+		//int q =0;
 	}
 
 	if ( this->deleted )
@@ -154,8 +154,8 @@ void Entity::Update()
 	{
 		this->Init();
 	}
-	this->callbacks->Call(this->_data, (char*)"UpdatePosition", NULL);
-	this->callbacks->Call(this->_data, (char*)"@AutoUpdatePosition", NULL);
+	this->callbacks->Call(this->_data, (char*)"UpdatePosition", nullptr);
+	this->callbacks->Call(this->_data, (char*)"@AutoUpdatePosition", nullptr);
 }
 
 void Entity::Close()
@@ -166,9 +166,9 @@ void Entity::Close()
 		this->ClearMapCollsion();
 		if ( this->callbacks )
 		{
-			this->callbacks->Call(this->_data, (char*)"@AutoPreClose", NULL);
-			this->callbacks->Call(this->_data, (char*)"Close", NULL);
-			this->callbacks->Call(this->_data, (char*)"@AutoPostClose", NULL);
+			this->callbacks->Call(this->_data, (char*)"@AutoPreClose", nullptr);
+			this->callbacks->Call(this->_data, (char*)"Close", nullptr);
+			this->callbacks->Call(this->_data, (char*)"@AutoPostClose", nullptr);
 		}
 
 	}
@@ -200,7 +200,7 @@ void Entity::FreeData()
 	{
 		this->callbacks->Destroy(this->_data);
 	}
-	this->_data = NULL;
+	this->_data = nullptr;
 }
 
 int32_t Entity::Call(std::string function, char * format, ...)
@@ -208,13 +208,13 @@ int32_t Entity::Call(std::string function, char * format, ...)
 	if ( this->deleted )
 		return -1;
 
-	if ( this->_data != NULL )
+	if ( this->_data != nullptr )
 	{
 		uint8_t c = 0;
 		int32_t return_value = 0;
 		va_list argptr;
 		va_start( argptr, format );
-		mem_pointer stack_mem = NULL;
+		mem_pointer stack_mem = nullptr;
 		if ( strlen(format) )
 		{
 			while( format[c] != '\0' )
@@ -230,7 +230,7 @@ int32_t Entity::Call(std::string function, char * format, ...)
 				else if( format[c] == 's' )
 				{
 					std::string str = va_arg( argptr, char * );
-					this->callbacks->PushString( this->_data, str, (stack_mem ? NULL : &stack_mem) );
+					this->callbacks->PushString( this->_data, str, (stack_mem ? nullptr : &stack_mem) );
 				}
 				c++;
 			}
@@ -406,7 +406,7 @@ void Entity::SetCollisionCount(int32_t count)
 int32_t Entity::GetHits( int32_t type )
 {
 	this->_hits.clear();
-	if (lux::game_system != NULL)
+	if (lux::game_system != nullptr)
 	{
 		for(int32_t n = 0; n < this->_used_collisions; n++)
 		{
@@ -424,7 +424,7 @@ int32_t Entity::GetHits( int32_t type )
  */
 void Entity::SetMapCollsion()
 {
-	if ( lux::game_system != NULL )
+	if ( lux::game_system != nullptr )
 	{
 		if ( this->_used_collisions > -1 )
 		{
@@ -447,7 +447,7 @@ void Entity::SetMapCollsion()
  */
 void Entity::ClearMapCollsion()
 {
-	if ( lux::game_system != NULL )
+	if ( lux::game_system != nullptr )
 	{
 		for( int32_t n = 0; n < this->_used_collisions; n++)
 		{
@@ -523,7 +523,7 @@ std::string Entity::GetSetting( char * key )
 {
 	std::string strkey;
 	std::string str = "";
-	if ( key != NULL )
+	if ( key != nullptr )
 	{
 		strkey.assign(key);
 		if ( !this->_settings.empty() )

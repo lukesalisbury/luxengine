@@ -256,7 +256,7 @@ uint32_t WorldSection::BuildMapID( const uint16_t grid_id )
 
 MokoiMap * WorldSection::GetMap( const uint16_t grid_id  )
 {
-	MokoiMap * map = NULL;
+	MokoiMap * map = nullptr;
 	uint32_t ident = this->BuildMapID( grid_id );
 
 	if ( ident )
@@ -269,7 +269,7 @@ MokoiMap * WorldSection::GetMap( const uint16_t grid_id  )
 
 MokoiMap * WorldSection::GetMap( const uint8_t grid_x, const uint8_t grid_y )
 {
-	MokoiMap * map = NULL;
+	MokoiMap * map = nullptr;
 	uint32_t ident = this->GetMapID( grid_x, grid_y );
 
 	if ( ident )

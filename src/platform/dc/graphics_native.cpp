@@ -40,7 +40,7 @@ pvr_ptr_t font_texture[95];
 float zcount = 0.0;
 MapObject dreamcastbackground;
 LuxRect dreamcastregion;
-LuxPolygon * sdlgraphics_cursor = NULL;
+LuxPolygon * sdlgraphics_cursor = nullptr;
 
 GraphicSystem GraphicsNative = {
 	&LuxGraphics_DC_Init,
@@ -61,7 +61,7 @@ GraphicSystem GraphicsNative = {
 	&LuxGraphics_DC_LoadSpriteSheet,
 	&LuxGraphics_DC_LoadSpriteSheetImage,
 	&LuxGraphics_DC_FreeSpriteSheet,
-	NULL,
+	nullptr,
 	&LuxGraphics_DC_FreeSprite,
 	&LuxGraphics_DC_PNGtoSprite,
 
@@ -118,7 +118,7 @@ bool dreamcastLoadTexture(Texture * texure)
 	if ( texure->loaded )
 		return true;
 
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size = 0;
 
 	size = lux::game_data->GetFile(texure->file, &data, false);
@@ -221,7 +221,7 @@ void dreamcastCreateFont()
 	position.x = x;
 	position.y = y;
 
-	LuxGraphics_DC_DrawPolygon(sdlgraphics_cursor->x, sdlgraphics_cursor->y, sdlgraphics_cursor->count, position, effect, NULL);
+	LuxGraphics_DC_DrawPolygon(sdlgraphics_cursor->x, sdlgraphics_cursor->y, sdlgraphics_cursor->count, position, effect, nullptr);
 
 }
 
@@ -235,7 +235,7 @@ void dreamcastCreateFont()
  */
  bool LuxGraphics_DC_FreeSprite( LuxSprite * sprite )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return false;
 	if (sprite->data)
 	{
@@ -243,7 +243,7 @@ void dreamcastCreateFont()
 		pvr_mem_free(texture->pointer);
 		delete texture;
 	}
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return false;
 }
 
@@ -305,7 +305,7 @@ void dreamcastCreateFont()
 	else
 	{
 		delete tex;
-		p->second->data = NULL;
+		p->second->data = nullptr;
 	}
 	*/
 
@@ -323,7 +323,7 @@ void dreamcastCreateFont()
  bool LuxGraphics_DC_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> * children)
 {
 	/* PNG Image */
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	elix::Image * png = new elix::Image;
 	if ( lux::game_data )
@@ -430,7 +430,7 @@ void dreamcastCreateFont()
  */
  LuxSprite * LuxGraphics_DC_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	elix::Image * src = new elix::Image(data, size);
 
 	if ( src->HasContent() )
@@ -438,7 +438,7 @@ void dreamcastCreateFont()
 		sprite = new LuxSprite( GraphicsNative );
 
 		Texture * tex = new Texture;
-		tex->pointer = NULL;
+		tex->pointer = nullptr;
 		tex->w = src->Width();
 		tex->h = src->Height();
 		tex->tw = dreamcastPowerOfTwo( tex->w );
@@ -468,7 +468,7 @@ void dreamcastCreateFont()
 		else
 		{
 			delete sprite;
-			sprite = NULL;
+			sprite = nullptr;
 		}
 		delete pixels;
 
@@ -483,7 +483,7 @@ void dreamcastCreateFont()
 
  void LuxGraphics_DC_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects)
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return;
 
 	Texture * tex = (Texture*) sprite->GetData(effects);
@@ -643,7 +643,7 @@ int32_t LuxGraphics_DC_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z,
 	{
 		if ( cchar <= 32 )
 		{
-			tex = NULL;
+			tex = nullptr;
 		}
 		else if ( cchar <= 128 )
 		{

@@ -27,8 +27,8 @@ AudioSystem::AudioSystem()
 	this->effects_volume = 96;
 	this->dialog_volume = 96;
 #ifndef NOAUDIO
-	this->music = NULL;
-	this->primary_dialog = this->secondary_dialog = NULL;
+	this->music = nullptr;
+	this->primary_dialog = this->secondary_dialog = nullptr;
 
 	if ( enabled )
 	{
@@ -115,7 +115,7 @@ bool AudioSystem::LoadAudio( std::string filename )
 #ifndef NOAUDIO
 	Mix_Chunk * audio = this->ReturnAudio( filename, true );
 
-	return (audio != NULL);
+	return (audio != nullptr);
 #else
 	return false;
 #endif
@@ -149,9 +149,9 @@ bool AudioSystem::UnloadAudio( Mix_Chunk * audio )
 Mix_Chunk * AudioSystem::ReturnAudio( std::string filename, bool cache )
 {
 	if ( !enabled )
-		return NULL;
+		return nullptr;
 
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size = lux::game_data->GetFile(filename, &data, false);
 
 	if ( size )
@@ -167,7 +167,7 @@ Mix_Chunk * AudioSystem::ReturnAudio( std::string filename, bool cache )
 			return audio;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -267,7 +267,7 @@ int32_t AudioSystem::PlayDialog( int32_t requestSound, int8_t channel )
 
 	int32_t used_channel;
 	uint32_t len = 0;
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	std::string filename;
 #ifndef NOAUDIO
@@ -317,7 +317,7 @@ int32_t AudioSystem::PlayMusic( std::string requestMusic, int32_t loop, int32_t 
 	if ( !enabled )
 		return 0;
 
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 #ifndef NOAUDIO
 	uint32_t size = lux::game_data->GetFile("./music/" + requestMusic, &data, false);
 
@@ -338,7 +338,7 @@ int32_t AudioSystem::PlayMusic( std::string requestMusic, int32_t loop, int32_t 
 				if ( this->music )
 				{
 					Mix_FreeMusic( this->music );
-					this->music = NULL;
+					this->music = nullptr;
 				}
 
 				if ( Mix_FadeInMusic( next_music, loop, fadeLength ) == -1 )

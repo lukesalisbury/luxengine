@@ -161,7 +161,7 @@ MapObject * GlobalObjects::GetObject( uint32_t ident )
 		if( iter != this->object_cache.end() )
 			return iter->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -204,7 +204,7 @@ void GlobalObjects::ReorderObjects()
 bool GlobalObjects::RemoveObject(uint32_t ident)
 {
 	MapObject * object = this->GetObject(ident);
-	if ( object != NULL )
+	if ( object != nullptr )
 	{
 		if ( lux::display->RemoveObject(object->layer, object) )
 		{

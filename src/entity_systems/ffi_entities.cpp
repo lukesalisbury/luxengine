@@ -34,7 +34,7 @@ uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, in
 	lux::core->NetworkLock();
 	#endif
 
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		if ( fixed_x != FIXED_MIN )
 			wanted->x = (fixed)fixed_x;
@@ -46,7 +46,7 @@ uint8_t Lux_FFI_Entity_Object_Set_Position( Entity * wanted, int32_t fixed_x, in
 	#ifdef NETWORKENABLED
 	lux::core->NetworkUnlock();
 	#endif
-	return ( wanted != NULL );
+	return ( wanted != nullptr );
 }
 
 /**
@@ -63,7 +63,7 @@ uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, 
 	lux::core->NetworkLock();
 	#endif
 
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		if ( fixed_x )
 			*fixed_x = wanted->x;
@@ -75,7 +75,7 @@ uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, 
 	#ifdef NETWORKENABLED
 	lux::core->NetworkUnlock();
 	#endif
-	return ( wanted != NULL );
+	return ( wanted != nullptr );
 }
 
 /**
@@ -86,9 +86,9 @@ uint8_t Lux_FFI_Entity_Object_Get_Position( Entity * wanted, int32_t * fixed_x, 
  */
 char * Lux_FFI_Entity_Object_Get_Setting( Entity * wanted, const char * key )
 {
-	char * string = NULL;
+	char * string = nullptr;
 
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		std::string str = wanted->GetSetting( key );
 		if ( str.length() )
@@ -111,7 +111,7 @@ int32_t Lux_FFI_Entity_Object_Get_Setting_Number(Entity * wanted, const char * k
 {
 	int32_t response = 0;
 
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		response =  wanted->GetSettingAsInt(key);
 	}
@@ -125,7 +125,7 @@ int32_t Lux_FFI_Entity_Object_Get_Setting_Number(Entity * wanted, const char * k
 */
 uint8_t Lux_FFI_Entity_Object_Delete( Entity * wanted )
 {
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		wanted->Delete();
 		return 1;
@@ -189,14 +189,14 @@ uint32_t Lux_FFI_Entity_Create( const char * script_file, const char * ident, in
 {
 	uint32_t response = 0;
 	std::string entity_parent, entity_id;
-	Entity * wanted_entity = NULL;
+	Entity * wanted_entity = nullptr;
 
 	entity_parent = script_file;
 	entity_id = ident;
 
 	wanted_entity = lux::entities->NewEntity( ident, script_file, map_id );
 
-	if ( wanted_entity != NULL )
+	if ( wanted_entity != nullptr )
 	{
 		wanted_entity->x = x;
 		wanted_entity->y = y;
@@ -229,7 +229,7 @@ uint8_t Lux_FFI_Entity_Delete( uint32_t hash_entity )
 uint32_t Lux_FFI_Entities_List( uint32_t map_id )
 {
 	uint32_t count = 0;
-	EntitySection * section = NULL;
+	EntitySection * section = nullptr;
 
 	if ( map_id == 0 ) /* GLOBAL */
 	{
@@ -261,9 +261,9 @@ uint32_t Lux_FFI_Entities_List( uint32_t map_id )
 */
 char * Lux_FFI_Entities_Next( uint32_t map_id, uint8_t * has_next )
 {
-	char * string = NULL;
+	char * string = nullptr;
 	std::string string_value = "";
-	EntitySection * section = NULL;
+	EntitySection * section = nullptr;
 
 	*has_next = false;
 
@@ -280,7 +280,7 @@ char * Lux_FFI_Entities_Next( uint32_t map_id, uint8_t * has_next )
 	}
 
 
-	if ( section != NULL )
+	if ( section != nullptr )
 	{
 		if ( section->iter != section->children.end() )
 		{

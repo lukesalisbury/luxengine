@@ -26,13 +26,13 @@ Permission is granted to anyone to use this software for any purpose, including 
 */
 uint8_t Lux_FFI_Entity_Object_Player_Set_Entity( uint32_t player_number, Entity * wanted )
 {
-	Player * player = NULL;
+	Player * player = nullptr;
 
 	player = lux::engine->GetPlayer( player_number );
 
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
-		if ( player != NULL )
+		if ( player != nullptr )
 		{
 			player->SetEntity(wanted);
 			return 1;
@@ -66,7 +66,7 @@ uint8_t Lux_FFI_Player_Set_Controller( uint32_t player_number, const char * cont
 */
 char * Lux_FFI_Player_Get_Controller( uint32_t player_number )
 {
-	char * string = NULL;
+	char * string = nullptr;
 	std::string str;
 	Player * player = lux::engine->GetPlayer( player_number );
 	if ( player )
@@ -110,15 +110,15 @@ uint8_t Lux_FFI_Player_Set_Colour( uint32_t player_number, uint32_t new_colour )
 */
 uint8_t Lux_FFI_Player_Set_Entity( uint32_t player_number, uint32_t hash_entity )
 {
-	Player * player = NULL;
-	Entity * wanted = NULL;
+	Player * player = nullptr;
+	Entity * wanted = nullptr;
 
 	wanted = lux::entities->GetEntity( hash_entity );
 	player = lux::engine->GetPlayer( player_number );
 
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
-		if ( player != NULL )
+		if ( player != nullptr )
 		{
 			player->SetEntity(wanted);
 			return 1;
@@ -133,7 +133,7 @@ uint8_t Lux_FFI_Player_Set_Entity( uint32_t player_number, uint32_t hash_entity 
 */
 uint8_t Lux_FFI_Player_Set_Name( uint32_t player_number, const char * player_name )
 {
-	Player * player = NULL;
+	Player * player = nullptr;
 
 	player = lux::engine->GetPlayer( player_number );
 	if ( player_name )
@@ -150,7 +150,7 @@ uint8_t Lux_FFI_Player_Set_Name( uint32_t player_number, const char * player_nam
 */
 char * Lux_FFI_Player_Get_Name( uint32_t player_number )
 {
-	char * string = NULL;
+	char * string = nullptr;
 	std::string str;
 	Player * player = lux::engine->GetPlayer( player_number );
 	if ( player )
@@ -175,7 +175,7 @@ char * Lux_FFI_Player_Get_Name( uint32_t player_number )
 */
 char * Lux_FFI_Controller_Config( const char * controller_name )
 {
-	char * string = NULL;
+	char * string = nullptr;
 	std::string str;
 	std::string config_str = "controller.";
 

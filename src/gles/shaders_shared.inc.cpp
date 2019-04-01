@@ -143,17 +143,17 @@ namespace OpenGLShader
 
 		GLint status;
 
-		OpenGLShaderImpl::ShaderSource( shader, 1, &source, NULL );
+		OpenGLShaderImpl::ShaderSource( shader, 1, &source, nullptr );
 		OpenGLShaderImpl::CompileShader( shader);
 		OpenGLShaderImpl::GetShaderiv( shader, GL_COMPILE_STATUS, &status );
 		if ( status == 0 )
 		{
 			GLint length;
-			char *info = NULL;
+			char *info = nullptr;
 
 			OpenGLShaderImpl::GetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 			info = new char[length+1];
-			OpenGLShaderImpl::GetShaderInfoLog(shader, length, NULL, info);
+			OpenGLShaderImpl::GetShaderInfoLog(shader, length, nullptr, info);
 			std::cout << "Failed to compile shader: " << info << std::endl;
 			std::cout << "-----------------------------------------" << std::endl;
 			std::cout << "Source: " << source << std::endl;

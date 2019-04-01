@@ -107,7 +107,7 @@ static cell pawnMapGetOffset(AMX *amx, const cell *params)
 static cell pawnMapCurrentIdent(AMX *amx, const cell *params)
 {
 	cell responed = 0;
-	if ( lux::game_system->active_map != NULL )
+	if ( lux::game_system->active_map != nullptr )
 	{
 		responed = lux::game_system->active_map->Ident();
 	}
@@ -126,7 +126,7 @@ static cell pawnMapCurrentGrid(AMX *amx, const cell *params)
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
 	cell responed = 0;
-	if ( lux::game_system->active_section != NULL )
+	if ( lux::game_system->active_section != nullptr )
 	{
 		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::game_system->grid_position[0]) );
 		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::game_system->grid_position[1]) );
@@ -146,7 +146,7 @@ static cell pawnMapCurrentDimension(AMX *amx, const cell *params)
 	ASSERT_PAWN_PARAM( amx, params, 2 );
 
 	cell responed = 0;
-	if ( lux::game_system->active_map != NULL )
+	if ( lux::game_system->active_map != nullptr )
 	{
 		write_amx_address( amx, params[1], MAKE_FIXED_INT(lux::game_system->active_map->map_width) );
 		write_amx_address( amx, params[2], MAKE_FIXED_INT(lux::game_system->active_map->map_height) );
@@ -534,7 +534,7 @@ static cell pawnWorldEditNew(AMX *amx, const cell *params)
 	ASSERT_PAWN_PARAM( amx, params, 1 );
 
 	cell result = 0;
-	char * section_name = NULL;
+	char * section_name = nullptr;
 	uint8_t width = (uint8_t)params[2];
 	uint8_t height = (uint8_t)params[3];
 

@@ -122,7 +122,7 @@ DisplaySystem::~DisplaySystem()
  */
 void DisplaySystem::InitialSetup()
 {
-	if ( lux::core == NULL )
+	if ( lux::core == nullptr )
 	{
 		return;
 	}
@@ -211,7 +211,7 @@ void DisplaySystem::Draw(Layer * current_layer)
 	}
 	else
 	{
-		if ( this->graphics.SetRotation != NULL &&  this->show_3d  )
+		if ( this->graphics.SetRotation != nullptr &&  this->show_3d  )
 		{
 			this->graphics.SetRotation( current_layer->_roll, current_layer->_pitch, current_layer->_yaw );
 			current_layer->Display();
@@ -412,7 +412,7 @@ void DisplaySystem::ReloadSheets()
 
 void DisplaySystem::LoadSheet( LuxSheet * sheet )
 {
-	if ( sheet != NULL )
+	if ( sheet != nullptr )
 	{
 		sheet->Load();
 	}
@@ -420,7 +420,7 @@ void DisplaySystem::LoadSheet( LuxSheet * sheet )
 
 LuxSheet * DisplaySystem::GetSheet( std::string name )
 {
-	LuxSheet * sheet = NULL;
+	LuxSheet * sheet = nullptr;
 	LuxSheetIter iter_sheet = this->_sheets.find(name);
 
 	if ( iter_sheet == this->_sheets.end() )
@@ -464,7 +464,7 @@ void DisplaySystem::RefSheet(std::string name)
 		return;
 	}
 
-	if ( iter_sheet->second != NULL )
+	if ( iter_sheet->second != nullptr )
 	{
 		iter_sheet->second->Ref();
 	}
@@ -485,7 +485,7 @@ void DisplaySystem::UnrefSheet(std::string name)
 		return;
 	}
 
-	if ( iter_sheet->second != NULL )
+	if ( iter_sheet->second != nullptr )
 	{
 		iter_sheet->second->Unref();
 	}
@@ -500,7 +500,7 @@ void DisplaySystem::UnloadSheet(std::string name)
 		return;
 	}
 
-	if ( iter_sheet->second != NULL )
+	if ( iter_sheet->second != nullptr )
 	{
 		if ( iter_sheet->second->Unload() )
 		{
@@ -513,7 +513,7 @@ void DisplaySystem::UnloadSheet(std::string name)
 
 LuxSprite * DisplaySystem::GetSprite( std::string parent, std::string name )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	LuxSheet * sheet = this->GetSheet( parent );
 
 	if ( sheet )
@@ -525,7 +525,7 @@ LuxSprite * DisplaySystem::GetSprite( std::string parent, std::string name )
 
 LuxSprite * DisplaySystem::GetSprite( std::string parent, uint32_t name_hash )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	LuxSheet * sheet = this->GetSheet( parent );
 
 	if ( sheet )
@@ -537,7 +537,7 @@ LuxSprite * DisplaySystem::GetSprite( std::string parent, uint32_t name_hash )
 
 LuxSprite * DisplaySystem::GetSprite( std::string sprite_name )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	if ( this->sprite_quick_access )
 	{
 		std::map<uint32_t, LuxSprite *>::iterator iter = this->_sprites.find( elix::string::Hash(sprite_name) );
@@ -774,10 +774,10 @@ void DisplaySystem::DrawMapObject( MapObject * object, LuxRect new_position, Obj
 LuxSprite * DisplaySystem::GetInputSprite(uint32_t player_id, int8_t axis, int8_t key, int8_t pointer )
 {
 	if ( !lux::engine )
-		return NULL;
+		return nullptr;
 
-	LuxSprite * sprite = NULL;
-	Player * player = NULL;
+	LuxSprite * sprite = nullptr;
+	Player * player = nullptr;
 	player = lux::engine->GetPlayer(player_id);
 
 	if ( player )
@@ -796,7 +796,7 @@ LuxSprite * DisplaySystem::GetInputSprite(uint32_t player_id, int8_t axis, int8_
  */
 Layer * DisplaySystem::GetLayer( uint32_t layer )
 {
-	Layer * requested_layer = NULL;
+	Layer * requested_layer = nullptr;
 
 	if ( layer < this->_layers.size() )
 	{
@@ -823,7 +823,7 @@ bool DisplaySystem::AddObjects(std::list<MapObject*> * objects)
 	return false;
 }
 
-Layer * last_layer = NULL;
+Layer * last_layer = nullptr;
 /**
  * @brief DisplaySystem::AddObjectToLayer
  * @param layer

@@ -47,7 +47,7 @@ GraphicSystem GraphicsOpenGL = {
 	&Lux_OGL_LoadSpriteSheet,
 	&Lux_OGL_LoadSpriteSheetImage,
 	&Lux_OGL_FreeSpriteSheet,
-	NULL,
+	nullptr,
 	&Lux_OGL_FreeSprite,
 	&Lux_OGL_PNGtoSprite,
 
@@ -83,7 +83,7 @@ SDL_GLContext native_context;
 float opengl_graphic_ratio_width = 1.00;
 float opengl_graphic_ratio_height = 1.00;
 float opengl_graphic_ratio = 1.33;
-LuxPolygon * opengl_graphic_cursor = NULL;
+LuxPolygon * opengl_graphic_cursor = nullptr;
 SDL_Rect native_screen_position;
 bool native_screen_stretching = false;
 bool native_screen_match = false;
@@ -115,7 +115,7 @@ void opengl_graphic_create_fbotexture( Texture & fbo )
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbo.tw, fbo.th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbo.tw, fbo.th, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
 	//glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo.pointer, 0);
 
@@ -143,14 +143,14 @@ bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
 
 	int window_width, window_height, width, height;
 
-	if ( display_dimension != NULL )
+	if ( display_dimension != nullptr )
 	{
 		window_width = display_dimension->w;
 		window_height = display_dimension->h;
 		width = screen_dimension->w;
 		height = screen_dimension->h;
 	}
-	else if ( screen_dimension != NULL )
+	else if ( screen_dimension != nullptr )
 	{
 		SDL_DisplayMode dm;
 		if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
@@ -180,7 +180,7 @@ bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
 	native_window = lux::core->GetWindow();
 
 	SDL_SetWindowSize(native_window, window_width, window_height );
-	if ( display_dimension != NULL )
+	if ( display_dimension != nullptr )
 	{
 		SDL_GetWindowSize(native_window, &window_width, &window_height);
 		display_dimension->w = window_width;
@@ -354,7 +354,7 @@ bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
 	if ( native_screen_match )
 	{
 		glViewport(0, 0, window_width, window_height);
-		SDL_RenderSetViewport(native_renderer, NULL);
+		SDL_RenderSetViewport(native_renderer, nullptr);
 
 		//gles::setOrtho( 0.0f, (float)window_width, (float)window_height, 0.0f, -10.0f, 10.0f );
 	}
@@ -440,7 +440,7 @@ bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
 	position.y = y;
 	position.z = 7000;
 
-	Lux_GLES_DrawPolygon(opengl_graphic_cursor->x, opengl_graphic_cursor->y, opengl_graphic_cursor->count, position, effect, NULL);
+	Lux_GLES_DrawPolygon(opengl_graphic_cursor->x, opengl_graphic_cursor->y, opengl_graphic_cursor->count, position, effect, nullptr);
 }
 
 /* Resource Functions */
@@ -452,7 +452,7 @@ bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
  */
  bool Lux_OGL_FreeSprite( LuxSprite * sprite )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return false;
 	if ( sprite->data )
 	{
@@ -460,7 +460,7 @@ bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
 		lux::OpenGLTexture::destroy(texture);
 		delete texture;
 	}
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return true;
 }
 
@@ -533,7 +533,7 @@ bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
 	bool results = false;
 
 	/* PNG Image */
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	elix::Image * png = new elix::Image;
 	if ( lux::game_data )
@@ -641,7 +641,7 @@ bool Lux_OGL_Init(LuxRect *screen_dimension, LuxRect *display_dimension)
  */
  LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	elix::Image * png = new elix::Image(data, size);
 
 	if ( png->HasContent() )

@@ -162,7 +162,7 @@ void Lux_GLES_LoadFont()
 		coords[i].set2( (cos(angle) * xradius),  (sin(angle) * yradius), 0.0, 0.0, 0.0 );
 	}
 
-	gles::render( GL_TRIANGLE_FAN, coords, 64, NULL, dest, colors, 0, gles::scale, gles::rotation, using_shader );
+	gles::render( GL_TRIANGLE_FAN, coords, 64, nullptr, dest, colors, 0, gles::scale, gles::rotation, using_shader );
 }
 
  void Lux_GLES_DrawLine( LuxRect points, ObjectEffect effects )
@@ -180,7 +180,7 @@ void Lux_GLES_LoadFont()
 	coords[0].set2( points.x, points.y, 0.0, 0.0, 0.0 );
 	coords[1].set2( points.w, points.h, 0.0, 0.0, 1.0 );
 
-	gles::render( GL_LINES, coords, 2, NULL, dest, colors, 0, gles::scale, gles::rotation, using_shader );
+	gles::render( GL_LINES, coords, 2, nullptr, dest, colors, 0, gles::scale, gles::rotation, using_shader );
 }
 
  void Lux_GLES_DrawPolygon( int16_t * x_point, int16_t *y_point, uint16_t point_count, LuxRect position, ObjectEffect effects, void * texture )
@@ -202,7 +202,7 @@ void Lux_GLES_LoadFont()
 		coords[i].set2( x_point[i],  y_point[i], 0.0, 0.0, 0.0 );
 	}
 
-	gles::render( GL_TRIANGLE_FAN, coords, point_count, NULL, dest, colors, 0, gles::scale, gles::rotation, using_shader );
+	gles::render( GL_TRIANGLE_FAN, coords, point_count, nullptr, dest, colors, 0, gles::scale, gles::rotation, using_shader );
 
 	delete[] coords;
 	delete[] colors;
@@ -238,18 +238,18 @@ void Lux_GLES_LoadFont()
 	coords[2].set2( -half_wit, half_hei, 0.0, 0.0, 1.0 );
 	coords[3].set2( half_wit, half_hei, 0.0, 1.0, 1.0 );
 
-	gles::render( GLES_DEFAULT_PRIMITIVE, coords, 4, NULL, dest, colors, 0, gles::scale, rotation, using_shader );
+	gles::render( GLES_DEFAULT_PRIMITIVE, coords, 4, nullptr, dest, colors, 0, gles::scale, rotation, using_shader );
 }
 
 
  void Lux_GLES_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return;
 
 	Texture * texture = (Texture*) sprite->GetData(effect);
 
-	if ( texture == NULL )
+	if ( texture == nullptr )
 		return;
 
 	LuxRect area = dest_rect;
@@ -448,8 +448,8 @@ void Lux_GLES_LoadFont()
 
  int32_t Lux_GLES_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z, ObjectEffect effects, bool allow_custom )
 {
-	LuxSprite * sprite_data = NULL;
-	Texture * texture = NULL;
+	LuxSprite * sprite_data = nullptr;
+	Texture * texture = nullptr;
 
 	/* Sprite Position */
 	LuxVertex dest;

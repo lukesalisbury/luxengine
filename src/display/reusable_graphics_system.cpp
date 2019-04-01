@@ -8,7 +8,7 @@
 bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	/* PNG Image */
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	elix::Image * png = new elix::Image;
 	if ( lux::game_data )
@@ -117,7 +117,7 @@ bool Lux_NATIVE_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children )
  */
 LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	elix::Image * png = new elix::Image(data, size);
 
 	if ( png->HasContent() )

@@ -33,7 +33,7 @@ Some Code taken from Easy GL2D http://rel.betterwebber.com
 
 /* Global Variables */
 struct NativeTexture {
-	sf2d_texture * texture;
+	C2D_Sprite * texture;
 	int32_t address;
 	uint32_t w, h, tw, th;
 	bool pot, loaded;
@@ -43,6 +43,8 @@ struct NativeTexture {
 gfxScreen_t current_screen;
 
 uint32_t native_screen_assignment = 0xC0000040; // 1100 0000 0000 0000 0000 0000 0100 0000
+
+#include "graphics_native.h"
 
 GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_Init,
@@ -63,7 +65,7 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_LoadSpriteSheet,
 	&Lux_NATIVE_LoadSpriteSheetImage,
 	&Lux_NATIVE_FreeSpriteSheet,
-	NULL,
+	nullptr,
 	&Lux_NATIVE_FreeSprite,
 	&Lux_NATIVE_PNGtoSprite,
 
@@ -75,12 +77,12 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_DrawText,
 	&Lux_NATIVE_DrawMessage,
 
-	NULL,
-	NULL
+	nullptr,
+	nullptr
 
 };
 
-DisplayBitFont * dsgraphics_bitfont = NULL;
+DisplayBitFont * dsgraphics_bitfont = nullptr;
 
 /* Local Functions */
 void Lux_NATIVE_SetFrame(LuxRect & rect, bool line)
@@ -370,11 +372,11 @@ void Lux_NATIVE_DrawLine( LuxRect points, ObjectEffect effects )
 
 int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, ObjectEffect effects, bool allow_custom )
 {
-	sf2d_texture * 	texture = NULL;
+	C2D_Sprite * texture = nullptr;
 	LuxColour c = effects.primary_colour;
 	LuxRect area;
-	NativeTexture * ntexture = NULL;
-	LuxSprite * sprite_data = NULL;
+	NativeTexture * ntexture = nullptr;
+	LuxSprite * sprite_data = nullptr;
 	int32_t offset = 7;
 
 	int8_t axis;
@@ -618,7 +620,7 @@ void Lux_NATIVE_DrawMessage( std::string message, uint8_t alignment )
 		{
 			if ( !Lux_Util_CheckTextColour( cchar, font_color, watch_for_color ) )
 			{
-				sf2d_texture * texture = dsgraphics_bitfont->GetTexture(cchar);
+				C2D_Sprite * texture = dsgraphics_bitfont->GetTexture(cchar);
 
 				if ( texture )
 				{
@@ -649,7 +651,7 @@ void Lux_NATIVE_DrawMessage( std::string message, uint8_t alignment )
  */
 bool Lux_NATIVE_FreeSprite ( LuxSprite * sprite )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return false;
 	if ( sprite->data )
 	{
@@ -657,7 +659,7 @@ bool Lux_NATIVE_FreeSprite ( LuxSprite * sprite )
 		sf2d_free_texture(texture->texture);
 		delete texture;
 	}
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return true;
 }
 

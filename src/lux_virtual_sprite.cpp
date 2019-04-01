@@ -74,8 +74,8 @@ bool LuxVirtualSprite::PushObjectsToMap( MapObject * parent, MapObjectList & obj
 	if ( !this->objects.size() )
 		return false;
 
-	MapObject * object = NULL;
-	MapObject * cache_object = NULL;
+	MapObject * object = nullptr;
+	MapObject * cache_object = nullptr;
 	std::map<uint32_t, MapObject*>::iterator l_object;
 
 	for ( l_object = this->objects.begin(); l_object != this->objects.end(); l_object++ )

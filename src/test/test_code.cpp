@@ -26,10 +26,10 @@ static std::string style_names[] = { "STYLE_NORMAL","STYLE_VGRADIENT",	"STYLE_HG
 
 namespace luxtest
 {
-	DisplaySystem * display = NULL;
-	UserInterface * interface = NULL;
+	DisplaySystem * display = nullptr;
+	UserInterface * interface = nullptr;
 
-	LuxSprite * logo = NULL;
+	LuxSprite * logo = nullptr;
 
 	bool opengl = true;
 	int16_t mode = 2;
@@ -80,7 +80,7 @@ bool luxtest::Shapes( ObjectEffect effect )
 	luxtest::display->graphics.DrawRect( rectangle_position, effect );
 	luxtest::display->graphics.DrawCircle( circle_position, effect );
 	luxtest::display->graphics.DrawLine( line_position, effect );
-	luxtest::display->graphics.DrawPolygon( polygon_x_points, polygon_y_points, 4, polygon_position, effect, NULL );
+	luxtest::display->graphics.DrawPolygon( polygon_x_points, polygon_y_points, 4, polygon_position, effect, nullptr );
 
 	luxtest::display->graphics.DrawText( "\u2776 Rotate\n"
 										 "\u2777 Scale\n"
@@ -240,7 +240,7 @@ void luxtest::end()
 		delete luxtest::display;
 	if ( lux::config )
 		delete lux::config;
-	lux::config = NULL;
+	lux::config = nullptr;
 
 
 	lux::engine->RemovePlayer(controller);

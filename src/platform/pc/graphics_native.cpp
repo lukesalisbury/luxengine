@@ -75,21 +75,21 @@ float sdlgraphics_ratio[2] = {1.0, 1.0};
 int32_t sdlgraphics_scale = 0;
 
 int sdlgraphics_dirtycount = 0;
-SDL_Surface * sdlgraphics_screen = NULL;
-SDL_Surface * sdlgraphics_realscreen = NULL;
+SDL_Surface * sdlgraphics_screen = nullptr;
+SDL_Surface * sdlgraphics_realscreen = nullptr;
 std::string sdlgraphics_title;
 uint32_t sdlgraphics_fps = 0, sdlgraphics_fpstime = 0;
 bool sdlgraphics_customtext = false;
 int32_t sdlgraphics_customtext_height = 10;
 
-LuxPolygon * sdlgraphics_cursor = NULL;
+LuxPolygon * sdlgraphics_cursor = nullptr;
 
 
 /* Local Functions */
 SDL_Surface * SDL_Surface_Colourise( SDL_Surface * src, LuxColour colour )
 {
 	if ( !src )
-		return NULL;
+		return nullptr;
 
 	int32_t x, y;
 	uint8_t r, g, b, a = 0;
@@ -123,7 +123,7 @@ SDL_Surface * SDL_Surface_Colourise( SDL_Surface * src, LuxColour colour )
 SDL_Surface * SDL_Surface_SwitchColour( SDL_Surface * src, LuxColour colour, LuxColour colour2 )
 {
 	if ( !src )
-		return NULL;
+		return nullptr;
 
 	int32_t x, y;
 	uint8_t r, g, b, a = 0;
@@ -150,7 +150,7 @@ SDL_Surface * SDL_Surface_SwitchColour( SDL_Surface * src, LuxColour colour, Lux
 SDL_Surface * SDL_Surface_Negative( SDL_Surface * src )
 {
 	if ( !src )
-		return NULL;
+		return nullptr;
 
 	int32_t x, y;
 	uint8_t r, g, b, a = 0;
@@ -188,7 +188,7 @@ inline bool SDL_Surface_IsVisiblePixel( int32_t x, int32_t y, SDL_Surface * src 
 SDL_Surface * SDL_Surface_Outline( SDL_Surface * src, LuxColour colour, uint8_t l  )
 {
 	if ( !src )
-		return NULL;
+		return nullptr;
 
 	uint32_t pixel;
 	uint8_t r, g, b, a = 0;
@@ -197,7 +197,7 @@ SDL_Surface * SDL_Surface_Outline( SDL_Surface * src, LuxColour colour, uint8_t 
 
 	SDL_LockSurface(src);
 	SDL_LockSurface(temp);
-	SDL_FillRect(temp, NULL, SDL_MapRGBA(temp->format,0,0,0,0) );
+	SDL_FillRect(temp, nullptr, SDL_MapRGBA(temp->format,0,0,0,0) );
 	for (x = 0; x < src->w; x++)
 	{
 		for (y = 0; y < src->h; y++)
@@ -233,7 +233,7 @@ SDL_Surface * SDL_Surface_Outline( SDL_Surface * src, LuxColour colour, uint8_t 
 SDL_Surface * SDL_Surface_Flip( SDL_Surface * original, uint8_t angle )
 {
 	if ( !original )
-		return NULL;
+		return nullptr;
 
 	SDL_Surface * newsuface;
 
@@ -257,7 +257,7 @@ SDL_Surface * SDL_Surface_Flip( SDL_Surface * original, uint8_t angle )
 									 original->format->Bmask,
 									 original->format->Amask);
 
-	SDL_FillRect(newsuface, NULL, SDL_MapRGBA(newsuface->format, 255, 0, 0, 255));
+	SDL_FillRect(newsuface, nullptr, SDL_MapRGBA(newsuface->format, 255, 0, 0, 255));
 	SDL_LockSurface(original);
 	SDL_LockSurface(newsuface);
 
@@ -321,8 +321,8 @@ SDL_Surface * SDL_Surface_Flip( SDL_Surface * original, uint8_t angle )
 
 SDL_Surface * SDL_Surface_Effects( SDL_Surface * orignal, ObjectEffect effects )
 {
-	if ( orignal == NULL )
-		return NULL;
+	if ( orignal == nullptr )
+		return nullptr;
 
 	bool update = false;
 	bool colourize = false;
@@ -379,8 +379,8 @@ SDL_Surface * SDL_Surface_Effects( SDL_Surface * orignal, ObjectEffect effects )
 
 	if ( update )
 	{
-		SDL_Surface * new_surface = NULL;
-		SDL_Surface * temp_surface = NULL;
+		SDL_Surface * new_surface = nullptr;
+		SDL_Surface * temp_surface = nullptr;
 		if ( effects.style == STYLE_REPCOLOUR )
 		{
 			new_surface = SDL_Surface_SwitchColour( orignal, effects.primary_colour, effects.secondary_colour );
@@ -540,9 +540,9 @@ SDL_Surface * SDL_Surface_Rectangle( LuxRect in_rect, ObjectEffect effects, SDL_
 // Loaded a file from the game file.
 SDL_Surface * SDL_Surface_LoadImage( std::string file )
 {
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
-	SDL_Surface * temp_surface = NULL;
+	SDL_Surface * temp_surface = nullptr;
 	if ( lux::game_data )
 	{
 		size = lux::game_data->GetFile(file, &data, false);
@@ -563,7 +563,7 @@ SDL_Surface * SDL_Surface_LoadImage( std::string file )
 
 // Switches 'sdlgraphics_screen' value
 // Can be use to redirect drawing functions to another SDL_Surface
-// Passing NULL will set back to the default.
+// Passing nullptr will set back to the default.
 bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 {
 	if ( output )
@@ -614,7 +614,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 	}
 	else
 	{
-		sdlgraphics_realscreen = NULL;
+		sdlgraphics_realscreen = nullptr;
 		sdlgraphics_screen = SDL_SetVideoMode(width, height, bpp, sdlgraphics_flags );
 		if ( !sdlgraphics_screen )
 		{
@@ -632,11 +632,11 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 		icon = SDL_Surface_LoadImage("./resources/icon32.png");
 	}
 	sdlgraphics_title = lux::config->GetString("project.title") + " (Software Rendering)";
-	SDL_WM_SetCaption(sdlgraphics_title.c_str(), NULL);
-	if (icon != NULL)
+	SDL_WM_SetCaption(sdlgraphics_title.c_str(), nullptr);
+	if (icon != nullptr)
 	{
 		SDL_SetAlpha(icon, SDL_SRCALPHA, 0);
-		SDL_WM_SetIcon(icon, NULL);
+		SDL_WM_SetIcon(icon, nullptr);
 		SDL_FreeSurface(icon);
 	}
 
@@ -688,7 +688,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 		if ( sdlgraphics_scale )
 		{
 			SDL_Surface * s = zoomSurface( sdlgraphics_screen, 2.0, 2.0, 0 );
-			SDL_BlitSurface(s, NULL, sdlgraphics_realscreen, NULL);
+			SDL_BlitSurface(s, nullptr, sdlgraphics_realscreen, nullptr);
 			SDL_Flip( sdlgraphics_realscreen );
 			SDL_FreeSurface( s );
 		}
@@ -716,7 +716,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 			title_msg << sdlgraphics_title << " " << sdlgraphics_fps;
 			sdlgraphics_fpstime = lux::core->GetTime();
 			sdlgraphics_fps = 0;
-			SDL_WM_SetCaption( title_msg.str().c_str(), NULL);
+			SDL_WM_SetCaption( title_msg.str().c_str(), nullptr);
 		}
 		sdlgraphics_fps++;
 	}
@@ -745,7 +745,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
  bool Lux_NATIVE_SetFullscreen( bool able )
 {
 	lux::config->SetBoolean("display.fullscreen", able);
-	Lux_NATIVE_ChangeOutput(NULL);
+	Lux_NATIVE_ChangeOutput(nullptr);
 	if ( SDL_WM_ToggleFullScreen(sdlgraphics_screen) )
 		return true;
 
@@ -765,7 +765,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 	position.x = x;
 	position.y = y;
 
-	Lux_NATIVE_DrawPolygon(sdlgraphics_cursor->x, sdlgraphics_cursor->y, sdlgraphics_cursor->count, position, effect, NULL);
+	Lux_NATIVE_DrawPolygon(sdlgraphics_cursor->x, sdlgraphics_cursor->y, sdlgraphics_cursor->count, position, effect, nullptr);
 
 }
 
@@ -798,7 +798,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
  */
  bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return false;
 	if ( !sprite->_cache.empty() )
 	{
@@ -815,7 +815,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 	{
 		SDL_FreeSurface((SDL_Surface *)sprite->data);
 	}
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return false;
 }
 
@@ -916,7 +916,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 			SDL_Surface * temp_sheet = SDL_CreateRGBSurface( sdlgraphics_flags, tmp_rect.w, tmp_rect.h, 32, RMASK, GMASK, BMASK, AMASK );
 			if ( temp_sheet )
 			{
-				SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, NULL);
+				SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, nullptr);
 				SDL_SetAlpha(temp_sheet, 0, 0);
 
 				p->second->data = (void *)SDL_DisplayFormatAlpha(temp_sheet);
@@ -1007,7 +1007,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
  */
  LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	elix::Image * png = new elix::Image(data, size);
 
 	if ( png->HasContent() )
@@ -1036,7 +1036,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 /* Drawing Functions */
  void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effects )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return;
 
 	if ( !sdlgraphics_screen )
@@ -1047,7 +1047,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 	SDL_Surface * orignal_surface = (SDL_Surface*) sprite->GetData( default_fx );
 	SDL_Surface * surface = (SDL_Surface*) sprite->GetData(effects);
 
-	if ( surface == NULL )
+	if ( surface == nullptr )
 		return;
 
 	if ( surface->w == 0 || surface->h == 0 )
@@ -1091,7 +1091,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 			{
 				draw.x = dest_rect.x + area.x;
 				draw.y = dest_rect.y + area.y;
-				SDL_BlitSurface(surface, NULL, sdlgraphics_screen, &draw);
+				SDL_BlitSurface(surface, nullptr, sdlgraphics_screen, &draw);
 			}
 		}
 	}
@@ -1099,13 +1099,13 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 	{
 		if ( effects.rotation )
 		{
-			if ( orignal_surface != NULL )
+			if ( orignal_surface != nullptr )
 			{
 				draw.x -= (surface->w - orignal_surface->w) / 2;
 				draw.y -= (surface->h - orignal_surface->h) / 2;
 			}
 		}
-		SDL_BlitSurface(surface, NULL, sdlgraphics_screen, &draw);
+		SDL_BlitSurface(surface, nullptr, sdlgraphics_screen, &draw);
 	}
 }
 
@@ -1130,7 +1130,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 	if ( (effects.style > STYLE_NORMAL && effects.style < STYLE_NEGATIVE) || effects.rotation )
 	{
 		SDL_Surface * surface = SDL_Surface_Rectangle( dest_rect, effects, &area );
-		SDL_BlitSurface(surface, NULL, sdlgraphics_screen, &area);
+		SDL_BlitSurface(surface, nullptr, sdlgraphics_screen, &area);
 		SDL_FreeSurface(surface);
 	}
 	else if ( effects.style == STYLE_NEGATIVE )
@@ -1165,7 +1165,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 	}
 
 
-	if ( texture != NULL )
+	if ( texture != nullptr )
 	{
 		texturedPolygon(sdlgraphics_screen, x_point, y_point, point_count, (SDL_Surface *)texture, 0,0);
 	}
@@ -1204,8 +1204,8 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
  int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, int32_t z, ObjectEffect effects, bool allow_custom )
 {
 	SDL_Rect area;
-	SDL_Surface * surface = NULL;
-	LuxSprite * sprite_data = NULL;
+	SDL_Surface * surface = nullptr;
+	LuxSprite * sprite_data = nullptr;
 	int32_t offset = 7;
 
 	int8_t axis;
@@ -1232,7 +1232,7 @@ bool Lux_NATIVE_ChangeOutput( SDL_Surface * output )
 		area.w = surface->w;
 		area.h = surface->h;
 
-		SDL_BlitSurface(surface, NULL, sdlgraphics_screen, &area);
+		SDL_BlitSurface(surface, nullptr, sdlgraphics_screen, &area);
 
 		offset = surface->w + 2;
 	}

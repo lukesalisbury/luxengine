@@ -81,7 +81,7 @@ void Lux_NATIVE_DrawText (std::string text, LuxRect dest_rect, Effects image_eff
 
 LuxSprite * Lux_NATIVE_PNGtoSprite( char * data, int32_t size )
 {
-	return NULL;
+	return nullptr;
 }
 
 void Lux_NATIVE_DrawPolygon ( short * x_point, short *y_point, short point_count, Effects image_effects, void * texture )

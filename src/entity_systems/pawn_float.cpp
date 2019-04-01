@@ -18,7 +18,7 @@
  *             Thiadmer Riemersma
  */
 #include <stdlib.h>     /* for atof() */
-#include <stdio.h>      /* for NULL */
+#include <stdio.h>      /* for nullptr */
 #include <assert.h>
 #include <math.h>
 #include "pawn_helper.h"
@@ -359,7 +359,7 @@ const AMX_NATIVE_INFO float_Natives[] = {
   { "floatcos",    n_floatcos   },
   { "floattan",    n_floattan   },
   { "floatatan2",    n_floatatan2   },
-  { NULL, NULL }        /* terminator */
+  { nullptr, nullptr }        /* terminator */
 };
 
 int AMXEXPORT AMXAPI amx_FloatInit(AMX *amx)

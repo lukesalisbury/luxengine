@@ -2,6 +2,9 @@
 #include "bitfont.h"
 #include "core.h"
 
+
+#include <citro2d.h>
+#include <citro3d.h>
 /**
  * @brief DisplayFont::DisplayFont
  */
@@ -21,12 +24,17 @@ DisplayBitFont::DisplayBitFont( )
 				charflip[y + (7-q)] = !!(font_point[l] & (1 << q)) ? 0xFFFFFFFF : 0x00000000 ;
 			}
 		}
-		this->textures[c] = sf2d_create_texture( 8, 8, TEXFMT_RGBA8, SF2D_PLACE_RAM );
-		memcpy(this->textures[c]->data, charflip, 256);
-		sf2d_texture_tile32(this->textures[c]);
+		C2D_Image i = { nullptr, nullptr };
+		C3D_TexInitVRAM(i.tex, 8, 8, GPU_RGBA8);
+
+		C3D_TexUpload(i.tex, charflip);
+
+		C2D_SpriteFromImage(this->textures[c], i);
+
+
 		font_point += 8;
 
-		delete charflip;
+		delete[] charflip;
 	}
 
 }
@@ -39,7 +47,8 @@ DisplayBitFont::~DisplayBitFont()
 {
 	for ( uint8_t c = 0; c < 130; c++)
 	{
-		sf2d_free_texture(this->textures[c]);
+		C3D_TexDelete(&this->textures[c]->tex);
+		C2D_Sprite(this->textures[c]);
 	}
 }
 
@@ -48,10 +57,10 @@ DisplayBitFont::~DisplayBitFont()
  * @param character
  * @return
  */
-sf2d_texture *DisplayBitFont::GetTexture(uint32_t character)
+C2D_Sprite * DisplayBitFont::GetTexture(uint32_t character)
 {
 
-	sf2d_texture * texture = NULL;
+	C2D_Sprite * texture = nullptr;
 	if ( character >= 32 && character <= 128 )
 	{
 		texture = this->textures[character];

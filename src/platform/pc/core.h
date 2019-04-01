@@ -8,8 +8,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef _CORE_H_
-	#define _CORE_H_
+#ifndef CORE_H
+	#define CORE_H
 
 	#include <SDL/SDL.h>
 	#include <SDL/SDL_framerate.h>
@@ -36,7 +36,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 			void QuitSubSystem(uint32_t flag);
 			bool InitSubSystem(uint32_t flag);
 			void SystemMessage(uint8_t type, std::string message);
-			std::ostream& SystemMessage(uint8_t type, const char *file = NULL, int line = 0);
+			std::ostream& SystemMessage(uint8_t type, const char *file = nullptr, int line = 0);
 			bool Good();
 			uint32_t GetTime();
 			uint32_t GetFrameDelta();

@@ -35,20 +35,20 @@ namespace colour {
 }
 
 namespace lux {
-	LuxEngine * engine = NULL;
-	CoreSystem * core = NULL;
-	UserInterface * gui = NULL;
-	Config * global_config = NULL;
-	GameConfig * config = NULL;
-	AudioSystem * audio = NULL;
-	DisplaySystem * display = NULL;
-	GameSystem * game_system = NULL;
-	EntityManager * entities = NULL;
-	MokoiGame * game_data = NULL;
-	EntitySystem * entity_system = NULL;
-	PlatformMedia * media = NULL;
+	LuxEngine * engine = nullptr;
+	CoreSystem * core = nullptr;
+	UserInterface * gui = nullptr;
+	Config * global_config = nullptr;
+	GameConfig * config = nullptr;
+	AudioSystem * audio = nullptr;
+	DisplaySystem * display = nullptr;
+	GameSystem * game_system = nullptr;
+	EntityManager * entities = nullptr;
+	MokoiGame * game_data = nullptr;
+	EntitySystem * entity_system = nullptr;
+	PlatformMedia * media = nullptr;
 
-	GameSystem * oldgame = NULL;
+	GameSystem * oldgame = nullptr;
 	namespace screen {
 		void display( std::string message );
 	}
@@ -98,10 +98,10 @@ LuxEngine::LuxEngine( std::string executable )
 	lux::core = new CoreSystem();
 	lux::global_config = new Config();
 
-	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, PROGRAM_NAME" - Version "PROGRAM_VERSION" Log" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, PROGRAM_NAME " - Version " PROGRAM_VERSION " Log" );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_LOG, "-------------------------------------" );
 
-	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, PROGRAM_NAME" - Version "PROGRAM_VERSION" Error Log" );
+	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, PROGRAM_NAME " - Version " PROGRAM_VERSION " Error Log" );
 	lux::core->SystemMessage( SYSTEM_MESSAGE_ERROR, "-------------------------------------" );
 
 	if ( executable[0] != 0 )
@@ -212,11 +212,11 @@ bool LuxEngine::Start( std::string project_file )
 		lux::display->graphics.PostShow(GRAPHICS_SCREEN_FRAME);
 
 
-//		lux::engine->ShowDialog("DIALOGOK", DIALOGOK, NULL );
-//		lux::engine->ShowDialog("DIALOGYESNO", DIALOGYESNO, NULL );
-//		lux::engine->ShowDialog("DIALOGYESNOCANCEL", DIALOGYESNOCANCEL, NULL );
+//		lux::engine->ShowDialog("DIALOGOK", DIALOGOK, nullptr );
+//		lux::engine->ShowDialog("DIALOGYESNO", DIALOGYESNO, nullptr );
+//		lux::engine->ShowDialog("DIALOGYESNOCANCEL", DIALOGYESNOCANCEL, nullptr );
 
-//		lux::engine->ShowDialog("DIALOGTEXT", DIALOGTEXT, NULL );
+//		lux::engine->ShowDialog("DIALOGTEXT", DIALOGTEXT, nullptr );
 //		return false;
 
 
@@ -561,7 +561,7 @@ Player * LuxEngine::GetPlayer( uint32_t player )
 	{
 		return this->_players[player_position];
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -680,7 +680,7 @@ bool LuxEngine::HandleSave()
 
 	saved_game.SetSlot( this->save_system_slot );
 
-	if ( saved_game.Save( lux::game_system, lux::entities, NULL, 0 ) )
+	if ( saved_game.Save( lux::game_system, lux::entities, nullptr, 0 ) )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "game saved" << std::endl;
 		return true;
@@ -737,7 +737,7 @@ bool LuxEngine::HandleLoad()
 	lux::game_system = restored_world;
 	lux::entities = restored_entity_manager;
 
-	if ( saved_game.Restore( restored_world, restored_entity_manager, NULL, 0 ) )
+	if ( saved_game.Restore( restored_world, restored_entity_manager, nullptr, 0 ) )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Game restored" << std::endl;
 		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "removing old world  & enitites" << std::endl;
@@ -799,7 +799,7 @@ bool LuxEngine::RestoreSaveGame( uint8_t slot )
 bool LuxEngine::WriteSaveGame( uint8_t slot, int32_t * info, uint32_t length )
 {
 	LuxSaveState saved_game;
-	saved_game.SetInformation( lux::game_data->ident, LUX_SAVE_COOKIE_TYPE, "", NULL );
+	saved_game.SetInformation( lux::game_data->ident, LUX_SAVE_COOKIE_TYPE, "", nullptr );
 	saved_game.SetSlot( slot );
 	saved_game.Save( lux::game_system, lux::entities, info, length );
 
@@ -817,10 +817,10 @@ bool LuxEngine::ReadSaveInfo(uint8_t slot, int32_t * info, uint32_t length, uint
 {
 	LuxSaveState saved_game;
 
-	saved_game.SetInformation( project_id, LUX_SAVE_COOKIE_TYPE, "", NULL );
+	saved_game.SetInformation( project_id, LUX_SAVE_COOKIE_TYPE, "", nullptr );
 	saved_game.SetSlot( slot );
 
-	if ( saved_game.Restore( NULL, NULL, info, length ) )
+	if ( saved_game.Restore( nullptr, nullptr, info, length ) )
 	{
 		return true;
 	}

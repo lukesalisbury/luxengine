@@ -21,7 +21,7 @@ class MapObject;
 #include "lux_polygon.h"
 #include "lux_virtual_sprite.h"
 
-#include "libs/Box2D/Box2D.h"
+//#include "libs/Box2D/Box2D.h"
 
 #define MAP_OBJECT_PAIR(a,b) std::pair<uint32_t, MapObject *>(a,b)
 
@@ -73,7 +73,7 @@ class MapObject
 		bool auto_delete;
 
 		/* Physics */
-		b2Body * body;
+		//b2Body * body;
 
 		/* Data Function */
 		bool has_data;

@@ -19,8 +19,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 KOS_INIT_FLAGS(INIT_DEFAULT);
 
 /* Local variables */
-cont_state_t * control[MAPLE_PORT_COUNT] = { NULL, NULL, NULL, NULL };
-maple_device_t * control_addr[MAPLE_PORT_COUNT] = { NULL, NULL, NULL, NULL };
+cont_state_t * control[MAPLE_PORT_COUNT] = { nullptr, nullptr, nullptr, nullptr };
+maple_device_t * control_addr[MAPLE_PORT_COUNT] = { nullptr, nullptr, nullptr, nullptr };
 
 /* Local functions */
 CoreSystem::CoreSystem()
@@ -176,7 +176,7 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 		if ( control_addr[p] )
 			control[p] = (cont_state_t *)maple_dev_status(control_addr[p]);
 		else
-			control[p] = NULL;
+			control[p] = nullptr;
 	}
 
 

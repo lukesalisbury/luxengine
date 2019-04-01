@@ -53,7 +53,7 @@ class Widget
 {
 	friend class UserInterface;
 	public:
-		Widget( LuxRect region, LuxWidget type, CSSParser * style = NULL );
+		Widget( LuxRect region, LuxWidget type, CSSParser * style = nullptr );
 		~Widget();
 
 	private:

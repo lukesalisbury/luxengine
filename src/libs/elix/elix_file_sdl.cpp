@@ -29,7 +29,7 @@ namespace elix {
 		this->path = filename;
 		this->handle = SDL_RWFromFile(this->path.c_str(), (write ? "wb" : "rb") );
 		this->_length = 0;
-		this->ErrorCallback = NULL;
+		this->ErrorCallback = nullptr;
 		if ( !this->handle )
 		{
 			this->error = "Can't open '" + this->path + "'";
@@ -201,7 +201,7 @@ namespace elix {
 			*buffer = new char[this->_length];
 			memset(*buffer, 0,this->_length);
 		}
-		if ( *buffer != NULL )
+		if ( *buffer != nullptr )
 		{
 			uint32_t read = SDL_RWread( (SDL_RWops *)this->handle, buffer, this->_length, 1 );
 

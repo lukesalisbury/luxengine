@@ -26,7 +26,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #ifdef WIIUSE
 #include "../../../../ThirdParty/wiiuse/wiiuse.h"
-wiimote ** wiimotes = NULL;
+wiimote ** wiimotes = nullptr;
 #endif
 
 /* Network Thread */
@@ -51,7 +51,7 @@ CoreSystem::CoreSystem()
 			for ( uint32_t i = 0; i < js_num; i++ )
 			{
 				this->joystick[i] = SDL_JoystickOpen(i);
-				if ( this->joystick[i] != NULL )
+				if ( this->joystick[i] != nullptr )
 				{
 					lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FUNCTION__ << ": Found Joystick (" << i << "): " << SDL_JoystickName(i) << " Axes:" << SDL_JoystickNumAxes(this->joystick[i]) << " Buttons:" << SDL_JoystickNumButtons(this->joystick[i]) << " Hats:" << SDL_JoystickNumHats(this->joystick[i]) << " Balls:" << SDL_JoystickNumBalls(this->joystick[i]) << std::endl;
 				}
@@ -78,7 +78,7 @@ CoreSystem::CoreSystem()
 
 	this->state = RUNNING;
 	this->lockfps = true;
-	this->keystate = SDL_GetKeyboardState(NULL);
+	this->keystate = SDL_GetKeyboardState(nullptr);
 	this->good = true;
 	this->time = this->GetTime();
 	
@@ -92,7 +92,7 @@ CoreSystem::~CoreSystem()
 	{
 		for ( int32_t i = 0; i < SDL_NumJoysticks(); i++ )
 		{
-			if ( this->joystick[i] != NULL )
+			if ( this->joystick[i] != nullptr )
 				SDL_JoystickClose(this->joystick[i]);
 		}
 	}
@@ -133,8 +133,8 @@ void CoreSystem::AbleOutput(bool able)
 	}
 	else
 	{
-		freopen( NULL, "w", stderr );
-		freopen( NULL, "w", stdout );
+		freopen( nullptr, "w", stderr );
+		freopen( nullptr, "w", stdout );
 	}
 
 }
@@ -272,7 +272,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 		}
 	}
 
-	this->keystate = SDL_GetKeyboardState(NULL);
+	this->keystate = SDL_GetKeyboardState(nullptr);
 	this->mousestate = SDL_GetMouseState(&this->mouseposition[0], &this->mouseposition[1]);
 	if ( lux::display->Display2Screen )
 	{

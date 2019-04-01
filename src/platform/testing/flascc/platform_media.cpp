@@ -80,7 +80,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 {
 	if (device == NOINPUT )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	switch (device)
@@ -92,7 +92,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 				std::string key_name = elix::string::FromInt(symbol);
 				return this->keyboard_sheet->GetSprite(key_name);
 			}
-			return NULL;
+			return nullptr;
 		}
 		case MOUSEAXIS:
 		{
@@ -101,7 +101,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 				std::string key_name = elix::string::FromInt(symbol);
 				return this->mouse_sheet->GetSprite(key_name);
 			}
-			return NULL;
+			return nullptr;
 		}
 
 		case MOUSEBUTTON:
@@ -112,7 +112,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 				key_name.append(elix::string::FromInt(symbol));
 				return this->mouse_sheet->GetSprite(key_name);
 			}
-			return NULL;
+			return nullptr;
 		}
 		case CONTROLAXIS:
 		{
@@ -130,7 +130,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 					return this->joystick_generic_sheet->GetSprite(key_name);
 				}
 
-			return NULL;
+			return nullptr;
 		}
 		case CONTROLBUTTON:
 		{
@@ -142,10 +142,10 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 					return this->joystick_generic_sheet->GetSprite(key_name);
 				}
 
-			return NULL;
+			return nullptr;
 		}
 		case NOINPUT:
 		default:
-			return NULL;
+			return nullptr;
 	}
 }

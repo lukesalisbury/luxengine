@@ -339,7 +339,7 @@ void UnicodeToInput( int32_t cchar, int8_t * axis, int8_t * button, int8_t * poi
 tinyxml2::XMLDocument * MokoiGame_GetXML( std::string file )
 {
 	tinyxml2::XMLDocument * xml_doc = new tinyxml2::XMLDocument;
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	if ( lux::game_data->GetFile(file, &data, true) )
 	{
 		xml_doc->Parse( (char *)data );

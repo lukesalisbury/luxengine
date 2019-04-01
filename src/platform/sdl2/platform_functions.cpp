@@ -21,10 +21,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 /* Debug Message */
 
-SDL_Window * debug_window = NULL;
-SDL_Renderer * debug_renderer = NULL;
+SDL_Window * debug_window = nullptr;
+SDL_Renderer * debug_renderer = nullptr;
 SDL_GLContext debug_context;
-DisplayBitFont * debug_font = NULL;
+DisplayBitFont * debug_font = nullptr;
 
 void SDL2_OuputRenderingInfo( SDL_RendererInfo * info );
 
@@ -245,7 +245,7 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 
 			if ( !Lux_Util_CheckTextColour( cchar, font_color, watch_for_color ) )
 			{
-				SDL_Texture * texture = NULL;
+				SDL_Texture * texture = nullptr;
 
 				texture = debug_font->GetTexture(cchar);
 
@@ -254,7 +254,7 @@ void Lux_SDL2_DrawMessage( std::string message, uint8_t alignment )
 					SDL_SetTextureColorMod( texture, font_color.r, font_color.g, font_color.b);
 					SDL_SetTextureAlphaMod( texture, 255 );
 					SDL_SetTextureBlendMode( texture, SDL_BLENDMODE_NONE);
-					SDL_RenderCopy(debug_renderer, texture, NULL, &draw);
+					SDL_RenderCopy(debug_renderer, texture, nullptr, &draw);
 				}
 				draw.x += 7;
 			}
@@ -290,7 +290,7 @@ void Lux_SDL2_CloseMessageWindow(  )
 	{
 		delete debug_font;
 		SDL_DestroyRenderer(debug_renderer);
-		debug_renderer = NULL;
+		debug_renderer = nullptr;
 	}
 
 	if ( debug_window )
@@ -305,7 +305,7 @@ void Lux_SDL2_CloseMessageWindow(  )
 		lux::global_config->SetNumber("debug.y", static_cast<int32_t>(y));
 
 		SDL_DestroyWindow(debug_window);
-		debug_window = NULL;
+		debug_window = nullptr;
 	}
 
 }
@@ -317,9 +317,9 @@ void Lux_SDL2_CloseMessageWindow(  )
  */
 SDL_Surface * Lux_SDL2_Image2Surface( std::string file )
 {
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
-	SDL_Surface * temp_surface = NULL;
+	SDL_Surface * temp_surface = nullptr;
 	if ( lux::game_data )
 	{
 		size = lux::game_data->GetFile(file, &data, false);
@@ -348,7 +348,7 @@ SDL_Surface * Lux_SDL2_Image2Surface( std::string file )
  */
 void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 {
-	SDL_Surface * icon = NULL;
+	SDL_Surface * icon = nullptr;
 
 	if ( lux::game_data )
 	{
@@ -358,12 +358,12 @@ void Lux_SDL2_SetWindowIcon( SDL_Window * native_window )
 			icon = Lux_SDL2_Image2Surface("./resources/icon32.png");
 	}
 
-	if ( icon == NULL )
+	if ( icon == nullptr )
 	{
 		// Load Icon from resource
 		uint32_t size = 0;
-		elix::File * image_source_file = NULL;
-		uint8_t * data = NULL;
+		elix::File * image_source_file = nullptr;
+		uint8_t * data = nullptr;
 
 		image_source_file = new elix::File( elix::directory::Resources("", "window_icon.png") );
 		size = image_source_file->ReadAll( (data_pointer*) &data);

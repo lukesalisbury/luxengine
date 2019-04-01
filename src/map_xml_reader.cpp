@@ -197,7 +197,7 @@ void MapXMLReader::ReadGlobalEntity( tinyxml2::XMLElement * entity_element, tiny
 	std::string entity_file_name;
 	std::string object_type, object_content, object_ident;
 
-	Entity * current_entity = NULL;
+	Entity * current_entity = nullptr;
 	tinyxml2::XMLElement * position_element;
 
 	if ( tinyxml2::QueryStringAttribute( entity_element, "value", entity_file_name) == tinyxml2::XML_SUCCESS )
@@ -490,15 +490,15 @@ MapObject * MapXMLReader::ReadObject( tinyxml2::XMLElement * object_element, con
 void MapXMLReader::ReadObjectsWithEntities( MapObjectList & object_array, MokoiMap * map )
 {
 	uint32_t object_cache_count = 0;
-	tinyxml2::XMLElement * child_element = NULL;
-	tinyxml2::XMLElement * entity_element = NULL;
+	tinyxml2::XMLElement * child_element = nullptr;
+	tinyxml2::XMLElement * entity_element = nullptr;
 
 	for( child_element = root->FirstChildElement("object"); child_element; child_element = child_element->NextSiblingElement("object") )
 	{
 		if ( strcmp(child_element->Value(), "object") )
 			continue;
 
-		MapObject * object = NULL;
+		MapObject * object = nullptr;
 		bool is_global_object = ( map ? false : true );
 
 		/* Check to see if object is global
@@ -546,7 +546,7 @@ void MapXMLReader::ReadObjectsWithEntities( MapObjectList & object_array, MokoiM
 void MapXMLReader::ReadObjects(MapObjectList & object_array, bool is_global )
 {
 	uint32_t object_cache_count = 0;
-	tinyxml2::XMLElement * child_element = NULL;
+	tinyxml2::XMLElement * child_element = nullptr;
 
 	for( child_element = root->FirstChildElement("object"); child_element; child_element = child_element->NextSiblingElement("object") )
 	{
@@ -609,7 +609,7 @@ void MapXMLReader::ReadSettings( MokoiMap * map, std::map<std::string, std::stri
 
 	tinyxml2::XMLElement * dimensions = settings_element->FirstChildElement("dimensions");
 	tinyxml2::XMLElement * background = settings_element->FirstChildElement("color");
-	tinyxml2::XMLElement * options = NULL;
+	tinyxml2::XMLElement * options = nullptr;
 
 	if ( dimensions )
 	{

@@ -27,16 +27,16 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "network_types.h"
 
 /* Network Thread */
-SDL_Thread * sdlcore_thread = NULL;
+SDL_Thread * sdlcore_thread = nullptr;
 bool net_active = false;
-ENetPeer * peer = NULL;
+ENetPeer * peer = nullptr;
 ENetHost * client;
 ENetAddress address;
 ENetEvent event;
 ENetPacket * message_packet;
 uint8_t net_id = 0;
 std::map<uint32_t, Player*> net_players;
-SDL_mutex * mutex = NULL;
+SDL_mutex * mutex = nullptr;
 
 extern std::string server_messages_text[13];
 
@@ -60,7 +60,7 @@ Player * NetworkGetPlayer( uint32_t network_id )
 	{
 		return p->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 int pc_network_thread( void *data )
@@ -150,7 +150,7 @@ int pc_network_thread( void *data )
 						{
 							uint32_t entity_id = 0;
 							ReadPacket<uint32_t>( event.packet, 2, entity_id );
-							Entity * entity = NULL;
+							Entity * entity = nullptr;
 							if ( entity_id )
 							{
 								entity = lux::entities->GetEntity( entity_id );
@@ -169,7 +169,7 @@ int pc_network_thread( void *data )
 									MessagePush( "msg: %d", data[0] );
 									lux::core->NetLock();
 									entity->callbacks->Push( entity->_data, data_length );
-									entity->callbacks->PushArray( entity->_data, data, data_length, NULL );
+									entity->callbacks->PushArray( entity->_data, data, data_length, nullptr );
 									entity->callbacks->Push( entity->_data, player );
 									entity->Call("NetMessage", (char*)"");
 									lux::core->NetUnlock();
@@ -198,7 +198,7 @@ int pc_network_thread( void *data )
 										}
 										lux::core->NetLock();
 										entity->callbacks->Push( entity->_data, data_length );
-										entity->callbacks->PushArray( entity->_data, data, data_length, NULL );
+										entity->callbacks->PushArray( entity->_data, data, data_length, nullptr );
 										entity->callbacks->Push( entity->_data, pid );
 										entity->Call("NetMessage", (char*)"");
 										lux::core->NetUnlock();
@@ -225,7 +225,7 @@ int pc_network_thread( void *data )
 
 								uint32_t enituty10;
 								fixed x10, y10;
-								Entity * entity = NULL;
+								Entity * entity = nullptr;
 
 								if ( data_length )
 								{
@@ -241,7 +241,7 @@ int pc_network_thread( void *data )
 											entity->y = y10;
 											entity->Update();
 										}
-										entity = NULL;
+										entity = nullptr;
 									}
 								}
 								lux::engine->SetState(RUNNING);
@@ -253,7 +253,7 @@ int pc_network_thread( void *data )
 				}
 			}
 			enet_packet_destroy( event.packet );
-			event.packet->data = NULL;
+			event.packet->data = nullptr;
 			event.packet->dataLength = 0;
 		}
 	}
@@ -267,7 +267,7 @@ int pc_network_thread( void *data )
 	}
 	enet_deinitialize();
 	SDL_DestroyMutex(mutex);
-	mutex = NULL;
+	mutex = nullptr;
 	return 0;
 }
 
@@ -277,12 +277,12 @@ bool pc_network_init()
 
 	std::string server_ip = lux::config->GetString("server.ip");
 
-	lux::engine->ShowDialog("Connected to '" + server_ip + "'?", DIALOGOK, NULL );
+	lux::engine->ShowDialog("Connected to '" + server_ip + "'?", DIALOGOK, nullptr );
 
 	enet_initialize();
-	client = enet_host_create(NULL, 1, 0, 0);
+	client = enet_host_create(nullptr, 1, 0, 0);
 
-	if ( client == NULL )
+	if ( client == nullptr )
 	{
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " An error occurred while trying to create an ENet client host." << std::endl;
 		enet_deinitialize();
@@ -297,7 +297,7 @@ bool pc_network_init()
 	/* Initiate the connection, allocating the two channels 0 and 1. */
 	peer = enet_host_connect( client, &address, 2 );
 
-	if ( peer == NULL )
+	if ( peer == nullptr )
 	{
 		lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " An error occurred while trying to create an ENet client host." << std::endl;
 		return net_active;
@@ -317,7 +317,7 @@ bool pc_network_init()
 			MessagePush( "Message %d for %d.", event.packet->data[0], net_id);
 			lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Connection to " << server_ip << " succeeded." << std::endl;
 			net_active = true;
-			sdlcore_thread = SDL_CreateThread( pc_network_thread, NULL );
+			sdlcore_thread = SDL_CreateThread( pc_network_thread, nullptr );
 		}
 	}
 	else
@@ -333,7 +333,7 @@ bool CoreSystem::CreateMessage(uint8_t type, bool reliable)
 	if ( !net_active )
 		return false;
 
-	message_packet = enet_packet_create(NULL, 2, (reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED));
+	message_packet = enet_packet_create(nullptr, 2, (reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED));
 	if ( message_packet )
 	{
 		message_packet->data[0] = type;
@@ -392,7 +392,7 @@ bool CoreSystem::MessageSend(bool wait)
 		if ( enet_peer_send(peer, 0, message_packet) )
 			MessagePush( "Error Sending %d.", message_packet->data[0] );
 		//enet_packet_destroy(message_packet);
-		message_packet = NULL;
+		message_packet = nullptr;
 		return true;
 	}
 	return false;

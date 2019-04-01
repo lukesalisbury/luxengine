@@ -25,14 +25,14 @@ Permission is granted to anyone to use this software for any purpose, including 
  */
 int32_t Lux_FFI_Layer_Apply_Shader( uint32_t layer, uint8_t shader )
 {
-	if ( lux::display == NULL )
+	if ( lux::display == nullptr )
 		return 0;
 
-	Layer * requested_layer = NULL;
+	Layer * requested_layer = nullptr;
 
 	requested_layer = lux::display->GetLayer( layer );
 
-	if ( requested_layer != NULL )
+	if ( requested_layer != nullptr )
 	{
 		requested_layer->SetShader( shader );
 		return 1;

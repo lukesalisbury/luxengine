@@ -26,7 +26,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "luxengine", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "luxengine", __VA_ARGS__))
 
-android_app * android_app_details = NULL;
+android_app * android_app_details = nullptr;
 
 
 

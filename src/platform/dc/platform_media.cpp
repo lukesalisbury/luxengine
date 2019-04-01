@@ -54,22 +54,22 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 {
 	if (device == NOINPUT )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	switch (device)
 	{
 		case KEYBOARD:
 		{
-			return NULL;
+			return nullptr;
 		}
 		case MOUSEAXIS:
 		{
-			return NULL;
+			return nullptr;
 		}
 		case MOUSEBUTTON:
 		{
-			return NULL;
+			return nullptr;
 		}
 		case CONTROLAXIS:
 		{
@@ -86,7 +86,7 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 			{
 				return this->joystick_dreamcast_sheet->GetSprite(key_name);
 			}
-			return NULL;
+			return nullptr;
 		}
 		case CONTROLBUTTON:
 		{
@@ -98,10 +98,10 @@ LuxSprite * PlatformMedia::GetInputImage( InputDevice device, uint32_t device_nu
 				return this->joystick_dreamcast_sheet->GetSprite(key_name);
 
 			}
-			return NULL;
+			return nullptr;
 		}
 		case NOINPUT:
 		default:
-			return NULL;
+			return nullptr;
 	}
 }

@@ -57,7 +57,7 @@ enet_address_set_host (ENetAddress * address, const char * name)
     struct hostent * hostEntry;
 
     hostEntry = gethostbyname (name);
-    if (hostEntry == NULL ||
+    if (hostEntry == nullptr ||
         hostEntry -> h_addrtype != AF_INET)
     {
         unsigned long host = inet_addr (name);
@@ -76,7 +76,7 @@ int
 enet_address_get_host_ip (const ENetAddress * address, char * name, size_t nameLength)
 {
     char * addr = inet_ntoa (* (struct in_addr *) & address -> host);
-    if (addr == NULL)
+    if (addr == nullptr)
         return -1;
     strncpy (name, addr, nameLength);
     return 0;
@@ -91,7 +91,7 @@ enet_address_get_host (const ENetAddress * address, char * name, size_t nameLeng
     in.s_addr = address -> host;
     
     hostEntry = gethostbyaddr ((char *) & in, sizeof (struct in_addr), AF_INET);
-    if (hostEntry == NULL)
+    if (hostEntry == nullptr)
       return enet_address_get_host_ip (address, name, nameLength);
 
     strncpy (name, hostEntry -> h_name, nameLength);
@@ -108,7 +108,7 @@ enet_socket_bind (ENetSocket socket, const ENetAddress * address)
 
     sin.sin_family = AF_INET;
 
-    if (address != NULL)
+    if (address != nullptr)
     {
        sin.sin_port = ENET_HOST_TO_NET_16 (address -> port);
        sin.sin_addr.s_addr = address -> host;
@@ -193,13 +193,13 @@ enet_socket_accept (ENetSocket socket, ENetAddress * address)
     int sinLength = sizeof (struct sockaddr_in);
 
     result = accept (socket, 
-                     address != NULL ? (struct sockaddr *) & sin : NULL, 
-                     address != NULL ? & sinLength : NULL);
+                     address != nullptr ? (struct sockaddr *) & sin : nullptr, 
+                     address != nullptr ? & sinLength : nullptr);
 
     if (result == INVALID_SOCKET)
-      return ENET_SOCKET_NULL;
+      return ENET_SOCKET_nullptr;
 
-    if (address != NULL)
+    if (address != nullptr)
     {
         address -> host = (enet_uint32) sin.sin_addr.s_addr;
         address -> port = ENET_NET_TO_HOST_16 (sin.sin_port);
@@ -223,7 +223,7 @@ enet_socket_send (ENetSocket socket,
     struct sockaddr_in sin;
     DWORD sentLength;
 
-    if (address != NULL)
+    if (address != nullptr)
     {
         memset (& sin, 0, sizeof (struct sockaddr_in));
 
@@ -237,10 +237,10 @@ enet_socket_send (ENetSocket socket,
                    (DWORD) bufferCount,
                    & sentLength,
                    0,
-                   address != NULL ? (struct sockaddr *) & sin : 0,
-                   address != NULL ? sizeof (struct sockaddr_in) : 0,
-                   NULL,
-                   NULL) == SOCKET_ERROR)
+                   address != nullptr ? (struct sockaddr *) & sin : 0,
+                   address != nullptr ? sizeof (struct sockaddr_in) : 0,
+                   nullptr,
+                   nullptr) == SOCKET_ERROR)
     {
        if (WSAGetLastError () == WSAEWOULDBLOCK)
          return 0;
@@ -267,10 +267,10 @@ enet_socket_receive (ENetSocket socket,
                      (DWORD) bufferCount,
                      & recvLength,
                      & flags,
-                     address != NULL ? (struct sockaddr *) & sin : NULL,
-                     address != NULL ? & sinLength : NULL,
-                     NULL,
-                     NULL) == SOCKET_ERROR)
+                     address != nullptr ? (struct sockaddr *) & sin : nullptr,
+                     address != nullptr ? & sinLength : nullptr,
+                     nullptr,
+                     nullptr) == SOCKET_ERROR)
     {
        switch (WSAGetLastError ())
        {
@@ -285,7 +285,7 @@ enet_socket_receive (ENetSocket socket,
     if (flags & MSG_PARTIAL)
       return -1;
 
-    if (address != NULL)
+    if (address != nullptr)
     {
         address -> host = (enet_uint32) sin.sin_addr.s_addr;
         address -> port = ENET_NET_TO_HOST_16 (sin.sin_port);
@@ -302,7 +302,7 @@ enet_socketset_select (ENetSocket maxSocket, ENetSocketSet * readSet, ENetSocket
     timeVal.tv_sec = timeout / 1000;
     timeVal.tv_usec = (timeout % 1000) * 1000;
 
-    return select (maxSocket + 1, readSet, writeSet, NULL, & timeVal);
+    return select (maxSocket + 1, readSet, writeSet, nullptr, & timeVal);
 }
 
 int
@@ -324,7 +324,7 @@ enet_socket_wait (ENetSocket socket, enet_uint32 * condition, enet_uint32 timeou
     if (* condition & ENET_SOCKET_WAIT_RECEIVE)
       FD_SET (socket, & readSet);
 
-    selectCount = select (socket + 1, & readSet, & writeSet, NULL, & timeVal);
+    selectCount = select (socket + 1, & readSet, & writeSet, nullptr, & timeVal);
 
     if (selectCount < 0)
       return -1;

@@ -28,7 +28,7 @@ Permission is granted to anyone to use this software for any purpose, including 
  */
 int32_t Lux_FFI_Entity_Object_Collision_Set( Entity * wanted, int32_t rect, int32_t type, int32_t x, int32_t y, int32_t w, int32_t h )
 {
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		return wanted->AddCollision(rect, x, y, w, h, type);
 	}
@@ -49,7 +49,7 @@ uint8_t Lux_FFI_Entity_Object_Collision_Get( Entity * wanted, int32_t rect, int3
 {
 	if ( rect >= 0 && rect < 7 )
 	{
-		if ( wanted != NULL )
+		if ( wanted != nullptr )
 		{
 			if ( wanted->_collisions[rect].added )
 			{
@@ -152,10 +152,10 @@ int32_t Lux_FFI_Entity_Object_Collision_Calculate_Current(Entity * wanted, uint3
  */
 int32_t Lux_FFI_Entity_Object_Collision_Set_From_Object( Entity * wanted, uint32_t object_id, int32_t type )
 {
-	MapObject * object = NULL;
+	MapObject * object = nullptr;
 	LuxRect rect[7] = {};
 
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		object = Lux_FFI_Object_Get( object_id );
 
@@ -191,7 +191,7 @@ int32_t Lux_FFI_Collision_Set( uint32_t hash_entity, int32_t rect, int32_t type,
 {
 
 	Entity * wanted = lux::entities->GetEntity(hash_entity);
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		return wanted->AddCollision(rect, x, y, w, h, type);
 	}
@@ -213,7 +213,7 @@ uint8_t Lux_FFI_Collision_Get( uint32_t hash_entity, int32_t rect, int32_t * x, 
 	if ( rect >= 0 && rect < 7 )
 	{
 		Entity * wanted = lux::entities->GetEntity(hash_entity);
-		if ( wanted != NULL )
+		if ( wanted != nullptr )
 		{
 			if ( wanted->_collisions[rect].added )
 			{
@@ -249,10 +249,10 @@ int32_t Lux_FFI_Collision_Check( uint32_t hash_entity_first, uint32_t hash_entit
 	Entity * first_entity, * second_entity;
 
 	first_entity = lux::entities->GetEntity(hash_entity_first);
-	if ( first_entity != NULL )
+	if ( first_entity != nullptr )
 	{
 		second_entity = lux::entities->GetEntity(hash_entity_second);
-		if ( second_entity != NULL )
+		if ( second_entity != nullptr )
 		{
 			if ( rect_first == -1 )
 			{
@@ -354,11 +354,11 @@ int32_t Lux_FFI_Collision_Calculate_Current( uint32_t hash_entity, uint32_t * en
  */
 int32_t Lux_FFI_Collision_Set_From_Object( uint32_t hash_entity, uint32_t object_id, int32_t type )
 {
-	MapObject * object = NULL;
+	MapObject * object = nullptr;
 	Entity * wanted = lux::entities->GetEntity(hash_entity);
 	LuxRect rect[7] = {};
 
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		object = Lux_FFI_Object_Get( object_id );
 

@@ -64,7 +64,7 @@ bool LuxEngine::EndDialog( LuxWidget dialog )
 
 bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * answer )
 {
-	if ( lux::display == NULL )
+	if ( lux::display == nullptr )
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "No Display Available. Message: " << text << std::endl;
 		return false;
@@ -90,7 +90,7 @@ bool LuxEngine::CreateDialog(std::string text, LuxWidget dialog, std::string * a
 	}
 	else
 	{
-		this->msgdialog_return = NULL;
+		this->msgdialog_return = nullptr;
 	}
 	this->msgdialog = 0;
 
@@ -114,7 +114,7 @@ bool LuxEngine::ShowDialog(std::string text, LuxWidget dialog, std::string * ans
 void LuxEngine::FatalError(std::string reason)
 {
 	this->state = GAMEERROR;
-	if ( lux::core == NULL )
+	if ( lux::core == nullptr )
 	{
 		std::cout << reason << std::endl;
 		std::cerr << reason << std::endl;
@@ -123,7 +123,7 @@ void LuxEngine::FatalError(std::string reason)
 	{
 		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR, reason);
 
-		if ( lux::display == NULL )
+		if ( lux::display == nullptr )
 		{
 			lux::display = new DisplaySystem( );
 		}

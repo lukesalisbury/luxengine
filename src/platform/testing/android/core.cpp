@@ -57,7 +57,7 @@ static void engine_handle_cmd(android_app* app, int32_t cmd)
 /* Local functions */
 CoreSystem::CoreSystem()
 {
-	this->android_state = NULL;
+	this->android_state = nullptr;
 	this->good = true;
 }
 
@@ -124,7 +124,7 @@ bool CoreSystem::InitSubSystem(uint32_t flag)
 	{
 		while ( !android_window )
 		{
-			RefreshInput( NULL );
+			RefreshInput( nullptr );
 		}
 	}
 	return true;
@@ -202,9 +202,9 @@ void CoreSystem::RefreshInput( DisplaySystem * display )
 		struct android_poll_source* source;
 
 		// Read events and draw a frame of animation.
-		if ((ident = ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0) {
+		if ((ident = ALooper_pollAll(0, nullptr, &events, (void**)&source)) >= 0) {
 			// Process this event.
-			if (source != NULL) {
+			if (source != nullptr) {
 				source->process(android_state, source);
 			}
 		}

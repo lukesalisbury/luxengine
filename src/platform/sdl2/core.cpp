@@ -186,12 +186,12 @@ std::ostream& CoreSystem::SystemMessage(const char *file, int line, uint8_t type
 
 std::ostream& CoreSystem::SystemMessage( uint8_t type )
 {
-	return this->SystemMessage( NULL, 0, type );
+	return this->SystemMessage( nullptr, 0, type );
 }
 
 void CoreSystem::SystemMessage( uint8_t type, std::string message )
 {
-	this->SystemMessage( NULL, 0, type ) << message << std::endl;
+	this->SystemMessage( nullptr, 0, type ) << message << std::endl;
 }
 
 void CoreSystem::AbleOutput(bool able)
@@ -806,7 +806,7 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 				this->mouse_position[1] = event.motion.y;
 
 				// Scale Mouse
-				if ( display->graphics.Display2Screen )
+				if ( display && display->graphics.Display2Screen )
 				{
 					display->graphics.Display2Screen(&this->mouse_position[0], &this->mouse_position[1]);
 				}
@@ -824,7 +824,7 @@ bool CoreSystem::InputLoopGet( DisplaySystem * display, uint16_t & key )
 
 			case SDL_DROPFILE:
 			{
-				SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_INFORMATION, "File dropped on window", event.drop.file, NULL );
+				SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_INFORMATION, "File dropped on window", event.drop.file, nullptr );
 				SDL_free(event.drop.file);
 				break;
 			}
@@ -967,7 +967,7 @@ const char * CoreSystem::GamepadName( uint32_t device_number )
 	{
 		return SDL_GameControllerName( this->controller[device_number] );
 	}
-	return NULL;
+	return nullptr;
 
 }
 
@@ -976,7 +976,7 @@ bool CoreSystem::GamepadAdded( int32_t joystick_index )
 	int index = 0;
 	while ( index < 8 )
 	{
-		if ( this->controller[index] == NULL )
+		if ( this->controller[index] == nullptr )
 		{
 			this->controller[index] = SDL_GameControllerOpen(joystick_index);
 			return true;

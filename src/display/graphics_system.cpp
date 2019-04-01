@@ -21,8 +21,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #endif
 
 GraphicSystem GraphicsNone = {
-	NULL,
-	NULL,
+	nullptr,
+	nullptr,
 	&Lux_GRAPHICS_Display2Screen,
 	&Lux_GRAPHICS_TextSprites,
 	&Lux_GRAPHICS_PreShow,
@@ -39,7 +39,7 @@ GraphicSystem GraphicsNone = {
 	&Lux_GRAPHICS_LoadSpriteSheet,
 	&Lux_GRAPHICS_LoadSpriteSheetImage,
 	&Lux_GRAPHICS_FreeSpriteSheet,
-	NULL,
+	nullptr,
 	&Lux_GRAPHICS_FreeSprite,
 	&Lux_GRAPHICS_PNGtoSprite,
 
@@ -175,13 +175,13 @@ GraphicSystem GraphicsNone = {
 
  void * Lux_GRAPHICS_CacheSprite ( LuxSprite * sprite, ObjectEffect fx )
 {
-	return NULL;
+	return nullptr;
 }
 
 
  LuxSprite * Lux_GRAPHICS_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	return NULL;
+	return nullptr;
 }
 
  bool Lux_GRAPHICS_CacheDisplay(uint8_t layer)

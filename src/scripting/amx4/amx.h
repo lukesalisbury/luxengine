@@ -279,7 +279,7 @@ typedef struct tagOVERLAYINFO {
 typedef struct tagAMX {
   unsigned char _FAR *base; /* points to the AMX header, perhaps followed by P-code and data */
   unsigned char _FAR *code; /* points to P-code block, possibly in ROM or in an overlay pool */
-  unsigned char _FAR *data; /* points to separate data+stack+heap, may be NULL */
+  unsigned char _FAR *data; /* points to separate data+stack+heap, may be nullptr */
   AMX_CALLBACK callback;    /* native function callback */
   AMX_DEBUG debug;          /* debug callback */
   AMX_OVERLAY overlay;      /* overlay reader callback */
@@ -450,10 +450,10 @@ enum {
 	  int result##_length_;                                                 \
 	  amx_StrLen(amx_Address(amx,param),&result##_length_);                 \
 	  if (result##_length_>0 &&                                             \
-		  ((result)=(type)alloca((result##_length_+1)*sizeof(*(result))))!=NULL) \
+		  ((result)=(type)alloca((result##_length_+1)*sizeof(*(result))))!=nullptr) \
 		amx_GetString((char*)(result),amx_Address(amx,param),               \
 					  sizeof(*(result))>1,result##_length_+1);              \
-	  else (result) = NULL;                                                 \
+	  else (result) = nullptr;                                                 \
 	} while (0)
   #define amx_StrParam(amx,param,result) \
 	amx_StrParam_Type(amx,param,result,void*)

@@ -850,7 +850,7 @@ static cell n_urlencode(AMX *amx,const cell *params)
   (void)(amx);
   if ((length=(int)params[3])==0)
 	return 0;
-  if ((str = (TCHAR*)alloca(length * sizeof(TCHAR)))==NULL)
+  if ((str = (TCHAR*)alloca(length * sizeof(TCHAR)))==nullptr)
 	return 0;
   cstr = amx_Address(amx, params[2]);
   amx_GetString((char*)str, cstr, sizeof(TCHAR)>1, length);
@@ -1393,7 +1393,7 @@ const AMX_NATIVE_INFO string_Natives[] = {
   { "urldecode", n_urldecode },
   { "urlencode", n_urlencode },
   { "valstr",    n_valstr },
-  { NULL, NULL }        /* terminator */
+  { nullptr, nullptr }        /* terminator */
 };
 
 int AMXEXPORT AMXAPI amx_StringInit(AMX *amx)

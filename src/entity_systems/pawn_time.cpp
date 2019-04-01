@@ -50,7 +50,7 @@ void stamp2datetime( time_t sec1970, cell * year, cell * month, cell * day, cell
 	cell days, seconds;
 
 	/* find the year */
-	assert(year!=NULL);
+	assert(year!=nullptr);
 	for (*year = 1970; ; *year += 1) {
 		days = 365 + ((*year & 0x03) == 0); /* clumsy "leap-year" routine, fails for 2100 */
 		seconds = days * SECONDS_PER_DAY;
@@ -60,7 +60,7 @@ void stamp2datetime( time_t sec1970, cell * year, cell * month, cell * day, cell
 	} /* if */
 
 	/* find the month */
-	assert(month!=NULL);
+	assert(month!=nullptr);
 	for (*month = 1; ; *month += 1) {
 		days = monthdays[*month - 1];
 		seconds = days * SECONDS_PER_DAY;
@@ -70,22 +70,22 @@ void stamp2datetime( time_t sec1970, cell * year, cell * month, cell * day, cell
 	} /* if */
 
 	/* find the day */
-	assert(day!=NULL);
+	assert(day!=nullptr);
 	for (*day = 1; sec1970 >= SECONDS_PER_DAY; *day += 1)
 		sec1970 -= SECONDS_PER_DAY;
 
 	/* find the hour */
-	assert(hour!=NULL);
+	assert(hour!=nullptr);
 	for (*hour = 0; sec1970 >= SECONDS_PER_HOUR; *hour += 1)
 		sec1970 -= SECONDS_PER_HOUR;
 
 	/* find the minute */
-	assert(minute!=NULL);
+	assert(minute!=nullptr);
 	for (*minute = 0; sec1970 >= SECONDS_PER_MINUTE; *minute += 1)
 		sec1970 -= SECONDS_PER_MINUTE;
 
 	/* remainder is the number of seconds */
-	assert(second!=NULL);
+	assert(second!=nullptr);
 	*second = (int)sec1970;
 }
 

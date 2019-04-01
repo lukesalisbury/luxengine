@@ -41,11 +41,11 @@ struct d3dVertex
 Uint32 d3dGraphics_flags = 0;
 LuxColour d3dGraphics_colour = {0,0,0,255};
 SDL_Rect d3dGraphics_dimension = {0, 0, 320,240};
-SDL_Surface * d3dGraphics_screen = NULL;
+SDL_Surface * d3dGraphics_screen = nullptr;
 
-IDirect3D9 * d3dGraphics_object = NULL;
-IDirect3DDevice9 * d3d_device = NULL;
-ID3DXFont * d3d_font = NULL;
+IDirect3D9 * d3dGraphics_object = nullptr;
+IDirect3DDevice9 * d3d_device = nullptr;
+ID3DXFont * d3d_font = nullptr;
 
 /* External Functions */
 SDL_RWops * Lux_Game_Read(std::string file);
@@ -61,12 +61,12 @@ int Lux_D3D_PowerOfTwo( int value )
 
 SDL_Surface * Lux_D3D_LoadSpriteImage(std::string file)
 {
-	SDL_Surface * temp_surface = NULL;
+	SDL_Surface * temp_surface = nullptr;
 	SDL_RWops * sprite_rwops = Lux_Game_Read(file);
-	if (sprite_rwops != NULL)
+	if (sprite_rwops != nullptr)
 	{
 		temp_surface = IMG_Load_RW(sprite_rwops, 1);
-		if ( temp_surface == NULL )
+		if ( temp_surface == nullptr )
 		{
 			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | Error Loading: " << file << ". " << IMG_GetError() << std::endl;
 		}
@@ -105,7 +105,7 @@ bool Lux_D3D_Init(int width, int height, int bpp, bool fullscreen)
 	SDL_GetWMInfo(&pInfo); 
 
 	d3dGraphics_object = Direct3DCreate9(D3D_SDK_VERSION); 
-	if( d3dGraphics_object == NULL )
+	if( d3dGraphics_object == nullptr )
 	{	
 		lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "Could not create Direct3D Object" << std::endl;
 		return false;
@@ -138,7 +138,7 @@ bool Lux_D3D_Init(int width, int height, int bpp, bool fullscreen)
 	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Acceleration: HAL" << std::endl;
 	lux::core->SystemMessage(__FILE__, __LINE__, SYSTEM_MESSAGE_LOG) << " Max Texture Size: " << d3dCaps.MaxTextureWidth << "x" << d3dCaps.MaxTextureHeight << std::endl;
 
-	SDL_WM_SetCaption("Lux Engine", NULL);
+	SDL_WM_SetCaption("Lux Engine", nullptr);
 
 	d3d_device->SetFVF((D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1));
 
@@ -164,9 +164,9 @@ void Lux_D3D_Destory()
 	-
 	*/
 	d3d_device->Release();
-	d3d_device = NULL;
+	d3d_device = nullptr;
 	d3dGraphics_object->Release();
-	d3dGraphics_object = NULL;
+	d3dGraphics_object = nullptr;
 }
 
 void Lux_D3D_Background(LuxColour fillcolor)
@@ -185,9 +185,9 @@ void Lux_D3D_Update( uint8_t screen, LuxRect rect)
 void Lux_D3D_Show( uint8_t screen )
 {
 	d3d_device->EndScene();
-	d3d_device->Present(NULL,NULL,NULL,NULL);
+	d3d_device->Present(nullptr,nullptr,nullptr,nullptr);
 
-	d3d_device->Clear(0,NULL,D3DCLEAR_TARGET ,D3DCOLOR_XRGB(d3dGraphics_colour.r,d3dGraphics_colour.g,d3dGraphics_colour.b),1.0f,0);
+	d3d_device->Clear(0,nullptr,D3DCLEAR_TARGET ,D3DCOLOR_XRGB(d3dGraphics_colour.r,d3dGraphics_colour.g,d3dGraphics_colour.b),1.0f,0);
 	d3d_device->BeginScene();
 	//d3d_device->SetRenderState( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
 d3d_device->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -218,11 +218,11 @@ bool Lux_D3D_LoadSpriteSheet(std::string name, std::map<uint32_t, LuxSprite *> *
 			tmp_rect.w = p->second->rect.w;
 			tmp_rect.h = p->second->rect.h;
 			SDL_Surface * temp_sheet = SDL_CreateRGBSurface ( d3dGraphics_flags, w, h, 32, RMASK, GMASK, BMASK, AMASK );
-			SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, NULL);
+			SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, nullptr);
 			SDL_SetAlpha(temp_sheet, 0, 0);
 
 			HRESULT result;
-			result = d3d_device->CreateTexture(w, h, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, (IDirect3DTexture9**)&p->second->data, NULL);
+			result = d3d_device->CreateTexture(w, h, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, (IDirect3DTexture9**)&p->second->data, nullptr);
 			if (FAILED(result)) {
 				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "CreateTexture() " << result << std::endl;
 			}
@@ -281,7 +281,7 @@ void Lux_D3D_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effe
 	};
 	d3d_device->SetTexture(0, (IDirect3DTexture9*)data);
 	d3d_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, tile, sizeof(d3dVertex));
-	d3d_device->SetTexture(0, NULL);
+	d3d_device->SetTexture(0, nullptr);
 }
 
 void Lux_D3D_DrawRect( LuxRect dest_rect, ObjectEffect effects)

@@ -13,7 +13,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #endif
 
 #ifndef PROGRAM_VERSION
-#define PROGRAM_VERSION "Nightly " __DATE__ " "__TIME__
+#define PROGRAM_VERSION "Nightly " __DATE__ " " __TIME__
 #endif
 
 #ifndef PROGRAM_VERSION_STABLE
@@ -28,8 +28,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 #define PACKAGE_GET_URL "http://localhost/get/"
 #endif
 
-#ifndef _STDHEADER_
-#define _STDHEADER_
+#ifndef STDHEADER_H
+#define STDHEADER_H
 
 #define LUX_INIT_BASE		0x00000001
 #define LUX_INIT_AUDIO		0x00000010
@@ -59,11 +59,14 @@ typedef uint32_t int_hash;
 
 #include "libs/elix/elix_file.hpp"
 
-#define TIMER_START(function) static uint8_t timer = __COUNTER__; uint64_t start_time = get_cpu_time();
-#define TIMER_END(function) lux::core->RecordFunctionTimer(timer, function, (get_cpu_time() - start_time));
 
-#define NULLIFY(x) if (x != NULL) { delete(x); x = NULL; }
-#define NULLIFY_ARRAY(x) if (x != NULL) { delete [] x; x = NULL; }
+#define UNUSEDARG __attribute__((unused))
+
+#define TIMER_START(function) 
+#define TIMER_END(function)
+
+#define NULLIFY(x) if (x != nullptr) { delete(x); x = nullptr; }
+#define NULLIFY_ARRAY(x) if (x != nullptr) { delete [] x; x = nullptr; }
 
 #define IS_BIT_SET(value, bit) (value) & ((1<<(bit)))
 
@@ -82,5 +85,5 @@ inline int32_t clamp(int32_t x, int32_t a, int32_t b)
 {
 	return (x < a ? a : (x > b ? b : x));
 }
-#include "get_cpu_time.hpp"
+
 #endif

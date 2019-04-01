@@ -562,7 +562,7 @@ int AMXAPI amx_Callback(AMX *amx, cell index, cell *result, const cell *params)
     unsigned char *code=amx->code+(int)amx->cip-sizeof(cell);
     if (amx->flags & AMX_FLAG_SYSREQN)		/* SYSREQ.N has 2 parameters */
       code-=sizeof(cell);
-    assert(amx->code!=NULL);
+	assert(amx->code!=NULL);
     assert(amx->cip>=4 && amx->cip<(hdr->dat - hdr->cod));
     assert(sizeof(f)<=sizeof(cell)); /* function pointer must fit in a cell */
     assert(*(cell*)code==index);
@@ -653,7 +653,7 @@ static int VerifyPcode(AMX *amx)
     amx_exec_list(amx,&opcode_list,&max_opcode);
   #endif
   #if defined AMX_TOKENTHREADING
-    opcode_list=NULL; /* avoid token translation if token threading is in effect */
+	opcode_list=NULL; /* avoid token translation if token threading is in effect */
   #endif
   #if defined AMX_NO_PACKED_OPC
     opmask= ~0;
@@ -702,8 +702,8 @@ static int VerifyPcode(AMX *amx)
      * as big as the size of a pointer (jump address); so basically we
      * rely on the opcode and a pointer being 32-bit
      */
-    if (opcode_list!=NULL) {
-      /* verify that opcode_list[op]!=NULL, if it is, this instruction
+	if (opcode_list!=NULL) {
+	  /* verify that opcode_list[op]!=NULL, if it is, this instruction
        * is unsupported
        */
       if (opcode_list[op & opmask]==0) {
@@ -1015,14 +1015,14 @@ static int VerifyPcode(AMX *amx)
         if ((amx->flags & AMX_FLAG_JITC)!=0)
           return AMX_ERR_OVERLAY;     /* JIT does not support overlays */
       #endif
-      if (amx->overlay==NULL)
+	  if (amx->overlay==NULL)
         return AMX_ERR_OVERLAY;       /* no overlay callback */
       break;
     case OP_CASETBL_OVL: {
       cell num;
       DBGPARAM(num);    /* number of records follows the opcode */
       cip+=(2*num + 1)*sizeof(cell);
-      if (amx->overlay==NULL)
+	  if (amx->overlay==NULL)
         return AMX_ERR_OVERLAY;       /* no overlay callback */
       break;
     } /* case */
@@ -1075,7 +1075,7 @@ static int VerifyPcode(AMX *amx)
        * of SYSREQ.(N)D
        */
       if (sizeof(AMX_NATIVE)<=sizeof(cell)) {
-        if (opcode_list!=NULL)
+		if (opcode_list!=NULL)
           amx->sysreq_d=(sysreq_flg==0x01) ? opcode_list[OP_SYSREQ_D] : opcode_list[OP_SYSREQ_ND];
         else
           amx->sysreq_d=(sysreq_flg==0x01) ? OP_SYSREQ_D : OP_SYSREQ_ND;
@@ -1185,7 +1185,7 @@ int AMXAPI amx_Init(AMX *amx,void *program)
   amx->hea=amx->hlw;
   amx->stk=amx->stp;
   #if defined AMX_DEFCALLBACK
-    if (amx->callback==NULL)
+	if (amx->callback==NULL)
       amx->callback=amx_Callback;
   #endif
 
@@ -1206,7 +1206,7 @@ int AMXAPI amx_Init(AMX *amx,void *program)
    */
   if (amx->data!=NULL) {
     data=amx->data;
-    if ((amx->flags & AMX_FLAG_DSEG_INIT)==0 && amx->overlay==NULL)
+	if ((amx->flags & AMX_FLAG_DSEG_INIT)==0 && amx->overlay==NULL)
       memcpy(data,amx->base+(int)hdr->dat,(size_t)(hdr->hea-hdr->dat));
   } else {
     data=amx->base+(int)hdr->dat;
@@ -1273,7 +1273,7 @@ int AMXAPI amx_Init(AMX *amx,void *program)
     err=VerifyPcode(amx);
   } else {
     int i;
-    err=(amx->overlay==NULL) ? AMX_ERR_OVERLAY : AMX_ERR_NONE;
+	err=(amx->overlay==NULL) ? AMX_ERR_OVERLAY : AMX_ERR_NONE;
     /* load every overlay on initialization and verify explicitly; we must
      * do this to know whether to use new or old system requests
      */
@@ -1299,7 +1299,7 @@ int AMXAPI amx_Init(AMX *amx,void *program)
       lib=GETENTRY(hdr,libraries,i);
       libname[0]='\0';
       #if defined __LINUX__ || defined __FreeBSD__ || defined __OpenBSD__ || defined __APPLE__
-        if (root!=NULL && *root!='\0') {
+		if (root!=NULL && *root!='\0') {
           strcpy(libname,root);
           if (libname[strlen(libname)-1]!='/')
             strcat(libname,"/");
@@ -1314,13 +1314,13 @@ int AMXAPI amx_Init(AMX *amx,void *program)
         #else
           hlib=LoadLibrary(libname);
           if (hlib<=HINSTANCE_ERROR)
-            hlib=NULL;
+			hlib=NULL;
         #endif
       #elif defined __LINUX__ || defined __FreeBSD__ || defined __OpenBSD__ || defined __APPLE__
         strcat(libname,".so");
         hlib=dlopen(libname,RTLD_NOW);
       #endif
-      if (hlib!=NULL) {
+	  if (hlib!=NULL) {
         /* a library that cannot be loaded or that does not have the required
          * initialization function is simply ignored
          */
@@ -1333,7 +1333,7 @@ int AMXAPI amx_Init(AMX *amx,void *program)
         #elif defined __LINUX__ || defined __FreeBSD__ || defined __OpenBSD__ || defined __APPLE__
           libinit=(AMX_ENTRY)dlsym(hlib,funcname);
         #endif
-        if (libinit!=NULL)
+		if (libinit!=NULL)
           libinit(amx);
       } /* if */
       lib->address=(ucell)(intptr_t)hlib;
@@ -1471,7 +1471,7 @@ int AMXAPI amx_Cleanup(AMX *amx)
         #elif defined __LINUX__ || defined __FreeBSD__ || defined __OpenBSD__ || defined __APPLE__
           libcleanup=(AMX_ENTRY)dlsym((void*)(intptr_t)lib->address,funcname);
         #endif
-        if (libcleanup!=NULL)
+		if (libcleanup!=NULL)
           libcleanup(amx);
         #if defined _Windows
           FreeLibrary((HINSTANCE)lib->address);
@@ -1663,7 +1663,7 @@ int AMXAPI amx_FindPublic(AMX *amx, const char *name, int *index)
   /* binary search */
   while (first<=last) {
     mid=(first+last)/2;
-    amx_GetPublic(amx,mid,pname,NULL);
+	amx_GetPublic(amx,mid,pname,NULL);
     result=strcmp(pname,name);
     if (result>0) {
       last=mid-1;
@@ -1904,8 +1904,8 @@ int AMXAPI amx_Register(AMX *amx, const AMX_NATIVE_INFO *list, int number)
   for (i=0; i<numnatives; i++) {
     if (func->address==0) {
       /* this function is not yet located */
-      funcptr=(list!=NULL) ? findfunction(GETENTRYNAME(hdr,func),list,number) : NULL;
-      if (funcptr!=NULL)
+	  funcptr=(list!=NULL) ? findfunction(GETENTRYNAME(hdr,func),list,number) : NULL;
+	  if (funcptr!=NULL)
         func->address=(ucell)(intptr_t)funcptr;
       else
 	  {
@@ -2130,7 +2130,7 @@ int AMXAPI amx_Exec(AMX *amx, cell *retval, int index)
     amx->cip=hdr->cip;
     if (hdr->overlays!=hdr->nametable) {
       assert(hdr->overlays!=0);
-      assert(amx->overlay!=NULL);
+	  assert(amx->overlay!=NULL);
       amx->ovl_index=(int)hdr->cip;
       if ((i=amx->overlay(amx,amx->ovl_index))!=AMX_ERR_NONE)
         return i;
@@ -2142,7 +2142,7 @@ int AMXAPI amx_Exec(AMX *amx, cell *retval, int index)
     reset_hea=amx->reset_hea;
     if (hdr->overlays!=hdr->nametable) {
       assert(hdr->overlays!=0);
-      assert(amx->overlay!=NULL);
+	  assert(amx->overlay!=NULL);
       if ((i=amx->overlay(amx,amx->ovl_index))!=AMX_ERR_NONE)
         return i;
     } /* if */
@@ -2155,7 +2155,7 @@ int AMXAPI amx_Exec(AMX *amx, cell *retval, int index)
     amx->cip=func->address;
     if (hdr->overlays!=hdr->nametable) {
       assert(hdr->overlays!=0);
-      assert(amx->overlay!=NULL);
+	  assert(amx->overlay!=NULL);
       amx->ovl_index=func->address;
       if ((i=amx->overlay(amx,amx->ovl_index))!=AMX_ERR_NONE)
         return i;
@@ -2668,7 +2668,7 @@ int AMXAPI amx_Exec(AMX *amx, cell *retval, int index)
     case OP_HALT:
       GETPARAM(offs);
     __halt:
-      if (retval!=NULL)
+	  if (retval!=NULL)
         *retval=pri;
       /* store complete status (stk and hea are already set in the ABORT macro) */
       amx->frm=frm;
@@ -2732,7 +2732,7 @@ int AMXAPI amx_Exec(AMX *amx, cell *retval, int index)
       break;
     case OP_BREAK:
       assert((amx->flags & AMX_FLAG_VERIFY)==0);
-      if (amx->debug!=NULL) {
+	  if (amx->debug!=NULL) {
         /* store status */
         amx->frm=frm;
         amx->stk=stk;
@@ -2805,13 +2805,13 @@ int AMXAPI amx_Exec(AMX *amx, cell *retval, int index)
       assert(offs>=0 && offs<(1<<(sizeof(cell)*4)));
       PUSH((offs<<(sizeof(cell)*4)) | amx->ovl_index);
       amx->ovl_index=(int)*cip;
-      assert(amx->overlay!=NULL);
+	  assert(amx->overlay!=NULL);
       if ((i=amx->overlay(amx,amx->ovl_index))!=AMX_ERR_NONE)
         ABORT(amx,i);
       cip=(cell*)amx->code;
       break;
     case OP_RETN_OVL:
-      assert(amx->overlay!=NULL);
+	  assert(amx->overlay!=NULL);
       POP(frm);
       POP(offs);
       amx->ovl_index=offs & (((ucell)~0)>>4*sizeof(cell));
@@ -2832,7 +2832,7 @@ int AMXAPI amx_Exec(AMX *amx, cell *retval, int index)
         /* nothing */;
       if (i>0)
         amx->ovl_index=*(cptr+1); /* case found */
-      assert(amx->overlay!=NULL);
+	  assert(amx->overlay!=NULL);
       if ((i=amx->overlay(amx,amx->ovl_index))!=AMX_ERR_NONE)
         ABORT(amx,i);
       cip=(cell*)amx->code;
@@ -3776,7 +3776,7 @@ int AMXAPI amx_UTF8Check(const char *string, int *length)
   int err=AMX_ERR_NONE;
   int len=0;
   while (err==AMX_ERR_NONE && *string!='\0') {
-    err=amx_UTF8Get(string,&string,NULL);
+	err=amx_UTF8Get(string,&string,NULL);
     len++;
   } /* while */
   if (length!=NULL)

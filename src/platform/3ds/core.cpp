@@ -13,12 +13,15 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "core.h"
 #include "config.h"
 #include "display/display.h"
+#include <stdint.h>
+#include <citro2d.h>
+#include <citro3d.h>
 
 /* Local variables */
 touchPosition touch_screen;
 circlePosition circle_pos;
-uint32 key_states, key_held;
-uint32 timer_ticks = 0;
+uint32_t key_states, key_held;
+uint32_t timer_ticks = 0;
 u16 width, height;
 
 bool top_screen = false;
@@ -42,14 +45,12 @@ CoreSystem::CoreSystem()
 	this->primary_screen = GFX_TOP;
 	this->secondary_screen = GFX_BOTTOM;
 
-
-	/*
-	aptInit();
-	hidInit(NULL);
-	gfxInit(GSP_BGR8_OES,GSP_BGR8_OES,false);
-	*/
-	sf2d_init();
-	//consoleInit(this->secondary_screen, NULL);
+	romfsInit();
+	gfxInitDefault();
+	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+	C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
+	C2D_Prepare();
+	consoleInit(GFX_BOTTOM, nullptr);
 
 
 	this->good = true;
@@ -117,12 +118,12 @@ std::ostream& CoreSystem::SystemMessage(const char *file, int line, uint8_t type
 }
 std::ostream& CoreSystem::SystemMessage( uint8_t type )
 {
-	return this->SystemMessage( NULL, 0, type );
+	return this->SystemMessage( nullptr, 0, type );
 }
 
 void CoreSystem::SystemMessage( uint8_t type, std::string message )
 {
-	this->SystemMessage( NULL, 0, type ) << message << std::endl;
+	this->SystemMessage( nullptr, 0, type ) << message << std::endl;
 }
 
 bool CoreSystem::Good()

@@ -44,7 +44,7 @@
 		}
 	#endif /* _POSIX_TIMERS */
 		struct timeval tm;
-		gettimeofday( &tm, NULL );
+		gettimeofday( &tm, nullptr );
 		return (tm.tv_sec * 1000000000) + (tm.tv_usec * 1000);
 
 	}

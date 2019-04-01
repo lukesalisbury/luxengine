@@ -69,16 +69,16 @@ typedef struct _property_list {
   cell value;
 } proplist;
 
-static proplist proproot = { NULL, 0, NULL, 0 };
+static proplist proproot = { nullptr, 0, nullptr, 0 };
 
 static proplist *list_additem(proplist *root)
 {
   proplist *item;
 
-  assert(root!=NULL);
-  if ((item=(proplist *)malloc(sizeof(proplist)))==NULL)
-	return NULL;
-  item->name=NULL;
+  assert(root!=nullptr);
+  if ((item=(proplist *)malloc(sizeof(proplist)))==nullptr)
+	return nullptr;
+  item->name=nullptr;
   item->id=0;
   item->value=0;
   item->next=root->next;
@@ -87,10 +87,10 @@ static proplist *list_additem(proplist *root)
 }
 static void list_delete(proplist *pred,proplist *item)
 {
-  assert(pred!=NULL);
-  assert(item!=NULL);
+  assert(pred!=nullptr);
+  assert(item!=nullptr);
   pred->next=item->next;
-  assert(item->name!=NULL);
+  assert(item->name!=nullptr);
   free(item->name);
   free(item);
 }
@@ -98,10 +98,10 @@ static void list_setitem(proplist *item,cell id,char *name,cell value)
 {
   char *ptr;
 
-  assert(item!=NULL);
-  if ((ptr=(char *)malloc(strlen(name)+1))==NULL)
+  assert(item!=nullptr);
+  if ((ptr=(char *)malloc(strlen(name)+1))==nullptr)
 	return;
-  if (item->name!=NULL)
+  if (item->name!=nullptr)
 	free(item->name);
   strcpy(ptr,name);
   item->name=ptr;
@@ -115,21 +115,21 @@ static proplist *list_finditem(proplist *root,cell id,char *name,cell value,
   proplist *prev=root;
 
   /* check whether to find by name or by value */
-  assert(name!=NULL);
+  assert(name!=nullptr);
   if (strlen(name)>0) {
 	/* find by name */
-	while (item!=NULL && (item->id!=id || stricmp(item->name,name)!=0)) {
+	while (item!=nullptr && (item->id!=id || stricmp(item->name,name)!=0)) {
 	  prev=item;
 	  item=item->next;
 	} /* while */
   } else {
 	/* find by value */
-	while (item!=NULL && (item->id!=id || item->value!=value)) {
+	while (item!=nullptr && (item->id!=id || item->value!=value)) {
 	  prev=item;
 	  item=item->next;
 	} /* while */
   } /* if */
-  if (pred!=NULL)
+  if (pred!=nullptr)
 	*pred=prev;
   return item;
 }
@@ -160,14 +160,14 @@ static cell AMX_NATIVE_CALL getproperty(AMX *amx,const cell *params)
   (void)amx;
   cstr=amx_Address(amx,params[2]);
   name=MakePackedString(cstr);
-  item=list_finditem(&proproot,params[1],name,params[3],NULL);
+  item=list_finditem(&proproot,params[1],name,params[3],nullptr);
   /* if list_finditem() found the value, store the name */
-  if (item!=NULL && item->value==params[3] && strlen(name)==0) {
+  if (item!=nullptr && item->value==params[3] && strlen(name)==0) {
 	cstr=amx_Address(amx,params[4]);
 	amx_SetString(cstr,item->name,1,0,params[5]);
   } /* if */
   free(name);
-  return (item!=NULL) ? item->value : 0;
+  return (item!=nullptr) ? item->value : 0;
 }
 
 /* setproperty(id=0, const name[]="", value=cellmin, const string[]="") */
@@ -180,10 +180,10 @@ static cell AMX_NATIVE_CALL setproperty(AMX *amx,const cell *params)
 
   cstr=amx_Address(amx,params[2]);
   name=MakePackedString(cstr);
-  item=list_finditem(&proproot,params[1],name,params[3],NULL);
-  if (item==NULL)
+  item=list_finditem(&proproot,params[1],name,params[3],nullptr);
+  if (item==nullptr)
 	item=list_additem(&proproot);
-  if (item==NULL) {
+  if (item==nullptr) {
 	amx_RaiseError(amx,AMX_ERR_MEMORY);
   } else {
 	prev=item->value;
@@ -210,7 +210,7 @@ static cell AMX_NATIVE_CALL delproperty(AMX *amx,const cell *params)
   cstr=amx_Address(amx,params[2]);
   name=MakePackedString(cstr);
   item=list_finditem(&proproot,params[1],name,params[3],&pred);
-  if (item!=NULL) {
+  if (item!=nullptr) {
 	prev=item->value;
 	list_delete(pred,item);
   } /* if */
@@ -228,9 +228,9 @@ static cell AMX_NATIVE_CALL existproperty(AMX *amx,const cell *params)
   (void)amx;
   cstr=amx_Address(amx,params[2]);
   name=MakePackedString(cstr);
-  item=list_finditem(&proproot,params[1],name,params[3],NULL);
+  item=list_finditem(&proproot,params[1],name,params[3],nullptr);
   free(name);
-  return (item!=NULL);
+  return (item!=nullptr);
 }
 #endif
 

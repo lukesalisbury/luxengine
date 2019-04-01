@@ -9,7 +9,6 @@ ifeq ($(BUILDDEBUG), TRUE)
 	OBJDIR = ./objects-debug
 endif
 
-
 ifeq ($(BUILDDIR), )
 	BUILDDIR = ./bin
 endif
@@ -19,16 +18,17 @@ ifeq ($(INSTALLDIR), )
 endif
 
 #Plaform bits
-ifeq (${shell uname -m}, x86_64)
+_PLATFORMBITS = ${shell uname -m}
+ifeq (_PLATFORMBITS, x86_64)
 	PLATFORMBITS = 64
 endif
-ifeq (${shell uname -m}, x86)
+ifeq (_PLATFORMBITS, x86)
 	PLATFORMBITS = 32
 endif
-ifeq (${shell uname -m}, i686)
+ifeq (_PLATFORMBITS, i686)
 	PLATFORMBITS = 32
 endif
-ifeq (${shell uname -m}, i386)
+ifeq (_PLATFORMBITS, i386)
 	PLATFORMBITS = 32
 endif
 

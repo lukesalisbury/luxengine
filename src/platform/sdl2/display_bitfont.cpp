@@ -25,7 +25,7 @@ DisplayBitFont::DisplayBitFont( SDL_Renderer * renderer)
 		SDL_SetTextureBlendMode( this->textures[c], SDL_BLENDMODE_BLEND);
 		//SDL_SetTextureBlendMode( this->textures[c], SDL_BLENDMODE_NONE);
 
-		SDL_UpdateTexture( this->textures[c], NULL, charflip, 16);
+		SDL_UpdateTexture( this->textures[c], nullptr, charflip, 16);
 
 		font_point += 8;
 	}
@@ -51,7 +51,7 @@ DisplayBitFont::~DisplayBitFont()
  */
 SDL_Texture *DisplayBitFont::GetTexture(uint32_t character)
 {
-	SDL_Texture * texture = NULL;
+	SDL_Texture * texture = nullptr;
 	if ( character >= 32 && character <= 128 )
 	{
 		texture = this->textures[character];

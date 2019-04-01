@@ -115,7 +115,7 @@ LuxSheet::~LuxSheet()
 	for( std::map<uint32_t, LuxSprite *>::iterator iter = this->children.begin(); iter != this->children.end(); ++iter )
 	{
 		delete (*iter).second;
-		(*iter).second = NULL;
+		(*iter).second = nullptr;
 	}
 	this->children.clear();
 }
@@ -129,8 +129,8 @@ void LuxSheet::SetName( std::string name )
 bool LuxSheet::ParseXML()
 {
 	bool results = false;
-	tinyxml2::XMLDocument * xml_file = NULL;
-	tinyxml2::XMLElement * root, * sprite_element = NULL, * position_element = NULL, * collision_element = NULL, * border_element = NULL, * frame_element = NULL;
+	tinyxml2::XMLDocument * xml_file = nullptr;
+	tinyxml2::XMLElement * root, * sprite_element = nullptr, * position_element = nullptr, * collision_element = nullptr, * border_element = nullptr, * frame_element = nullptr;
 
 	xml_file = MokoiGame_GetXML("./sprites/" + this->name + ".xml");
 	if ( xml_file->Error() )
@@ -186,7 +186,10 @@ bool LuxSheet::ParseXML()
 			Lux_Sprite_SetCollisions( t_sprite, collision_element );
 			Lux_Sprite_SetBorderImages( t_sprite, border_element );
 
-			this->children.insert( std::make_pair<uint32_t, LuxSprite*>( t_sprite->hash, t_sprite ) );
+			std::pair<uint32_t, LuxSprite*> q( t_sprite->hash, t_sprite );
+			this->children.insert( q );
+			//this->children.insert( std::make_pair<uint32_t, LuxSprite*>( t_sprite->hash, t_sprite ) );
+			//this->children.emplace( t_sprite->hash, t_sprite );
 		}
 	}
 
@@ -252,7 +255,8 @@ bool LuxSheet::ParseXML()
 				}
 			}
 
-			this->children.insert( std::make_pair<uint32_t, LuxSprite*>( t_sprite->hash, t_sprite ) );
+			//this->children.insert( std::make_pair<uint32_t, LuxSprite*>( t_sprite->hash, t_sprite ) );
+			this->children.emplace( t_sprite->hash, t_sprite );
 		}
 	}
 	/*
@@ -317,7 +321,8 @@ bool LuxSheet::ParseSimpleText(const std::string content )
 	t_sprite->sheet_area.w = elix::string::ToIntU16(info_array[3]);
 	t_sprite->sheet_area.h = elix::string::ToIntU16(info_array[4]);
 
-	this->children.insert( std::make_pair<uint32_t, LuxSprite*>( elix::string::Hash(info_array[0]), t_sprite ) );
+	//this->children.insert( this->children.end(), std::make_pair<uint32_t, LuxSprite*>( elix::string::Hash(info_array[0]), t_sprite ) );
+	this->children.emplace( elix::string::Hash(info_array[0]), t_sprite );
 
 	info_array.clear();
 
@@ -433,7 +438,7 @@ LuxSprite * LuxSheet::GetSprite( std::string name )
 		return (LuxSprite *)(iter->second);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 LuxSprite * LuxSheet::GetSprite( uint32_t name_hash )
@@ -448,5 +453,5 @@ LuxSprite * LuxSheet::GetSprite( uint32_t name_hash )
 		return (LuxSprite *)(iter->second);
 	}
 
-	return NULL;
+	return nullptr;
 }

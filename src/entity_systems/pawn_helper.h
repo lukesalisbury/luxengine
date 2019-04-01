@@ -56,7 +56,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#ifndef amx_Address
 	inline cell * amx_Address( AMX * amx, cell param )
 	{
-		cell *cellptr = NULL;
+		cell *cellptr = nullptr;
 		amx_GetAddr(amx, param, &cellptr);
 		return cellptr;
 	}

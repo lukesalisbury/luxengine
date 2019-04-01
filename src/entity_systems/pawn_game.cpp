@@ -81,7 +81,7 @@ static cell pawnGameSave(AMX *amx, const cell *params)
 */
 static cell pawnGameSaveHibernate(AMX *amx, const cell *params)
 {
-	return lux::engine->WriteSaveGame( 0x00, NULL, 0 );
+	return lux::engine->WriteSaveGame( 0x00, nullptr, 0 );
 }
 
 /** pawnGameHasSave
@@ -143,7 +143,7 @@ static cell pawnGameGetDetails(AMX *amx, const cell *params)
 		return 0;
 
 	cell read_successful = false;
-	int32_t * cookie_data = NULL;
+	int32_t * cookie_data = nullptr;
 	uint8_t data_size = 0;
 	uint8_t requested_save_slot = (uint8_t)params[1];
 
@@ -183,7 +183,7 @@ static cell pawnGameDetails(AMX *amx, const cell *params)
 	cell read_successful = false;
 	uint32_t game_id = (uint32_t)params[1];
 	uint8_t requested_save_slot = (uint8_t)params[2];
-	int32_t * cookie_data = NULL;
+	int32_t * cookie_data = nullptr;
 	uint8_t data_size = 0;
 
 
@@ -248,7 +248,7 @@ static cell pawnDialogShow(AMX *amx, const cell *params)
 {
 	char * function_name;
 	Entity * wanted_entity = lux::entities->_global;
-	if ( wanted_entity != NULL )
+	if ( wanted_entity != nullptr )
 	{
 		amx_StrParam_Type(amx, params[2], function_name, char*);
 		wanted_entity->Call(function_name, (char*)"d", params[1]);

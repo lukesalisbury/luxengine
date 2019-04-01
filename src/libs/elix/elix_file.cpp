@@ -26,9 +26,9 @@ namespace elix {
 		this->error = "";
 		this->path = filename;
 		this->_length = 0;
-		this->ErrorCallback = NULL;
+		this->ErrorCallback = nullptr;
 		this->writable = false;
-		this->handle = NULL;
+		this->handle = nullptr;
 
 		if ( write )
 		{
@@ -218,7 +218,7 @@ namespace elix {
 			*buffer = new char[this->_length];
 			memset(*buffer, 0,this->_length);
 		}
-		if ( *buffer != NULL )
+		if ( *buffer != nullptr )
 		{
 
 			if ( fread(*buffer, this->_length, 1, (FILE *)this->handle) )

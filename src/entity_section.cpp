@@ -184,7 +184,7 @@ bool EntitySection::Loop()
 				this->_entities.erase((*iter)->hashid);
 
 				delete (*iter);
-				(*iter) = NULL;
+				(*iter) = nullptr;
 
 
 				iter = this->children.erase(iter);
@@ -247,7 +247,7 @@ void EntitySection::Close()
 		{
 			if ( (*iter)->deleted )
 			{
-				uint32 h = (*iter)->hashid;
+				uint32_t h = (*iter)->hashid;
 				delete (*iter);
 
 				lux::entities->RemoveEntity( h );
@@ -265,7 +265,7 @@ void EntitySection::Close()
 
 void EntitySection::Append( Entity * enw )
 {
-	if ( enw != NULL )
+	if ( enw != nullptr )
 	{
 		this->_entities.insert( std::make_pair(enw->hashid, enw) );
 		this->children.push_back(enw);
@@ -281,5 +281,5 @@ Entity * EntitySection::GetEntity( uint32_t entity_id )
 	{
 		return p->second;
 	}
-	return NULL;
+	return nullptr;
 }

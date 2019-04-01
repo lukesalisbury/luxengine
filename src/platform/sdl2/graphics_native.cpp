@@ -58,7 +58,7 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_LoadSpriteSheet,
 	&Lux_NATIVE_LoadSpriteSheetImage,
 	&Lux_NATIVE_FreeSpriteSheet,
-	NULL,
+	nullptr,
 	&Lux_NATIVE_FreeSprite,
 	&Lux_NATIVE_PNGtoSprite,
 
@@ -70,8 +70,8 @@ GraphicSystem GraphicsNative = {
 	&Lux_NATIVE_DrawText,
 	&Lux_SDL2_DrawMessage,
 
-	NULL,
-	NULL
+	nullptr,
+	nullptr
 
 };
 
@@ -83,8 +83,8 @@ int32_t SDL2_AcceratedRendering();
 /* Shared */
 Uint32 native_render_flags = 0;
 Uint32 native_window_flags = 0;
-SDL_Window * native_window = NULL;
-SDL_Renderer * native_renderer = NULL;
+SDL_Window * native_window = nullptr;
+SDL_Renderer * native_renderer = nullptr;
 std::string native_window_title;
 SDL_Rect native_graphics_dimension = {0, 0, 320,240};
 uint32_t native_screen_assignment = 0xC0000040; // 1100 0000 0000 0000 0000 0000 0100 0000
@@ -92,7 +92,7 @@ bool native_current_screen = true;
 
 
 /* Global Variables */
-DisplayBitFont * sdlgraphics_bitfont = NULL;
+DisplayBitFont * sdlgraphics_bitfont = nullptr;
 
 LuxColour sdlgraphics_colour = {0,0,0,255};
 
@@ -124,7 +124,7 @@ bool Lux_NATIVE_Init(LuxRect * screen_dimension, LuxRect * display_dimension )
 	native_render_flags = SDL_RENDERER_ACCELERATED;
 	native_window = lux::core->GetWindow();
 
-	if ( screen_dimension == NULL || screen_dimension->w == 0 || screen_dimension->h == 0 )
+	if ( screen_dimension == nullptr || screen_dimension->w == 0 || screen_dimension->h == 0 )
 	{
 		SDL_DisplayMode dm;
 		if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
@@ -150,7 +150,7 @@ bool Lux_NATIVE_Init(LuxRect * screen_dimension, LuxRect * display_dimension )
 		window_height = height = screen_dimension->h;
 	}
 
-	if ( display_dimension != NULL && screen_dimension->w != 0 && screen_dimension->h != 0 )
+	if ( display_dimension != nullptr && screen_dimension->w != 0 && screen_dimension->h != 0 )
 	{
 		window_width = display_dimension->w;
 		window_height = display_dimension->h;
@@ -201,13 +201,13 @@ bool Lux_NATIVE_Init(LuxRect * screen_dimension, LuxRect * display_dimension )
 	sdlgraphics_bitfont = new DisplayBitFont( native_renderer );
 	SDL_DisableScreenSaver();
 
-	if ( display_dimension != NULL )
+	if ( display_dimension != nullptr )
 	{
 		display_dimension->w = window_width;
 		display_dimension->h = window_height;
 	}
 
-	if ( screen_dimension != NULL )
+	if ( screen_dimension != nullptr )
 	{
 		screen_dimension->w = width;
 		screen_dimension->h = height;
@@ -429,7 +429,7 @@ void Lux_NATIVE_TextSprites( bool able )
  */
 void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect effect )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return;
 
 	if ( !native_renderer )
@@ -440,7 +440,7 @@ void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect 
 
 	NativeTexture * surface = (NativeTexture*) sprite->GetData(effect);
 
-	if ( surface == NULL )
+	if ( surface == nullptr )
 	{
 		lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | Not a valid surface." << std::endl;
 		return;
@@ -540,7 +540,7 @@ void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect 
 
 
 
-				SDL_RenderCopyEx( native_renderer, surface->texnum, NULL, &draw, angle, &point, (SDL_RendererFlip)flipmode );
+				SDL_RenderCopyEx( native_renderer, surface->texnum, nullptr, &draw, angle, &point, (SDL_RendererFlip)flipmode );
 			}
 		}
 	}
@@ -560,7 +560,7 @@ void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, ObjectEffect 
 		{
 			draw.y += surface->w;
 		}*/
-		SDL_RenderCopyEx( native_renderer, surface->texnum, NULL, &draw, angle, &point, (SDL_RendererFlip)flipmode );
+		SDL_RenderCopyEx( native_renderer, surface->texnum, nullptr, &draw, angle, &point, (SDL_RendererFlip)flipmode );
 	}
 
 }
@@ -692,9 +692,9 @@ int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, ObjectEffect e
 {
 	LuxColour c = effects.primary_colour;
 	SDL_Rect area;
-	SDL_Texture * texture = NULL;
-	NativeTexture * ntexture = NULL;
-	LuxSprite * sprite_data = NULL;
+	SDL_Texture * texture = nullptr;
+	NativeTexture * ntexture = nullptr;
+	LuxSprite * sprite_data = nullptr;
 	int32_t offset = 7;
 
 	int8_t axis;
@@ -745,7 +745,7 @@ int32_t Lux_NATIVE_DrawChar( int32_t cchar, int32_t x, int32_t y, ObjectEffect e
 		SDL_SetTextureColorMod(texture, c.r, c.g, c.b);
 		SDL_SetTextureAlphaMod(texture, c.a);
 		SDL_SetTextureBlendMode( texture, sdlgraphics_blend_mode);// sdlgraphics_blend_mode
-		SDL_RenderCopy(native_renderer, texture, NULL, &area);
+		SDL_RenderCopy(native_renderer, texture, nullptr, &area);
 	}
 	return offset;
 }
@@ -852,7 +852,7 @@ void Lux_NATIVE_DrawText( std::string text, LuxRect dest_rect, ObjectEffect effe
  */
 bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return false;
 	if ( sprite->data )
 	{
@@ -860,7 +860,7 @@ bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 		SDL_DestroyTexture(texture->texnum);
 		delete texture;
 	}
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return true;
 }
 
@@ -899,7 +899,7 @@ bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect rect, elix::Image * pn
 		}
 
 		SDL_SetTextureBlendMode(texture->texnum, sdlgraphics_blend_mode);
-		SDL_UpdateTexture(texture->texnum, NULL, pixels, texture->tw * 4);
+		SDL_UpdateTexture(texture->texnum, nullptr, pixels, texture->tw * 4);
 	}
 	delete pixels;
 	/*  ^ PNG Image */

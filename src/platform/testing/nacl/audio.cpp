@@ -26,7 +26,7 @@ AudioSystem::AudioSystem()
 	this->paused = false;
 	
 	/*
-	this->music = NULL;
+	this->music = nullptr;
 	this->bits = 0; 
 	this->buffers = 512;
 	this->frequency = 22050;
@@ -80,7 +80,7 @@ bool AudioSystem::Loop()
 bool AudioSystem::LoadAudio(std::string filename)
 {
 	/*
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	size = lux::game->GetFile(filename, &data, false);
 	if ( size )
@@ -97,7 +97,7 @@ bool AudioSystem::LoadAudio(std::string filename)
 /*
 Mix_Chunk * AudioSystem::ReturnAudio(std::string filename)
 {
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	size = lux::game->GetFile(filename, &data, false);
 	if ( size )
@@ -111,7 +111,7 @@ Mix_Chunk * AudioSystem::ReturnAudio(std::string filename)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 */
 
@@ -119,7 +119,7 @@ int32_t AudioSystem::PlayEffect ( std::string requestSound, int32_t x, int32_t y
 {
 	/*
 	Mix_Chunk * sample = this->FindEffect( "./soundfx/" + requestSound);
-	if ( sample == NULL )
+	if ( sample == nullptr )
 		sample = this->ReturnAudio("./soundfx/" +requestSound);
 
 	if ( sample )
@@ -149,11 +149,11 @@ void AudioSystem::StopDialog()
 	/* Mix_FreeMusic should also free up SDL_RWops */
 	/*
 	Mix_FreeMusic( this->dialog );
-	this->dialog = NULL;
+	this->dialog = nullptr;
 	if ( this->music )
 	{
 		Mix_PlayMusic(this->music, -1);
-		Mix_HookMusicFinished(NULL);
+		Mix_HookMusicFinished(nullptr);
 	}
 	*/
 }
@@ -163,7 +163,7 @@ int32_t AudioSystem::PlayDialog( int32_t requestSound )
 	/*
 	std::ostringstream filename("");
 	filename << "./dialog/en." << requestSound << ".ogg" ;
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	size = lux::game->GetFile(filename.str(), &data, false);
 	if ( size )
@@ -188,7 +188,7 @@ int32_t AudioSystem::PlayDialog( int32_t requestSound )
 int32_t AudioSystem::PlayMusic ( std::string requestMusic, int32_t loop, int32_t fadeLength )
 {
 	/*
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	size = lux::game->GetFile("./music/" + requestMusic, &data, false);
 	if ( size )
@@ -199,7 +199,7 @@ int32_t AudioSystem::PlayMusic ( std::string requestMusic, int32_t loop, int32_t
 			if ( this->music )
 			{
 				Mix_FreeMusic( this->music );
-				this->music = NULL;
+				this->music = nullptr;
 			}
 
 			this->music = Mix_LoadMUS_RW( src );
@@ -260,7 +260,7 @@ Mix_Chunk * AudioSystem::FindEffect(std::string name)
 	{
 		return p->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 uint32_t AudioSystem::EffectLength( Mix_Chunk * chunk )

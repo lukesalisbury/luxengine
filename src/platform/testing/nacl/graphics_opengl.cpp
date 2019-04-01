@@ -43,7 +43,7 @@ LuxColour oglGraphics_colour = { 0, 0, 0, 255 };
 SDL_Rect oglGraphics_dimension = {0, 0, 320, 240 };
 float oglGraphics_ratio_width = 1.00;
 float oglGraphics_ratio_height = 1.00;
-SDL_Surface * oglGraphics_screen = NULL;
+SDL_Surface * oglGraphics_screen = nullptr;
 glCamera * camera;
 bool oglUseNPOT = true;
 std::string oglGraphics_title;
@@ -153,9 +153,9 @@ void Lux_OGL_CreateFont()
 
 SDL_Surface * Lux_OGL_LoadSpriteImage(std::string file)
 {
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
-	SDL_Surface * temp_surface = NULL;
+	SDL_Surface * temp_surface = nullptr;
 	if ( lux::game )
 	{
 		size = lux::game->GetFile(file, &data, false);
@@ -232,10 +232,10 @@ bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * act
 
 	SDL_Surface * icon = Lux_OGL_LoadSpriteImage("./sprites/__icon.png");
 	oglGraphics_title = lux::config->GetString("project.title") + " (OpenGL)";
-	SDL_WM_SetCaption( oglGraphics_title.c_str(), NULL );
-	if ( icon != NULL )
+	SDL_WM_SetCaption( oglGraphics_title.c_str(), nullptr );
+	if ( icon != nullptr )
 	{
-		SDL_WM_SetIcon(icon, NULL);
+		SDL_WM_SetIcon(icon, nullptr);
 		SDL_FreeSurface(icon);
 	}
 
@@ -309,7 +309,7 @@ void Lux_OGL_Show( uint8_t screen )
 		title_msg << oglGraphics_title << " " << oglGraphics_fps;
 		oglGraphics_fpstime = lux::core->GetTime();
 		oglGraphics_fps = 0;
-		SDL_WM_SetCaption( title_msg.str().c_str(), NULL);
+		SDL_WM_SetCaption( title_msg.str().c_str(), nullptr);
 	}
 	oglGraphics_fps++;
 }
@@ -347,7 +347,7 @@ bool Lux_OGL_LoadSpriteSheet(std::string name, std::map<std::string, LuxSprite *
 			tmp_rect.w = p->second->rect.w;
 			tmp_rect.h = p->second->rect.h;
 			SDL_Surface * temp_sheet = SDL_CreateRGBSurface ( oglGraphics_flags, w, h, 32, RMASK, GMASK, BMASK, AMASK );
-			SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, NULL);
+			SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, nullptr);
 			SDL_SetAlpha(temp_sheet, 0, 0);
 			if ( temp_sheet )
 			{
@@ -417,7 +417,7 @@ LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
 			temp_texure->pot = ( temp_texure->tw == temp_texure->w && temp_texure->th == temp_texure->h) ? true : false;
 			
 			SDL_Surface * temp_sheet = SDL_CreateRGBSurface( oglGraphics_flags, temp_texure->tw, temp_texure->th, 32, RMASK, GMASK, BMASK, AMASK );
-			SDL_BlitSurface( surface, NULL, temp_sheet, NULL );
+			SDL_BlitSurface( surface, nullptr, temp_sheet, nullptr );
 			SDL_SetAlpha(temp_sheet, 0, 0);
 
 			glTexImage2D(GL_TEXTURE_2D, 0, 4, temp_sheet->w, temp_sheet->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, temp_sheet->pixels);
@@ -436,14 +436,14 @@ LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
 		}
 	}
 	delete sprite;
-	return NULL;
+	return nullptr;
 }
 
 bool Lux_OGL_FreeSprite( LuxSprite * sprite )
 {
 	glDeleteTextures(1, &((Texture*)sprite->data)->texnum);
 	delete (Texture*)sprite->data;
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return false;
 }
 
@@ -594,7 +594,7 @@ void Lux_OGL_DrawSprite(LuxSprite * sprite, LuxRect dest_rect, Effects image_eff
 		lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << __FILE__ << ":" << __LINE__ << " | Not a valid surface." << std::endl;
 		return;
 	}
-	if ( data == NULL )
+	if ( data == nullptr )
 		return;
 
 	Texture * surface = ((Texture*)data);

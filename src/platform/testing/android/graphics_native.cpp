@@ -83,7 +83,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(uint16_t  width, uint16_t height, uint
 
 	android_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-	eglInitialize(android_display, NULL, NULL);
+	eglInitialize(android_display, nullptr, nullptr);
 
 	LOGI("eglChooseConfig");
 	eglChooseConfig(android_display, attribs, &config, 1, &numConfigs);
@@ -94,9 +94,9 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init(uint16_t  width, uint16_t height, uint
 	ANativeWindow_setBuffersGeometry(lux::core->GetAndroidApp()->window, width, height, format);
 
 	LOGI("eglCreateWindowSurface");
-	android_surface = eglCreateWindowSurface(android_display, config, lux::core->GetAndroidApp()->window, NULL);
+	android_surface = eglCreateWindowSurface(android_display, config, lux::core->GetAndroidApp()->window, nullptr);
 	LOGI("eglCreateContext");
-	android_context = eglCreateContext(android_display, config, NULL, NULL);
+	android_context = eglCreateContext(android_display, config, nullptr, nullptr);
 
 	LOGI("eglMakeCurrent");
 	if (eglMakeCurrent(android_display, android_surface, android_surface, android_context) == EGL_FALSE)
@@ -180,7 +180,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_Show( uint8_t screen )
  */
 LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return false;
 	if ( sprite->data )
 	{
@@ -188,7 +188,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSprite( LuxSprite * sprite )
 		lux::OpenGLTexture::destroy(texture);
 		delete texture;
 	}
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return true;
 }
 
@@ -246,7 +246,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_CreateSprite( LuxSprite * sprite, LuxRect r
 LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	/* PNG Image */
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	elix::Image * png = new elix::Image;
 	if ( lux::game )
@@ -318,7 +318,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_RefreshSpriteSheet( std::string name, std::
  */
 LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	elix::Image * png = new elix::Image(data, size);
 
 	if ( png->HasContent() )

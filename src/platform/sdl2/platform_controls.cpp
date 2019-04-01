@@ -80,7 +80,7 @@ bool Player::SetupController( std::string name )
 		this->_pointerConfig.set(CONTROLAXIS, device_number, SDL_CONTROLLER_AXIS_RIGHTX, SDL_CONTROLLER_AXIS_RIGHTY );
 
 	}
-	else if ( lux::config == NULL || name.compare(0, 7, "default") == 0 )
+	else if ( lux::config == nullptr || name.compare(0, 7, "default") == 0 )
 	{
 		//Default Controllers
 		// "arrows|mouse|mouse|k04|k022|k07|k020|k026|k08|k040|k079|k080|k081|k082|m01|m02|m03|m04|k041|k040|k041|m01|k061" );

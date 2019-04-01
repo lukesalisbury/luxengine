@@ -41,7 +41,7 @@ CoreSystem::CoreSystem()
 	PrintConsole * bottomScreen;
 	videoSetModeSub(MODE_5_2D);
 	vramSetBankF(VRAM_F_MAIN_BG);
-	bottomScreen = consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 7, 0, false, true);
+	bottomScreen = consoleInit(nullptr, 0, BgType_Text4bpp, BgSize_T_256x256, 7, 0, false, true);
 	consoleSelect(bottomScreen);
 	bgSetPriority(0, 1);
 	bgSetPriority(1, 0);

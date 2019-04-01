@@ -30,7 +30,7 @@ static cell pawnEntityActive(AMX *amx, const cell *params)
 	#endif
 	cell result = -1;
 	Entity * wanted = Lux_PawnEntity_GetEntity(amx, params[1]);
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		result = (cell)wanted->onscreen;
 	}
@@ -51,7 +51,7 @@ static cell pawnEntityNetworkSync(AMX *amx, const cell *params)
 	lux::core->NetworkLock();
 
 	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted != NULL )
+	if ( wanted != nullptr )
 	{
 		if ( lux::core->CreateMessage( LENS_MAPUPDATE, (bool)params[1] ) )
 		{
@@ -75,7 +75,7 @@ extern uint8_t net_id;
 static cell pawnNetworkConnect( AMX *amx, const cell *params )
 {
 	#ifdef NETWORKENABLED
-	char * name = NULL;
+	char * name = nullptr;
 
 	if ( lux::core->InitSubSystem( LUX_INIT_NETWORK ) )
 	{
@@ -145,7 +145,7 @@ static cell pawnNetworkMessage(AMX *amx, const cell *params)
 		else
 		{
 			Entity * wanted = Lux_PawnEntity_GetParent(amx);
-			if ( wanted != NULL )
+			if ( wanted != nullptr )
 			{
 				if ( lux::core->CreateMessage( (params[2] ? LENS_SERVERMSG : LENS_ENTITYMSG), (bool)params[1] ) )
 				{

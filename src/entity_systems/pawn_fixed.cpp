@@ -819,7 +819,7 @@ const AMX_NATIVE_INFO fixed_Natives[] = {
 	{ "fatan2",	n_fixedatan2 },
 
 
-	{ NULL, NULL }				/* terminator */
+	{ nullptr, nullptr }				/* terminator */
 };
 
 

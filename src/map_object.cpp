@@ -71,7 +71,7 @@ void MapObject::InitialSetup()
 {
 	this->is_virtual_child = false;
 	this->effects.tile_object = true;
-	this->data = NULL;
+	this->data = nullptr;
 	this->data_type = 0;
 	this->timer = 0;
 	this->speed = 1;
@@ -279,7 +279,7 @@ void MapObject::FreeData()
 			delete (LuxCanvas*)this->data;
 		}
 	}
-	this->data = NULL;
+	this->data = nullptr;
 	this->data_type = 0;
 	this->has_data = false;
 }
@@ -308,7 +308,7 @@ SpriteFrame MapObject::RetieveAnimationFrame( LuxSprite * sprite, uint32_t timer
 {
 	std::vector<SpriteFrame>::iterator iter_forward;
 	std::vector<SpriteFrame>::reverse_iterator iter_rev;
-	SpriteFrame current_frame = { NULL, 0, 0, 0 };
+	SpriteFrame current_frame = { nullptr, 0, 0, 0 };
 	uint32_t count = 0, next_count = 0;
 
 	if ( this->reverse )
@@ -423,7 +423,7 @@ LuxSprite * MapObject::PeekSprite(  )
 			LuxSprite * orig = (LuxSprite*)this->data;
 
 			if ( !orig )
-				return NULL;
+				return nullptr;
 
 			if ( !orig->animated )
 				return orig;
@@ -431,7 +431,7 @@ LuxSprite * MapObject::PeekSprite(  )
 				return this->PeekAnimationFrame( orig );
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MapObject::SetSprite(LuxSprite * data)
@@ -479,7 +479,7 @@ LuxSprite * MapObject::GetSprite( bool no_increment )
 			LuxSprite * orig = (LuxSprite*)this->data;
 
 			if ( !orig )
-				return NULL;
+				return nullptr;
 
 			if ( !orig->animated )
 				return orig;
@@ -491,7 +491,7 @@ LuxSprite * MapObject::GetSprite( bool no_increment )
 			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR) << "data type error" << std::endl;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 LuxSprite * MapObject::GetAnimation( )
@@ -503,11 +503,11 @@ LuxSprite * MapObject::GetAnimation( )
 			LuxSprite * orig = (LuxSprite*)this->data;
 
 			if ( !orig )
-				return NULL;
+				return nullptr;
 			return orig;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 LuxSprite * MapObject::GetCurrentSprite( )
@@ -525,7 +525,7 @@ LuxSprite * MapObject::GetCurrentSprite( )
 		{
 			LuxSprite * orig = (LuxSprite*)this->data;
 			if ( !orig )
-				return NULL;
+				return nullptr;
 
 			if ( orig->animated )
 			{
@@ -547,7 +547,7 @@ LuxSprite * MapObject::GetCurrentSprite( )
 			lux::core->SystemMessage(__FUNCTION__, __LINE__, SYSTEM_MESSAGE_ERROR) << "data type error" << std::endl;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 mem_pointer MapObject::GetImage( ObjectEffect fx )
@@ -565,7 +565,7 @@ mem_pointer MapObject::GetImage( ObjectEffect fx )
 		{
 			LuxSprite * orig = (LuxSprite*)this->data;
 			if ( !orig )
-				return NULL;
+				return nullptr;
 
 			if ( orig->animated )
 			{
@@ -586,7 +586,7 @@ mem_pointer MapObject::GetImage( ObjectEffect fx )
 		else
 			return this->data;
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -599,7 +599,7 @@ LuxPolygon * MapObject::GetPolygon()
 	{
 		return (LuxPolygon*)this->data;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MapObject::SetPolygon(LuxPolygon * poly)
@@ -612,7 +612,7 @@ void MapObject::SetPolygon(LuxPolygon * poly)
 	}
 	else
 	{
-		this->data = NULL;
+		this->data = nullptr;
 		this->has_data = false;
 	}
 }
@@ -624,7 +624,7 @@ LuxCanvas * MapObject::GetCanvas()
 	{
 		return (LuxCanvas*)this->data;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MapObject::SetCanvas(LuxCanvas * data)
@@ -641,7 +641,7 @@ LuxVirtualSprite * MapObject::GetVirtual()
 	{
 		return (LuxVirtualSprite*)this->data;
 	}
-	return NULL;
+	return nullptr;
 }
 
 LuxVirtualSprite * MapObject::InitialiseVirtual( )

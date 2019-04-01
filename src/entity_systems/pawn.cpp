@@ -164,7 +164,7 @@ int32_t Lux_PawnEntity_Register( AMX * amx )
  */
 AMX * Lux_PawnEntity_LoadFile( const char * entity_name )
 {
-	AMX * temp_amx = NULL;
+	AMX * temp_amx = nullptr;
 	std::string file_name = "./c/scripts/";
 	file_name.append(entity_name);
 	#if PLATFORMBITS == 64
@@ -174,12 +174,12 @@ AMX * Lux_PawnEntity_LoadFile( const char * entity_name )
 	#endif
 
 	//bool successful = false;
-	uint8_t * temp_block = NULL;
+	uint8_t * temp_block = nullptr;
 
 	if ( lux::game_data->HasFile( file_name ) )
 	{
 		uint32_t bytes_read = 0;
-		uint8_t * mem_block = NULL;
+		uint8_t * mem_block = nullptr;
 		int32_t result = 0;
 
 		AMX_HEADER hdr;
@@ -238,7 +238,7 @@ AMX * Lux_PawnEntity_LoadFile( const char * entity_name )
 		delete temp_amx;
 		delete[] mem_block;
 
-		temp_amx = NULL;
+		temp_amx = nullptr;
 	}
 	else
 	{
@@ -274,12 +274,12 @@ void Lux_PawnCache_Cleanup()
 		while ( pawn_entities.begin() != pawn_entities.end() )
 		{
 			AMX * amx = (AMX *)pawn_entities.begin()->second;
-			amx_SetDebugHook(amx, NULL);
-			if( amx->base != NULL )
+			amx_SetDebugHook(amx, nullptr);
+			if( amx->base != nullptr )
 			{
 				amx_Cleanup( amx );
 				//delete [] amx->base; //Crashes
-				amx->base = NULL;
+				amx->base = nullptr;
 			}
 			delete amx;
 
@@ -296,7 +296,7 @@ void Lux_PawnCache_Cleanup()
  */
 AMX * Lux_PawnEntity_GetBaseAMX( const char * entity_base )
 {
-	AMX * base_amx = NULL;
+	AMX * base_amx = nullptr;
 
 	std::map<const char *, AMX *>::iterator iter = pawn_entities.find(entity_base);
 
@@ -307,7 +307,7 @@ AMX * Lux_PawnEntity_GetBaseAMX( const char * entity_base )
 	else
 	{
 		base_amx = Lux_PawnEntity_LoadFile(entity_base);
-		if( base_amx != NULL )
+		if( base_amx != nullptr )
 		{
 			pawn_entities[entity_base] = base_amx;
 		}
@@ -324,7 +324,7 @@ AMX * Lux_PawnEntity_GetBaseAMX( const char * entity_base )
 
 inline void Lux_PawnEntity_UpdatePublicVariable( AMX * entity_data,  const char * variable_name, int32_t value)
 {
-	cell * cell_pointer = NULL;
+	cell * cell_pointer = nullptr;
 	if ( amx_FindPubVar( entity_data, variable_name, &cell_pointer) == AMX_ERR_NONE )
 	{
 		*cell_pointer = value;
@@ -340,20 +340,20 @@ inline void Lux_PawnEntity_UpdatePublicVariable( AMX * entity_data,  const char 
  */
 mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_base, Entity * entity )
 {
-	AMX * entity_data = NULL;
+	AMX * entity_data = nullptr;
 
 #if PAWNCLONABLE
 	long datasize = 0, stackheap = 0;
-	AMX * base_amx = NULL;
+	AMX * base_amx = nullptr;
 
-	uint8_t * memory_block = NULL;
+	uint8_t * memory_block = nullptr;
 	int32_t result = 0;
 
 	base_amx = Lux_PawnEntity_GetBaseAMX( entity_base );
 
-	if ( base_amx != NULL )
+	if ( base_amx != nullptr )
 	{
-		result = amx_MemInfo( base_amx, NULL, &datasize, &stackheap);
+		result = amx_MemInfo( base_amx, nullptr, &datasize, &stackheap);
 		if ( result )
 		{
 			lux::core->SystemMessage(__FILE__ , __LINE__, SYSTEM_MESSAGE_ERROR) << " | AMX Clone Failed: "  << Lux_PawnEntity_StrError(result) << "." << std::endl;
@@ -393,7 +393,7 @@ mem_pointer Lux_PawnEntity_Init( const char * entity_id, const char * entity_bas
 #else
 	entity_data = Lux_PawnEntity_LoadFile( entity_base );
 
-	if ( entity_data != NULL )
+	if ( entity_data != nullptr )
 	{
 		entity_data->parent = entity;
 
@@ -420,17 +420,17 @@ void Lux_PawnEntity_QuickReload(Entity * entity)
 	std::cout << "Lux_PawnEntity_QuickReload" << std::endl;
 	if ( entity )
 	{
-		AMX * new_amx = NULL;
+		AMX * new_amx = nullptr;
 		AMX * amx = static_cast<AMX*>(entity->_data);
 		uint8_t * old_data;
 		long int new_header_area_size = 1, old_header_area_size = 0;
 
-		amx_MemInfo(amx, NULL, &old_header_area_size, NULL);
+		amx_MemInfo(amx, nullptr, &old_header_area_size, nullptr);
 
 		if ( new_header_area_size > 0 )
 		{
 			AMX_HEADER * hdr = (AMX_HEADER *)amx->base;
-			uint8_t * data = (amx->data != NULL) ? amx->data : amx->base+(int)hdr->dat;
+			uint8_t * data = (amx->data != nullptr) ? amx->data : amx->base+(int)hdr->dat;
 
 			old_data = new uint8_t[old_header_area_size];
 			memcpy(old_data, data, old_header_area_size);
@@ -438,15 +438,15 @@ void Lux_PawnEntity_QuickReload(Entity * entity)
 
 			new_amx = Lux_PawnEntity_LoadFile( entity->_base.c_str() );
 
-			if ( new_amx != NULL )
+			if ( new_amx != nullptr )
 			{
 
-				amx_MemInfo(amx, NULL, &new_header_area_size, NULL);
+				amx_MemInfo(amx, nullptr, &new_header_area_size, nullptr);
 				std::cout << entity->_base << " " << old_header_area_size << "-" << new_header_area_size << std::endl;
 				if (old_header_area_size == new_header_area_size)
 				{
 					hdr = (AMX_HEADER *)new_amx->base;
-					data = (new_amx->data != NULL) ? new_amx->data : new_amx->base+(int)hdr->dat;
+					data = (new_amx->data != nullptr) ? new_amx->data : new_amx->base+(int)hdr->dat;
 					new_amx->parent = entity;
 
 					memcpy(data, old_data, new_header_area_size);
@@ -474,12 +474,12 @@ void Lux_PawnEntity_Destroy(mem_pointer entity_data)
 	{
 		AMX * entity = static_cast<AMX*>(entity_data);
 
-		amx_SetDebugHook(entity, NULL);
-		if ( entity->data != NULL )
+		amx_SetDebugHook(entity, nullptr);
+		if ( entity->data != nullptr )
 		{
 			NULLIFY_ARRAY(entity->data);
 		}
-//		if ( entity->base != NULL )
+//		if ( entity->base != nullptr )
 //		{
 //			NULLIFY_ARRAY(entity->base);
 //			memset(entity, 0, sizeof(AMX));
@@ -497,7 +497,7 @@ Entity * Lux_PawnEntity_GetParent(AMX * entity_data)
 {
 	if ( !entity_data )
 	{
-		return NULL;
+		return nullptr;
 	}
 	return static_cast<Entity*>(entity_data->parent);
 }
@@ -519,7 +519,7 @@ void Lux_PawnEntity_Restore(elix::File * current_save_file, mem_pointer entity_d
 
 		saved_data_size = current_save_file->ReadUint32WithLabel( "Entity Header Size", true );
 
-		amx_MemInfo(amx, NULL, &header_area_size, NULL);
+		amx_MemInfo(amx, nullptr, &header_area_size, nullptr);
 		unsigned_header_area_size = (uint32_t)header_area_size;
 
 		if ( unsigned_header_area_size == 0 )
@@ -570,12 +570,12 @@ void Lux_PawnEntity_Save(elix::File * current_save_file, mem_pointer entity_data
 		uint32_t unsigned_header_area_size = 0;
 		long int header_area_size = 1;
 
-		amx_MemInfo(amx, NULL, &header_area_size, NULL);
+		amx_MemInfo(amx, nullptr, &header_area_size, nullptr);
 
 		if ( header_area_size > 0 )
 		{
 			AMX_HEADER * hdr = (AMX_HEADER *)amx->base;
-			uint8_t * data = (amx->data != NULL) ? amx->data : amx->base+(int)hdr->dat;
+			uint8_t * data = (amx->data != nullptr) ? amx->data : amx->base+(int)hdr->dat;
 
 			unsigned_header_area_size = (uint32_t)header_area_size;
 
@@ -634,7 +634,7 @@ bool Lux_PawnEntity_Run(mem_pointer entity_data, bool & scriptcontinue )
 	{
 		p->starting_run_time = lux::core->GetTime();
 		amx->flags |= AMX_FLAG_WATCH;
-		error = amx_Exec( amx, NULL, (scriptcontinue ? AMX_EXEC_CONT : AMX_EXEC_MAIN));
+		error = amx_Exec( amx, nullptr, (scriptcontinue ? AMX_EXEC_CONT : AMX_EXEC_MAIN));
 	}
 	else
 	{
@@ -678,7 +678,7 @@ bool Lux_PawnEntity_PushArrayNative( mem_pointer entity_data, native_type array[
 	#if PAWN_VERSION == 4
 	int32_t err = amx_PushArray((AMX*)entity_data, (cell**)&stack_mem, (cell*)array, size);
 	#else
-	int32_t err = amx_PushArray((AMX*)entity_data, (cell*)stack_mem, NULL, (cell*)array, size);
+	int32_t err = amx_PushArray((AMX*)entity_data, (cell*)stack_mem, nullptr, (cell*)array, size);
 	#endif
 	if ( err )
 	{
@@ -704,7 +704,7 @@ bool Lux_PawnEntity_PushArray( mem_pointer entity_data, int32_t array[], uint32_
 {
 	if ( !entity_data && size == 0 )
 		return false;
-	native_type * native_array = NULL;
+	native_type * native_array = nullptr;
 
 	#if PLATFORMBITS == 64
 	native_array = new native_type[size];
@@ -852,11 +852,11 @@ uint32_t Lux_PawnEntity_HasString(AMX * amx, cell str_param)
 * \param amx - Pointer to current pawn script
 * \param text_param - parameter to Text
 * \param length - length of
-* \return Entity object or NULL
+* \return Entity object or nullptr
 */
 Entity * Lux_PawnEntity_GetEntity(AMX *amx, cell text_param )
 {
-	Entity * wanted = NULL;
+	Entity * wanted = nullptr;
 	uint32_t hash = (uint32_t)text_param;
 
 	if ( hash )
@@ -1001,7 +1001,7 @@ std::string Lux_PawnEntity_GetString(AMX * amx, cell param)
 int32_t Lux_PawnEntity_PublicVariable(AMX * amx, std::string varname, int32_t * new_value )
 {
 	int32_t ret = 0;
-	cell * cptr = NULL;
+	cell * cptr = nullptr;
 	#if PAWN_VERSION == 4
 
 	if ( amx_FindPubVar( amx, varname.c_str(), &cptr) == AMX_ERR_NONE )

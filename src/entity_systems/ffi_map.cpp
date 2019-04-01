@@ -51,7 +51,7 @@ uint32_t Lux_FFI_Map_Find_Ident( const char * map_file )
 	uint32_t map_ident = 0;
 	if ( lux::game_system )
 	{
-		MokoiMap * map = NULL;
+		MokoiMap * map = nullptr;
 
 		map = lux::game_system->FindMap( map_file );
 
@@ -74,7 +74,7 @@ uint32_t Lux_FFI_Map_Create( const char * map_file )
 	uint32_t map_ident = 0;
 	if ( lux::game_system )
 	{
-		MokoiMap * map = NULL;
+		MokoiMap * map = nullptr;
 		map = lux::game_system->CreateMap( map_file, true, false, 0, 0 );
 
 		if ( map )
@@ -182,7 +182,7 @@ uint32_t Lux_FFI_Map_Edit_New( const char * map_file, const uint32_t section_has
 	uint32_t map_ident = 0;
 	if ( lux::game_system )
 	{
-		MokoiMap * map = NULL;
+		MokoiMap * map = nullptr;
 		map = lux::game_system->CreateMap( std::string(map_file), false, true, width, height );
 
 		if ( map )
@@ -229,8 +229,8 @@ uint8_t Lux_FFI_Map_Edit_Save( const uint32_t map_ident )
 uint32_t Lux_FFI_Map_Edit_Object_Create( const uint32_t map_ident, const uint8_t type, const int32_t x, const int32_t y,
 								const fixed z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite )
 {
-	MapObject * map_object = NULL;
-	MokoiMap * map = NULL;
+	MapObject * map_object = nullptr;
+	MokoiMap * map = nullptr;
 
 
 	if ( lux::game_system )
@@ -250,7 +250,7 @@ uint32_t Lux_FFI_Map_Edit_Object_Create( const uint32_t map_ident, const uint8_t
 			get_colour.hex = elix::endian::host32(colour);
 			map_object->effects.primary_colour = get_colour.rgba;
 
-			if ( type == 's' && sprite != NULL )
+			if ( type == 's' && sprite != nullptr )
 				map_object->sprite.assign( sprite );
 
 
@@ -264,8 +264,8 @@ uint32_t Lux_FFI_Map_Edit_Object_Create( const uint32_t map_ident, const uint8_t
 int32_t Lux_FFI_Map_Edit_Object_Postion( const uint32_t map_ident, uint32_t object_id, const int32_t x, const int32_t y, const fixed z,
 								const uint16_t w, const uint16_t h )
 {
-	MapObject * map_object = NULL;
-	MokoiMap * map = NULL;
+	MapObject * map_object = nullptr;
+	MokoiMap * map = nullptr;
 
 
 	if ( lux::game_system )
@@ -318,8 +318,8 @@ int32_t Lux_FFI_Map_Edit_Object_Postion( const uint32_t map_ident, uint32_t obje
  */
 int32_t Lux_FFI_Map_Edit_Object_Effect( const uint32_t map_ident, uint32_t object_id, uint32_t primary_colour, uint32_t secondary_colour, uint16_t rotation, uint16_t scale_xaxis, uint16_t scale_yaxis, uint8_t flip_image, uint8_t style )
 {
-	MapObject * map_object = NULL;
-	MokoiMap * map = NULL;
+	MapObject * map_object = nullptr;
+	MokoiMap * map = nullptr;
 
 
 	if ( lux::game_system )
@@ -356,8 +356,8 @@ int32_t Lux_FFI_Map_Edit_Object_Effect( const uint32_t map_ident, uint32_t objec
  */
 int32_t Lux_FFI_Map_Edit_Object_Replace(const uint32_t map_ident, uint32_t object_id, uint8_t type, const char *sprite )
 {
-	MapObject * map_object = NULL;
-	MokoiMap * map = NULL;
+	MapObject * map_object = nullptr;
+	MokoiMap * map = nullptr;
 
 
 	if ( lux::game_system )
@@ -401,8 +401,8 @@ int32_t Lux_FFI_Map_Edit_Object_Replace(const uint32_t map_ident, uint32_t objec
 int16_t Lux_FFI_Map_Edit_Object_Flag( const uint32_t map_ident, const uint32_t object_id, const uint8_t key, const int16_t value )
 {
 	int16_t value_return = 0;
-	MapObject * map_object = NULL;
-	MokoiMap * map = NULL;
+	MapObject * map_object = nullptr;
+	MokoiMap * map = nullptr;
 
 
 	if ( lux::game_system )
@@ -453,7 +453,7 @@ int16_t Lux_FFI_Map_Edit_Object_Flag( const uint32_t map_ident, const uint32_t o
  */
 uint8_t Lux_FFI_Map_Edit_Object_Delete( const uint32_t map_ident, const uint32_t object_id )
 {
-	MokoiMap * map = NULL;
+	MokoiMap * map = nullptr;
 
 	if ( lux::game_system )
 	{

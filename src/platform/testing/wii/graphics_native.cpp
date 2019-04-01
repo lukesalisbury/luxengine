@@ -132,7 +132,7 @@ bool Lux_NATIVE_LoadTexture(Texture * texure)
 	if ( texure->loaded )
 		return true;
 	
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size = 0;
 
 	size = lux::game->GetFile(texure->file, &data, false);
@@ -335,6 +335,6 @@ void Lux_NATIVE_DrawCircle( LuxRect dest_rect, ObjectEffect effects )
 
 LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	return NULL;
+	return nullptr;
 }
 

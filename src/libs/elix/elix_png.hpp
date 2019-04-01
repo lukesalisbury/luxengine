@@ -19,7 +19,7 @@ namespace elix
 			uint8_t * GetPixelPointer( int32_t x, int32_t y );
 
 		public:
-			Image() : pixels(NULL) {}
+			Image() : pixels(nullptr) {}
 			Image( uint8_t * data, int32_t size )
 			{
 				this->LoadFile( data, size );

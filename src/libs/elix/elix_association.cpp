@@ -37,18 +37,18 @@ namespace elix {
 			while( (pos = regname.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-")) != std::string::npos )
 				regname.erase( pos, 1 );
 
-			if ( SHSetValue( HKEY_CURRENT_USER, reg.c_str(), NULL, REG_SZ, regname.c_str(), regname.length() ) != ERROR_SUCCESS )
+			if ( SHSetValue( HKEY_CURRENT_USER, reg.c_str(), nullptr, REG_SZ, regname.c_str(), regname.length() ) != ERROR_SUCCESS )
 			{
 				return false;
 			}
 
-			if ( SHSetValue( HKEY_CURRENT_USER, regname.c_str(), NULL, REG_SZ, name.c_str(), name.length() ) != ERROR_SUCCESS )
+			if ( SHSetValue( HKEY_CURRENT_USER, regname.c_str(), nullptr, REG_SZ, name.c_str(), name.length() ) != ERROR_SUCCESS )
 			{
 				return false;
 			}
 
 			regname += "\\shell\\open\\command";
-			if ( SHSetValue( HKEY_CURRENT_USER, regname.c_str(), NULL, REG_SZ, run_path.c_str(), run_path.length() ) != ERROR_SUCCESS )
+			if ( SHSetValue( HKEY_CURRENT_USER, regname.c_str(), nullptr, REG_SZ, run_path.c_str(), run_path.length() ) != ERROR_SUCCESS )
 			{
 				return false;
 			}

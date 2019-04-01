@@ -26,9 +26,9 @@ uint32_t entity_mainhash = 0x1D1A8BF1; //__main__
 EntityManager::EntityManager()
 {
 	this->_count = 0;
-	this->_global = this->_keyboard = NULL;
+	this->_global = this->_keyboard = nullptr;
 
-	srand( time(NULL) );
+	srand( time(nullptr) );
 }
 
 EntityManager::~EntityManager()
@@ -57,7 +57,7 @@ Entity * EntityManager::NewEntity(std::string id, std::string base, uint32_t map
 	uint32_t hash = this->GetRandomID( &id );
 	if ( this->GetEntity(hash) )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	Entity * new_entity = new Entity( base, id, map_id, lux::entity_system->GetSystem(base) );
@@ -83,27 +83,27 @@ Entity * EntityManager::NewEntity(std::string id, std::string base, uint32_t map
 		}
 	}
 	delete new_entity;
-	return NULL;
+	return nullptr;
 }
 
 Entity * EntityManager::GetEntity(uint32_t entity_id )
 {
 	if ( entity_id == entity_maphash )
 	{
-		if ( lux::game_system->active_map != NULL )
-			if ( lux::game_system->active_map->entities != NULL)
+		if ( lux::game_system->active_map != nullptr )
+			if ( lux::game_system->active_map->entities != nullptr)
 				return lux::game_system->active_map->entities->parent;
 			else
-				return NULL;
+				return nullptr;
 		else
-			return NULL;
+			return nullptr;
 	}
 	else if ( entity_id == entity_mainhash )
 	{
-		if ( lux::game_system != NULL )
+		if ( lux::game_system != nullptr )
 			return lux::game_system->GetEntities()->parent;
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	std::map<uint32_t, Entity *>::iterator p;
@@ -116,12 +116,12 @@ Entity * EntityManager::GetEntity(uint32_t entity_id )
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool EntityManager::AddEntity( Entity * enw )
 {
-	if ( this->GetEntity(enw->hashid) != NULL )
+	if ( this->GetEntity(enw->hashid) != nullptr )
 		return false;
 	this->_entities[enw->hashid] = enw;
 	this->_count = this->_entities.size();

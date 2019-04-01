@@ -132,7 +132,7 @@ CSSElement * CSSParser::FindElement( LuxWidget element, _WidgetStates state, boo
 		return temp_element;
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 extern ObjectEffect default_fx;
 
@@ -140,7 +140,7 @@ ObjectEffect CSSParser::GetEffect( LuxWidget element, _WidgetStates state )
 {
 	CSSElement * css = this->FindElement(element, state);
 	ObjectEffect new_effect = default_fx;
-	if ( css != NULL )
+	if ( css != nullptr )
 	{
 		for ( std::map<std::string, std::string>::iterator keys = css->key.begin(); keys != css->key.end(); keys++ )
 		{
@@ -168,7 +168,7 @@ ObjectEffect CSSParser::GetEffect( LuxWidget element, _WidgetStates state )
 LuxColour CSSParser::GetColour( LuxWidget element, _WidgetStates state, std::string key )
 {
 	CSSElement * css = this->FindElement(element, state);
-	if ( css != NULL )
+	if ( css != nullptr )
 	{
 		for ( std::map<std::string, std::string>::iterator keys = css->key.begin(); keys != css->key.end(); keys++ )
 		{

@@ -9,8 +9,11 @@ PLATFORMBITS=32
 #Settings
 INCLUDE_PAWN = TRUE
 NETWORK = FALSE
-DOWNLOADER_MODE = curl
+DOWNLOADER_MODE = basic
 OPENGL = TRUE
+
+MKDIR= .\extra\mkdir
+RM = .\extra\rm
 
 CPP = g++
 CC = gcc
@@ -37,8 +40,10 @@ endif
 PLATFORM = __GNUWIN32__
 PLATFORM_DIRECTORY = platform/sdl2
 
-PLATFORM_LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lwinmm -static-libgcc -lws2_32 -lcurldll -lssl.dll -lcrypto.dll
-PLATFORM_LIBS += -lopengl32 -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lversion -luuid
+#PLATFORM_LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lwinmm -static-libgcc -lws2_32 -lcurldll -lssl.dll -lcrypto.dll
+#PLATFORM_LIBS += -lopengl32 -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lversion -luuid
+PLATFORM_LIBS = -lSDL2main -lSDL2 -lSDL2_mixer
+
 PLATFORM_FLAGS = -DHAVE_UNISTD_H -DHAVE_INTTYPES_H -DHAVE_STDINT_H -DNO_ZLIB -DUSE_SDL2 -DDISPLAYMODE_NATIVE -Dmain=SDL_main
 PLATFORM_OBJECTS =  $(OBJDIR)/lux.res
 ifeq ($(NETWORK), TRUE)
@@ -53,7 +58,6 @@ PLATFORM_FLAGS += -DDISPLAYMODE_OPENGL
 #	PLATFORM_LIBS += -mwindows
 #endif
 PLATFORM_LIBS += -mwindows
-
 
 $(OBJDIR)/lux.res: $(RES_SOURCE)
 	@-$(MKDIR) $(dir $@)

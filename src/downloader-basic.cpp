@@ -102,7 +102,7 @@ std::string Lux_Util_FillAddress(std::string address, uint16_t port, sockaddr_in
 			port = port_t;
 		address = address.erase(cut_at);
 	}
-	header = "GET " + path + " HTTP/1.0\r\nAccept: */*\r\nHost: " + address + "\r\nUser-Agent:LuxEngine "PROGRAM_VERSION"\r\n\r\n";
+	header = "GET " + path + " HTTP/1.0\r\nAccept: */*\r\nHost: " + address + "\r\nUser-Agent:LuxEngine " PROGRAM_VERSION "\r\n\r\n";
 	addr.sin_family = AF_INET;
 
 	#if defined (__GAMECUBE__) || defined (__WII__)
@@ -297,7 +297,7 @@ uint32_t Lux_Util_FileCheck( std::string filename )
 
 int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserInterface * ui )
 {
-	Widget * dialog = NULL;
+	DownloadRequest request;
 	struct sockaddr_in serv_addr;
 
 	int32_t ret = 0;
@@ -309,12 +309,15 @@ int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserI
 
 	if ( ui )
 	{
-		LuxRect region = {ui->ui_region.w, ui->ui_region.h, ui->ui_region.w, 50, 0 };
+		LuxRect region = {ui->ui_region.w, ui->ui_region.h, ui->ui_region.w, 140, 0 };
 		region.x /= 4;
 		region.y = (region.y / 2) - 25;
 		region.w /= 2;
-		dialog = ui->AddChild(region, EMPTYWINDOW, (LuxColour){150, 150, 200, 200}, "Downloading\n" + urlArg + "\n");
-		dialog->SetText("Downloading\n" + urlArg + "\n", urlArg.length() );
+		request.dialog = ui->AddChild(region, THROBBER, "Downloading\n" + urlArg + "\n");
+		request.dialog->SetText("Downloading\n" + urlArg + "\n", urlArg.length() );
+
+
+		ui->Loop();
 	}
 
 	if ( Lux_Util_SocketInit(sockDesc) )
@@ -343,13 +346,13 @@ int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserI
 		{
 			while ( Lux_Util_ReadHTTPData( sockDesc, urlData, length_count ) )
 			{
-				dialog->SetText("Downloading\n" + urlArg + "\n", urlArg.length() );
+				request.dialog->SetText("Downloading\n" + urlArg + "\n", urlArg.length() );
 				ui->Loop();
 			}
 
 			if ( urlData.length() )
 			{
-				dialog->SetText("Save File to " + origFile );
+				request.dialog->SetText("Save File to " + origFile );
 				elix::File * file = new elix::File( origFile, true );
 				file->WriteString( urlData );
 				delete file;
@@ -359,11 +362,11 @@ int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserI
 	}
 	if ( ui )
 	{
-		ui->RemoveChild( dialog );
+		ui->RemoveChild( request.dialog );
 	}
 	Lux_Util_SocketClose(sockDesc);
 
-	delete dialog;
+	delete request.dialog;
 	return ret;
 }
 

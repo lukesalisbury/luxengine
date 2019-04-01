@@ -35,7 +35,7 @@ CoreSystem::CoreSystem()
 
 	this->state = RUNNING;
 	this->lockfps = true;
-	this->keystate = SDL_GetKeyState(NULL);
+	this->keystate = SDL_GetKeyState(nullptr);
 	this->good = true;
 	this->time = this->GetTime();
 }
@@ -197,7 +197,7 @@ LuxState CoreSystem::HandleFrame(LuxState old_state)
 void CoreSystem::RefreshInput( DisplaySystem * display )
 {
 	SDL_PumpEvents();
-	this->keystate = SDL_GetKeyState(NULL);
+	this->keystate = SDL_GetKeyState(nullptr);
 	this->mousestate = SDL_GetMouseState(&this->mouseposition[0], &this->mouseposition[1]);
 	if ( display )
 		if ( display->graphics.Display2Screen )

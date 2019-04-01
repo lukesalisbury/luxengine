@@ -45,7 +45,7 @@ namespace elix {
 
 	bool Image::LoadFile( elix::File * png_file )
 	{
-		uint8_t * png_data = NULL;
+		uint8_t * png_data = nullptr;
 		uint32_t png_file_size = 0;
 		bool results = false;
 
@@ -67,7 +67,7 @@ namespace elix {
 		this->bpp = 4;
 		stbi_convert_iphone_png_to_rgb(1);
 		this->pixels = stbi_load_from_memory(data, (int)size, (int*)&this->width, (int*)&this->height, (int*)&this->original_bpp, this->bpp);
-		if ( this->pixels == NULL )
+		if ( this->pixels == nullptr )
 		{
 			std::cout << "elix::Image:" << stbi_failure_reason() << std::endl;
 			this->length = 0;
@@ -96,12 +96,12 @@ namespace elix {
 	uint8_t * Image::GetPixelPointer( int32_t x, int32_t y )
 	{
 		if ( x > this->width )
-			return NULL;
+			return nullptr;
 		if ( y > this->height )
-			return NULL;
+			return nullptr;
 		int32_t p = (x + (y * this->width))*this->bpp;
 		if (p > length)
-			return NULL;
+			return nullptr;
 
 		uint8_t * pix = this->pixels;
 		pix += p;
@@ -150,7 +150,7 @@ namespace elix {
 
 	bool Image::HasContent()
 	{
-		return (this->pixels != NULL);
+		return (this->pixels != nullptr);
 	}
 
 	void Image::ConvertToPOT( int32_t w, int32_t h)

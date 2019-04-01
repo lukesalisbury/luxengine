@@ -535,7 +535,7 @@ SDL_Rect * sdlgraphics_dirty = 0;
 float sdlgraphics_ratio[2] = {1.0, 1.0};
 int32_t sdlgraphics_scale = 0;
 
-SDL_Window * sdlgraphics_window = NULL;
+SDL_Window * sdlgraphics_window = nullptr;
 std::string sdlgraphics_title;
 uint32_t sdlgraphics_fps = 0, sdlgraphics_fpstime = 0;
 bool sdlgraphics_customtext = false;
@@ -545,9 +545,9 @@ int32_t sdlgraphics_customtext_height = 32;
 // Loaded a file from the game file.
 SDL_Surface * SDL_Surface_LoadImage( std::string file )
 {
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
-	SDL_Surface * temp_surface = NULL;
+	SDL_Surface * temp_surface = nullptr;
 	if ( lux::game )
 	{
 		size = lux::game->GetFile(file, &data, false);
@@ -580,7 +580,7 @@ SDL_Texture * SDL_Texture_LoadImage( std::string file )
 	SDL_Surface * temp_surface = SDL_Surface_LoadImage( file );
 	if (temp_surface)
 		return SDL_CreateTextureFromSurface(0, temp_surface);
-	return NULL;
+	return nullptr;
 }
 
 /* Display Functions */
@@ -628,7 +628,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_Init( uint16_t  width, uint16_t height, uin
 
 	/* Set Window Icon */
 	SDL_Surface * icon = SDL_Surface_LoadImage("./sprites/__icon.png");
-	if ( icon != NULL )
+	if ( icon != nullptr )
 	{
 		SDL_SetWindowIcon(sdlgraphics_window,icon);
 		SDL_FreeSurface(icon);
@@ -727,7 +727,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_RefreshSpriteSheet( std::string name, std::
 			tmp_rect.h = p->second->rect.h;
 
 			SDL_Surface * temp_sheet = SDL_CreateRGBSurface( sdlgraphics_flags, tmp_rect.w, tmp_rect.h, 32, RMASK, GMASK, BMASK, AMASK );
-			SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, NULL);
+			SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, nullptr);
 			SDL_SetAlpha(temp_sheet, 0, 0);
 
 			if ( temp_sheet )
@@ -760,7 +760,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map
 
 			SDL_Surface * temp_sheet = SDL_CreateRGBSurface( 0, tmp_rect.w, tmp_rect.h, 32, RMASK, GMASK, BMASK, AMASK );
 
-			if( temp_sheet == NULL )
+			if( temp_sheet == nullptr )
 			{
 				lux::core->SystemMessage(SYSTEM_MESSAGE_ERROR) << "CreateRGBSurface failed: " << SDL_GetError() << std::endl;
 			}
@@ -768,7 +768,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_LoadSpriteSheet( std::string name, std::map
 			{
 				if ( tmp_rect.x + tmp_rect.w < parent_sheet->w && tmp_rect.y + tmp_rect.h < parent_sheet->h)
 				{
-					SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, NULL);
+					SDL_BlitSurface(parent_sheet, &tmp_rect, temp_sheet, nullptr);
 				SDL_SetAlpha(temp_sheet, 0, 0);
 				}
 
@@ -794,7 +794,7 @@ LUX_DISPLAY_FUNCTION bool Lux_NATIVE_FreeSpriteSheet( std::map<std::string, LuxS
 			if ( p->second->data )
 			{
 				SDL_DestroyTexture((SDL_Texture *)p->second->data);
-				p->second->data = NULL;
+				p->second->data = nullptr;
 			}
 		}
 	}
@@ -828,7 +828,7 @@ LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_
 	else
 	{
 		delete sprite;
-		return NULL;
+		return nullptr;
 	}
 
 }
@@ -837,12 +837,12 @@ LUX_DISPLAY_FUNCTION LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_
 
 LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect dest_rect, Effects image_effects )
 {
-	if ( data == NULL )
+	if ( data == nullptr )
 		return;
 
 	int32_t width = 0, height = 0;
 	SDL_Texture * surface = (SDL_Texture*)data;
-	SDL_QueryTexture(surface, NULL, NULL, &width, &height);
+	SDL_QueryTexture(surface, nullptr, nullptr, &width, &height);
 
 	if ( width == 0 || height == 0 )
 	{
@@ -887,7 +887,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 				draw.x = dest_rect.x + area.x;
 				draw.y = dest_rect.y + area.y;
 				SDL_SetRenderDrawColor(image_effects.colour.r, image_effects.colour.g, image_effects.colour.b, image_effects.colour.a);
-				SDL_RenderCopy(surface, NULL, &draw);
+				SDL_RenderCopy(surface, nullptr, &draw);
 			}
 		}
 	}
@@ -896,7 +896,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawSprite( LuxSprite * sprite, LuxRect des
 		dest_rect.w = width;
 		dest_rect.h = height;
 		SDL_SetRenderDrawColor(image_effects.colour.r, image_effects.colour.g, image_effects.colour.b, image_effects.colour.a);
-		SDL_RenderCopy(surface, NULL, &draw);
+		SDL_RenderCopy(surface, nullptr, &draw);
 	}
 }
 
@@ -914,7 +914,7 @@ LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawRect( LuxRect dest_rect, Effects image_
 LUX_DISPLAY_FUNCTION void Lux_NATIVE_DrawPolygon ( int16_t * x_point, int16_t *y_point, uint16_t point_count, Effects image_effects, void * texture )
 {
 	/*
-	if ( texture != NULL )
+	if ( texture != nullptr )
 	{
 		texturedPolygon(sdlgraphics_screen, x_point, y_point, point_count, (SDL_Surface *)texture, 0,0);
 	}

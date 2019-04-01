@@ -8,8 +8,8 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef _DISPLAY_H_
-#define _DISPLAY_H_
+#ifndef DISPLAY_H
+#define DISPLAY_H
 
 #include <sstream>
 #include <map>
@@ -151,4 +151,4 @@ namespace lux {
 	extern DisplaySystem * display;
 }
 
-#endif
+#endif /* DISPLAY_H */

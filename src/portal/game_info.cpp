@@ -25,8 +25,8 @@ GameInfo::GameInfo( UserInterface * gui, std::string game_path )
 {
 	this->type = GI_INVALID;
 	this->gui = gui;
-	this->button = NULL;
-	this->icon = NULL;
+	this->button = nullptr;
+	this->icon = nullptr;
 
 	this->url = game_path;
 
@@ -42,8 +42,8 @@ GameInfo::GameInfo( UserInterface * gui, tinyxml2::XMLElement * xml_element )
 {
 	this->type = GI_INVALID;
 	this->gui = gui;
-	this->button = NULL;
-	this->icon = NULL;
+	this->button = nullptr;
+	this->icon = nullptr;
 	this->hash = 0;
 
 	tinyxml2::QueryStringAttribute( xml_element->FirstChildElement("download"), "url", this->url );

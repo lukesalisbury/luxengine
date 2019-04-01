@@ -53,7 +53,7 @@ GraphicSystem GraphicsOpenGL = {
 	&Lux_OGL_LoadSpriteSheet,
 	&Lux_OGL_LoadSpriteSheetImage,
 	&Lux_OGL_FreeSpriteSheet,
-	NULL,
+	nullptr,
 	&Lux_OGL_FreeSprite,
 	&Lux_OGL_PNGtoSprite,
 
@@ -73,10 +73,10 @@ LuxColour opengl_graphics_colour = { 0, 0, 0, 255 };
 SDL_Rect opengl_graphic_dimension = {0, 0, 320, 240 };
 float opengl_graphic_ratio_width = 1.00;
 float opengl_graphic_ratio_height = 1.00;
-SDL_Surface * opengl_graphic_screen = NULL;
+SDL_Surface * opengl_graphic_screen = nullptr;
 glCamera * opengl_graphic_camera;
 bool oglUseNPOT = true;
-LuxPolygon * opengl_graphic_cursor = NULL;
+LuxPolygon * opengl_graphic_cursor = nullptr;
 
 
 std::string opengl_window_title;
@@ -94,7 +94,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
  */
  bool Lux_OGL_Init( uint16_t  width, uint16_t height, uint8_t bpp, uint16_t * actual_width, uint16_t * actual_height )
 {
-	SDL_Surface * opengl_window_icon = NULL;
+	SDL_Surface * opengl_window_icon = nullptr;
 	if ( lux::config->GetString("display.mode") != "OpenGL" )
 		return false;
 
@@ -147,11 +147,11 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
 		opengl_window_icon = SDL_Surface_LoadImage("./resources/icon32.png");
 	}
 	opengl_window_title = lux::config->GetString("project.title") + " (OpenGL Rendering)";
-	SDL_WM_SetCaption( opengl_window_title.c_str(), NULL );
-	if ( opengl_window_icon != NULL )
+	SDL_WM_SetCaption( opengl_window_title.c_str(), nullptr );
+	if ( opengl_window_icon != nullptr )
 	{
 		SDL_SetAlpha(opengl_window_icon, SDL_SRCALPHA, 255);
-		SDL_WM_SetIcon(opengl_window_icon, NULL);
+		SDL_WM_SetIcon(opengl_window_icon, nullptr);
 		SDL_FreeSurface(opengl_window_icon);
 	}
 
@@ -257,7 +257,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
 		title_msg << opengl_window_title << " " << opengl_graphics_fps;
 		opengl_graphics_fpstime = lux::core->GetTime();
 		opengl_graphics_fps = 0;
-		SDL_WM_SetCaption( title_msg.str().c_str(), NULL);
+		SDL_WM_SetCaption( title_msg.str().c_str(), nullptr);
 	}
 	opengl_graphics_fps++;
 	*/
@@ -273,7 +273,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
 	position.x = x;
 	position.y = y;
 
-	Lux_GLES_DrawPolygon(opengl_graphic_cursor->x, opengl_graphic_cursor->y, opengl_graphic_cursor->count, position, effect, NULL);
+	Lux_GLES_DrawPolygon(opengl_graphic_cursor->x, opengl_graphic_cursor->y, opengl_graphic_cursor->count, position, effect, nullptr);
 }
 
 /* Resource Functions */
@@ -284,7 +284,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
  */
  bool Lux_OGL_FreeSprite( LuxSprite * sprite )
 {
-	if ( sprite == NULL )
+	if ( sprite == nullptr )
 		return false;
 	if ( sprite->data )
 	{
@@ -292,7 +292,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
 		lux::OpenGLTexture::destroy(texture);
 		delete texture;
 	}
-	sprite->data = NULL;
+	sprite->data = nullptr;
 	return true;
 }
 
@@ -367,7 +367,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
  bool Lux_OGL_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprite *> * children )
 {
 	/* PNG Image */
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size;
 	elix::Image * png = new elix::Image;
 	if ( lux::game_data )
@@ -478,7 +478,7 @@ uint32_t opengl_graphics_fps = 0, opengl_graphics_fpstime = 0;
  */
  LuxSprite * Lux_OGL_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	elix::Image * png = new elix::Image(data, size);
 
 	if ( png->HasContent() )

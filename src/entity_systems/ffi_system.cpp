@@ -96,7 +96,7 @@ uint32_t Lux_FFI_System_List_Count( const uint8_t list )
 
 const char * Lux_FFI_System_List_Item( const uint8_t list, const uint32_t item )
 {
-	return NULL;
+	return nullptr;
 }
 
 

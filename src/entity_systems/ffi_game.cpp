@@ -49,7 +49,7 @@ uint8_t Lux_FFI_Game_Save( uint8_t save_slot, int32_t detail[64] )
  */
 uint8_t Lux_FFI_Game_Save_Hibernate( )
 {
-	return lux::engine->WriteSaveGame( 0x00, NULL, 0 );
+	return lux::engine->WriteSaveGame( 0x00, nullptr, 0 );
 }
 
 /**
@@ -100,7 +100,7 @@ int32_t * Lux_FFI_Game_Details( const uint32_t project_id, const uint8_t save_sl
 	{
 		*data_size = 0;
 		delete [] cookie_data;
-		return NULL;
+		return nullptr;
 	}
 	return cookie_data;
 }

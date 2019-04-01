@@ -133,7 +133,7 @@ static const void * const amx_opcodelist[] = {
         &&op_swap_alt,    &&op_break,       &&op_casetbl,
         /* patched instructions */
         /* if op_sysreq_d and/or op_sysreq_nd are not implemented, their entries
-         * in this table must be NULL
+		 * in this table must be NULL
          */
         &&op_sysreq_d,    &&op_sysreq_nd,
         /* overlay instructions */
@@ -183,8 +183,8 @@ static const void * const amx_opcodelist[] = {
    */
   if (amx->flags==~0) {
     assert(sizeof(cell)==sizeof(void *));
-    assert(data==NULL);
-    assert(retval!=NULL);
+	assert(data==NULL);
+	assert(retval!=NULL);
     *retval=(cell)amx_opcodelist;
     return sizearray(amx_opcodelist);
   } /* if */
@@ -622,7 +622,7 @@ static const void * const amx_opcodelist[] = {
   op_halt:
     GETPARAM(offs);
   __halt:
-    if (retval!=NULL)
+	if (retval!=NULL)
       *retval=pri;
     /* store complete status (stk and hea are already set in the ABORT macro) */
     amx->frm=frm;
@@ -685,7 +685,7 @@ static const void * const amx_opcodelist[] = {
     NEXT(cip,op);
   op_break:
     assert((amx->flags & AMX_FLAG_VERIFY)==0);
-    if (amx->debug!=NULL) {
+	if (amx->debug!=NULL) {
       /* store status */
       amx->frm=frm;
       amx->stk=stk;
@@ -765,13 +765,13 @@ static const void * const amx_opcodelist[] = {
     assert(offs>=0 && offs<(1<<(sizeof(cell)*4)));
     PUSH((offs<<(sizeof(cell)*4)) | amx->ovl_index);
     amx->ovl_index=(int)*cip;
-    assert(amx->overlay!=NULL);
+	assert(amx->overlay!=NULL);
     if ((num=amx->overlay(amx,amx->ovl_index))!=AMX_ERR_NONE)
       ABORT(amx,num);
     cip=(cell*)amx->code;
     NEXT(cip,op);
   op_retn_ovl:
-    assert(amx->overlay!=NULL);
+	assert(amx->overlay!=NULL);
     POP(frm);
     POP(offs);
     amx->ovl_index=offs & (((ucell)~0)>>4*sizeof(cell));
@@ -791,7 +791,7 @@ static const void * const amx_opcodelist[] = {
       /* nothing */;
     if (num>0)
       amx->ovl_index=*(cptr+1); /* case found */
-    assert(amx->overlay!=NULL);
+	assert(amx->overlay!=NULL);
     if ((num=amx->overlay(amx,amx->ovl_index))!=AMX_ERR_NONE)
       ABORT(amx,num);
     cip=(cell*)amx->code;

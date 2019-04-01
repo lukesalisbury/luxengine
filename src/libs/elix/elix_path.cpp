@@ -45,7 +45,7 @@ namespace elix {
 			int lastslash = path.find_last_of( ELIX_DIR_SEPARATOR, path.length() );
 			if ( lastslash == -1 )
 			{
-				return "."ELIX_DIR_SSEPARATOR;
+				return "." ELIX_DIR_SSEPARATOR;
 			}
 			if ( trailing )
 			{
@@ -130,7 +130,7 @@ namespace elix {
 		*/
 		bool Children( std::string path, std::string sub_path, std::vector<std::string> & list, bool deep, bool storepath, bool storedirectories )
 		{
-			dirent * entry = NULL;
+			dirent * entry = nullptr;
 			std::string dir_path = path + ELIX_DIR_SSEPARATOR + sub_path;
 			std::string file_path = path;
 			DIR * dir = opendir( dir_path.c_str() );
@@ -140,7 +140,7 @@ namespace elix {
 				return false;
 			}
 
-			while ( (entry = readdir(dir)) != NULL )
+			while ( (entry = readdir(dir)) != nullptr )
 			{
 				if ( (strcmp(entry->d_name, ".") != 0) && (strcmp(entry->d_name, "..") != 0) )
 				{

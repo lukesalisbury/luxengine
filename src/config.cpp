@@ -107,15 +107,14 @@ void ConfigResource::MarkModified(std::string key)
 
 
 
-
 Config::Config( )
 {
 	this->watch_modified = false;
 	this->path = elix::program::RootDirectory();
 	this->platform = "posix";
 
-	this->SetString( "project.file", this->path + ELIX_DIR_SSEPARATOR"game"ELIX_DIR_SSEPARATOR ); /* Path to Default Game */
-	this->SetString( "project.title", PROGRAM_NAME" "PROGRAM_VERSION );
+	this->SetString( "project.file", this->path + ELIX_DIR_SSEPARATOR "game" ELIX_DIR_SSEPARATOR ); /* Path to Default Game */
+	this->SetString( "project.title", PROGRAM_NAME " " PROGRAM_VERSION );
 	this->SetString( "language.default", "en" );
 	this->SetString( "language.available", "en;English" );
 	this->SetNumber( "player.number", 1 );
@@ -126,6 +125,7 @@ Config::Config( )
 	this->SetBoolean( "patches.auto", true );
 
 	this->PlatformSettings();
+
 
 	/* Load Global Settings */
 	elix::File * file = new elix::File( elix::directory::User("", false, "mokoi.config") );

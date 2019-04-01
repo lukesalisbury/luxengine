@@ -18,7 +18,7 @@ namespace elix {
 
 			bool valid = true;
 			char directory[MAX_PATH];
-			valid = SHGetSpecialFolderPath(NULL, directory, (roaming ? CSIDL_APPDATA : CSIDL_LOCAL_APPDATA), 1);
+			valid = SHGetSpecialFolderPath(nullptr, directory, (roaming ? CSIDL_APPDATA : CSIDL_LOCAL_APPDATA), 1);
 			if ( valid )
 				full_directory = directory;
 
@@ -43,7 +43,7 @@ namespace elix {
 			bool valid = true;
 
 			char directory[MAX_PATH];
-			valid = SHGetSpecialFolderPath(NULL, directory, (shared ? CSIDL_COMMON_DOCUMENTS : CSIDL_PROFILE), 0);
+			valid = SHGetSpecialFolderPath(nullptr, directory, (shared ? CSIDL_COMMON_DOCUMENTS : CSIDL_PROFILE), 0);
 			if ( valid )
 				full_directory.assign(directory);
 

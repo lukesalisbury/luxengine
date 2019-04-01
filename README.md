@@ -13,12 +13,10 @@ Build Requirements
 - TinyXML (Source Included)
 - ENet (Source Included)
 - Box2d (Source Included)
- 
+
 
 How to Build
 ----------------------
-When building from source, elix (https://github.com/lukesalisbury/elix) is 
-required to be checked out to the same parent directory as luxengine.
-- 'luxengine/' can be built by run 'make'.
+Run Make
 
 

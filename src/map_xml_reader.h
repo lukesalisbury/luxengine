@@ -17,7 +17,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 class MapXMLReader
 {
-		MapXMLReader(): xml_file(NULL), object_z_offset(0) {}
+		MapXMLReader(): xml_file(nullptr), object_z_offset(0) {}
 		~MapXMLReader() { delete xml_file; }
 	private:
 		tinyxml2::XMLDocument * xml_file;

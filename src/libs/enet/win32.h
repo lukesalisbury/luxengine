@@ -13,7 +13,7 @@ typedef SOCKET ENetSocket;
 
 enum
 {
-    ENET_SOCKET_NULL = INVALID_SOCKET
+    ENET_SOCKET_nullptr = INVALID_SOCKET
 };
 
 #define ENET_HOST_TO_NET_16(value) (htons (value))

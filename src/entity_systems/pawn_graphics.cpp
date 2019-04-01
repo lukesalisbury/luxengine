@@ -37,9 +37,9 @@ extern const AMX_NATIVE_INFO Graphics_Natives[];
  */
 MapObject * Lux_PawnEntity_GetObject(AMX * amx, uint32_t object_id )
 {
-	MapObject * object = NULL;
+	MapObject * object = nullptr;
 	Entity * wanted = Lux_PawnEntity_GetParent(amx);
-	if ( wanted == NULL )
+	if ( wanted == nullptr )
 		return object;
 
 	if ( lux::game_system )

@@ -11,10 +11,10 @@
 */
 
 /** Creates a packet that may be sent to a peer.
-    @param dataContents initial contents of the packet's data; the packet's data will remain uninitialized if dataContents is NULL.
+    @param dataContents initial contents of the packet's data; the packet's data will remain uninitialized if dataContents is nullptr.
     @param dataLength   size of the data allocated for this packet
     @param flags        flags for this packet as described for the ENetPacket structure.
-    @returns the packet on success, NULL on failure
+    @returns the packet on success, nullptr on failure
 */
 ENetPacket *
 enet_packet_create (const void * data, size_t dataLength, enet_uint32 flags)
@@ -26,20 +26,20 @@ enet_packet_create (const void * data, size_t dataLength, enet_uint32 flags)
     else
     {
        packet -> data = (enet_uint8 *) enet_malloc (dataLength);
-       if (packet -> data == NULL)
+       if (packet -> data == nullptr)
        {
           enet_free (packet);
-          return NULL;
+          return nullptr;
        }
 
-       if (data != NULL)
+       if (data != nullptr)
          memcpy (packet -> data, data, dataLength);
     }
 
     packet -> referenceCount = 0;
     packet -> flags = flags;
     packet -> dataLength = dataLength;
-    packet -> freeCallback = NULL;
+    packet -> freeCallback = nullptr;
 
     return packet;
 }
@@ -50,7 +50,7 @@ enet_packet_create (const void * data, size_t dataLength, enet_uint32 flags)
 void
 enet_packet_destroy (ENetPacket * packet)
 {
-    if (packet -> freeCallback != NULL)
+    if (packet -> freeCallback != nullptr)
       (* packet -> freeCallback) (packet);
     if (! (packet -> flags & ENET_PACKET_FLAG_NO_ALLOCATE))
       enet_free (packet -> data);
@@ -76,7 +76,7 @@ enet_packet_resize (ENetPacket * packet, size_t dataLength)
     }
 
     newData = (enet_uint8 *) enet_malloc (dataLength);
-    if (newData == NULL)
+    if (newData == nullptr)
       return -1;
 
     memcpy (newData, packet -> data, packet -> dataLength);

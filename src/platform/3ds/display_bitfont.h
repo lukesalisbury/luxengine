@@ -14,18 +14,19 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "stdheader.h"
 #include <string>
 #include <3ds.h>
-#include <sf2d.h>
+#include <citro2d.h>
+
 class DisplayBitFont
 {
 private:
-	sf2d_texture * textures[130];
+	C2D_Sprite * textures[130];
 
 public:
 	DisplayBitFont();
 	~DisplayBitFont();
 
 
-	sf2d_texture * GetTexture( uint32_t character );
+	C2D_Sprite * GetTexture( uint32_t character );
 
 };
 

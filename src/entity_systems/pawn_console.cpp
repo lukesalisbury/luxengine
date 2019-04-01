@@ -105,9 +105,9 @@ static cell pawnConsoleLog(AMX *amx,const cell *params)
 		cstr = amx_Address(amx, params[1]);
 		info.f_putstr = cons_putstr;
 		info.f_putchar = cons_putchar;
-		cons_putstr(NULL, "Game: ");
+		cons_putstr(nullptr, "Game: ");
 		amx_printstring(amx,cstr,&info);
-		cons_putstr(NULL, "\n");
+		cons_putstr(nullptr, "\n");
 		fflush(stdout);
 	}
 	return 0;
@@ -164,5 +164,5 @@ const AMX_NATIVE_INFO console_Natives[] = {
 	{ "ConsoleOutput", pawnConsoleOutput },
 	{ "ConsoleInfomation", pawnConsoleInfomation },
 	{ "ConsoleLog", pawnConsoleLog },
-	{ NULL, NULL }				/* terminator */
+	{ nullptr, nullptr }				/* terminator */
 };

@@ -12,12 +12,12 @@
 
 /** Creates a host for communicating to peers.  
 
-    @param address   the address at which other peers may connect to this host.  If NULL, then no peers may connect to the host.
+    @param address   the address at which other peers may connect to this host.  If nullptr, then no peers may connect to the host.
     @param peerCount the maximum number of peers that should be allocated for the host.
     @param incomingBandwidth downstream bandwidth of the host in bytes/second; if 0, ENet will assume unlimited bandwidth.
     @param outgoingBandwidth upstream bandwidth of the host in bytes/second; if 0, ENet will assume unlimited bandwidth.
 
-    @returns the host on success and NULL on failure
+    @returns the host on success and nullptr on failure
 
     @remarks ENet will strategically drop packets on specific sides of a connection between hosts
     to ensure the host's bandwidth is not overwhelmed.  The bandwidth parameters also determine
@@ -31,21 +31,21 @@ enet_host_create (const ENetAddress * address, size_t peerCount, enet_uint32 inc
     ENetPeer * currentPeer;
 
     if (peerCount > ENET_PROTOCOL_MAXIMUM_PEER_ID)
-      return NULL;
+      return nullptr;
 
     host -> peers = (ENetPeer *) enet_malloc (peerCount * sizeof (ENetPeer));
     memset (host -> peers, 0, peerCount * sizeof (ENetPeer));
 
     host -> socket = enet_socket_create (ENET_SOCKET_TYPE_DATAGRAM);
-    if (host -> socket == ENET_SOCKET_NULL || (address != NULL && enet_socket_bind (host -> socket, address) < 0))
+    if (host -> socket == ENET_SOCKET_nullptr || (address != nullptr && enet_socket_bind (host -> socket, address) < 0))
     {
-       if (host -> socket != ENET_SOCKET_NULL)
+       if (host -> socket != ENET_SOCKET_nullptr)
          enet_socket_destroy (host -> socket);
 
        enet_free (host -> peers);
        enet_free (host);
 
-       return NULL;
+       return nullptr;
     }
 
     enet_socket_set_option (host -> socket, ENET_SOCKOPT_NONBLOCK, 1);
@@ -53,7 +53,7 @@ enet_host_create (const ENetAddress * address, size_t peerCount, enet_uint32 inc
     enet_socket_set_option (host -> socket, ENET_SOCKOPT_RCVBUF, ENET_HOST_RECEIVE_BUFFER_SIZE);
     enet_socket_set_option (host -> socket, ENET_SOCKOPT_SNDBUF, ENET_HOST_SEND_BUFFER_SIZE);
 
-    if (address != NULL)
+    if (address != nullptr)
       host -> address = * address;
 
     host -> incomingBandwidth = incomingBandwidth;
@@ -75,7 +75,7 @@ enet_host_create (const ENetAddress * address, size_t peerCount, enet_uint32 inc
     {
        currentPeer -> host = host;
        currentPeer -> incomingPeerID = currentPeer - host -> peers;
-       currentPeer -> data = NULL;
+       currentPeer -> data = nullptr;
 
        enet_list_clear (& currentPeer -> acknowledgements);
        enet_list_clear (& currentPeer -> sentReliableCommands);
@@ -114,7 +114,7 @@ enet_host_destroy (ENetHost * host)
     @param host host seeking the connection
     @param address destination for the connection
     @param channelCount number of channels to allocate
-    @returns a peer representing the foreign host on success, NULL on failure
+    @returns a peer representing the foreign host on success, nullptr on failure
     @remarks The peer returned will have not completed the connection until enet_host_service()
     notifies of an ENET_EVENT_TYPE_CONNECT event for the peer.
 */
@@ -140,7 +140,7 @@ enet_host_connect (ENetHost * host, const ENetAddress * address, size_t channelC
     }
 
     if (currentPeer >= & host -> peers [host -> peerCount])
-      return NULL;
+      return nullptr;
 
     currentPeer -> state = ENET_PEER_STATE_CONNECTING;
     currentPeer -> address = * address;
@@ -189,7 +189,7 @@ enet_host_connect (ENetHost * host, const ENetAddress * address, size_t channelC
     command.connect.packetThrottleDeceleration = ENET_HOST_TO_NET_32 (currentPeer -> packetThrottleDeceleration);
     command.connect.sessionID = currentPeer -> sessionID;
     
-    enet_peer_queue_outgoing_command (currentPeer, & command, NULL, 0, 0);
+    enet_peer_queue_outgoing_command (currentPeer, & command, nullptr, 0, 0);
 
     return currentPeer;
 }
@@ -383,7 +383,7 @@ enet_host_bandwidth_throttle (ENetHost * host)
            else
              command.bandwidthLimit.incomingBandwidth = ENET_HOST_TO_NET_32 (bandwidthLimit);
 
-           enet_peer_queue_outgoing_command (peer, & command, NULL, 0, 0);
+           enet_peer_queue_outgoing_command (peer, & command, nullptr, 0, 0);
        } 
     }
 

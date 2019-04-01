@@ -59,11 +59,11 @@ void LuxWidget_MergeRect(LuxRect & a, WidgetObjectPosition& b)
 
 UserInterface::UserInterface(DisplaySystem * display )
 {
-	this->internal_display = ( display == NULL ? new DisplaySystem( 0, 0 ) : display);
+	this->internal_display = ( display == nullptr ? new DisplaySystem( 0, 0 ) : display);
 	this->ui_region = this->internal_display->screen_dimension;
 
-	this->controller = NULL;
-	this->active_child = this->main_widget = NULL;
+	this->controller = nullptr;
+	this->active_child = this->main_widget = nullptr;
 
 	this->SetTheme();
 
@@ -100,7 +100,7 @@ UserInterface::~UserInterface()
 LuxSheet * UserInterface::GetSheet( std::string file, uint16_t width, uint16_t height )
 {
 	bool check_local_filesystem = false;
-	LuxSheet * current_sheet = NULL;
+	LuxSheet * current_sheet = nullptr;
 	LuxSheetIter iter_sheet = this->sheets.find(file);
 
 	if ( iter_sheet == this->sheets.end() )
@@ -148,7 +148,7 @@ LuxSheet * UserInterface::GetSheet( std::string file, uint16_t width, uint16_t h
 			else
 			{
 				delete current_sheet;
-				current_sheet = NULL;
+				current_sheet = nullptr;
 			}
 
 		}
@@ -175,8 +175,8 @@ LuxSheet * UserInterface::GetSheet( std::string file, uint16_t width, uint16_t h
 
 LuxSprite * UserInterface::GetSprite( std::string file, uint16_t width, uint16_t height )
 {
-	LuxSheet * sheet = NULL;
-	LuxSprite * return_sprite = NULL;
+	LuxSheet * sheet = nullptr;
+	LuxSprite * return_sprite = nullptr;
 	std::vector<std::string> name;
 
 	elix::string::Split(file, ":", &name);
@@ -195,7 +195,7 @@ LuxSprite * UserInterface::GetSprite( std::string file, uint16_t width, uint16_t
 
 Widget * UserInterface::AddWidgetChild(Widget * parent, LuxRect region, LuxWidget type, std::string text, uint32_t text_length)
 {
-	Widget * child = NULL;
+	Widget * child = nullptr;
 
 	if ( region.x < 0 )
 		region.x += ( parent->_region.x + parent->_region.w );
@@ -216,7 +216,7 @@ Widget * UserInterface::AddWidgetChild(Widget * parent, LuxRect region, LuxWidge
 Widget * UserInterface::AddWidgetChild(Widget * parent, int32_t x, int32_t y, uint16_t w, uint16_t h, LuxWidget type, std::string text)
 {
 	LuxRect region;
-	Widget * child = NULL;
+	Widget * child = nullptr;
 
 	region.x = x;
 	region.y = y;
@@ -343,13 +343,13 @@ Widget * UserInterface::AddChild(LuxRect region, LuxWidget type, std::string tex
 
 void UserInterface::DrawWidget(Widget * child, uint16_t z)
 {
-	if ( child == NULL || !this->internal_display )
+	if ( child == nullptr || !this->internal_display )
 	{
 		return;
 	}
 
-	LuxSprite * spr = NULL;
-	WidgetObject * object = NULL;
+	LuxSprite * spr = nullptr;
+	WidgetObject * object = nullptr;
 	std::list<WidgetObject*>::iterator l_object;
 
 	if ( child->objects.size() )
@@ -396,14 +396,14 @@ void UserInterface::DrawWidget(Widget * child, uint16_t z)
 						this->internal_display->graphics.DrawSprite( spr, area, default_fx );
 					else
 						this->internal_display->graphics.DrawRect( area, default_fx );
-					spr = NULL;
+					spr = nullptr;
 					break;
 				case OBJECT_SPRITE:
 					if ( child->GetData() )
 					{
 						spr = (LuxSprite*)child->GetData();
 						this->internal_display->graphics.DrawSprite( spr, area, default_fx );
-						spr = NULL;
+						spr = nullptr;
 					}
 					else
 						this->internal_display->graphics.DrawRect( area, default_fx );
@@ -431,7 +431,7 @@ void UserInterface::RemoveChild(Widget * child)
 	{
 		if ( this->active_child == child )
 		{
-			this->active_child = NULL;
+			this->active_child = nullptr;
 		}
 		this->children_widget.remove(child);
 		this->children_iter = this->children_widget.begin();
@@ -440,7 +440,7 @@ void UserInterface::RemoveChild(Widget * child)
 
 void UserInterface::RemoveAll()
 {
-	this->active_child = NULL;
+	this->active_child = nullptr;
 	this->children_widget.clear();
 	this->children_iter = this->children_widget.begin();
 }
@@ -562,7 +562,7 @@ int32_t UserInterface::Loop()
 	{
 		if ( this->children_widget.begin() == this->children_widget.end() ) //do nothing
 		{
-			this->active_child = NULL;
+			this->active_child = nullptr;
 		}
 		else if ( this->children_iter == this->children_widget.end() )
 		{
@@ -578,7 +578,7 @@ int32_t UserInterface::Loop()
 			}
 			else
 			{
-				this->active_child = NULL;
+				this->active_child = nullptr;
 			}
 		}
 
@@ -587,7 +587,7 @@ int32_t UserInterface::Loop()
 	{
 		if ( this->children_widget.begin() == this->children_widget.end() ) //do nothing
 		{
-			this->active_child = NULL;
+			this->active_child = nullptr;
 		}
 		else if ( this->children_iter == this->children_widget.begin() )
 		{
@@ -631,7 +631,7 @@ int32_t UserInterface::Loop()
 			return_value = GUI_EXIT;
 		}
 
-		if ( this->active_child != NULL && !return_value )
+		if ( this->active_child != nullptr && !return_value )
 		{
 			if ( !this->active_child->SendEvent( key_event ) )
 			{

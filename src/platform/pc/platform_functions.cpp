@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 uint32_t GetPixel(SDL_Surface *surface, int32_t x, int32_t y)
 {
-	if ( surface == NULL )
+	if ( surface == nullptr )
 		return 0;
 
 	if ( x > surface->w || y > surface->h || x < 0 || y < 0 )
@@ -48,7 +48,7 @@ uint32_t GetPixel(SDL_Surface *surface, int32_t x, int32_t y)
 
 void PutPixel(SDL_Surface *surface, uint32_t x, uint32_t y, uint32_t pixel)
 {
-	if ( surface == NULL )
+	if ( surface == nullptr )
 		return;
 
 	int bpp = surface->format->BytesPerPixel;

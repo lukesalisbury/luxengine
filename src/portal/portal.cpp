@@ -40,7 +40,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #endif
 
 namespace LuxPortal {
-	UserInterface * interface = NULL;
+	UserInterface * interface = nullptr;
 	std::vector<GameInfo *> visible_games_list;
 	std::vector<GameInfo *> complete_games_list;
 	std::list<std::string> previous;
@@ -52,7 +52,7 @@ namespace LuxPortal {
 	LuxRect region = {0, 0, 960, 540, 0};
 	uint16_t page_padding = 0;
 
-	LuxSprite * logo = NULL;
+	LuxSprite * logo = nullptr;
 
 	uint32_t offset = 0;
 	uint32_t max_page_item = 10;
@@ -615,7 +615,7 @@ bool LuxPortal::run()
 	LuxPortal::browse_path = LuxPortal::browse_path_default;
 	LuxPortal::mode = GUI_PORTAL_DEMOS;
 
-	LuxPortal::interface = new UserInterface( NULL );
+	LuxPortal::interface = new UserInterface( nullptr );
 
 	LuxPortal::region = LuxPortal::interface->ui_region;
 

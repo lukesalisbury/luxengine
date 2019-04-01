@@ -21,18 +21,18 @@ LuxPolygon::LuxPolygon( uint16_t points )
 	}
 	else
 	{
-		this->x = NULL;
-		this->y = NULL;
+		this->x = nullptr;
+		this->y = nullptr;
 	}
-	this->texture = NULL;
+	this->texture = nullptr;
 }
 
 LuxPolygon::LuxPolygon(std::string file)
 {
 	this->count = 0;
-	this->x = NULL;
-	this->y = NULL;
-	this->texture = NULL;
+	this->x = nullptr;
+	this->y = nullptr;
+	this->texture = nullptr;
 
 }
 

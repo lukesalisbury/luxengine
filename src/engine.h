@@ -36,7 +36,7 @@ class LuxEngine
 		LuxEngine( std::string executable = "/");
 		LuxEngine( const void * window_ptr );
 
-		bool ShowDialog(std::string text, LuxWidget dialog = DIALOGYESNO, std::string * answer = NULL);
+		bool ShowDialog(std::string text, LuxWidget dialog = DIALOGYESNO, std::string * answer = nullptr);
 		void FatalError(std::string reason);
 
 
@@ -108,7 +108,7 @@ class LuxEngine
 		LuxState msgstate;
 		int32_t msgdialog;
 		std::string * msgdialog_return;
-		bool CreateDialog(std::string text, LuxWidget dialog, std::string * answer = NULL );
+		bool CreateDialog(std::string text, LuxWidget dialog, std::string * answer = nullptr );
 		bool LoopDialog();
 		bool EndDialog( LuxWidget dialog = DIALOGYESNO );
 

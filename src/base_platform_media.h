@@ -21,7 +21,7 @@ class BasePlatformMedia
 		void Init(GraphicSystem graphic) { }
 		void Free() { }
 		LuxSprite * GetInputImage( InputDevice device, uint32_t device_number, int32_t symbol ) {
-			return NULL;
+			return nullptr;
 		}
 
 };

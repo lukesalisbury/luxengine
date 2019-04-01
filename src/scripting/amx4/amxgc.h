@@ -40,7 +40,7 @@ int gc_settable(int exponent,int flags);
 int gc_tablestat(int *exponent,int *percentage);
         /* Upon return, "exponent" will hold the values passed to gc_settable();
          * "percentage" is the level (in percent) that the hash table is filled
-         * up. Either parameter may be set to NULL.
+         * up. Either parameter may be set to nullptr.
          */
 
 int gc_mark(cell value);

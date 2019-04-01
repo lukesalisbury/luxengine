@@ -26,11 +26,11 @@ void Lux_FFI_Keyboard_Watch( uint32_t hash_entity, uint8_t able )
 		if ( wanted )
 			lux::entities->_keyboard = wanted;
 		else
-			lux::entities->_keyboard = NULL;
+			lux::entities->_keyboard = nullptr;
 	}
 	else
 	{
-		lux::entities->_keyboard = NULL;
+		lux::entities->_keyboard = nullptr;
 	}
 }
 

@@ -18,7 +18,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "elix/elix_string.hpp"
 
 bool testMode = false;
-void * clientWindowID = NULL;
+void * clientWindowID = nullptr;
 
 
 #if defined(ANDROID_NDK)
@@ -116,7 +116,7 @@ void main_args( int argc, char *argv[] )
 		}
 		else if ( strncmp(argv[c], "--windowid=",11) == 0 )
 		{
-			clientWindowID = (void*)strtoul( argv[c]+11, NULL, 0 );
+			clientWindowID = (void*)strtoul( argv[c]+11, nullptr, 0 );
 			std::cout << "clientWindowID " << clientWindowID << std::endl;
 		}
 		else if ( argv[c][0] != '-' )

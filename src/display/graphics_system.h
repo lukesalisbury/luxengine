@@ -44,7 +44,7 @@ bool Lux_GRAPHICS_LoadSpriteSheet( std::string name, std::map<uint32_t, LuxSprit
 bool Lux_GRAPHICS_LoadSpriteSheetImage( elix::Image * image, std::map<uint32_t, LuxSprite *> * children);
 bool Lux_GRAPHICS_FreeSpriteSheet( std::map<uint32_t, LuxSprite *> * children);
 bool Lux_GRAPHICS_FreeSprite ( LuxSprite * sprite );
-//void * Lux_GRAPHICS_CacheSprite ( LuxSprite * sprite, ObjectEffect fx ); //Use NULL instead
+//void * Lux_GRAPHICS_CacheSprite ( LuxSprite * sprite, ObjectEffect fx ); //Use nullptr instead
 LuxSprite * Lux_GRAPHICS_PNGtoSprite( uint8_t * data, uint32_t size );
 
 bool Lux_GRAPHICS_CacheDisplay( uint8_t layer );

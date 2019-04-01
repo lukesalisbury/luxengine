@@ -8,11 +8,12 @@ Permission is granted to anyone to use this software for any purpose, including 
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
-#ifndef _LUXTYPES_H_
-	#define _LUXTYPES_H_
+#ifndef LUX_TYPES_H
+	#define LUX_TYPES_H
 
 #include "stdheader.h"
 #include <map>
+
 class MapObject;
 
 #ifdef __GNUWIN32__
@@ -211,4 +212,4 @@ enum {
 	NUM_SHADERS
 };
 
-#endif /* _LUXTYPES_H_ */
+#endif /* LUX_TYPES_H */

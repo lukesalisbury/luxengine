@@ -106,7 +106,7 @@ void MokoiMap::InitialSetup( std::string map_name )
 	this->centered_view = lux::config->GetBoolean("map.centerview");
 
 	this->object_cache_count = 0;
-	this->entities = NULL;
+	this->entities = nullptr;
 	this->wrap_mode = MAP_WRAPNONE;
 	this->server = false;
 	this->entity_file_name = "maps/" + this->map_name;
@@ -278,7 +278,7 @@ bool MokoiMap::Loop()
 
 	/* Screens */
 	uint32_t screen_number = 0;
-	MokoiMapScreen * screen = NULL;
+	MokoiMapScreen * screen = nullptr;
 	if ( this->dimension_width == 1 && this->dimension_height == 1 )
 	{
 		screen = this->GetScreen(screen_number);
@@ -414,7 +414,7 @@ bool MokoiMap::Reset()
 void MokoiMap::AddObjectToScreens( MapObject * object )
 {
 	uint32_t screen_number = 0;
-	MokoiMapScreen * screen = NULL;
+	MokoiMapScreen * screen = nullptr;
 
 	int32_t sx = (object->position.x/this->default_map_width)*this->default_map_width;
 	int32_t sy = (object->position.y/this->default_map_height)*this->default_map_height;
@@ -483,7 +483,7 @@ MapObject * MokoiMap::GetObject( uint32_t ident )
 		if( iter != this->object_cache.end() )
 			return iter->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MokoiMap::ReplaceObjectsSheets( std::string old_sheet, std::string new_sheet )
@@ -752,7 +752,7 @@ bool MokoiMap::Restore( elix::File * current_save_file )
 	{
 		for( uint32_t i = 0; i < this->object_cache_count; i++ )
 		{
-			MapObject * existing_object = NULL;
+			MapObject * existing_object = nullptr;
 			existing_object = new MapObject( current_save_file );
 			this->object_cache[existing_object->GetStaticMapID()] = existing_object;
 
@@ -784,7 +784,7 @@ MokoiMapScreen * MokoiMap::GetScreen(uint32_t screen_number, bool init_new)
 	if ( this->dimension_width == 1 && this->dimension_height == 1 )
 		screen_number = 0;
 	if ( screen_number > (this->dimension_width * this->dimension_height)-1 )
-		return NULL;
+		return nullptr;
 	if ( !this->screens.empty() )
 	{
 		std::map<uint32_t, MokoiMapScreen *>::iterator iter = this->screens.find(screen_number);
@@ -804,7 +804,7 @@ MokoiMapScreen * MokoiMap::UnloadScreen(uint32_t screen_number, bool init_new)
 	if ( this->width == 1 && this->height == 1 )
 		screen_number = 0;
 	if ( screen_number > (this->width * this->height)-1 )
-		return NULL;
+		return nullptr;
 	std::map<uint32_t, MokoiMapScreen *>::iterator iter = this->_screen.find(screen_number);
 	if( iter != this->_screen.end() )
 		return iter->second;
@@ -818,7 +818,7 @@ MokoiMapScreen * MokoiMap::LoadAllScreen(uint32_t screen_number, bool init_new)
 	if ( this->width == 1 && this->height == 1 )
 		screen_number = 0;
 	if ( screen_number > (this->width * this->height)-1 )
-		return NULL;
+		return nullptr;
 	std::map<uint32_t, MokoiMapScreen *>::iterator iter = this->_screen.find(screen_number);
 	if( iter != this->_screen.end() )
 		return iter->second;
@@ -997,7 +997,7 @@ bool MokoiMap::LoadSnapshot()
 /* Mask Functions */
 uint16_t MokoiMap::GetMaskValue(uint16_t x, uint16_t y)
 {
-	MokoiMapScreen * screen = NULL;
+	MokoiMapScreen * screen = nullptr;
 	screen = this->GetScreen( XY2Screen( x, y, this->dimension_width ) );
 	if ( screen )
 		return screen->GetMaskValue(x, y);
@@ -1007,7 +1007,7 @@ uint16_t MokoiMap::GetMaskValue(uint16_t x, uint16_t y)
 void MokoiMap::FillMask(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t value)
 {
 	uint32_t screen_number = 0;
-	MokoiMapScreen * screen = NULL;
+	MokoiMapScreen * screen = nullptr;
 
 	int32_t sx = x;
 	int32_t sy = y;

@@ -122,6 +122,6 @@ struct Texture {
 
  LuxSprite * Lux_NATIVE_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	return NULL;
+	return nullptr;
 }
 

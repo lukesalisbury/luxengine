@@ -37,7 +37,7 @@ static cell pawnKeyboardWatch(AMX *amx, const cell *params)
 	if ( params[1] )
 		lux::entities->_keyboard = Lux_PawnEntity_GetParent(amx);
 	else
-		lux::entities->_keyboard = NULL;
+		lux::entities->_keyboard = nullptr;
 	return 0;
 }
 

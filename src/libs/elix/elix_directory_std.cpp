@@ -18,7 +18,7 @@ namespace elix {
 
 			char * home_path = getenv( "XDG_DATA_HOME" );
 			/* If XDG_DATA_HOME not set use HOME instead  */
-			if ( home_path == NULL )
+			if ( home_path == nullptr )
 			{
 				home_path = getenv( "HOME" );
 				if ( home_path )
@@ -96,7 +96,7 @@ namespace elix {
 				/* POSIX + XDG */
 				char * home_path = getenv( "XDG_DATA_HOME" );
 				/* If XDG_DATA_HOME not set use HOME instead  */
-				if ( home_path == NULL )
+				if ( home_path == nullptr )
 				{
 					home_path = getenv( "HOME" );
 					if ( home_path )
@@ -125,7 +125,7 @@ namespace elix {
 		std::string Cache( std::string filename )
 		{
 			std::string full_directory;
-			char * home_path = NULL;
+			char * home_path = nullptr;
 			home_path = getenv( "XDG_CACHE_HOME" );
 			if ( !home_path )
 			{

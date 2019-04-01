@@ -72,7 +72,7 @@ GraphicSystem GraphicsNative = {
 	&LuxGraphics_NDS_LoadSpriteSheet,
 	&LuxGraphics_NDS_LoadSpriteSheetImage,
 	&LuxGraphics_NDS_FreeSpriteSheet,
-	NULL,
+	nullptr,
 	&LuxGraphics_NDS_FreeSprite,
 	&LuxGraphics_NDS_PNGtoSprite,
 
@@ -426,7 +426,7 @@ void LuxGraphics_NDS_Show( uint8_t screen )
 {
 	if ( sprite->data )
 		return false;
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	uint32_t size = 0;
 	Texture * texure = new Texture;
 
@@ -549,7 +549,7 @@ void LuxGraphics_NDS_Show( uint8_t screen )
 
  LuxSprite * LuxGraphics_NDS_PNGtoSprite( uint8_t * data, uint32_t size )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 	elix::Image * src = new elix::Image(data, size);
 	if ( src->HasContent() )
 	{
@@ -584,7 +584,7 @@ void LuxGraphics_NDS_Show( uint8_t screen )
 		else
 		{
 			delete sprite;
-			sprite = NULL;
+			sprite = nullptr;
 		}
 
 

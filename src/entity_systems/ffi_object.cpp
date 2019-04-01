@@ -35,7 +35,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const int32_t x, const int32_t y,
 								const fixed z, const uint16_t w, const uint16_t h, const uint32_t colour, const char * sprite )
 {
-	MapObject * map_object = NULL;
+	MapObject * map_object = nullptr;
 	uint32_t ident = 0;
 
 	if ( lux::game_system->active_map )
@@ -52,7 +52,7 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 		get_colour.hex = elix::endian::host32(colour);
 		map_object->effects.primary_colour = get_colour.rgba;
 
-		if ( (type == OBJECT_SPRITE || type == OBJECT_CANVAS) && sprite != NULL )
+		if ( (type == OBJECT_SPRITE || type == OBJECT_CANVAS) && sprite != nullptr )
 		{
 			map_object->sprite.assign( sprite );
 			if ( !map_object->sprite.compare( 0, 8, "Virtual:" ) )
@@ -60,7 +60,7 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 				map_object->type = OBJECT_CANVAS;
 			}
 		}
-		if ( (type == OBJECT_TEXT) && sprite != NULL )
+		if ( (type == OBJECT_TEXT) && sprite != nullptr )
 			map_object->sprite.assign( sprite );
 
 		if ( global )
@@ -86,7 +86,7 @@ uint32_t Lux_FFI_Object_Create( const uint8_t global, const uint8_t type, const 
 int32_t Lux_FFI_Object_Position(uint32_t object_id, const int32_t x, const int32_t y, const int32_t z,
 								const uint16_t w, const uint16_t h )
 {
-	MapObject * map_object = NULL;
+	MapObject * map_object = nullptr;
 
 	map_object = Lux_FFI_Object_Get( object_id );
 
@@ -131,7 +131,7 @@ int32_t Lux_FFI_Object_Position(uint32_t object_id, const int32_t x, const int32
  */
 int32_t Lux_FFI_Object_Info(const uint32_t object_id, uint16_t * w, uint16_t * h, int32_t * x, int32_t *y, int32_t *z )
 {
-	MapObject * map_object = NULL;
+	MapObject * map_object = nullptr;
 
 	map_object = Lux_FFI_Object_Get( object_id );
 
@@ -181,7 +181,7 @@ int32_t Lux_FFI_Object_Info(const uint32_t object_id, uint16_t * w, uint16_t * h
  */
 int32_t Lux_FFI_Object_Effect( uint32_t object_id, uint32_t primary_colour, uint32_t secondary_colour, uint16_t rotation, uint16_t scale_xaxis, uint16_t scale_yaxis, uint8_t flip_image, uint8_t style )
 {
-	MapObject * map_object = NULL;
+	MapObject * map_object = nullptr;
 
 	map_object = Lux_FFI_Object_Get( object_id );
 
@@ -216,7 +216,7 @@ int32_t Lux_FFI_Object_Effect( uint32_t object_id, uint32_t primary_colour, uint
  */
 int32_t Lux_FFI_Object_Replace(uint32_t object_id, uint8_t type, const char *sprite )
 {
-	MapObject * map_object = NULL;
+	MapObject * map_object = nullptr;
 
 	map_object = Lux_FFI_Object_Get( object_id );
 
@@ -256,7 +256,7 @@ int32_t Lux_FFI_Object_Replace(uint32_t object_id, uint8_t type, const char *spr
  */
 int16_t Lux_FFI_Object_Flag( uint32_t object_id, uint8_t key, int16_t value )
 {
-   MapObject * map_object = NULL;
+   MapObject * map_object = nullptr;
 
    map_object = Lux_FFI_Object_Get( object_id );
 
@@ -388,7 +388,7 @@ uint32_t Lux_FFI_Polygon_Add_Point( const char * name, int32_t x, int32_t y )
  */
 uint32_t Lux_FFI_Canvas_Child_Info(uint32_t object_id, uint32_t child_id, int32_t * x, int32_t * y, uint16_t * w, uint16_t * h )
 {
-	MapObject * map_object = NULL;
+	MapObject * map_object = nullptr;
 
 	map_object = Lux_FFI_Object_Get( object_id );
 
@@ -456,7 +456,7 @@ uint32_t Lux_FFI_Canvas_Child_Info(uint32_t object_id, uint32_t child_id, int32_
  */
 int32_t Lux_FFI_Canvas_Child_Set_Effect( uint32_t object_id, uint32_t child_id, uint32_t primary_colour, uint32_t secondary_colour, uint16_t rotation, uint16_t scale_xaxis, uint16_t scale_yaxis, uint8_t flip_image, uint8_t style )
 {
-	MapObject * map_object = NULL;
+	MapObject * map_object = nullptr;
 
 	map_object = Lux_FFI_Object_Get( object_id );
 

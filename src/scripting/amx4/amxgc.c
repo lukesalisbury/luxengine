@@ -85,9 +85,9 @@ int gc_settable(int exponent, int flags)
 {
   if (exponent==0) {
     gc_clean();         /* delete all "live" objects first */
-    if (SharedGC.table!=NULL) {
+    if (SharedGC.table!=nullptr) {
       free(SharedGC.table);
-      SharedGC.table=NULL;
+      SharedGC.table=nullptr;
     } /* if */
     SharedGC.exponent=0;
     SharedGC.flags=0;
@@ -104,7 +104,7 @@ int gc_settable(int exponent, int flags)
       return GC_ERR_PARAMS;
     /* allocate the new table */
     table=malloc(size*sizeof(*table));
-    if (table==NULL)
+    if (table==nullptr)
       return GC_ERR_MEMORY;
     /* save the statistics of the old table */
     oldtable=SharedGC.table;
@@ -116,7 +116,7 @@ int gc_settable(int exponent, int flags)
     SharedGC.count=flags;
     SharedGC.count=0;           /* old table in initially empty */
     /* re-mark all objects in the old table */
-    if (oldtable!=NULL) {
+    if (oldtable!=nullptr) {
       int index;
       for (index=0; index<oldsize; index++)
         if (oldtable[index].value!=0)
@@ -129,9 +129,9 @@ int gc_settable(int exponent, int flags)
 
 int gc_tablestat(int *exponent,int *percentage)
 {
-  if (exponent!=NULL)
+  if (exponent!=nullptr)
     *exponent=SharedGC.exponent;
-  if (percentage!=NULL) {
+  if (percentage!=nullptr) {
     int size=(1L<<SharedGC.exponent);
     /* calculate with floating point to avoid integer overflow */
     double p=100.0*SharedGC.count/size;
@@ -146,7 +146,7 @@ int gc_mark(cell value)
   cell v,t;
   unsigned char *minorbyte;
 
-  if (SharedGC.table==NULL)
+  if (SharedGC.table==nullptr)
     return GC_ERR_INIT;
   if (SharedGC.count>=(1<<SharedGC.exponent)) {
     int err;
@@ -203,9 +203,9 @@ static void scansection(cell *start,size_t size)
   cell v,t;
   unsigned char *minorbyte;
 
-  assert(SharedGC.table!=NULL);
+  assert(SharedGC.table!=nullptr);
   assert((size % sizeof(cell))==0);
-  assert(start!=NULL);
+  assert(start!=nullptr);
   size/=sizeof(cell); /* from number of bytes to number of cells */
 
   incridx_org= (SharedGC.exponent<sizeof increments / sizeof increments[0]) ?
@@ -258,9 +258,9 @@ int gc_scan(AMX *amx)
   AMX_HEADER *hdr;
   unsigned char *data;
 
-  if (amx==NULL)
+  if (amx==nullptr)
     return GC_ERR_PARAMS;
-  if (SharedGC.table==NULL)
+  if (SharedGC.table==nullptr)
     return GC_ERR_INIT;
 
   hdr=(AMX_HEADER*)amx->base;
@@ -281,9 +281,9 @@ int gc_clean(void)
   int size;
   GCPAIR *item;
 
-  if (SharedGC.table==NULL)
+  if (SharedGC.table==nullptr)
     return GC_ERR_INIT;
-  if (SharedGC.callback==NULL)
+  if (SharedGC.callback==nullptr)
     return GC_ERR_CALLBACK;
 
   size=(1<<SharedGC.exponent);

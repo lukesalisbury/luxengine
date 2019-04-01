@@ -29,18 +29,18 @@
 
 int AMXAPI dbg_FreeInfo(AMX_DBG *amxdbg)
 {
-  assert(amxdbg != NULL);
-  if (amxdbg->hdr != NULL)
+  assert(amxdbg != nullptr);
+  if (amxdbg->hdr != nullptr)
     free(amxdbg->hdr);
-  if (amxdbg->filetbl != NULL)
+  if (amxdbg->filetbl != nullptr)
     free(amxdbg->filetbl);
-  if (amxdbg->symboltbl != NULL)
+  if (amxdbg->symboltbl != nullptr)
     free(amxdbg->symboltbl);
-  if (amxdbg->tagtbl != NULL)
+  if (amxdbg->tagtbl != nullptr)
     free(amxdbg->tagtbl);
-  if (amxdbg->automatontbl != NULL)
+  if (amxdbg->automatontbl != nullptr)
     free(amxdbg->automatontbl);
-  if (amxdbg->statetbl != NULL)
+  if (amxdbg->statetbl != nullptr)
     free(amxdbg->statetbl);
   memset(amxdbg, 0, sizeof(AMX_DBG));
   return AMX_ERR_NONE;
@@ -54,8 +54,8 @@ int AMXAPI dbg_LoadInfo(AMX_DBG *amxdbg, FILE *fp)
   int index, dim;
   AMX_DBG_SYMDIM *symdim;
 
-  assert(fp != NULL);
-  assert(amxdbg != NULL);
+  assert(fp != nullptr);
+  assert(amxdbg != nullptr);
 
   memset(&amxhdr, 0, sizeof amxhdr);
   fseek(fp, 0L, SEEK_SET);
@@ -100,12 +100,12 @@ int AMXAPI dbg_LoadInfo(AMX_DBG *amxdbg, FILE *fp)
     amxdbg->automatontbl = (AMX_DBG_MACHINE**)malloc(dbghdr.automatons * sizeof(AMX_DBG_MACHINE*));
   if (dbghdr.states > 0)
     amxdbg->statetbl = (AMX_DBG_STATE**)malloc(dbghdr.states * sizeof(AMX_DBG_STATE*));
-  if (amxdbg->hdr == NULL
-      || (dbghdr.files > 0 && amxdbg->filetbl == NULL)
-      || (dbghdr.symbols > 0 && amxdbg->symboltbl == NULL)
-      || (dbghdr.tags > 0 && amxdbg->tagtbl == NULL)
-      || (dbghdr.states > 0 && amxdbg->statetbl == NULL)
-      || (dbghdr.automatons > 0 && amxdbg->automatontbl == NULL))
+  if (amxdbg->hdr == nullptr
+      || (dbghdr.files > 0 && amxdbg->filetbl == nullptr)
+      || (dbghdr.symbols > 0 && amxdbg->symboltbl == nullptr)
+      || (dbghdr.tags > 0 && amxdbg->tagtbl == nullptr)
+      || (dbghdr.states > 0 && amxdbg->statetbl == nullptr)
+      || (dbghdr.automatons > 0 && amxdbg->automatontbl == nullptr))
   {
     dbg_FreeInfo(amxdbg);
     return AMX_ERR_MEMORY;
@@ -120,7 +120,7 @@ int AMXAPI dbg_LoadInfo(AMX_DBG *amxdbg, FILE *fp)
 
   /* file table */
   for (index = 0; index < dbghdr.files; index++) {
-    assert(amxdbg->filetbl != NULL);
+    assert(amxdbg->filetbl != nullptr);
     amxdbg->filetbl[index] = (AMX_DBG_FILE *)ptr;
     #if BYTE_ORDER==BIG_ENDIAN
       amx_Align32(&amxdbg->filetbl[index]->address);
@@ -142,7 +142,7 @@ int AMXAPI dbg_LoadInfo(AMX_DBG *amxdbg, FILE *fp)
 
   /* symbol table (plus index tags) */
   for (index = 0; index < dbghdr.symbols; index++) {
-    assert(amxdbg->symboltbl != NULL);
+    assert(amxdbg->symboltbl != nullptr);
     amxdbg->symboltbl[index] = (AMX_DBG_SYMBOL *)ptr;
     #if BYTE_ORDER==BIG_ENDIAN
       amx_Align32(&amxdbg->symboltbl[index]->address);
@@ -164,7 +164,7 @@ int AMXAPI dbg_LoadInfo(AMX_DBG *amxdbg, FILE *fp)
 
   /* tag name table */
   for (index = 0; index < dbghdr.tags; index++) {
-    assert(amxdbg->tagtbl != NULL);
+    assert(amxdbg->tagtbl != nullptr);
     amxdbg->tagtbl[index] = (AMX_DBG_TAG *)ptr;
     #if BYTE_ORDER==BIG_ENDIAN
       amx_Align16(&amxdbg->tagtbl[index]->tag);
@@ -176,7 +176,7 @@ int AMXAPI dbg_LoadInfo(AMX_DBG *amxdbg, FILE *fp)
 
   /* automaton name table */
   for (index = 0; index < dbghdr.automatons; index++) {
-    assert(amxdbg->automatontbl != NULL);
+    assert(amxdbg->automatontbl != nullptr);
     amxdbg->automatontbl[index] = (AMX_DBG_MACHINE *)ptr;
     #if BYTE_ORDER==BIG_ENDIAN
       amx_Align16(&amxdbg->automatontbl[index]->automaton);
@@ -189,7 +189,7 @@ int AMXAPI dbg_LoadInfo(AMX_DBG *amxdbg, FILE *fp)
 
   /* state name table */
   for (index = 0; index < dbghdr.states; index++) {
-    assert(amxdbg->statetbl != NULL);
+    assert(amxdbg->statetbl != nullptr);
     amxdbg->statetbl[index] = (AMX_DBG_STATE *)ptr;
     #if BYTE_ORDER==BIG_ENDIAN
       amx_Align16(&amxdbg->statetbl[index]->state);
@@ -214,10 +214,10 @@ int AMXAPI dbg_LinearAddress(AMX *amx, ucell relative_addr, ucell *linear_addr)
 {
   AMX_HEADER *hdr;
 
-  assert(amx!=NULL);
+  assert(amx!=nullptr);
   hdr=(AMX_HEADER *)amx->base;
-  assert(hdr!=NULL);
-  assert(linear_addr!=NULL);
+  assert(hdr!=nullptr);
+  assert(linear_addr!=nullptr);
   if ((hdr->flags & AMX_FLAG_OVERLAY)==0) {
     *linear_addr=relative_addr;
   } else {
@@ -235,9 +235,9 @@ int AMXAPI dbg_LookupFile(AMX_DBG *amxdbg, ucell address, const char **filename)
 {
   int index;
 
-  assert(amxdbg != NULL);
-  assert(filename != NULL);
-  *filename = NULL;
+  assert(amxdbg != nullptr);
+  assert(filename != nullptr);
+  *filename = nullptr;
   /* this is a simple linear look-up; a binary search would be possible too */
   for (index = 0; index < amxdbg->hdr->files && amxdbg->filetbl[index]->address <= address; index++)
     /* nothing */;
@@ -253,8 +253,8 @@ int AMXAPI dbg_LookupLine(AMX_DBG *amxdbg, ucell address, long *line)
 {
   int index;
 
-  assert(amxdbg != NULL);
-  assert(line != NULL);
+  assert(amxdbg != nullptr);
+  assert(line != nullptr);
   *line = 0;
   /* this is a simple linear look-up; a binary search would be possible too */
   for (index = 0; index < amxdbg->hdr->lines && amxdbg->linetbl[index].address <= address; index++)
@@ -275,9 +275,9 @@ int AMXAPI dbg_LookupFunction(AMX_DBG *amxdbg, ucell address, const char **funcn
    */
   int index;
 
-  assert(amxdbg != NULL);
-  assert(funcname != NULL);
-  *funcname = NULL;
+  assert(amxdbg != nullptr);
+  assert(funcname != nullptr);
+  *funcname = nullptr;
   for (index = 0; index < amxdbg->hdr->symbols; index++) {
     if (amxdbg->symboltbl[index]->ident == iFUNCTN
         && amxdbg->symboltbl[index]->codestart <= address
@@ -295,9 +295,9 @@ int AMXAPI dbg_GetTagName(AMX_DBG *amxdbg, int tag, const char **name)
 {
   int index;
 
-  assert(amxdbg != NULL);
-  assert(name != NULL);
-  *name = NULL;
+  assert(amxdbg != nullptr);
+  assert(name != nullptr);
+  *name = nullptr;
   for (index = 0; index < amxdbg->hdr->tags && amxdbg->tagtbl[index]->tag != tag; index++)
     /* nothing */;
   if (index >= amxdbg->hdr->tags)
@@ -311,9 +311,9 @@ int AMXAPI dbg_GetAutomatonName(AMX_DBG *amxdbg, int automaton, const char **nam
 {
   int index;
 
-  assert(amxdbg != NULL);
-  assert(name != NULL);
-  *name = NULL;
+  assert(amxdbg != nullptr);
+  assert(name != nullptr);
+  *name = nullptr;
   for (index = 0; index < amxdbg->hdr->automatons && amxdbg->automatontbl[index]->automaton != automaton; index++)
     /* nothing */;
   if (index >= amxdbg->hdr->automatons)
@@ -327,9 +327,9 @@ int AMXAPI dbg_GetStateName(AMX_DBG *amxdbg, int state, const char **name)
 {
   int index;
 
-  assert(amxdbg != NULL);
-  assert(name != NULL);
-  *name = NULL;
+  assert(amxdbg != nullptr);
+  assert(name != nullptr);
+  *name = nullptr;
   for (index = 0; index < amxdbg->hdr->states && amxdbg->statetbl[index]->state != state; index++)
     /* nothing */;
   if (index >= amxdbg->hdr->states)
@@ -353,9 +353,9 @@ int AMXAPI dbg_GetLineAddress(AMX_DBG *amxdbg, long line, const char *filename, 
   int file, index;
   ucell bottomaddr,topaddr;
 
-  assert(amxdbg != NULL);
-  assert(filename != NULL);
-  assert(address != NULL);
+  assert(amxdbg != nullptr);
+  assert(filename != nullptr);
+  assert(address != nullptr);
   *address = 0;
 
   index = 0;
@@ -406,10 +406,10 @@ int AMXAPI dbg_GetFunctionAddress(AMX_DBG *amxdbg, const char *funcname, const c
   const char *tgtfile;
   ucell funcaddr;
 
-  assert(amxdbg != NULL);
-  assert(funcname != NULL);
-  assert(filename != NULL);
-  assert(address != NULL);
+  assert(amxdbg != nullptr);
+  assert(funcname != nullptr);
+  assert(filename != nullptr);
+  assert(address != nullptr);
   *address = 0;
 
   index = 0;
@@ -445,10 +445,10 @@ int AMXAPI dbg_GetVariable(AMX_DBG *amxdbg, const char *symname, ucell scopeaddr
   ucell codestart,codeend;
   int index;
 
-  assert(amxdbg != NULL);
-  assert(symname != NULL);
-  assert(sym != NULL);
-  *sym = NULL;
+  assert(amxdbg != nullptr);
+  assert(symname != nullptr);
+  assert(sym != nullptr);
+  *sym = nullptr;
 
   codestart = codeend = 0;
   index = 0;
@@ -472,7 +472,7 @@ int AMXAPI dbg_GetVariable(AMX_DBG *amxdbg, const char *symname, ucell scopeaddr
     index++;
   } /* for */
 
-  return (*sym == NULL) ? AMX_ERR_NOTFOUND : AMX_ERR_NONE;
+  return (*sym == nullptr) ? AMX_ERR_NOTFOUND : AMX_ERR_NONE;
 }
 
 int AMXAPI dbg_GetArrayDim(AMX_DBG *amxdbg, const AMX_DBG_SYMBOL *sym, const AMX_DBG_SYMDIM **symdim)
@@ -480,10 +480,10 @@ int AMXAPI dbg_GetArrayDim(AMX_DBG *amxdbg, const AMX_DBG_SYMBOL *sym, const AMX
   /* retrieves a pointer to the array dimensions structures of an array symbol */
   const char *ptr;
 
-  assert(amxdbg != NULL);
-  assert(sym != NULL);
-  assert(symdim != NULL);
-  *symdim = NULL;
+  assert(amxdbg != nullptr);
+  assert(sym != nullptr);
+  assert(symdim != nullptr);
+  *symdim = nullptr;
 
   if (sym->ident != iARRAY && sym->ident != iREFARRAY)
     return AMX_ERR_PARAMS;

@@ -42,6 +42,7 @@ extern LuxEntityCallback EntitySystemPawn;
 
 class EntitySystem
 {
+	public:
 		EntitySystem()
 		{
 			Lux_PawnCache_Init();

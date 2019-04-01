@@ -122,7 +122,7 @@ void amx_swapcell(cell *pc)
   } value;
   uchar t;
 
-  assert(pc!=NULL);
+  assert(pc!=nullptr);
   value.c = *pc;
   #if PAWN_CELL_SIZE==16
 	t = value.b[0];
@@ -239,7 +239,7 @@ static cell core_random(AMX *amx,const cell *params)
 	/* one-time initialization (or, mostly one-time) */
 	#if !defined SN_TARGET_PS2 && !defined _WIN32_WCE && !defined __ICC430__
 		if (IL_StandardRandom_seed == INITIAL_SEED)
-			IL_StandardRandom_seed=(unsigned long)time(NULL);
+			IL_StandardRandom_seed=(unsigned long)time(nullptr);
 	#endif
 
 	(void)amx;
@@ -282,5 +282,5 @@ const AMX_NATIVE_INFO core_Natives[] = {
   { "clamp",         core_clamp },
   { "random",        core_random },
   { "DebugWatch",        pawnDebugWatch },
-  { NULL, NULL }        /* terminator */
+  { nullptr, nullptr }        /* terminator */
 };

@@ -61,7 +61,7 @@ Player::Player(uint32_t id, uint8_t control)
 	this->SetControls((uint8_t)id);
 	this->_control = control;
 	this->timer = 0;
-	this->_entity = NULL;
+	this->_entity = nullptr;
 	this->_pointer[0] = this->_pointer[1] = this->_pointer[2] = 10;
 
 	this->PlayerColour = default_fx;
@@ -75,7 +75,7 @@ Player::~Player()
 	if ( this->_entity )
 	{
 		this->_entity->Delete();
-		this->_entity = NULL;
+		this->_entity = nullptr;
 	}
 }
 std::string Player::GetControllerName()
@@ -172,7 +172,7 @@ void Player::CacheAxisValues( uint8_t n )
 
 void Player::CacheButtonValues(uint8_t n)
 {
-	if ( lux::core == NULL )
+	if ( lux::core == nullptr )
 		return;
 	int key = lux::core->GetInput( this->_buttonConfig[n].device, this->_buttonConfig[n].device_number, this->_buttonConfig[n].sym );
 	if ( key )
@@ -229,7 +229,7 @@ void Player::Loop()
 
 LuxSprite * Player::GetInputSprite( int8_t axis, int8_t key, int8_t pointer )
 {
-	LuxSprite * sprite = NULL;
+	LuxSprite * sprite = nullptr;
 		if ( axis >= 0 && axis < 12 )
 		{
 			uint8_t a = axis/6; // Axis (Either 1 or 2)
@@ -312,7 +312,7 @@ void Player::SetPointer(uint8_t axis, int16_t value)
 
 MapObject *Player::GetPointerObject()
 {
-	return NULL;
+	return nullptr;
 }
 
 /* Entity */
@@ -352,7 +352,7 @@ void Player::Message( int32_t * data, uint32_t size )
 		lux::core->NetworkLock();
 		#endif
 		this->_entity->callbacks->Push( this->_entity->_data, size );
-		this->_entity->callbacks->PushArray( this->_entity->_data, data, size, NULL );
+		this->_entity->callbacks->PushArray( this->_entity->_data, data, size, nullptr );
 		this->_entity->callbacks->Push( this->_entity->_data, 0 );
 		this->_entity->Call("NetMessage", (char*)"");
 		#ifdef NETWORKENABLED

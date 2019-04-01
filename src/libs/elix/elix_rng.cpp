@@ -26,7 +26,7 @@ namespace elix
 		{
 			if ( seed == 0 )
 			{
-				seed = time(NULL);
+				seed = time(nullptr);
 				std::srand( seed );
 			}
 		}

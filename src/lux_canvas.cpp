@@ -52,7 +52,7 @@ MapObject * LuxCanvas::FindChild(uint32_t ident)
 			return l_object->second;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -90,7 +90,7 @@ bool LuxCanvas::Draw( DisplaySystem * display, int32_t x, int32_t y, int32_t z )
 	if ( !display )
 		return false;
 
-	MapObject * object = NULL;
+	MapObject * object = nullptr;
 	LuxRect position;
 
 	for ( MapObjectListIter l_object = this->objects.begin(); l_object != this->objects.end(); l_object++ )

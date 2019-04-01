@@ -28,7 +28,7 @@ MODULE_EXPORT int32_t luxengine_sogl_startgame( char * uri )
 
 MODULE_EXPORT int32_t luxengine_sogl_loopgame( )
 {
-    if ( lux::engine != NULL )
+    if ( lux::engine != nullptr )
     {
         lux::engine->Refresh();
         return (int32_t)lux::engine->state;
@@ -45,7 +45,7 @@ MODULE_EXPORT int32_t luxengine_sogl_pausegame( )
 
 MODULE_EXPORT int32_t luxengine_sogl_closegame( )
 {
-    if ( lux::engine != NULL )
+    if ( lux::engine != nullptr )
     {
         lux::engine->Close();
     }
@@ -55,15 +55,15 @@ MODULE_EXPORT int32_t luxengine_sogl_closegame( )
 MODULE_EXPORT int32_t luxengine_sogl_load()
 {
     lux::engine = new LuxEngine("./");
-    return (lux::engine != NULL);
+    return (lux::engine != nullptr);
 }
 
 MODULE_EXPORT int32_t luxengine_sogl_unload()
 {
-    if ( lux::engine != NULL )
+    if ( lux::engine != nullptr )
     {
         delete lux::engine;
-        lux::engine = NULL;
+        lux::engine = nullptr;
     }
     return 999;
 }

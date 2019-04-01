@@ -28,7 +28,7 @@ int16_t Memory_ReadShort( uint8_t * from, uint32_t offset )
 LuxSprite::LuxSprite( GraphicSystem graphic )
 {
 	this->graphics = graphic;
-	this->data = NULL;
+	this->data = nullptr;
 
 	this->hash = 0;
 	this->flag = 0;

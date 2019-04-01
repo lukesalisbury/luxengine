@@ -45,7 +45,7 @@ namespace Mokoi {
 	{
 		uint8_t game_sign[8] = {137, 'M', 'o', 'k', 'o', 'i', '0', '\n'};
 		int32_t p = -1;
-		if ( file != NULL )
+		if ( file != nullptr )
 		{
 			game_sign[6] = '1';
 			p = file->Scan( 0, game_sign, 8 );
@@ -62,7 +62,7 @@ namespace Mokoi {
 MokoiGame::MokoiGame( std::string path, bool scan_files )
 {
 	this->ident = 0;
-	this->png = NULL;
+	this->png = nullptr;
 	this->type = MOKOI_GAME_UNKNOWN;
 	this->has_public_directory = false;
 
@@ -348,7 +348,7 @@ uint8_t MokoiGame::PackageType( std::string & file_path )
 	/*  */
 	uint8_t type = MOKOI_GAME_UNKNOWN;
 	uint8_t buf[8];
-	elix::File * file = NULL;
+	elix::File * file = nullptr;
 	if ( elix::path::Exist(file_path) )
 	{
 		type = MOKOI_GAME_DIRECTORY;
@@ -755,7 +755,7 @@ uint32_t MokoiGame::GetFile(std::string filename, uint8_t ** data, bool addnull)
 std::string MokoiGame::GetFileAsString( std::string file )
 {
 	std::string content;
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	if ( this->GetFile(file, &data, true ) )
 	{
 		if ( data )
@@ -772,7 +772,7 @@ std::string MokoiGame::GetFileAsString( std::string file )
 
 bool MokoiGame::GetStream(std::string file, std::stringstream * stream)
 {
-	uint8_t * data = NULL;
+	uint8_t * data = nullptr;
 	if ( this->GetFile(file, &data, true ) )
 	{
 		if ( data )

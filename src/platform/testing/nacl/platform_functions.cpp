@@ -15,11 +15,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 uint32_t GetPixel(SDL_Surface *surface, uint32_t x, uint32_t y)
 {
-	if ( surface == NULL )
+	if ( surface == nullptr )
 		return 0;
 		
 	int bpp = 0;
-	if ( surface != NULL )
+	if ( surface != nullptr )
 		bpp =  surface->format->BytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
 	Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;

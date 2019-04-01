@@ -65,9 +65,9 @@ static size_t Lux_Util_CurlWriteMemory(void *contents, size_t size, size_t nmemb
   struct MemoryStruct *mem = (struct MemoryStruct *)userp;
 
   mem->memory = (char*)realloc(mem->memory, mem->size + realsize + 1);
-  if (mem->memory == NULL) {
+  if (mem->memory == nullptr) {
 	/* out of memory! */
-	printf("not enough memory (realloc returned NULL)\n");
+	printf("not enough memory (realloc returned nullptr)\n");
 	return 0;
   }
 
@@ -100,7 +100,7 @@ CURLcode Lux_Util_FileDownloaderHandler( DownloadRequest * request )
 {
 	CURL * curl;
 	CURLcode res = CURLE_UNSUPPORTED_PROTOCOL;
-	elix::File * output_file = NULL;
+	elix::File * output_file = nullptr;
 
 	lux::core->SystemMessage(SYSTEM_MESSAGE_LOG) << "Downloading " << request->url << " to " << request->file  << std::endl;
 
@@ -162,7 +162,7 @@ int32_t Lux_Util_FileDownloader( std::string urlArg, std::string origFile, UserI
 	CURLcode res;
 	DownloadRequest request;
 
-	request.dialog = NULL;
+	request.dialog = nullptr;
 	request.url = urlArg;
 	request.file = origFile;
 
