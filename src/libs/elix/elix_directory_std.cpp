@@ -37,7 +37,7 @@ namespace elix {
 				full_directory.assign(home_path);
 			}
 
-			#endif
+
 
 			AppendDirectoryAndCreate( full_directory, elix::program::_user );
 			AppendDirectoryAndCreate( full_directory, subdirectory );

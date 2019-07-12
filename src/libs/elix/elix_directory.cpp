@@ -22,14 +22,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "elix/elix_string.hpp"
 #include "elix/elix_program.hpp"
 
-#ifdef __GNUWIN32__
-	#ifndef _WIN32_IE
-		#define _WIN32_IE 0x0600
-	#endif
-	#include <io.h>
-	#include <shlobj.h>
-	#include <direct.h>
-#endif
+
 
 #ifdef ANDROID_NDK
 	#include <SDL.h>
@@ -76,7 +69,7 @@ namespace elix {
 	#include "elix_directory_console.cpp"
 #elif defined(ANDROID_NDK)
 	#include "elix_directory_android.cpp"
-#elif defined(__WINDOWS__) || defined(__GNUWIN32__)
+#elif defined(PLATFORM_WINDOWS)
 	#include "elix_directory_windows.cpp"
 #else
 	#include "elix_directory_std.cpp"

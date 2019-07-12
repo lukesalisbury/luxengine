@@ -44,7 +44,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	#define USING_GLDESKTOP 2
 	#include <SDL/SDL.h>
 	#include <SDL/SDL_opengl.h>
-#elif defined(USE_SDL2)
+#elif defined(OPENGLENABLED)
 	#define USING_GLDESKTOP 2
 	#define SHADER_IMPL_DESKTOP 1
 	#include <SDL.h>

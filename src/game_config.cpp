@@ -24,7 +24,7 @@ GameConfig::GameConfig()
 	{
 		std::stringstream config_file;
 
-		if ( lux::game_data->GetStream("./"DIRECTORY_FILE, &config_file) )
+		if ( lux::game_data->GetStream("./" DIRECTORY_FILE, &config_file) )
 		{
 			has_config_file = true;
 		}

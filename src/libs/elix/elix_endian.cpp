@@ -10,88 +10,44 @@ Permission is granted to anyone to use this software for any purpose, including 
 ****************************/
 #include "elix/elix_intdef.h"
 
-#if defined ENDIAN_SDL
-	#include <SDL/SDL.h>
-#elif __GNUWIN32__
-	#include <winsock2.h>
-	#define ENDIAN_NETWORK 1
-#elif __linux__
-	#include <arpa/inet.h>
-	#define ENDIAN_NETWORK 1
-#elif  FLASCC
-	#include <arpa/inet.h>
-	#define ENDIAN_NETWORK 1
-#elif defined (__NDS__)
-	#include <sys/socket.h>
-	#define ENDIAN_NETWORK 1
-#elif defined (__3DS__)
-	#include <arpa/inet.h>
-	#include <sys/socket.h>
-	#define ENDIAN_NETWORK 1
-#elif defined (DREAMCAST)
-	#include <endian.h>
-	#define ENDIAN_NETWORK 1
-#elif defined (__GAMECUBE__) || defined (__WII__)
-	#include <network.h>
-	#define ENDIAN_NETWORK 1
-#elif defined __apple__
-	#include <SDL.h>
-	#define ENDIAN_SDL 1
-#else
-	#include <sys/socket.h>
-	#define ENDIAN_NETWORK 1
-#endif
 
 
 namespace elix {
 	namespace endian {
-		#ifdef ENDIAN_NETWORK
+	#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 		uint32_t big32(uint32_t number)
 		{
-			return htonl(number);
+			return number;
 		}
 
 		uint16_t big16(uint16_t number)
 		{
-			return htons(number);
+			return number;
 		}
 
 		uint32_t host32(uint32_t number)
 		{
-			return ntohl(number);
+			return number;
 		}
 		uint16_t host16(uint16_t number)
 		{
-			return ntohs(number);
+			return number;
 		}
-		#elif ENDIAN_SDL
-		uint32_t big32(uint32_t number)
-		{
-			return SDL_SwapBE32(number);
+	#else
+		uint32_t big32(uint32_t number) {
+			return __builtin_bswap32(number);
 		}
+		uint16_t big16(uint16_t number) {
+			return __builtin_bswap16(number);
+		}
+		uint32_t host32(uint32_t number) {
+			return __builtin_bswap32(number);
+		}
+		uint16_t host16(uint16_t number) {
+			return __builtin_bswap16(number);
+		}
+	#endif
 
-		uint16_t big16(uint16_t number)
-		{
-			return SDL_SwapBE16(number);
-		}
-
-		uint32_t host32(uint32_t number)
-		{
-			#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-				return SDL_Swap32(number);
-			#else
-				return number;
-			#endif
-		}
-		uint16_t host16(uint16_t number)
-		{
-			#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-				return SDL_Swap16(number);
-			#else
-				return number;
-			#endif
-		}
-		#endif
 
 	}
 }

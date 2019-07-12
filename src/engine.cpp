@@ -230,7 +230,7 @@ bool LuxEngine::Start( std::string project_file )
 			lux::screen::display("Loading Content Package");
 			if ( !lux::game_data->LoadPackage( package_main_name ) )
 			{
-				this->ShowDialog("Can not find " + package_main_name + "\n"PACKAGE_GET_URL + package_main_name + "\nExiting game.", DIALOGOK);
+				this->ShowDialog("Can not find " + package_main_name + "\n" PACKAGE_GET_URL + package_main_name + "\nExiting game.", DIALOGOK);
 				this->state = GAMEERROR;
 				return false;
 			}
@@ -242,7 +242,7 @@ bool LuxEngine::Start( std::string project_file )
 			lux::screen::display("Loading Content Package");
 			if ( !lux::game_data->LoadPackage( package_music_name ) )
 			{
-				this->ShowDialog("Can not find " + package_music_name + "\n"PACKAGE_GET_URL + package_music_name + "\nExiting game.", DIALOGOK);
+				this->ShowDialog("Can not find " + package_music_name + "\n" PACKAGE_GET_URL + package_music_name + "\nExiting game.", DIALOGOK);
 				this->state = GAMEERROR;
 				return false;
 			}
@@ -254,7 +254,7 @@ bool LuxEngine::Start( std::string project_file )
 			lux::screen::display("Loading Content Package");
 			if ( !lux::game_data->LoadPackage( package_music_name ) )
 			{
-				this->ShowDialog("Can not find " + package_music_name + "\n"PACKAGE_GET_URL + package_music_name + "\nExiting game.", DIALOGOK);
+				this->ShowDialog("Can not find " + package_music_name + "\n" PACKAGE_GET_URL + package_music_name + "\nExiting game.", DIALOGOK);
 				this->state = GAMEERROR;
 				return false;
 			}
@@ -266,7 +266,7 @@ bool LuxEngine::Start( std::string project_file )
 			lux::screen::display("Loading Content Package");
 			if ( !lux::game_data->LoadPackage( package_music_name ) )
 			{
-				this->ShowDialog("Can not find " + package_music_name + "\n"PACKAGE_GET_URL + package_music_name + "\nExiting game.", DIALOGOK);
+				this->ShowDialog("Can not find " + package_music_name + "\n" PACKAGE_GET_URL + package_music_name + "\nExiting game.", DIALOGOK);
 				this->state = GAMEERROR;
 				return false;
 			}

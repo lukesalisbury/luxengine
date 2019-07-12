@@ -1,0 +1,31 @@
+compiler = gcc
+
+program_binary = luxengine
+
+platform_subsystem = sdl2
+
+
+object_dir = obj-${compile_mode}-${platform_subsystem}
+program = obj-${compile_mode}-${platform_subsystem}/${program_binary}.exe
+
+platform_lib = -lstdc++ -lpthread -lSDL2main -lSDL2  -lSDL2_mixer -lm -lopengl32 ${platform_lib}
+platform_lib_flags = -std=c++11 -pthread ${platform_lib_flags}
+
+platform_includes= -I"src/platform/${platform_subsystem}" ${platform_includes}
+platform_flags = -std=c++11 -DPLATFORM_WINDOWS -DDISPLAYMODE_OPENGL  -DOPENGLENABLED=1 ${platform_flags}
+
+
+# Rules
+rule compile
+  command = $compiler $platform_includes $platform_flags $compiler_flags $debug_flag -o $out -c $in
+  description = Building $in
+
+rule link
+  command = $compiler $platform_lib_flags $in -o $out  $platform_lib $compiler_lib $debug_flag
+  description = Creating $out
+
+rule clean
+  command = rm.cmd $object_dir
+  description = Cleaning directory $object_dir
+
+

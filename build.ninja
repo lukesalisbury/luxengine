@@ -1,0 +1,19 @@
+# build.ninja
+
+ninja_required_version = 1.3
+
+compiler_lib = -Wformat -Wno-unused-variable -L"lib"
+compiler_flags = -Wformat -Wno-unused-variable -Wno-write-strings -Wno-unused-function -fno-access-control -fno-exceptions -fno-rtti -I"include" -I"src" -I"src/libs"
+
+# Settings
+include buildconfig/config.ninja
+
+# Platform Rules
+include buildscripts/$platform_ninja
+
+# Files
+include buildconfig/files.ninja
+
+build clean: clean
+
+default $program

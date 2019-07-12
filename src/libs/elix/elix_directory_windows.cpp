@@ -9,6 +9,14 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 ****************************/
 
+#ifdef PLATFORM_WINDOWS
+	#ifndef _WIN32_IE
+		#define _WIN32_IE 0x0600
+	#endif
+	#include <io.h>
+	#include <shlobj.h>
+	#include <direct.h>
+#endif
 
 namespace elix {
 	namespace directory {

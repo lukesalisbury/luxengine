@@ -44,6 +44,9 @@ src/scripting/amx4
 src/scripting/squirrel
 makefiles
 src/platform/3ds
-C:\dev\devkitpro\libctru\include
-C:\dev\devkitpro\ports\libsf2d\include
-
+C:\dev\supportlibs64\include\SDL2
+.
+buildscripts
+settings
+buildscripts/settings
+buildconfig

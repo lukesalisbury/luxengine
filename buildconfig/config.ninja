@@ -1,0 +1,4 @@
+platform_ninja=windows-x86_64.ninja
+platform_includes=-I"C:\dev\supportlibs64/include" -I"C:\dev\supportlibs64/include/SDL2" 
+platform_lib_flags=-L"C:\dev\supportlibs64/lib"
+compile_mode=debug

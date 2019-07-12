@@ -1,0 +1,9 @@
+include ./buildscripts/windows-common.ninja
+
+
+platform_includes = ${platform_includes}
+platform_flags = ${platform_flags} -DPLATFORM_BITS=64
+
+platform_lib_flags = ${platform_lib_flags} -Wl,-rpath -Wl,\$$ORIGIN/lib
+
+

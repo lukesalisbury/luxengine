@@ -109,8 +109,8 @@ namespace elix {
 		{
 			if ( !Exist(path) )
 			{
-			#ifdef __GNUWIN32__
-				_mkdir( path.c_str() );
+			#ifdef PLATFORM_WINDOWS
+				mkdir( path.c_str() );
 			#else
 				mkdir( path.c_str(), 0744 );
 			#endif

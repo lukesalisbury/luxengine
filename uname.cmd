@@ -1,2 +1,2 @@
 @echo off
-@echo WINDOWS
+IF "%~1"=="-m" ( @echo x86_64 ) ELSE ( @echo Windows )

@@ -1,0 +1,7 @@
+# Network code
+ifeq ($(NETWORK), TRUE)
+	COMPILER_FLAGS += -DNETWORKENABLED
+	OBJ += $(OBJDIR)/libs/enet/callbacks.o $(OBJDIR)/libs/enet/host.o  $(OBJDIR)/libs/enet/packet.o $(OBJDIR)/libs/enet/peer.o $(OBJDIR)/libs/enet/protocol.o $(OBJDIR)/libs/enet/list.o
+	OBJ += $(OBJDIR)/$(PLATFORM_DIRECTORY)/core_network.o
+	OBJ += $(OBJDIR)/map_network.o
+endif

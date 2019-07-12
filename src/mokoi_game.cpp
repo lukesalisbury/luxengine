@@ -250,7 +250,7 @@ uint8_t MokoiGame::ReadType( std::string & file_path, bool info )
 				}
 				if ( type == MOKOI_GAME_DIRECTORY )
 				{
-					elix::File * png_file = new elix::File( file_path + "resources"ELIX_DIR_SSEPARATOR"icon32.png" );
+					elix::File * png_file = new elix::File( file_path + "resources" ELIX_DIR_SSEPARATOR "icon32.png" );
 					if ( png_file->Exist() )
 					{
 						this->png_length = png_file->Length();

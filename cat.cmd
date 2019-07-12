@@ -1,4 +1,4 @@
 @echo off
-set string=%*
+set string=%~1
 set string=%string:/=\%
-del %string%
+type %string%
