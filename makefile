@@ -11,8 +11,6 @@ PLATFORMBITS?=unknown
 
 CONFIG_OPENGL?=TRUE
 
-
-
 ifeq ($(BUILDPLATFORM), Windows)
 writecommand=writeout.exe
 endif
@@ -65,28 +63,29 @@ include buildscripts/settings/*.mk
 .PHONY: clean
 
 all: debug
-	#ninja 1>&2
+	ninja 1>&2
 
 clean:
-#	ninja clean 1>&2
+	ninja clean 1>&2
 	@rm $(filesninja)
 	@rm $(configninja)
 	@rm $(writecommand)
 
-info:
+info: file config
 	@echo --------------------------------
 	@echo Build Platform: $(BUILDPLATFORM)
 	@echo Target Platform: $(PLATFORMOS)/$(PLATFORMBITS)
 	@echo --------------------------------
 	@cat $(configninja)
 	@echo --------------------------------
+	@cat $(filesninja)
 
 
 $(filesninja): $(OBJ)
-	${shell $(writecommand) "build $${program}: link $(OBJ:%=$${object_dir}/%)" >> $(filesninja)}
+	${shell $(writecommand) "build \$${program}: link $(OBJ:%=\$${object_dir}/%)" >> $(filesninja)}
 
 %.o:
-	${shell $(writecommand)"build $${object_dir}/$@: compile src/$(@:%.o=%.cpp)" >> $(filesninja)}
+	${shell $(writecommand) "build \$${object_dir}/$@: compile src/$(@:%.o=%.cpp)" >> $(filesninja)}
 
 file_header:
 	${shell $(writecommand) "#FileObjects" > $(filesninja)}
